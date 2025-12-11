@@ -1,0 +1,21 @@
+
+:root{--bg1:#05010b;--bg2:#0b0430;--neon:#8a2be2;--neon2:#d37cff}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#fff}
+.hero-header{display:flex;align-items:center;justify-content:space-between;padding:20px;position:sticky;top:0;background:rgba(0,0,0,0.2);backdrop-filter:blur(6px);z-index:50}
+.logo-3d{height:72px;filter:drop-shadow(0 30px 80px rgba(138,43,226,0.45))}
+.container{max-width:1200px;margin:28px auto;padding:0 18px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:16px;border-radius:12px;margin:18px;border:1px solid rgba(138,43,226,0.06)}
+.lead{color:rgba(255,255,255,0.8)}
+.service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.floating-player{position:fixed;right:18px;bottom:18px;z-index:999}
+a{color:inherit;text-decoration:none;margin-left:16px;font-weight:600}
+
+/* Ultra-Neon PRO styles */
+.onair{position:fixed;left:18px;top:18px;background:linear-gradient(90deg,#7b2be2,#d37cff);padding:8px 14px;border-radius:10px;font-weight:900;box-shadow:0 8px 30px rgba(138,43,226,0.32);z-index:999;color:#fff}
+.neon-btn{background:transparent;border:1px solid rgba(138,43,226,0.18);padding:10px 14px;border-radius:10px}
+.logo-3d{filter:drop-shadow(0 20px 60px rgba(138,43,226,0.5))}
+
+.audio-bars{position:fixed;right:18px;bottom:18px;display:flex;gap:6px;z-index:999}
+.audio-bars .bar{width:6px;height:18px;background:linear-gradient(180deg,#d37cff,#8a2be2);animation:bar 1s infinite}
+@keyframes bar{0%{height:8px}50%{height:32px}100%{height:8px}}

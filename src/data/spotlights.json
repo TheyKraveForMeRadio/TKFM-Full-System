@@ -1,0 +1,26 @@
+[
+  {
+    "artist": "Lt. Slime",
+    "title": "Lt. Slime — The Silent Menace of Drill",
+    "genre": "Trap / Drill",
+    "bio": "Street rhythms with cinematic intensity.",
+    "image": "/assets/artists/novaray.jpg",
+    "link": "https://instagram.com/novaray"
+  },
+  {
+    "artist": "Kargo Ken",
+    "title": "Kargo Ken — The Heavy Loader of Trap",
+    "genre": "Trap / Drill",
+    "bio": "Street rhythms with cinematic intensity.",
+    "image": "/assets/artists/jsteelo.jpg",
+    "link": "https://instagram.com/kargoken"
+  },
+  {
+    "artist": "Savage Butta",
+    "title": "Savage Butta — Smooth but Deadly",
+    "genre": "Trap / Drill",
+    "bio": "Street rhythms with cinematic intensity.",
+    "image": "/assets/artists/luxa.jpg",
+    "link": "https://instagram.com/savagebutta"
+  }
+]

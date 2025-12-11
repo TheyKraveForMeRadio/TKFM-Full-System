@@ -1,0 +1,389 @@
+*** Begin Patch
+*** Add File: netlify/functions/admin-login.js
++const jwt = require('jsonwebtoken');
++
++exports.handler = async (event) => {
++  try {
++    if (event.httpMethod !== 'POST') {
++      return { statusCode: 405, body: 'Method Not Allowed' };
++    }
++    const body = JSON.parse(event.body || '{}');
++    const { email, password } = body;
++    const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
++    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
++    const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
++
++    if (!email || !password) {
++      return { statusCode: 400, body: JSON.stringify({ error: 'Missing credentials' }) };
++    }
++    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
++      const token = jwt.sign({ email, admin: true }, ADMIN_JWT_SECRET, { expiresIn: '12h' });
++      return { statusCode: 200, body: JSON.stringify({ token }) };
++    }
++    return { statusCode: 401, body: JSON.stringify({ error: 'Invalid credentials' }) };
++  } catch (err) {
++    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
++  }
++};
+*** End Patch
+*** Begin Patch
+*** Add File: netlify/functions/cloudinary-sign.js
++const crypto = require('crypto');
++const jwt = require('jsonwebtoken');
++
++exports.handler = async (event) => {
++  try {
++    if (event.httpMethod !== 'POST') {
++      return { statusCode: 405, body: 'Method Not Allowed' };
++    }
++    const authHeader = event.headers.authorization || event.headers.Authorization;
++    if (!authHeader || !authHeader.startsWith('Bearer ')) {
++      return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
++    }
++    const token = authHeader.split(' ')[1];
++    const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
++    try {
++      jwt.verify(token, ADMIN_JWT_SECRET);
++    } catch (e) {
++      return { statusCode: 401, body: JSON.stringify({ error: 'Invalid token' }) };
++    }
++
++    const body = JSON.parse(event.body || '{}');
++    const timestamp = Math.round(new Date().getTime() / 1000);
++    const params_to_sign = {
++      timestamp,
++      ...(body.folder ? { folder: body.folder } : {}),
++      ...(body.public_id ? { public_id: body.public_id } : {})
++    };
++
++    const toSignArr = Object.keys(params_to_sign)
++      .sort()
++      .map((k) => `${k}=${params_to_sign[k]}`);
++    const toSign = toSignArr.join('&');
++    const apiSecret = process.env.CLOUDINARY_API_SECRET;
++    const signature = crypto.createHash('sha1').update(toSign + apiSecret).digest('hex');
++
++    return {
++      statusCode: 200,
++      body: JSON.stringify({
++        signature,
++        apiKey: process.env.CLOUDINARY_API_KEY,
++        timestamp,
++        cloudName: process.env.CLOUDINARY_CLOUD_NAME
++      })
++    };
++  } catch (err) {
++    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
++  }
++};
+*** End Patch
+*** Begin Patch
+*** Add File: src/utils/auth.js
++export function saveToken(token) {
++  localStorage.setItem('tkfm_admin_token', token);
++}
++export function getToken() {
++  return localStorage.getItem('tkfm_admin_token');
++}
++export function clearToken() {
++  localStorage.removeItem('tkfm_admin_token');
++}
++export function authFetch(url, opts = {}) {
++  const token = getToken();
++  const headers = opts.headers || {};
++  if (token) headers['Authorization'] = `Bearer ${token}`;
++  return fetch(url, { ...opts, headers });
++}
+*** End Patch
+*** Begin Patch
+*** Add File: src/admin/Login.jsx
++import React, { useState } from 'react';
++import { saveToken } from '../utils/auth';
++
++export default function Login({ onLogin }) {
++  const [email, setEmail] = useState('');
++  const [password, setPassword] = useState('');
++  const [err, setErr] = useState('');
++
++  async function submit(e) {
++    e.preventDefault();
++    setErr('');
++    try {
++      const res = await fetch('/.netlify/functions/admin-login', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ email, password })
++      });
++      const json = await res.json();
++      if (!res.ok) {
++        setErr(json.error || 'Login failed');
++        return;
++      }
++      saveToken(json.token);
++      if (onLogin) onLogin();
++    } catch (e) {
++      setErr(e.message);
++    }
++  }
++
++  return (
++    <div className="admin-login" style={{padding:20}}>
++      <h2>Admin Login</h2>
++      {err && <div className="error" style={{color:'salmon'}}>{err}</div>}
++      <form onSubmit={submit}>
++        <label>Email</label><br/>
++        <input value={email} onChange={e => setEmail(e.target.value)} /><br/>
++        <label>Password</label><br/>
++        <input type="password" value={password} onChange={e => setPassword(e.target.value)} /><br/><br/>
++        <button type="submit">Sign in</button>
++      </form>
++    </div>
++  );
++}
+*** End Patch
+*** Begin Patch
+*** Add File: src/admin/UploadImage.jsx
++import React, {useState} from 'react';
++import { getToken } from '../utils/auth';
++
++export default function UploadImage({ onUploaded }) {
++  const [file, setFile] = useState(null);
++  const [status, setStatus] = useState('');
++
++  async function handleUpload(e){
++    e.preventDefault();
++    if (!file) return alert('Select a file');
++
++    setStatus('Requesting signature...');
++    const sigRes = await fetch('/.netlify/functions/cloudinary-sign', {
++      method: 'POST',
++      headers: {
++        'Content-Type': 'application/json',
++        'Authorization': `Bearer ${getToken()}`
++      },
++      body: JSON.stringify({ folder: 'tkfm_uploads' })
++    });
++
++    const sigJson = await sigRes.json();
++    if (!sigRes.ok) {
++      setStatus('Signature failed: ' + (sigJson.error || sigRes.status));
++      return;
++    }
++
++    const { signature, apiKey, timestamp, cloudName } = sigJson;
++    setStatus('Uploading to Cloudinary...');
++
++    const formData = new FormData();
++    formData.append('file', file);
++    formData.append('api_key', apiKey);
++    formData.append('timestamp', timestamp);
++    formData.append('signature', signature);
++    formData.append('folder', 'tkfm_uploads');
++
++    const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
++    const resp = await fetch(url, { method: 'POST', body: formData });
++    const json = await resp.json();
++    if (!resp.ok) {
++      setStatus('Upload error: ' + (json.error?.message || resp.status));
++      return;
++    }
++    setStatus('Upload successful');
++    if (onUploaded) onUploaded(json);
++  }
++
++  return (
++    <div className="upload-image">
++      <form onSubmit={handleUpload}>
++        <input type="file" accept="image/*" onChange={(e)=>setFile(e.target.files[0])} />
++        <button type="submit">Upload</button>
++      </form>
++      <div>{status}</div>
++    </div>
++  );
++}
+*** End Patch
+*** Begin Patch
+*** Add File: src/admin/AdminDashboard.jsx
++import React, {useState} from 'react';
++import UploadImage from './UploadImage';
++import Login from './Login';
++import { getToken, clearToken } from '../utils/auth';
++
++export default function AdminDashboard(){
++  const [logged, setLogged] = useState(!!getToken());
++  const [uploads, setUploads] = useState([]);
++
++  if (!logged) {
++    return <Login onLogin={()=>setLogged(true)} />;
++  }
++
++  function handleUploaded(info){
++    setUploads([info, ...uploads]);
++  }
++
++  return (
++    <div style={{padding:20}}>
++      <h2>TKFM Admin</h2>
++      <button onClick={() => { clearToken(); setLogged(false); }}>Sign out</button>
++
++      <section style={{marginTop:20}}>
++        <h3>Upload Image</h3>
++        <UploadImage onUploaded={handleUploaded} />
++      </section>
++
++      <section style={{marginTop:20}}>
++        <h3>Recent Uploads</h3>
++        {uploads.length === 0 && <div>No uploads yet</div>}
++        {uploads.map((u, i) => (
++          <div key={i} style={{marginBottom:12}}>
++            <img src={u.secure_url} alt={u.public_id} style={{maxWidth:200}} />
++            <div>{u.public_id}</div>
++          </div>
++        ))}
++      </section>
++    </div>
++  );
++}
+*** End Patch
+*** Begin Patch
+*** Update File: src/App.jsx
+@@
+-import React from 'react'
+-import { Routes, Route, Link } from 'react-router-dom'
+-
+-import Home from './pages/Home'
+-import OnAir from './components/OnAir'
+-import Merch from './pages/Merch'
+-import Spotlight from './pages/Spotlight'
+-import News from './pages/News'
+-import Chat from './components/Chat'
+-
+-import Player from './pages/Player'
+-import Mixtapes from './pages/Mixtapes'
+-import Store from './pages/Store'
+-import Artists from './pages/Artists'
+-import Auth from './pages/Auth'
+-
+-import AudioBars from './components/AudioBars'
+-import AdminDashboard from './admin/AdminDashboard'
+-
+-export default function App() {
+-  return (
+-    <div className='app'>
+-      <header className='hero-header'>
+-        <OnAir/>
+-        <div className='logo-wrap'>
+-          <img src='/assets/logo.svg' className='logo-3d' alt='TKFM' />
+-        </div>
+-
+-        <nav className='main-nav'>
+-          <Link to='/'>Home</Link>
+-          <Link to='/player'>Listen</Link>
+-          <Link to='/mixtapes'>Mixtapes</Link>
+-          <Link to='/store'>Shop</Link>
+-          <Link to='/news'>News</Link>
+-          <Link to='/artists'>Artists</Link>
+-          <Link to='/admin'>Admin</Link>
+-        </nav>
+-
+-        <AudioBars/>
+-      </header>
+-
+-      <main className='container'>
+-        <Routes>
+-          <Route path='/' element={<Home />} />
+-          <Route path='/player' element={<Player />} />
+-          <Route path='/mixtapes' element={<Mixtapes />} />
+-          <Route path='/store' element={<Store />} />
+-          <Route path='/news' element={<News />} />
+-          <Route path='/artists' element={<Artists />} />
+-          <Route path='/admin' element={<AdminDashboard />} />
+-          <Route path='/auth' element={<Auth />} />
+-        </Routes>
+-      </main>
+-
+-      <div id='floating-player' className='floating-player'>
+-        <iframe
+-          width='300'
+-          height='120'
+-          frameBorder='0'
+-          src='https://live365.com/embeds/v1/player/a71526?s=md&m=dark&c=mp3'>
+-        </iframe>
+-      </div>
+-    </div>
+-  )
+-}
++import React from 'react'
++import { Routes, Route, Link } from 'react-router-dom'
++
++import Home from './pages/Home'
++import OnAir from './components/OnAir'
++import Merch from './pages/Merch'
++import Spotlight from './pages/Spotlight'
++import News from './pages/News'
++import Chat from './components/Chat'
++
++import Player from './pages/Player'
++import Mixtapes from './pages/Mixtapes'
++import Store from './pages/Store'
++import Artists from './pages/Artists'
++import Auth from './pages/Auth'
++
++import AudioBars from './components/AudioBars'
++import AdminDashboard from './admin/AdminDashboard'
++
++export default function App() {
++  return (
++    <div className='app'>
++      <header className='hero-header'>
++        <OnAir/>
++        <div className='logo-wrap'>
++          <img src='/assets/logo.svg' className='logo-3d' alt='TKFM' />
++        </div>
++
++        <nav className='main-nav'>
++          <Link to='/'>Home</Link>
++          <Link to='/player'>Listen</Link>
++          <Link to='/mixtapes'>Mixtapes</Link>
++          <Link to='/store'>Shop</Link>
++          <Link to='/news'>News</Link>
++          <Link to='/artists'>Artists</Link>
++          <Link to='/admin'>Admin</Link>
++        </nav>
++
++        <AudioBars/>
++      </header>
++
++      <main className='container'>
++        <Routes>
++          <Route path='/' element={<Home />} />
++          <Route path='/player' element={<Player />} />
++          <Route path='/mixtapes' element={<Mixtapes />} />
++          <Route path='/store' element={<Store />} />
++          <Route path='/news' element={<News />} />
++          <Route path='/artists' element={<Artists />} />
++          <Route path='/admin' element={<AdminDashboard />} />
++          <Route path='/auth' element={<Auth />} />
++        </Routes>
++      </main>
++
++      <div id='floating-player' className='floating-player'>
++        <iframe
++          width='300'
++          height='120'
++          frameBorder='0'
++          src='https://live365.com/embeds/v1/player/a71526?s=md&m=dark&c=mp3'>
++        </iframe>
++      </div>
++    </div>
++  )
++}
+*** End Patch
+*** Begin Patch
+*** Update File: package.json
+@@
+   "dependencies": {
+-    "jsonwebtoken": "^9.0.0"
++    "jsonwebtoken": "^9.0.0"
+   },
+*** End Patch

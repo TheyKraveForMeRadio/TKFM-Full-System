@@ -1,0 +1,20 @@
+[
+  {
+    "id": "post_homepage",
+    "name": "Homepage Artist Post",
+    "price": 50,
+    "description": "Boost your visibility with a featured homepage post on TKFM."
+  },
+  {
+    "id": "interview",
+    "name": "Artist Interview",
+    "price": 75,
+    "description": "Full interview feature with TKFM."
+  },
+  {
+    "id": "spotlight",
+    "name": "Artist Spotlight",
+    "price": 100,
+    "description": "Premium spotlight placement for serious artists making noise."
+  }
+]

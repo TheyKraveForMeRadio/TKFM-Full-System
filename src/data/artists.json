@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Lt. Slime",
+    "genre": "Trap / Drill",
+    "bio": "Street rhythms with cinematic intensity.",
+    "image": "/assets/artists/novaray.jpg",
+    "link": "https://instagram.com/novaray"
+  },
+  {
+    "name": "Kargo Ken",
+    "genre": "Trap / Drill",
+    "bio": "Street rhythms with cinematic intensity.",
+    "image": "/assets/artists/jsteelo.jpg",
+    "link": "https://instagram.com/kargoken"
+  },
+  {
+    "name": "Savage Butta",
+    "genre": "Trap / Drill",
+    "bio": "Street rhythms with cinematic intensity.",
+    "image": "/assets/artists/luxa.jpg",
+    "link": "https://instagram.com/savagebutta"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "TKFM Hoodie",
+    "price": 40,
+    "image": "/assets/shop/hoodie.jpg",
+    "description": "Premium black hoodie with neon TKFM branding."
+  },
+  {
+    "name": "TKFM T-Shirt",
+    "price": 25,
+    "image": "/assets/shop/tshirt.jpg",
+    "description": "Clean neon-accent tee representing the station the streets love."
+  }
+]
