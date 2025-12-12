@@ -1,71 +1,24 @@
-// netlify/functions/editor-delete-news.js
-import jwt from 'jsonwebtoken';
+import knex from "knex";
 
-export const handler = async (event) => {
+const db = knex({
+  client: "pg",
+  connection: process.env.SUPABASE_URL + "/postgres",
+});
+
+export async function handler(event, context) {
   try {
-    // Require DELETE
-    if (event.httpMethod !== "DELETE") {
-      return { statusCode: 405, body: "Method Not Allowed" };
-    }
+    const { id } = JSON.parse(event.body);
 
-    // Validate token
-    const authHeader = event.headers.authorization || "";
-    const token = authHeader.replace("Bearer ", "");
-    const SECRET = process.env.ADMIN_JWT_SECRET;
-
-    if (!token || !SECRET) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: "Unauthorized" })
-      };
-    }
-
-    let user;
-    try {
-      user = jwt.verify(token, SECRET);
-    } catch {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: "Invalid token" })
-      };
-    }
-
-    // Only Admin + Editor allowed
-    if (user.role !== "editor" && user.role !== "admin") {
-      return {
-        statusCode: 403,
-        body: JSON.stringify({ error: "Forbidden" })
-      };
-    }
-
-    import knex from 'knex';({
-      client: "sqlite3",
-      connection: { filename: "./sql/tkfm.db" },
-      useNullAsDefault: true
-    });
-
-    const { id } = JSON.parse(event.body || "{}");
-
-    if (!id) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Missing news ID" })
-      };
-    }
-
-    // Perform delete
-    await knex("news")
-      .where({ id })
-      .del();
+    await db("news").where({ id }).del();
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, message: "News deleted" })
+      body: JSON.stringify({ success: true }),
     };
-  } catch (err) {
+  } catch (e) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message })
+      body: JSON.stringify({ success: false, error: e.message }),
     };
   }
-};
+}
