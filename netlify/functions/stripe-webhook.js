@@ -1,11 +1,11 @@
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { createClient } = require('@supabase/supabase-js');
-const sgMail = require('@sendgrid/mail');
+import stripe from 'stripe';(process.env.STRIPE_SECRET_KEY);
+import { createClient } from '@supabase/supabase-js';
+import sgMail from '@sendgrid/mail';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-exports.handler = async function(event) {
+export const handler = async function(event) {
   const sig = event.headers['stripe-signature'] || event.headers['Stripe-Signature'];
   let evt;
   try { evt = stripe.webhooks.constructEvent(event.body, sig, process.env.STRIPE_WEBHOOK_SECRET); } catch (e) { console.error('Webhook signature error', e.message); return { statusCode:400, body: `Webhook Error: ${e.message}` }; }

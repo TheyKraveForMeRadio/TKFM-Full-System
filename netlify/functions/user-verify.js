@@ -1,7 +1,7 @@
 // netlify/functions/user-verify.js
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     const authHeader =
       event.headers.authorization || event.headers.Authorization;

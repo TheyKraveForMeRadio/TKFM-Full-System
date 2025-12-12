@@ -1,7 +1,7 @@
 
-const Stripe = require('stripe');
+import Stripe from 'stripe';
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-exports.handler = async function(event) {
+export const handler = async function(event) {
   try {
     const body = JSON.parse(event.body || '{}');
     const { title, price } = body;

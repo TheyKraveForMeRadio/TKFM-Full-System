@@ -1,10 +1,10 @@
 
-const Stripe = require('stripe');
-const { createClient } = require('@supabase/supabase-js');
+import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-exports.handler = async function(event) {
+export const handler = async function(event) {
   try {
     const body = JSON.parse(event.body || '{}');
     const { priceId, metadata } = body;

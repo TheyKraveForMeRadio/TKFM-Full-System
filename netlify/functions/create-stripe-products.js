@@ -3,13 +3,13 @@
  * Auto-create Stripe products & prices from config/prices.json
  * Admin-only (uses verifyAdmin header token)
  */
-const fs = require('fs');
-const path = require('path');
-const Stripe = require('stripe');
+import fs from 'fs';
+import path from 'path';
+import Stripe from 'stripe';
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-const { verifyAdmin } = require('./_helpers');
+import { verifyAdmin } from './_helpers';
 
-exports.handler = async function(event) {
+export const handler = async function(event) {
   try {
     verifyAdmin(event);
     const cfgPath = path.join(__dirname, '..', '..', 'config', 'prices.json');

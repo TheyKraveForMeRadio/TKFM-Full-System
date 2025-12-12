@@ -1,8 +1,8 @@
 // netlify/functions/admin-delete-news.js
-const jwt = require("jsonwebtoken");
-const { createClient } = require("@supabase/supabase-js");
+import jwt from 'jsonwebtoken';
+import { createClient } from '@supabase/supabase-js';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     if (event.httpMethod !== "DELETE") {
       return {

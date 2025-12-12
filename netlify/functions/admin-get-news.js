@@ -1,8 +1,8 @@
 // netlify/functions/admin-get-news.js
-const jwt = require("jsonwebtoken");
-const { createClient } = require("@supabase/supabase-js");
+import jwt from 'jsonwebtoken';
+import { createClient } from '@supabase/supabase-js';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     const SECRET = process.env.ADMIN_JWT_SECRET;
     if (!SECRET) {

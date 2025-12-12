@@ -1,7 +1,7 @@
 // netlify/functions/public-get-news.js
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from '@supabase/supabase-js';
 
-exports.handler = async () => {
+export const handler = async () => {
   try {
     const SUPABASE_URL = process.env.SUPABASE_URL;
     const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;

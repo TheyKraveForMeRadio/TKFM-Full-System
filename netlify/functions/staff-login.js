@@ -1,7 +1,7 @@
 // netlify/functions/staff-login.js
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     const { email, password } = JSON.parse(event.body || "{}");
 

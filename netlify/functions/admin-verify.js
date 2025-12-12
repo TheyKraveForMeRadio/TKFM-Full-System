@@ -1,7 +1,7 @@
 // netlify/functions/admin-verify.js
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-exports.handler = async function(event) {
+export const handler = async function(event) {
   try {
     const SECRET = process.env.ADMIN_JWT_SECRET;
     if (!SECRET) return { statusCode: 500, body: JSON.stringify({ error: 'Missing JWT secret' }) };

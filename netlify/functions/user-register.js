@@ -1,7 +1,7 @@
 // netlify/functions/user-register.js
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from '@supabase/supabase-js';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     const { email, password } = JSON.parse(event.body || "{}");
 

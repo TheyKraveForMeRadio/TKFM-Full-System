@@ -1,7 +1,7 @@
 // netlify/functions/staff-verify.js
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     const SECRET = process.env.STAFF_JWT_SECRET;
 

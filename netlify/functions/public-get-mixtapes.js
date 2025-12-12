@@ -1,7 +1,7 @@
 // netlify/functions/public-get-mixtapes.js
-exports.handler = async () => {
+export const handler = async () => {
   try {
-    const knex = require("knex")({
+    import knex from 'knex';({
       client: "sqlite3",
       connection: { filename: "./sql/tkfm.db" },
       useNullAsDefault: true

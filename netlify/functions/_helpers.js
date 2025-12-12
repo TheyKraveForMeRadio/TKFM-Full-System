@@ -1,6 +1,6 @@
 // netlify/functions/_helpers.js
-const jwt = require('jsonwebtoken');
-const { createClient } = require('@supabase/supabase-js');
+import jwt from 'jsonwebtoken';
+import { createClient } from '@supabase/supabase-js';
 
 function getSupabase() {
   const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -46,7 +46,7 @@ function requireStaffOrAdmin(event) {
   return payload;
 }
 
-module.exports = {
+export default {
   getSupabase,
   signToken,
   verifyToken,

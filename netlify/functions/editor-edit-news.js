@@ -1,7 +1,7 @@
 // netlify/functions/editor-edit-news.js
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     // Require PATCH or PUT
     if (event.httpMethod !== "PATCH" && event.httpMethod !== "PUT") {
@@ -38,7 +38,7 @@ exports.handler = async (event) => {
       };
     }
 
-    const knex = require("knex")({
+    import knex from 'knex';({
       client: "sqlite3",
       connection: { filename: "./sql/tkfm.db" },
       useNullAsDefault: true

@@ -1,7 +1,7 @@
 // netlify/functions/dj-upload-mixtape.js
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     if (event.httpMethod !== "POST") {
       return { statusCode: 405, body: "Method Not Allowed" };
@@ -37,7 +37,7 @@ exports.handler = async (event) => {
       };
     }
 
-    const knex = require("knex")({
+    import knex from 'knex';({
       client: "sqlite3",
       connection: { filename: "./sql/tkfm.db" },
       useNullAsDefault: true
