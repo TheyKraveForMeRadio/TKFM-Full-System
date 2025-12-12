@@ -1,76 +1,29 @@
-// netlify/functions/dj-upload-mixtape.js
-import jwt from 'jsonwebtoken';
+import knex from "knex";
 
-export const handler = async (event) => {
+const db = knex({
+  client: "pg",
+  connection: process.env.SUPABASE_URL + "/postgres",
+});
+
+export async function handler(event, context) {
   try {
-    if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "Method Not Allowed" };
-    }
+    const { title, artist, file_url } = JSON.parse(event.body);
 
-    // Token check
-    const authHeader = event.headers.authorization || "";
-    const token = authHeader.replace("Bearer ", "");
-    const SECRET = process.env.ADMIN_JWT_SECRET;
-
-    if (!token || !SECRET) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: "Unauthorized" })
-      };
-    }
-
-    let user;
-    try {
-      user = jwt.verify(token, SECRET);
-    } catch (err) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: "Invalid token" })
-      };
-    }
-
-    // Only Admin or DJ can upload mixtapes
-    if (user.role !== "dj" && user.role !== "admin") {
-      return {
-        statusCode: 403,
-        body: JSON.stringify({ error: "Forbidden" })
-      };
-    }
-
-    import knex from 'knex';({
-      client: "sqlite3",
-      connection: { filename: "./sql/tkfm.db" },
-      useNullAsDefault: true
-    });
-
-    // POST body
-    const { title, artist, fileUrl, coverUrl } = JSON.parse(event.body || "{}");
-
-    if (!title || !artist || !fileUrl) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "title, artist, fileUrl required" })
-      };
-    }
-
-    const id = await knex("mixtapes").insert({
+    await db("mixtapes").insert({
       title,
       artist,
-      file_url: fileUrl,
-      cover_url: coverUrl || null,
-      uploaded_by: user.email,
-      created_at: new Date().toISOString()
+      file_url,
+      created_at: new Date(),
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, id })
+      body: JSON.stringify({ success: true }),
     };
-
-  } catch (err) {
+  } catch (e) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message })
+      body: JSON.stringify({ success: false, error: e.message }),
     };
   }
-};
+}
