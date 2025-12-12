@@ -1,24 +1,30 @@
-import knex from "knex";
+import { createClient } from "@supabase/supabase-js";
+import { verifyAdmin } from "./_helpers.js";
 
-const db = knex({
-  client: "pg",
-  connection: process.env.SUPABASE_URL + "/postgres",
-});
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
-export async function handler(event, context) {
-  try {
-    const { id } = JSON.parse(event.body);
+export const handler = async (event) => {
+  const admin = verifyAdmin(event);
+  if (!admin.id) return admin;
 
-    await db("news").where({ id }).del();
+  const body = JSON.parse(event.body || "{}");
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true }),
-    };
-  } catch (e) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ success: false, error: e.message }),
-    };
+  const { id } = body;
+
+  const { error } = await supabase
+    .from("news")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    return { statusCode: 500, body: JSON.stringify({ success: false, error }) };
   }
-}
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ success: true, deleted: id }),
+  };
+};
