@@ -1,30 +1,32 @@
-import { createClient } from "@supabase/supabase-js";
-import { requireAuth } from "./_helpers.js";
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+import { createSupabaseClient, verifyAdmin } from './_helpers.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export const handler = async (event) => {
-  const user = requireAuth(event);
-  if (!user.id) return user;
+  try {
+    // require staff/admin
+    verifyAdmin(event);
 
-  const body = JSON.parse(event.body || "{}");
+    const body = JSON.parse(event.body || "{}");
+    if (!body.title || !body.file_url) {
+      return { statusCode: 400, body: JSON.stringify({ error: "title and file_url required" }) };
+    }
 
-  const { title, artist, file_url } = body;
+    const supabase = createSupabaseClient();
+    const record = {
+      id: uuidv4(),
+      title: body.title,
+      description: body.description || null,
+      file_url: body.file_url,
+      dj_name: body.dj_name || null,
+      created_at: new Date().toISOString()
+    };
 
-  const { data, error } = await supabase
-    .from("mixtapes")
-    .insert([{ title, artist, file_url }])
-    .select();
+    const { data, error } = await supabase.from('mixtapes').insert([record]).select();
 
-  if (error) {
-    return { statusCode: 500, body: JSON.stringify({ success: false, error }) };
+    if (error) throw error;
+    return { statusCode: 201, body: JSON.stringify(data[0]) };
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 401, body: JSON.stringify({ error: err.message }) };
   }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ success: true, mixtape: data[0] }),
-  };
 };

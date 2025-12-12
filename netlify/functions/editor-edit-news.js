@@ -1,31 +1,28 @@
-import { createClient } from "@supabase/supabase-js";
-import { verifyAdmin } from "./_helpers.js";
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+import { createSupabaseClient, verifyAdmin } from './_helpers.js';
 
 export const handler = async (event) => {
-  const admin = verifyAdmin(event);
-  if (!admin.id) return admin;
+  try {
+    // require admin/editor token
+    verifyAdmin(event);
 
-  const body = JSON.parse(event.body || "{}");
+    const payload = JSON.parse(event.body || "{}");
+    if (!payload.id) return { statusCode: 400, body: JSON.stringify({ error: "Missing id" }) };
 
-  const { id, title, body: content } = body;
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+      .from('news_posts')
+      .update({
+        title: payload.title,
+        body: payload.body,
+        tags: payload.tags || null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', payload.id);
 
-  const { data, error } = await supabase
-    .from("news")
-    .update({ title, body: content })
-    .eq("id", id)
-    .select();
-
-  if (error) {
-    return { statusCode: 500, body: JSON.stringify({ success: false, error }) };
+    if (error) throw error;
+    return { statusCode: 200, body: JSON.stringify(data) };
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 401, body: JSON.stringify({ error: err.message }) };
   }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ success: true, news: data[0] }),
-  };
 };
