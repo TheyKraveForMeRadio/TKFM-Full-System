@@ -1,88 +1,96 @@
 // netlify/functions/admin-create-news.js
-import jwt from 'jsonwebtoken';
-import { createClient } from '@supabase/supabase-js';
+import jwt from 'jsonwebtoken'
+import { createClient } from '@supabase/supabase-js'
 
 export const handler = async (event) => {
   try {
-    if (event.httpMethod !== "POST") {
+    if (event.httpMethod !== 'POST') {
       return {
         statusCode: 405,
-        body: JSON.stringify({ error: "Method not allowed" })
-      };
+        body: JSON.stringify({ error: 'Method not allowed' }),
+      }
     }
 
-    // --- AUTH ---
-    const SECRET = process.env.ADMIN_JWT_SECRET;
-    const auth = event.headers.authorization || "";
+    // ======================
+    // AUTH
+    // ======================
+    const SECRET = process.env.ADMIN_JWT_SECRET
+    const auth = event.headers.authorization || ''
 
-    if (!auth.startsWith("Bearer ")) {
+    if (!auth.startsWith('Bearer ')) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ error: "Unauthorized — missing token" })
-      };
+        body: JSON.stringify({ error: 'Unauthorized — missing token' }),
+      }
     }
 
-    let decoded;
+    let decoded
     try {
-      decoded = jwt.verify(auth.split(" ")[1], SECRET);
+      decoded = jwt.verify(auth.split(' ')[1], SECRET)
     } catch {
       return {
         statusCode: 401,
-        body: JSON.stringify({ error: "Invalid or expired token" })
-      };
+        body: JSON.stringify({ error: 'Invalid or expired token' }),
+      }
     }
 
-    if (decoded.role !== "admin") {
+    if (decoded.role !== 'admin') {
       return {
         statusCode: 403,
-        body: JSON.stringify({ error: "Forbidden — admin only" })
-      };
+        body: JSON.stringify({ error: 'Forbidden — admin only' }),
+      }
     }
 
-    // --- READ INPUT ---
-    const { title, body, image_url } = JSON.parse(event.body || "{}");
+    // ======================
+    // INPUT
+    // ======================
+    const { title, body, image_url, published = false } = JSON.parse(
+      event.body || '{}'
+    )
 
     if (!title || !body) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "title and body are required" })
-      };
+        body: JSON.stringify({ error: 'title and body are required' }),
+      }
     }
 
-    // --- SUPABASE ---
-    const SUPABASE_URL = process.env.SUPABASE_URL;
-    const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // ======================
+    // SUPABASE (SERVICE ROLE)
+    // ======================
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    )
 
     const { data, error } = await supabase
-      .from("news_posts")
+      .from('news')
       .insert([
         {
           title,
           body,
           image_url: image_url || null,
           author: decoded.email,
-          created_at: new Date().toISOString()
-        }
+          published,
+        },
       ])
       .select()
-      .single();
+      .single()
 
-    if (error) throw error;
+    if (error) throw error
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        success: true,
-        message: "News post created",
-        post: data
-      })
-    };
-
+        ok: true,
+        message: 'News post created',
+        data,
+      }),
+    }
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message })
-    };
+      body: JSON.stringify({ error: err.message }),
+    }
   }
-};
+}
