@@ -1,18 +1,30 @@
-import { createSupabaseClient } from './_helpers.js';
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 export const handler = async () => {
   try {
-    const supabase = createSupabaseClient();
     const { data, error } = await supabase
-      .from('mixtapes')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50);
+      .from("mixtapes")
+      .select("*")
+      .eq("published", true)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return { statusCode: 200, body: JSON.stringify(data) };
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    };
   } catch (err) {
-    console.error(err);
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: err.message }),
+    };
   }
 };
