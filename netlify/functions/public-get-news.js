@@ -7,7 +7,7 @@ const supabase = createClient(
 
 export const handler = async () => {
   const { data, error } = await supabase
-    .from("posts")
+    .from("news")
     .select("*")
     .order("created_at", { ascending: false });
 
@@ -22,10 +22,6 @@ export const handler = async () => {
   return {
     statusCode: 200,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      ok: true,
-      count: data.length,
-      data,
-    }),
+    body: JSON.stringify({ ok: true, count: data.length, data }),
   };
 };
