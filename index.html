@@ -1,16 +1,101 @@
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>They Krave For Me Radio — TKFM</title>
-  <link rel="canonical" href="https://tkfmradio.com" />
-  <meta property="og:url" content="https://tkfmradio.com" />
-  <meta name="twitter:url" content="https://tkfmradio.com" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+
+    header {
+      padding: 24px;
+      text-align: center;
+      border-bottom: 1px solid #222;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #ff00ff;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    #news article {
+      background: #111;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
+    }
+
+    #news h3 {
+      margin-top: 0;
+      color: #00ffff;
+    }
+
+    #news small {
+      display: block;
+      margin-top: 12px;
+      color: #aaa;
+    }
+  </style>
 </head>
+
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+  <header>
+    <h1>They Krave For Me Radio</h1>
+    <p style="color:#aaa;">Independent Artist Power Station</p>
+  </header>
+
+  <main>
+    <h2>🔥 Latest News</h2>
+    <div id="news">Loading news…</div>
+  </main>
+
+  <script>
+    const newsEl = document.getElementById('news')
+
+    async function loadNews() {
+      try {
+        const res = await fetch('/.netlify/functions/public-get-news')
+        const json = await res.json()
+
+        console.log('NEWS RAW RESPONSE:', json)
+
+        if (!json || !Array.isArray(json.data)) {
+          throw new Error('No data array returned')
+        }
+
+        if (json.data.length === 0) {
+          newsEl.innerHTML = '<p>No news yet.</p>'
+          return
+        }
+
+        newsEl.innerHTML = json.data.map(post => `
+          <article>
+            <h3>${post.title}</h3>
+            <p>${post.body}</p>
+            <small>Posted by ${post.author}</small>
+          </article>
+        `).join('')
+      } catch (err) {
+        console.error('NEWS LOAD ERROR:', err)
+        newsEl.innerHTML = '<p style="color:red;">Error loading news.</p>'
+      }
+    }
+
+    loadNews()
+  </script>
 </body>
 </html>

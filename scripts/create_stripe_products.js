@@ -1,40 +1,91 @@
 import Stripe from "stripe";
 import fs from "fs";
 
-const stripeKey = process.env.STRIPE_SECRET_KEY;
-if (!stripeKey) {
-  console.error("ERROR: STRIPE_SECRET_KEY not set in environment.");
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error("❌ Missing STRIPE_SECRET_KEY");
   process.exit(1);
 }
 
-const stripe = new Stripe(stripeKey);
-
 const products = [
-  { name: "Artist Homepage Post", metadata: { type: "homepage_post" }, prices: [10000, 30000] },
-  { name: "Artist Interview", metadata: { type: "interview" }, prices: [5000, 15000] },
-  { name: "Artist Spotlight Feature", metadata: { type: "spotlight" }, prices: [15000] },
-  { name: "Mixtape Upload", metadata: { type: "mixtape", storage: "audio", max_size_mb: "200" }, prices: [10000] },
-  { name: "DJ Single Track Upload", metadata: { type: "dj_upload" }, prices: [5000] },
-  { name: "Exclusive Mixtape Hosting", metadata: { type: "hosting" }, prices: [50000, 100000] },
-  { name: "Blog / News Premier Feature", metadata: { type: "news_premier" }, prices: [10000] },
-  { name: "Donations", metadata: { type: "donation" }, prices: [500, 1000, 2000, 5000] }
+  {
+    name: "Artist Homepage Post",
+    prices: [10000, 20000, 30000],
+    metadata: { type: "homepage_post" }
+  },
+  {
+    name: "Artist Interview (15 min)",
+    prices: [5000],
+    metadata: { type: "interview", duration: "15" }
+  },
+  {
+    name: "Artist Interview (30 min)",
+    prices: [15000],
+    metadata: { type: "interview", duration: "30" }
+  },
+  {
+    name: "Artist Spotlight Feature",
+    prices: [15000],
+    metadata: { type: "spotlight" }
+  },
+  {
+    name: "Mixtape Upload",
+    prices: [10000],
+    metadata: { type: "mixtape", storage: "audio", max_size_mb: "200" }
+  },
+  {
+    name: "DJ Single Track Upload",
+    prices: [5000],
+    metadata: { type: "dj_single_track" }
+  },
+  {
+    name: "Exclusive Mixtape Hosting",
+    prices: [50000, 100000],
+    metadata: { type: "exclusive_mixtape_hosting" }
+  },
+  {
+    name: "Donations",
+    prices: [500, 1000, 2000, 5000],
+    metadata: { type: "donation" }
+  }
 ];
 
 async function run() {
+  console.log("\n🚀 Creating Stripe products...\n");
+
   const output = [];
-  for (const p of products) {
-    console.log(`Creating: ${p.name}...`);
-    const product = await stripe.products.create({ name: p.name, metadata: p.metadata });
-    const createdPrices = [];
-    for (const amount of p.prices) {
-      const price = await stripe.prices.create({ product: product.id, unit_amount: amount, currency: "usd" });
-      createdPrices.push({ id: price.id, unit_amount: price.unit_amount });
+
+  for (const product of products) {
+    console.log(`Creating: ${product.name}...`);
+
+    const createdProduct = await stripe.products.create({
+      name: product.name,
+      metadata: product.metadata
+    });
+
+    const priceIds = [];
+
+    for (const amount of product.prices) {
+      const price = await stripe.prices.create({
+        unit_amount: amount,
+        currency: "usd",
+        product: createdProduct.id
+      });
+      priceIds.push(price.id);
     }
-    output.push({ product: { id: product.id, name: product.name }, prices: createdPrices });
+
+    output.push({
+      product: createdProduct.id,
+      name: product.name,
+      prices: priceIds
+    });
   }
+
   fs.writeFileSync("stripe_output.json", JSON.stringify(output, null, 2));
-  console.log("✅ All Stripe products & prices created!");
-  console.log("➡ stripe_output.json saved.");
+
+  console.log("\n✅ All Stripe products created!");
+  console.log("📄 Saved to stripe_output.json\n");
 }
 
-run().catch(err => { console.error("Error:", err); process.exit(1); });
+run();

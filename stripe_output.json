@@ -1,58 +1,64 @@
-{
-  "homepage_post": {
-    "product": "prod_TaXIQTcHmrA1OO",
+[
+  {
+    "product": "prod_TacGMWjrQHo1H7",
+    "name": "Artist Homepage Post",
     "prices": [
-      "price_1SdME1LsS3JnVEiGfu8d83bD",
-      "price_1SdME1LsS3JnVEiGasWQXFjd",
-      "price_1SdME1LsS3JnVEiGOBrkLMuy"
+      "price_1SdR1uLsS3JnVEiGMWtxu7Gg",
+      "price_1SdR1uLsS3JnVEiGr05W4uWS",
+      "price_1SdR1vLsS3JnVEiGeZZHRPpK"
     ]
   },
-  "interview": {
-    "product": "prod_TaXIxwIRFGI7iI",
+  {
+    "product": "prod_TacG0oRAGtlVA3",
+    "name": "Artist Interview (15 min)",
     "prices": [
-      "price_1SdME2LsS3JnVEiGSCWotPPz",
-      "price_1SdME2LsS3JnVEiGx18kOZz9"
+      "price_1SdR1vLsS3JnVEiGpr0JHM5C"
     ]
   },
-  "spotlight": {
-    "product": "prod_TaXIrwCyY3Y3HH",
+  {
+    "product": "prod_TacGFYU8pTzmAp",
+    "name": "Artist Interview (30 min)",
     "prices": [
-      "price_1SdME3LsS3JnVEiGbhHo3Ota"
+      "price_1SdR1wLsS3JnVEiGNng8wXF0"
     ]
   },
-  "mixtape_upload": {
-    "product": "prod_TaXIkt8tn7JY8G",
+  {
+    "product": "prod_TacGkT1MSsrj4F",
+    "name": "Artist Spotlight Feature",
     "prices": [
-      "price_1SdME3LsS3JnVEiGCpPrQV9Q"
+      "price_1SdR1wLsS3JnVEiGWrFWx83u"
     ]
   },
-  "dj_single_track": {
-    "product": "prod_TaXIPPQdueZLpr",
+  {
+    "product": "prod_TacGUCbS3TTZ4B",
+    "name": "Mixtape Upload",
     "prices": [
-      "price_1SdME4LsS3JnVEiGmEUBFzp3"
+      "price_1SdR1xLsS3JnVEiGD5rNVNkb"
     ]
   },
-  "exclusive_hosting": {
-    "product": "prod_TaXIk8hH5go5gv",
+  {
+    "product": "prod_TacGhrDd92acyg",
+    "name": "DJ Single Track Upload",
     "prices": [
-      "price_1SdME4LsS3JnVEiGQXrG4D8m",
-      "price_1SdME4LsS3JnVEiGEJJjcegW",
-      "price_1SdME5LsS3JnVEiGd9NhbsLg"
+      "price_1SdR1xLsS3JnVEiGDjzkxMdg"
     ]
   },
-  "blog_premier": {
-    "product": "prod_TaXIFljJaMHjsQ",
+  {
+    "product": "prod_TacGo21CBpaxNb",
+    "name": "Exclusive Mixtape Hosting",
     "prices": [
-      "price_1SdME5LsS3JnVEiGOMP3kHup"
+      "price_1SdR1yLsS3JnVEiG1Z4MzYVw",
+      "price_1SdR1yLsS3JnVEiGlB40D60r"
     ]
   },
-  "donations": {
-    "product": "prod_TaXIKI2p3vnJxe",
+  {
+    "product": "prod_TacGj2WAH1xoxH",
+    "name": "Donations",
     "prices": [
-      "price_1SdME6LsS3JnVEiGVbaj5M6Q",
-      "price_1SdME6LsS3JnVEiG0fPDtlBe",
-      "price_1SdME6LsS3JnVEiGr1kxFDsD",
-      "price_1SdME7LsS3JnVEiGuy9Jua3w"
+      "price_1SdR1yLsS3JnVEiGvmnrsFyg",
+      "price_1SdR1zLsS3JnVEiG3fJE6Pg3",
+      "price_1SdR1zLsS3JnVEiG9wAgX52Z",
+      "price_1SdR1zLsS3JnVEiGWBKAgmXW"
     ]
   }
-}
+]
