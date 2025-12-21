@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Submit Music | TKFM</title>
+  <link rel="stylesheet" crossorigin href="/assets/style-cMV2_I9d.css">
+</head>
+<body>
+
+<h1>Submit Your Music to TKFM</h1>
+
+<p>
+TKFM is a curated Independent Artist Power Station.
+All submissions are reviewed. Payment ensures quality control.
+</p>
+
+<ul>
+  <li>Standard Submission – $40</li>
+  <li>Priority Submission – $75 (48hr review)</li>
+</ul>
+
+<button onclick="checkout('price_artist_submission_40')">
+Submit Track – $40
+</button>
+
+<button onclick="checkout('price_priority_submission_75')">
+Priority Submit – $75
+</button>
+
+<script>
+async function checkout(priceId) {
+  const r = await fetch('/.netlify/functions/create-checkout', {
+    method:'POST',
+    body:JSON.stringify({
+      priceId,
+      successUrl:'/success.html',
+      cancelUrl:'/submit.html'
+    })
+  });
+  const d = await r.json();
+  location.href = d.url;
+}
+</script>
+
+</body>
+</html>
