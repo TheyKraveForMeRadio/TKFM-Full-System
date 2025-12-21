@@ -1,25 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Submit Music | TKFM Radio</title>
+  <title>Submit Music | TKFM</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <h1>Submit Your Music</h1>
-  <p>Artists: submit your best records for TKFM Radio review.</p>
 
-  <form action="/success.html" method="GET">
-    <label>Artist Name</label><br>
-    <input type="text" required><br><br>
+<h1>Submit Your Music to TKFM</h1>
 
-    <label>Email</label><br>
-    <input type="email" required><br><br>
+<p>
+TKFM is a curated Independent Artist Power Station.
+All submissions are reviewed. Payment ensures quality control.
+</p>
 
-    <label>Track Link (SoundCloud / Dropbox)</label><br>
-    <input type="url" required><br><br>
+<ul>
+  <li>Standard Submission – $40</li>
+  <li>Priority Submission – $75 (48hr review)</li>
+</ul>
 
-    <button type="submit">Submit Track</button>
-  </form>
+<button onclick="checkout('price_artist_submission_40')">
+Submit Track – $40
+</button>
+
+<button onclick="checkout('price_priority_submission_75')">
+Priority Submit – $75
+</button>
+
+<script>
+async function checkout(priceId) {
+  const r = await fetch('/.netlify/functions/create-checkout', {
+    method:'POST',
+    body:JSON.stringify({
+      priceId,
+      successUrl:'/success.html',
+      cancelUrl:'/submit.html'
+    })
+  });
+  const d = await r.json();
+  location.href = d.url;
+}
+</script>
+
 </body>
 </html>
