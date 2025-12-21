@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sponsor Analytics</title>
+<style>
+body{background:#0b0014;color:#fff;font-family:Arial;padding:30px}
+.card{background:#160022;padding:16px;border-radius:12px;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<h1>📊 Sponsor Analytics</h1>
+<div id="data"></div>
+
+<script>
+async function load(){
+  const res = await fetch('/.netlify/functions/get-store?sponsors')
+  const sponsors = await res.json()
+
+  document.getElementById('data').innerHTML = sponsors.map(s=>`
+    <div class="card">
+      <strong>${s.name}</strong><br/>
+      Tier: ${s.tier}<br/>
+      Impressions: ${s.impressions||0}<br/>
+      Clicks: ${s.clicks||0}<br/>
+      CTR: ${((s.clicks||0)/(s.impressions||1)*100).toFixed(2)}%
+    </div>
+  `).join('')
+}
+load()
+</script>
+</body>
+</html>

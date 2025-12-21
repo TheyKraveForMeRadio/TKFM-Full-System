@@ -7,8 +7,30 @@
   command = "npm run dev"
   targetPort = 5173
   port = 8888
-  autoLaunch = false
+  framework = "vite"
 
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = [
+    "stripe",
+    "uuid",
+    "jsonwebtoken"
+  ]
+
+# 🔁 AUTOPILOT CRONS
+[functions."expire-features"]
+  schedule = "@daily"
+
+[functions."auto-promote-feature"]
+  schedule = "@hourly"
+
+[functions."feature-revenue-engine"]
+  schedule = "@hourly"
+
+[functions."feature-notification-engine"]
+  schedule = "@hourly"
+
+# 🌐 CORS
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
@@ -16,7 +38,25 @@
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
 
+# 🔓 ALLOW FUNCTIONS FIRST (CRITICAL)
+
+# ROUTES
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/dj"
+to = "/dj.html"
+status = 200
+
+[[redirects]]
+from = "/sponsors"
+to = "/sponsors.html"
+status = 200
+
+[[redirects]]
+from = "/news"
+to = "/news.html"
+status = 200
+
+[[redirects]]
+from = "/submit"
+to = "/submit.html"
+status = 200

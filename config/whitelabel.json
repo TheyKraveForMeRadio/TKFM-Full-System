@@ -1,0 +1,9 @@
+{
+  "city": "Prov",
+  "brand": "TKFM Prov",
+  "logo": "/logos/provl.png",
+  "theme": {
+    "primary": "#ff00ff",
+    "secondary": "#00ffff"
+  }
+}

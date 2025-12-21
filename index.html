@@ -1,101 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>They Krave For Me Radio — TKFM</title>
+  <meta charset="UTF-8" />
+  <title>They Krave For Me Radio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #000;
-      color: #fff;
-    }
-
-    header {
-      padding: 24px;
-      text-align: center;
-      border-bottom: 1px solid #222;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-      color: #ff00ff;
-    }
-
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 24px;
-    }
-
-    #news article {
-      background: #111;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
-    }
-
-    #news h3 {
-      margin-top: 0;
-      color: #00ffff;
-    }
-
-    #news small {
-      display: block;
-      margin-top: 12px;
-      color: #aaa;
-    }
-  </style>
 </head>
 
 <body>
-  <header>
+
+<nav style="text-align:center; margin-bottom:20px;">
+  <a href="/" style="margin:10px;">Home</a>
+  <a href="/dj" style="margin:10px;">DJs</a>
+  <a href="/sponsors" style="margin:10px;">Sponsors</a>
+  <a href="/news" style="margin:10px;">News</a>
+  <a href="/submit" style="margin:10px;">Submit</a>
+</nav>
+
+  <header class="tkfm-header">
+    <img src="/logo.png" class="tkfm-logo pulse-active" />
     <h1>They Krave For Me Radio</h1>
-    <p style="color:#aaa;">Independent Artist Power Station</p>
+    <p>Independent Artist Power Station</p>
   </header>
 
-  <main>
-    <h2>🔥 Latest News</h2>
-    <div id="news">Loading news…</div>
-  </main>
+  <section class="tkfm-player">
+    <h2>🔊 LIVE ON TKFM</h2>
+    <audio controls>
+      <source src="" />
+    </audio>
+    <div class="stream-offline">🔇 Stream Offline</div>
+  </section>
 
-  <script>
-    const newsEl = document.getElementById('news')
+  <section class="tkfm-featured">
+    <h2>📌 Top Featured Mixtape</h2>
+    <div id="homepage-pin"></div>
+  </section>
 
-    async function loadNews() {
-      try {
-        const res = await fetch('/.netlify/functions/public-get-news')
-        const json = await res.json()
+  <section class="tkfm-featured">
+    <h2>🔥 Featured Mixtapes</h2>
+    <div id="featured-carousel"></div>
+  </section>
 
-        console.log('NEWS RAW RESPONSE:', json)
+  <section class="tkfm-featured">
+    <h2>🏆 Featured Leaderboard</h2>
+    <div id="leaderboard"></div>
+  </section>
 
-        if (!json || !Array.isArray(json.data)) {
-          throw new Error('No data array returned')
-        }
+  <section class="tkfm-featured">
+    <h2>🤝 Official Partner</h2>
+    <div id="sponsor-slot"></div>
+  </section>
 
-        if (json.data.length === 0) {
-          newsEl.innerHTML = '<p>No news yet.</p>'
-          return
-        }
-
-        newsEl.innerHTML = json.data.map(post => `
-          <article>
-            <h3>${post.title}</h3>
-            <p>${post.body}</p>
-            <small>Posted by ${post.author}</small>
-          </article>
-        `).join('')
-      } catch (err) {
-        console.error('NEWS LOAD ERROR:', err)
-        newsEl.innerHTML = '<p style="color:red;">Error loading news.</p>'
-      }
-    }
-
-    loadNews()
-  </script>
 </body>
 </html>

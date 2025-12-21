@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="/src/styles/tkfm-theme.css" />
+</head>
+
+<body>
+
+<h1>TKFM Admin Panel</h1>
+
+<div id="login">
+  <input id="email" placeholder="Admin Email" />
+  <input id="password" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <p id="loginError"></p>
+</div>
+
+<div id="dashboard" class="hidden">
+  <h2>Create News</h2>
+  <input id="title" placeholder="Title" />
+  <textarea id="body" placeholder="News content"></textarea>
+  <button onclick="createNews()">Publish</button>
+
+  <h2>News List</h2>
+  <div id="news"></div>
+
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+const API = '/.netlify/functions';
+const tokenKey = 'tkfm_admin_token';
+
+function login() {
+  fetch(`${API}/admin-login`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.ok) return loginError.textContent = res.error;
+    localStorage.setItem(tokenKey, res.token);
+    showDashboard();
+  });
+}
+
+function showDashboard() {
+  login.classList.add('hidden');
+  dashboard.classList.remove('hidden');
+  loadNews();
+}
+
+function logout() {
+  localStorage.removeItem(tokenKey);
+  location.reload();
+}
+
+function createNews() {
+  fetch(`${API}/admin-create-news`, {
+    method: 'POST',
+    headers: {
+      'Content-Type':'application/json',
+      'Authorization':`Bearer ${localStorage.getItem(tokenKey)}`
+    },
+    body: JSON.stringify({
+      title: title.value,
+      body: body.value
+    })
+  }).then(loadNews);
+}
+
+function loadNews() {
+  fetch(`${API}/admin-get-news`, {
+    headers: {
+      'Authorization':`Bearer ${localStorage.getItem(tokenKey)}`
+    }
+  })
+  .then(r => r.json())
+  .then(res => {
+    news.innerHTML = res.data.map(n =>
+      `<article><b>${n.title}</b><p>${n.body}</p></article>`
+    ).join('');
+  });
+}
+
+if (localStorage.getItem(tokenKey)) showDashboard();
+</script>
+
+<section>
+  <h2>💼 Sponsor Performance</h2>
+  <div id="sponsor-stats"></div>
+</section>
+
+<script type="module" src="/src/js/tkfm-sponsor-admin.js"></script>
+
+<button onclick="startSponsorCheckout('price_SPONSOR_PRO')">
+  🤝 Become Official Partner — $2,000/mo
+</button>
+
+<script>
+async function startSponsorCheckout(priceId) {
+  const res = await fetch('/.netlify/functions/create-sponsor-checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      priceId,
+      successUrl: window.location.origin + '/sponsors.html',
+      cancelUrl: window.location.href
+    })
+  })
+
+  const data = await res.json()
+  window.location.href = data.url
+}
+</script>
+
+<section>
+  <h2>🤝 Active Sponsors</h2>
+  <div id="sponsor-dashboard"></div>
+</section>
+
+<script type="module">
+async function loadSponsors() {
+  const res = await fetch('/.netlify/functions/public-get-sponsors')
+  const sponsors = await res.json()
+
+  document.getElementById('sponsor-dashboard').innerHTML =
+    sponsors.map(s => `
+      <div class="mixtape-card">
+        <strong>${s.brandName}</strong><br/>
+        Category: ${s.category}<br/>
+        Impressions: ${s.impressions || 0}<br/>
+        Plan: ${s.plan.toUpperCase()}
+      </div>
+    `).join('')
+}
+
+loadSponsors()
+</script>
+
+.sponsor-card .badge {
+  background: gold;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: bold;
+  box-shadow: 0 0 15px gold;
+}
+
+</body>
+</html>
