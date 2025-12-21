@@ -2,16 +2,10 @@
   "name": "tkfm-full-production",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "echo \"Static site – no build required\""
   },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.43.4"
-  },
-  "devDependencies": {
-    "vite": "^5.4.21"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
+
