@@ -1,45 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Submit Music | TKFM</title>
-  <link rel="stylesheet" href="/assets/style.css">
+<meta charset="UTF-8">
+<title>Submit Music | TKFM Radio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin:0;
+  font-family:Segoe UI, sans-serif;
+  background:linear-gradient(135deg,#000,#6200ff);
+  color:#fff;
+}
+section {
+  max-width:900px;
+  margin:auto;
+  padding:60px 20px;
+}
+h1,h2 { text-shadow:0 0 12px #ff00e6; }
+.card {
+  background:rgba(0,0,0,.6);
+  padding:24px;
+  border-radius:16px;
+  box-shadow:0 0 18px #7a00ff;
+  margin-bottom:30px;
+}
+.price { font-size:22px;color:#ff9cf7;font-weight:bold; }
+.btn {
+  display:inline-block;
+  margin-top:12px;
+  padding:14px 22px;
+  border-radius:10px;
+  background:linear-gradient(to right,#ff00e6,#9a00ff);
+  color:#fff;
+  text-decoration:none;
+  font-weight:bold;
+}
+</style>
 </head>
 <body>
 
+<section>
 <h1>Submit Your Music to TKFM</h1>
-
 <p>
-TKFM is a curated Independent Artist Power Station.
-All submissions are reviewed. Payment ensures quality control.
+TKFM is an <strong>Independent Artist Power Station</strong>.
+Real rotation. Real exposure. No gatekeepers.
 </p>
 
-<ul>
-  <li>Standard Submission – $40</li>
-  <li>Priority Submission – $75 (48hr review)</li>
-</ul>
+<div class="card">
+<h2>🎧 Basic Rotation Review</h2>
+<p>
+Track reviewed for rotation consideration.
+</p>
+<div class="price">$50 one-time</div>
+<a class="btn" href="#">Pay & Submit</a>
+</div>
 
-<button onclick="checkout('price_artist_submission_40')">
-Submit Track – $40
-</button>
+<div class="card">
+<h2>🔥 Artist Spotlight (AI DJ)</h2>
+<p>
+Includes AI DJ on-air shoutout + featured placement.
+</p>
+<div class="price">$75 one-time</div>
+<a class="btn" href="#">Pay & Submit</a>
+</div>
 
-<button onclick="checkout('price_priority_submission_75')">
-Priority Submit – $75
-</button>
+<div class="card">
+<h2>🚀 Rotation Boost</h2>
+<p>
+Heavy rotation for 7 days + AI DJ mentions.
+</p>
+<div class="price">$250</div>
+<a class="btn" href="#">Boost My Track</a>
+</div>
 
-<script>
-async function checkout(priceId) {
-  const r = await fetch('/.netlify/functions/create-checkout', {
-    method:'POST',
-    body:JSON.stringify({
-      priceId,
-      successUrl:'/success.html',
-      cancelUrl:'/submit.html'
-    })
-  });
-  const d = await r.json();
-  location.href = d.url;
-}
-</script>
+<p style="opacity:.7;font-size:14px;">
+TKFM uses AI-generated broadcast elements for branding,
+automation, and artist promotion.
+</p>
+</section>
 
 </body>
 </html>

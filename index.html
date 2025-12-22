@@ -2,54 +2,221 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>They Krave For Me Radio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TKFM Radio — Independent Artist Power Station</title>
 
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #000 40%, #6200ff 100%);
+      color: #fff;
+    }
+
+    header {
+      padding: 24px;
+      background: rgba(0,0,0,0.65);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 18px #9a00ff;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+      text-shadow: 0 0 14px #ff00e6;
+    }
+
+    nav a {
+      margin-left: 16px;
+      color: #ff9cf7;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    nav a:hover {
+      text-shadow: 0 0 8px #ff00e6;
+    }
+
+    section {
+      padding: 60px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .hero {
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 38px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 18px #b400ff;
+    }
+
+    .hero p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .cta {
+      margin-top: 30px;
+    }
+
+    .cta a {
+      display: inline-block;
+      margin: 10px;
+      padding: 14px 22px;
+      border-radius: 10px;
+      background: linear-gradient(to right, #ff00e6, #9a00ff);
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 14px #ff00e6;
+    }
+
+    .cta a:hover {
+      transform: scale(1.05);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: rgba(0,0,0,0.55);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 0 18px #7a00ff;
+      backdrop-filter: blur(4px);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #ff9cf7;
+      text-shadow: 0 0 10px #ff00e6;
+    }
+
+    footer {
+      padding: 30px;
+      text-align: center;
+      background: rgba(0,0,0,0.7);
+      margin-top: 60px;
+      font-size: 14px;
+      opacity: 0.75;
+    }
+  </style>
 </head>
 
 <body>
 
-<nav style="text-align:center; margin-bottom:20px;">
-  <a href="/" style="margin:10px;">Home</a>
-  <a href="/dj" style="margin:10px;">DJs</a>
-  <a href="/sponsors" style="margin:10px;">Sponsors</a>
-  <a href="/news" style="margin:10px;">News</a>
-  <a href="/submit" style="margin:10px;">Submit</a>
-</nav>
+<header>
+  <h1>TKFM Radio</h1>
+  <nav>
+    <a href="/dj.html">DJs</a>
+    <a href="/news.html">News</a>
+    <a href="/mixtapes.html">Mixtapes</a>
+    <a href="/sponsors.html">Sponsors</a>
+    <a href="/submit.html">Submit Music</a>
+  </nav>
+</header>
 
-  <header class="tkfm-header">
-    <img src="/logo.png" class="tkfm-logo pulse-active" />
-    <h1>They Krave For Me Radio</h1>
-    <p>Independent Artist Power Station</p>
-  </header>
+<section class="hero">
+  <h2>The Independent Artist Power Station</h2>
+  <p>
+    Breaking independent artists first.  
+    Real rotation. Real exposure. Real opportunity.
+  </p>
 
-  <section class="tkfm-player">
-    <h2>🔊 LIVE ON TKFM</h2>
-    <audio controls>
-      <source src="" />
-    </audio>
-    <div class="stream-offline">🔇 Stream Offline</div>
-  </section>
+  <div class="cta">
+    <a href="/submit.html">Submit Your Music</a>
+    <a href="/sponsors.html">Become a Sponsor</a>
+    <a href="/tkfm-media-kit.html">Media Kit</a>
+  </div>
+</section>
 
-  <section class="tkfm-featured">
-    <h2>📌 Top Featured Mixtape</h2>
-    <div id="homepage-pin"></div>
-  </section>
+<section>
+  <h2>🎧 TKFM AI DJ</h2>
+  <p>
+    TKFM features an AI-powered DJ host that keeps the station live,
+    polished, and moving 24/7.
+  </p>
+  <p>
+    Our AI DJ delivers station IDs, artist shoutouts, sponsor mentions,
+    and smooth transitions — enhancing the broadcast without replacing
+    human DJs.
+  </p>
 
-  <section class="tkfm-featured">
-    <h2>🔥 Featured Mixtapes</h2>
-    <div id="featured-carousel"></div>
-  </section>
+  <div class="grid">
+    <div class="card">
+      <h3>24/7 Energy</h3>
+      <p>
+        When live DJs aren’t on air, the TKFM AI DJ keeps
+        the station active and professional.
+      </p>
+    </div>
 
-  <section class="tkfm-featured">
-    <h2>🏆 Featured Leaderboard</h2>
-    <div id="leaderboard"></div>
-  </section>
+    <div class="card">
+      <h3>Artist Promotion</h3>
+      <p>
+        Paid artist spotlights include AI DJ shoutouts
+        during rotation for maximum exposure.
+      </p>
+    </div>
 
-  <section class="tkfm-featured">
-    <h2>🤝 Official Partner</h2>
-    <div id="sponsor-slot"></div>
-  </section>
+    <div class="card">
+      <h3>Sponsor Monetization</h3>
+      <p>
+        Sponsors receive AI DJ mentions and branded
+        broadcast drops that scale with their tier.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>💰 Monetization Opportunities</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Artist Submissions</h3>
+      <p>
+        Submit your music for rotation, interviews,
+        AI DJ shoutouts, and featured placement.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>DJ Memberships</h3>
+      <p>
+        Join TKFM as an official DJ with branding,
+        rotation slots, and promotion.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Sponsorships</h3>
+      <p>
+        Monthly sponsor plans with AI DJ branding,
+        on-air mentions, and site visibility.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>
+    © TKFM Radio — Independent Artist Power Station
+  </p>
+  <p>
+    TKFM uses AI-generated broadcast elements for branding,
+    automation, and artist promotion.
+  </p>
+</footer>
 
 </body>
 </html>
