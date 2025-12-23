@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -61,49 +60,136 @@
       const text = await res.text()
       let json = null
       try { json = text ? JSON.parse(text) : null } catch {}
-      return { ok: res.ok, status: res.status, json }
-    }
+      return { ok: res.ok, status: res.status, j
 
-    document.getElementById('btnPublish').addEventListener('click', async () => {
-      const token = localStorage.getItem(TOKEN_KEY)
-      const msg = document.getElementById('msg')
-      if (!token) { msg.textContent = 'Missing admin token — login first'; msg.className='danger'; return }
 
-      msg.textContent = 'Saving...'
-      msg.className = 'muted'
 
-      const payload = {
-        title: document.getElementById('title').value.trim(),
-        slug: document.getElementById('slug').value.trim() || null,
-        excerpt: document.getElementById('excerpt').value.trim() || null,
-        body: document.getElementById('body').value.trim(),
-        published: document.getElementById('published').checked
-      }
 
-      const { ok, json } = await fetchJSON(`${API}/admin-create-blog`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      })
 
-      if (!ok || !json?.ok) {
-        msg.textContent = 'Save failed'
-        msg.className = 'danger'
-        return
-      }
 
-      msg.textContent = `Saved (${json.data.status})`
-      msg.className = 'ok'
-      document.getElementById('title').value = ''
-      document.getElementById('slug').value = ''
-      document.getElementById('excerpt').value = ''
-      document.getElementById('body').value = ''
-      document.getElementById('published').checked = false
-    })
-  </script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TKFM Admin — Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;padding:24px;max-width:1100px;margin:0 auto}
+    .card{background:#111;border:1px solid #222;border-radius:12px;padding:16px;margin:14px 0}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
+    textarea{min-height:240px;resize:vertical}
+    button{padding:10px 12px;border-radius:10px;border:1px solid #333;background:#1b1b1b;color:#fff;cursor:pointer}
+    button:hover{border-color:#555}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .muted{color:#aaa}
+    .badge{display:inline-block;padding:4px 10px;border:1px solid #333;border-radius:999px;font-size:12px}
+    .ok{color:#7CFFB2}
+    .warn{color:#FFD37C}
+    .danger{color:#FF7C7C}
+    article{padding:14px;border-radius:12px;border:1px solid #222;background:#0d0d0d;margin:10px 0}
+    article h3{margin:0 0 6px}
+    .meta{font-size:12px;color:#9aa}
+  </style>
+</head>
+<body>
+  <h1>📝 Blog Manager</h1>
+  <p class="muted">Admin-only. Requires tkfm_admin_token.</p>
+
+  <section class="card">
+    <h2>Create / Edit</h2>
+
+    <div class="toolbar">
+      <span class="muted">Editing ID:</span>
+      <span id="editId" class="badge">new</span>
+      <button id="btnNew">New</button>
+      <span id="msg" class="muted"></span>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <div>
+        <label>Title</label>
+        <input id="title" placeholder="Blog title..." />
+      </div>
+      <div>
+        <label>Slug (a-z 0-9 -)</label>
+        <input id="slug" placeholder="my-blog-post" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <div>
+        <label>Excerpt</label>
+        <input id="excerpt" placeholder="Short summary..." />
+      </div>
+      <div>
+        <label>Cover URL</label>
+        <input id="cover_url" placeholder="https://..." />
+      </div>
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Body</label>
+      <textarea id="body" placeholder="Write the post..."></textarea>
+    </div>
+
+    <div class="toolbar" style="margin-top:10px">
+      <label class="muted"><input id="published" type="checkbox" /> Published</label>
+      <button id="btnSave">Save</button>
+      <button id="btnDelete" class="danger">Delete</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>List / Search</h2>
+
+    <div class="row">
+      <div>
+        <label>Search</label>
+        <input id="q" placeholder="Search title/body/author/slug..." />
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="status">
+          <option value="all">All</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top:10px">
+      <button id="btnSearch">Search</button>
+      <button id="btnRefresh">Refresh</button>
+      <span class="muted">Count:</span>
+      <span id="count" class="badge">0</span>
+    </div>
+
+    <div id="list"></div>
+  </section>
+
+  <script type="module" src="/admin/blog.js"></script>
 </body>
 </html>
+

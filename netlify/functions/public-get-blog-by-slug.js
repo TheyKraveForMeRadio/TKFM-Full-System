@@ -1,4 +1,4 @@
-// netlify/functions/public-get-blog.js — ENTERPRISE LOCKED (PUBLIC)
+// netlify/functions/public-get-blog-by-slug.js — ENTERPRISE LOCKED (PUBLIC)
 import { createClient } from '@supabase/supabase-js'
 
 function json(statusCode, obj) {
@@ -12,10 +12,12 @@ function json(statusCode, obj) {
   }
 }
 
-function safeLimit(v) {
-  const n = Number(v)
-  if (!Number.isFinite(n)) return 20
-  return Math.min(50, Math.max(1, Math.floor(n)))
+function safeSlug(v) {
+  if (typeof v !== 'string') return ''
+  const s = v.trim().toLowerCase()
+  if (!s || s.length > 80) return ''
+  if (!/^[a-z0-9-]{3,80}$/.test(s)) return ''
+  return s
 }
 
 export const handler = async (event) => {
@@ -26,19 +28,21 @@ export const handler = async (event) => {
   const ANON = process.env.SUPABASE_ANON_KEY
   if (!URL || !ANON) return json(500, { error: 'Server not configured' })
 
+  const slug = safeSlug(event.queryStringParameters?.slug)
+  if (!slug) return json(400, { error: 'Missing slug' })
+
   const supabase = createClient(URL, ANON)
-  const limit = safeLimit(event.queryStringParameters?.limit)
 
   try {
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('id,title,excerpt,cover_url,author,status,created_at,updated_at,slug')
+      .select('id,title,excerpt,cover_url,author,status,created_at,updated_at,slug,body')
       .eq('status', 'published')
-      .order('created_at', { ascending: false })
-      .limit(limit)
+      .eq('slug', slug)
+      .single()
 
-    if (error) return json(500, { error: 'Query failed' })
-    return json(200, { ok: true, data: data || [], limit })
+    if (error) return json(404, { error: 'Not found' })
+    return json(200, { ok: true, data })
   } catch {
     return json(500, { error: 'Internal Error' })
   }

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>TKFM Admin — Sponsor Analytics</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+body{background:#0b0014;color:#fff;font-family:Arial;padding:30px;max-width:900px;margin:auto}
+.card{background:#160022;padding:16px;border-radius:12px;margin-bottom:14px;border:1px solid #260033}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;border:1px solid #333}
+.ok{color:#7CFFB2}
+.warn{color:#FFD37C}
+</style>
+</head>
+<body>
+
+<h1>📊 Sponsor Analytics</h1>
+<p class="muted">Admin only</p>
+
+<div id="data">Loading…</div>
+
+<script>
+const API = '/.netlify/functions/admin-sponsor-analytics'
+const TOKEN_KEY = 'tkfm_admin_token'
+
+function escapeHTML(s){
+  return String(s||'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+}
+
+async function load(){
+  const token = localStorage.getItem(TOKEN_KEY)
+  if(!token){
+    document.getElementById('data').innerHTML = 'Missing admin token'
+    return
+  }
+
+  const res = await fetch(API,{
+    headers:{ Authorization:`Bearer ${token}` }
+  })
+
+  if(!res.ok){
+    document.getElementById('data').innerHTML = 'Unauthorized'
+    return
+  }
+
+  const json = await res.json()
+  const sponsors = json.data || []
+
+  document.getElementById('data').innerHTML = sponsors.map(s=>`
+    <div class="card">
+      <strong>${escapeHTML(s.name)}</strong><br/>
+      Tier: ${escapeHTML(s.tier)}<br/>
+      Impressions: ${s.impressions}<br/>
+      Clicks: ${s.clicks}<br/>
+      CTR: ${s.ctr}%<br/>
+      <span class="badge ${s.active?'ok':'warn'}">
+        ${s.active?'ACTIVE':'INACTIVE'}
+      </span>
+    </div>
+  `).join('')
+}
+
+load()
+</script>
+</body>
+</html>

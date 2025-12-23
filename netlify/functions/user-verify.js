@@ -1,58 +1,48 @@
-// netlify/functions/user-verify.js
-import jwt from 'jsonwebtoken';
+// netlify/functions/user-verify.js — ENTERPRISE LOCKED
+import { createClient } from '@supabase/supabase-js'
+
+function json(statusCode, obj) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify(obj),
+  }
+}
+
+function getBearer(event) {
+  const h = event.headers?.authorization || event.headers?.Authorization || ''
+  if (!h || typeof h !== 'string') return ''
+  return h.startsWith('Bearer ') ? h.slice(7).trim() : ''
+}
 
 export const handler = async (event) => {
-  try {
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, body: '' }
+  if (event.httpMethod !== 'GET') return json(405, { error: 'Method Not Allowed' })
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: "No token provided" })
-      };
-    }
+  const SUPABASE_URL = process.env.SUPABASE_URL
+  const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY
 
-    const token = authHeader.split(" ")[1];
-
-    // PUBLIC user tokens are signed by SUPABASE,
-    // so the secret is SUPABASE_JWT_SECRET
-    const SECRET = process.env.SUPABASE_JWT_SECRET;
-
-    if (!SECRET) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Missing SUPABASE_JWT_SECRET" })
-      };
-    }
-
-    // Validate token
-    let decoded;
-    try {
-      decoded = jwt.verify(token, SECRET);
-    } catch (err) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: "Invalid or expired token" })
-      };
-    }
-
-    // Valid user token
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        authorized: true,
-        user_id: decoded.sub,
-        email: decoded.email,
-        role: decoded.role || "user"
-      })
-    };
-
-  } catch (err) {
-    console.error("user-verify ERROR:", err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message })
-    };
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return json(500, { error: 'Server not configured' })
   }
-};
+
+  const token = getBearer(event)
+  if (!token) return json(401, { error: 'Unauthorized' })
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+  try {
+    const { data, error } = await supabase.auth.getUser(token)
+    if (error || !data?.user) return json(401, { error: 'Invalid or expired token' })
+
+    const u = data.user
+    return json(200, {
+      authorized: true,
+      user_id: u.id,
+      email: u.email || null,
+      role: (u.user_metadata && u.user_metadata.role) || 'user',
+    })
+  } catch {
+    return json(500, { error: 'Verify failed' })
+  }
+}

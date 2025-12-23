@@ -1,5 +1,6 @@
-// netlify/functions/admin-verify.js — ENTERPRISE LOCKED
+// netlify/functions/admin-sponsor-analytics.js — ENTERPRISE LOCKED
 import jwt from 'jsonwebtoken'
+import { getStore } from './_helpers.js'
 
 function json(statusCode, obj) {
   return {
@@ -11,15 +12,13 @@ function json(statusCode, obj) {
 
 function getBearer(event) {
   const h = event.headers?.authorization || event.headers?.Authorization || ''
-  if (!h || typeof h !== 'string') return ''
-  return h.startsWith('Bearer ') ? h.slice(7).trim() : ''
+  return typeof h === 'string' && h.startsWith('Bearer ')
+    ? h.slice(7).trim()
+    : ''
 }
 
 export const handler = async (event) => {
-  // Preflight
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, body: '' }
-
-  // Method lock
   if (event.httpMethod !== 'GET') return json(405, { error: 'Method Not Allowed' })
 
   const SECRET = process.env.ADMIN_JWT_SECRET
@@ -28,22 +27,36 @@ export const handler = async (event) => {
   const token = getBearer(event)
   if (!token) return json(401, { error: 'Unauthorized' })
 
+  let decoded
   try {
-    const decoded = jwt.verify(token, SECRET, {
+    decoded = jwt.verify(token, SECRET, {
       issuer: 'tkfm',
       audience: 'tkfm-admin',
-    })
-
-    if (!decoded || decoded.role !== 'admin') {
-      return json(403, { error: 'Forbidden' })
-    }
-
-    return json(200, {
-      authorized: true,
-      email: decoded.email || null,
-      role: decoded.role,
     })
   } catch {
     return json(401, { error: 'Invalid or expired token' })
   }
+
+  if (decoded.role !== 'admin') {
+    return json(403, { error: 'Forbidden' })
+  }
+
+  const sponsors = (await getStore('sponsors')) || []
+
+  // 🔒 Return analytics-only fields
+  const data = sponsors.map(s => ({
+    id: s.id,
+    name: s.name,
+    tier: s.tier || 'standard',
+    impressions: s.impressions || 0,
+    clicks: s.clicks || 0,
+    ctr:
+      s.impressions > 0
+        ? Number(((s.clicks || 0) / s.impressions * 100).toFixed(2))
+        : 0,
+    active: s.active !== false,
+  }))
+
+  return json(200, { ok: true, data })
 }
+
