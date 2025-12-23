@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TKFM DJ Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      background:#000;
+      color:#fff;
+      font-family:Arial,sans-serif;
+      padding:30px;
+      max-width:700px;
+      margin:0 auto;
+    }
+    h1 { margin-bottom:10px }
+    .card {
+      background:#111;
+      border:1px solid #222;
+      border-radius:14px;
+      padding:20px;
+      margin-top:20px;
+    }
+    input, button {
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:1px solid #333;
+      background:#0b0b0b;
+      color:#fff;
+    }
+    button {
+      cursor:pointer;
+      font-weight:bold;
+    }
+    button:hover {
+      border-color:#555;
+    }
+    .error { color:#ff7c7c; margin-top:10px }
+    .ok { color:#7cffb2; margin-top:10px }
+    .muted { color:#aaa; font-size:13px }
+  </style>
+</head>
+<body>
+
+<h1>🎧 Upload Mixtape</h1>
+<p class="muted">DJ access only. Accepted: MP3 / WAV (max 200MB).</p>
+
+<div class="card">
+  <input id="title" placeholder="Mixtape Title" />
+  <input id="djName" placeholder="DJ Name" />
+  <input id="audio" type="file" accept="audio/*" />
+  <button onclick="upload()">Upload Mixtape</button>
+
+  <div id="msg"></div>
+</div>
+
+<script>
+const API = '/.netlify/functions'
+const TOKEN_KEY = 'tkfm_dj_token'
+
+function setMsg(text, cls) {
+  const el = document.getElementById('msg')
+  el.textContent = text
+  el.className = cls || ''
+}
+
+async function upload() {
+  const token = localStorage.getItem(TOKEN_KEY)
+  if (!token) {
+    setMsg('Not logged in as DJ', 'error')
+    return
+  }
+
+  const title = document.getElementById('title').value.trim()
+  const djName = document.getElementById('djName').value.trim()
+  const file = document.getElementById('audio').files[0]
+
+  if (!title || !djName || !file) {
+    setMsg('All fields are required', 'error')
+    return
+  }
+
+  // Hard limits (client-side)
+  if (file.size > 200 * 1024 * 1024) {
+    setMsg('File too large (200MB max)', 'error')
+    return
+  }
+
+  if (!file.type.startsWith('audio/')) {
+    setMsg('Invalid file type', 'error')
+    return
+  }
+
+  const form = new FormData()
+  form.append('title', title)
+  form.append('djName', djName)
+  form.append('audio', file)
+
+  setMsg('Uploading...', 'muted')
+
+  try {
+    const res = await fetch(`${API}/dj-upload-mixtape`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: form
+    })
+
+    const json = await res.json()
+
+    if (!res.ok || !json.ok) {
+      setMsg(json.error || 'Upload failed', 'error')
+      return
+    }
+
+    setMsg('Upload successful!', 'ok')
+    document.getElementById('audio').value = ''
+  } catch {
+    setMsg('Network error', 'error')
+  }
+}
+
+// Auto-block if not logged in
+if (!localStorage.getItem(TOKEN_KEY)) {
+  document.body.innerHTML = '<p style="color:#ff7c7c">DJ login required.</p>'
+}
+</script>
+
+</body>
+</html>
