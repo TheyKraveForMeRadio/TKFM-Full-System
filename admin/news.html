@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TKFM Admin — News</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;padding:24px;max-width:1100px;margin:0 auto}
+    .card{background:#111;border:1px solid #222;border-radius:12px;padding:16px;margin:14px 0}
+    input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
+    textarea{min-height:140px;resize:vertical}
+    button{padding:10px 12px;border-radius:10px;border:1px solid #333;background:#1b1b1b;color:#fff;cursor:pointer}
+    button:hover{border-color:#555}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+    .muted{color:#aaa}
+    .badge{display:inline-block;padding:4px 10px;border:1px solid #333;border-radius:999px;font-size:12px}
+    .ok{color:#7CFFB2}
+    .warn{color:#FFD37C}
+    .danger{color:#FF7C7C}
+    .hidden{display:none}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .list article{padding:14px;border-radius:12px;border:1px solid #222;background:#0d0d0d;margin:10px 0}
+    .list h3{margin:0 0 6px}
+    .meta{font-size:12px;color:#9aa}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  </style>
+</head>
+<body>
+
+  <h1>TKFM Admin — News</h1>
+  <p class="muted">Create, publish, edit, delete, and search news posts.</p>
+
+  <!-- LOGIN -->
+  <section id="loginCard" class="card">
+    <h2>Admin Login</h2>
+    <div class="row">
+      <div>
+        <label>Email</label>
+        <input id="adminEmail" type="email" autocomplete="username" />
+      </div>
+      <div>
+        <label>Password</label>
+        <input id="adminPassword" type="password" autocomplete="current-password" />
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btnLogin">Login</button>
+      <span id="loginMsg" class="muted"></span>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <section id="app" class="hidden">
+
+    <section class="card">
+      <div class="toolbar">
+        <span class="badge">Token: <span id="tokenStatus" class="warn">unknown</span></span>
+        <button id="btnVerify">Verify</button>
+        <button id="btnLogout">Logout</button>
+        <span id="globalMsg" class="muted"></span>
+      </div>
+    </section>
+
+    <!-- CREATE -->
+    <section class="card">
+      <h2>Create News</h2>
+      <div class="row">
+        <div>
+          <label>Title</label>
+          <input id="newsTitle" placeholder="Headline..." />
+        </div>
+        <div>
+          <label>Image URL (optional)</label>
+          <input id="newsImage" placeholder="https://..." />
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>Body</label>
+        <textarea id="newsBody" placeholder="Write the story..."></textarea>
+      </div>
+
+      <div class="toolbar" style="margin-top:10px">
+        <label class="muted"><input id="newsPublished" type="checkbox" /> Published</label>
+        <button id="btnCreate">Create</button>
+        <span id="createMsg" class="muted"></span>
+      </div>
+    </section>
+
+    <!-- SEARCH / LIST -->
+    <section class="card">
+      <div class="row3">
+        <div>
+          <label>Search</label>
+          <input id="searchQ" placeholder="Search title/body/author..." />
+        </div>
+        <div>
+          <label>Published</label>
+          <select id="filterPublished">
+            <option value="all">All</option>
+            <option value="true">Published</option>
+            <option value="false">Drafts</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;align-items:end">
+          <button id="btnSearch" style="width:100%">Search</button>
+          <button id="btnRefresh" style="width:100%">Refresh</button>
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-top:10px">
+        <span class="muted">Showing:</span>
+        <span id="count" class="badge">0</span>
+      </div>
+
+      <div id="newsList" class="list"></div>
+    </section>
+
+    <!-- EDIT MODAL (simple inline panel) -->
+    <section id="editCard" class="card hidden">
+      <h2>Edit News</h2>
+      <div class="muted" style="margin-bottom:8px">ID: <span id="editId"></span></div>
+
+      <div class="row">
+        <div>
+          <label>Title</label>
+          <input id="editTitle" />
+        </div>
+        <div>
+          <label>Image URL</label>
+          <input id="editImage" />
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>Body</label>
+        <textarea id="editBody"></textarea>
+      </div>
+
+      <div class="toolbar" style="margin-top:10px">
+        <label class="muted"><input id="editPublished" type="checkbox" /> Published</label>
+        <button id="btnSave">Save</button>
+        <button id="btnCancelEdit">Cancel</button>
+        <span id="editMsg" class="muted"></span>
+      </div>
+    </section>
+
+  </section>
+
+  <script type="module" src="/admin/news.js"></script>
+</body>
+</html>
