@@ -13,6 +13,10 @@ function safeStr(v, max = 120) {
   const s = String(v || '').trim()
   return s.length > max ? s.slice(0, max) : s
 }
+function safeBool(v) {
+  const s = String(v || '').toLowerCase()
+  return s === '1' || s === 'true' || s === 'yes'
+}
 
 export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, body: '' }
@@ -38,17 +42,21 @@ export const handler = async (event) => {
 
   const q = safeStr(event.queryStringParameters?.q, 80)
   const status = safeStr(event.queryStringParameters?.status, 20)
+  const includeArchived = safeBool(event.queryStringParameters?.includeArchived)
 
-  let query = supabase.from('submissions').select('*').order('created_at', { ascending: false }).limit(200)
+  let query = supabase
+    .from('submissions')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(500)
 
+  if (!includeArchived) query = query.eq('archived', false)
   if (status) query = query.eq('status', status)
-  if (q) {
-    // Search across common fields
-    query = query.or(`artist_name.ilike.%${q}%,track_title.ilike.%${q}%,email.ilike.%${q}%`)
-  }
+  if (q) query = query.or(`artist_name.ilike.%${q}%,track_title.ilike.%${q}%,email.ilike.%${q}%`)
 
   const { data, error } = await query
   if (error) return json(500, { error: 'Query failed' })
 
   return json(200, { ok: true, data: data || [] })
 }
+

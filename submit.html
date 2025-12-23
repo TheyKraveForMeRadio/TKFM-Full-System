@@ -85,5 +85,21 @@ async function checkout(plan) {
 }
 </script>
 
+<script>
+async function startSubmitCheckout(tier){
+  const res = await fetch('/.netlify/functions/create-submit-checkout', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      tier, // basic | spotlight | boost
+      successUrl: window.location.origin + '/success.html',
+      cancelUrl: window.location.href
+    })
+  })
+  const data = await res.json()
+  if (data.url) window.location.href = data.url
+}
+</script>
+
 </body>
 </html>

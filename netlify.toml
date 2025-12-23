@@ -30,33 +30,108 @@
 [functions."feature-notification-engine"]
   schedule = "@hourly"
 
-# 🌐 CORS
+# =========================
+# 🔒 HEADERS (ENTERPRISE)
+# =========================
+
+# 1) Protected functions — DO NOT allow wildcard origins
+[[headers]]
+  for = "/.netlify/functions/admin-*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://tkfmradio.com"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Vary = "Origin"
+
+[[headers]]
+  for = "/.netlify/functions/staff-*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://tkfmradio.com"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Vary = "Origin"
+
+[[headers]]
+  for = "/.netlify/functions/dj-*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://tkfmradio.com"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Vary = "Origin"
+
+# Stripe checkout creators should not be wildcard either
+[[headers]]
+  for = "/.netlify/functions/create-*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://YOUR_DOMAIN_HERE"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "POST, OPTIONS"
+    Vary = "Origin"
+
+# 2) Public functions (GET-only) — can be open
+[[headers]]
+  for = "/.netlify/functions/public-*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+
+# 3) Default fallback (avoid letting everything be *)
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Origin = "https://tkfmradio.com"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Vary = "Origin"
 
-# 🔓 ALLOW FUNCTIONS FIRST (CRITICAL)
+# =========================
+# 🔒 SECURITY HEADERS (STATIC)
+# =========================
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
-# ROUTES
+# =========================
+# ROUTES / ALIASES
+# =========================
+
 [[redirects]]
-from = "/dj"
-to = "/dj.html"
-status = 200
+  from = "/dj"
+  to = "/dj.html"
+  status = 200
 
 [[redirects]]
-from = "/sponsors"
-to = "/sponsors.html"
-status = 200
+  from = "/dj/upload"
+  to = "/dj/upload.html"
+  status = 200
 
 [[redirects]]
-from = "/news"
-to = "/news.html"
-status = 200
+  from = "/admin"
+  to = "/admin/login.html"
+  status = 200
 
 [[redirects]]
-from = "/submit"
-to = "/submit.html"
-status = 200
+  from = "/admin/news"
+  to = "/admin/news.html"
+  status = 200
+
+[[redirects]]
+  from = "/sponsors"
+  to = "/sponsors.html"
+  status = 200
+
+[[redirects]]
+  from = "/news"
+  to = "/news.html"
+  status = 200
+
+[[redirects]]
+  from = "/submit"
+  to = "/submit.html"
+  status = 200

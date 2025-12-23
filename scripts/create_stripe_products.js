@@ -3,7 +3,7 @@ import fs from 'fs'
 import crypto from 'crypto'
 
 const KEY = process.env.STRIPE_SECRET_KEY
-const MODE = (process.env.STRIPE_MODE || '').toLowerCase() // require 'test' or 'live'
+const MODE = (process.env.STRIPE_MODE || '').toLowerCase() // 'test' | 'live'
 
 if (!KEY) {
   console.error('❌ Missing STRIPE_SECRET_KEY')
@@ -14,7 +14,7 @@ if (MODE !== 'test' && MODE !== 'live') {
   process.exit(1)
 }
 
-// Basic guardrail: prevent seeding live by accident
+// Guardrail: prevent seeding wrong mode by accident
 if (MODE === 'live' && !KEY.startsWith('sk_live_')) {
   console.error('❌ STRIPE_MODE=live but key is not sk_live_...')
   process.exit(1)
@@ -26,15 +26,24 @@ if (MODE === 'test' && !KEY.startsWith('sk_test_')) {
 
 const stripe = new Stripe(KEY, { apiVersion: '2023-10-16' })
 
+/**
+ * PRODUCTS + PRICES
+ * Add your submission tiers here too (Basic/Spotlight/Boost)
+ */
 const products = [
-  { name: 'Artist Homepage Post', prices: [10000, 20000, 30000], metadata: { type: 'homepage_post' } },
-  { name: 'Artist Interview (15 min)', prices: [5000], metadata: { type: 'interview', duration: '15' } },
-  { name: 'Artist Interview (30 min)', prices: [15000], metadata: { type: 'interview', duration: '30' } },
-  { name: 'Artist Spotlight Feature', prices: [15000], metadata: { type: 'spotlight' } },
-  { name: 'Mixtape Upload', prices: [10000], metadata: { type: 'mixtape', storage: 'audio', max_size_mb: '200' } },
-  { name: 'DJ Single Track Upload', prices: [5000], metadata: { type: 'dj_single_track' } },
-  { name: 'Exclusive Mixtape Hosting', prices: [50000, 100000], metadata: { type: 'exclusive_mixtape_hosting' } },
-  { name: 'Donations', prices: [500, 1000, 2000, 5000], metadata: { type: 'donation' } },
+  { key: 'homepage_post', name: 'Artist Homepage Post', prices: [10000, 20000, 30000], metadata: { type: 'homepage_post' } },
+  { key: 'interview_15', name: 'Artist Interview (15 min)', prices: [5000], metadata: { type: 'interview', duration: '15' } },
+  { key: 'interview_30', name: 'Artist Interview (30 min)', prices: [15000], metadata: { type: 'interview', duration: '30' } },
+  { key: 'spotlight', name: 'Artist Spotlight Feature', prices: [15000], metadata: { type: 'spotlight' } },
+  { key: 'mixtape_upload', name: 'Mixtape Upload', prices: [10000], metadata: { type: 'mixtape', storage: 'audio', max_size_mb: '200' } },
+  { key: 'dj_single_track', name: 'DJ Single Track Upload', prices: [5000], metadata: { type: 'dj_single_track' } },
+  { key: 'exclusive_hosting', name: 'Exclusive Mixtape Hosting', prices: [50000, 100000], metadata: { type: 'exclusive_mixtape_hosting' } },
+  { key: 'donations', name: 'Donations', prices: [500, 1000, 2000, 5000], metadata: { type: 'donation' } },
+
+  // ✅ Submission tiers you asked about
+  { key: 'submit_basic', name: 'TKFM Submission — Basic Rotation Review', prices: [5000], metadata: { type: 'submission', tier: 'basic' } },
+  { key: 'submit_spotlight', name: 'TKFM Submission — Spotlight', prices: [7500], metadata: { type: 'submission', tier: 'spotlight' } },
+  { key: 'submit_boost', name: 'TKFM Submission — Rotation Boost', prices: [25000], metadata: { type: 'submission', tier: 'boost' } },
 ]
 
 function slugify(s) {
@@ -49,19 +58,28 @@ function idemKey(str) {
   return crypto.createHash('sha256').update(str).digest('hex')
 }
 
+async function safeProductSearch(query) {
+  // Stripe Search API may not be enabled; fail soft.
+  try {
+    return await stripe.products.search({ query, limit: 1 })
+  } catch (e) {
+    console.warn('⚠️ Product search unavailable or failed; falling back to list scan.')
+    return null
+  }
+}
+
 async function createOrFindProduct(p) {
-  // Use a deterministic lookup key (Stripe supports searching by metadata too, but lookup key is clean)
-  const lookup = `tkfm_${slugify(p.name)}`
+  const lookup = `tkfm_${p.key || slugify(p.name)}`
   const idempotencyKey = idemKey(`product|${MODE}|${lookup}`)
 
-  // Try to find existing product by metadata.lookup_key or name+metadata
-  // (Search API is available; we’ll use it to reduce duplicates.)
-  const search = await stripe.products.search({
-    query: `metadata['tkfm_lookup_key']:'${lookup}'`,
-    limit: 1,
-  })
+  // Best: search by metadata key
+  const search = await safeProductSearch(`metadata['tkfm_lookup_key']:'${lookup}'`)
+  if (search?.data?.length) return search.data[0]
 
-  if (search.data.length) return search.data[0]
+  // Fallback: list scan (limited)
+  const list = await stripe.products.list({ limit: 100, active: true })
+  const existing = list.data.find(x => x.metadata?.tkfm_lookup_key === lookup)
+  if (existing) return existing
 
   return await stripe.products.create(
     {
@@ -72,69 +90,85 @@ async function createOrFindProduct(p) {
   )
 }
 
-async function createPrice(productId, amount, meta) {
-  const lookup = `tkfm_${productId}_${amount}`
-  const idempotencyKey = idemKey(`price|${MODE}|${lookup}`)
+async function createOrFindPrice(productId, amount, meta, priceLookupKey) {
+  const idempotencyKey = idemKey(`price|${MODE}|${productId}|${amount}`)
 
-  // Try to find an existing active price with same unit_amount/product
   const prices = await stripe.prices.list({ product: productId, active: true, limit: 100 })
   const existing = prices.data.find(pr => pr.unit_amount === amount && pr.currency === 'usd')
   if (existing) return existing
 
-  return await stripe.prices.create(
-    {
-      unit_amount: amount,
-      currency: 'usd',
-      product: productId,
-      metadata: { ...meta, source: 'tkfm' },
-    },
-    { idempotencyKey }
-  )
+  // Stripe supports lookup_key on price (handy for later), but it must be unique.
+  // If your account rejects lookup_key for some reason, remove it.
+  const createParams = {
+    unit_amount: amount,
+    currency: 'usd',
+    product: productId,
+    metadata: { ...meta, source: 'tkfm' },
+    lookup_key: priceLookupKey,
+  }
+
+  return await stripe.prices.create(createParams, { idempotencyKey })
+}
+
+function envLine(k, v) {
+  return `${k}=${v}`
 }
 
 async function run() {
-  console.log(`\n🚀 Creating Stripe products (mode=${MODE})...\n`)
+  console.log(`\n🚀 Seeding Stripe (mode=${MODE})...\n`)
 
   const output = []
-  const allPriceIds = []
+  const allowlist = []
+  const env = []
 
   for (const p of products) {
     console.log(`• Product: ${p.name}`)
-    const createdProduct = await createOrFindProduct(p)
+    const product = await createOrFindProduct(p)
 
     const priceIds = []
     for (const amount of p.prices) {
-      const pr = await createPrice(createdProduct.id, amount, p.metadata)
-      priceIds.push(pr.id)
-      allPriceIds.push(pr.id)
-      console.log(`  - $${(amount / 100).toFixed(2)} => ${pr.id}`)
+      const priceLookupKey = `tkfm_${p.key}_${amount}_${MODE}`.slice(0, 64)
+      const price = await createOrFindPrice(product.id, amount, p.metadata, priceLookupKey)
+
+      priceIds.push(price.id)
+      allowlist.push(price.id)
+      console.log(`  - $${(amount / 100).toFixed(2)} => ${price.id}`)
     }
 
     output.push({
-      product: createdProduct.id,
+      product: product.id,
       name: p.name,
-      lookup: createdProduct.metadata?.tkfm_lookup_key || null,
+      key: p.key,
+      lookup: product.metadata?.tkfm_lookup_key || null,
       prices: priceIds,
       metadata: p.metadata,
     })
+
+    // Helpful explicit ENV mappings (use first price for single-price products)
+    if (p.key === 'submit_basic') env.push(envLine('STRIPE_PRICE_SUBMIT_BASIC', priceIds[0]))
+    if (p.key === 'submit_spotlight') env.push(envLine('STRIPE_PRICE_SUBMIT_SPOTLIGHT', priceIds[0]))
+    if (p.key === 'submit_boost') env.push(envLine('STRIPE_PRICE_SUBMIT_BOOST', priceIds[0]))
   }
 
   fs.writeFileSync('stripe_output.json', JSON.stringify(output, null, 2), 'utf8')
 
-  // Useful env snippets for your Netlify FINAL LOCK allowlists
   const envSnippets = [
     `# Paste into Netlify env vars (${MODE}):`,
-    `STRIPE_PRICE_ALLOWLIST=${allPriceIds.join(',')}`,
+    env.join('\n'),
+    '',
+    `# Global allowlist (optional but recommended for checkout endpoints):`,
+    `STRIPE_PRICE_ALLOWLIST=${allowlist.join(',')}`,
+    '',
   ].join('\n')
 
-  fs.writeFileSync('stripe_env_snippets.txt', envSnippets + '\n', 'utf8')
+  fs.writeFileSync('stripe_env_snippets.txt', envSnippets, 'utf8')
 
   console.log('\n✅ Done!')
   console.log('📄 Saved: stripe_output.json')
-  console.log('🧩 Saved: stripe_env_snippets.txt (allowlist for Netlify)\n')
+  console.log('🧩 Saved: stripe_env_snippets.txt\n')
 }
 
-run().catch(() => {
-  console.error('❌ Stripe seed failed')
+run().catch((err) => {
+  console.error('❌ Stripe seed failed:', err?.message || err)
   process.exit(1)
 })
