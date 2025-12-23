@@ -17,13 +17,14 @@
     th,td{border-bottom:1px solid #222;padding:10px;text-align:left;vertical-align:top}
     a{color:#ff00e6;text-decoration:none}
     a:hover{text-decoration:underline}
+    .small{font-size:12px}
   </style>
 </head>
 <body>
   <div class="top">
     <div>
       <h1 style="margin:0">📥 Admin — Submissions</h1>
-      <div class="muted">JWT-protected</div>
+      <div class="muted">JWT-protected • status • archive • export</div>
     </div>
     <div class="row">
       <a href="/admin/news.html">News</a>
@@ -42,7 +43,15 @@
         <option value="accepted">accepted</option>
         <option value="rejected">rejected</option>
       </select>
+
       <button id="refresh">Refresh</button>
+      <button id="exportCsv">Export CSV</button>
+
+      <label class="muted" style="display:flex;gap:8px;align-items:center">
+        <input id="includeArchived" type="checkbox" />
+        include archived
+      </label>
+
       <span id="msg" class="muted"></span>
     </div>
 
@@ -54,7 +63,7 @@
             <th>Plan</th>
             <th>Artist / Track</th>
             <th>Links</th>
-            <th>Status</th>
+            <th>Status / Actions</th>
           </tr>
         </thead>
         <tbody id="rows">
@@ -65,67 +74,125 @@
   </div>
 
 <script>
-const API = '/.netlify/functions'
-const TOKEN_KEY = 'tkfm_admin_token'
-const token = localStorage.getItem(TOKEN_KEY)
+const API = '/.netlify/functions';
+const TOKEN_KEY = 'tkfm_admin_token';
+const token = localStorage.getItem(TOKEN_KEY);
 
-if (!token) location.href = '/admin/login.html'
+if (!token) location.href = '/admin/login.html';
 
 document.getElementById('logout').onclick = () => {
-  localStorage.removeItem(TOKEN_KEY)
-  location.href = '/admin/login.html'
-}
+  localStorage.removeItem(TOKEN_KEY);
+  location.href = '/admin/login.html';
+};
 
-document.getElementById('refresh').onclick = load
-document.getElementById('q').addEventListener('keydown', (e)=>{ if(e.key==='Enter') load() })
-document.getElementById('status').onchange = load
+document.getElementById('refresh').onclick = load;
+document.getElementById('q').addEventListener('keydown', (e)=>{ if(e.key==='Enter') load(); });
+document.getElementById('status').onchange = load;
+document.getElementById('includeArchived').onchange = load;
 
-function esc(s){ s=String(s??''); return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
-function escAttr(s){ s=String(s??''); return s.replace(/"/g,'&quot;') }
+document.getElementById('exportCsv').onclick = () => {
+  const inc = document.getElementById('includeArchived').checked ? '?includeArchived=1' : '';
+  // Opens in new tab; function will return a CSV download
+  window.open(`${API}/admin-export-submissions-csv${inc}`, '_blank');
+};
+
+function esc(s){ s=String(s??''); return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ s=String(s??''); return s.replace(/"/g,'&quot;'); }
 
 async function load(){
-  const msg = document.getElementById('msg')
-  msg.textContent = 'Loading…'
-  const q = document.getElementById('q').value.trim()
-  const status = document.getElementById('status').value
+  const msg = document.getElementById('msg');
+  msg.textContent = 'Loading…';
 
-  const qs = new URLSearchParams()
-  if (q) qs.set('q', q)
-  if (status) qs.set('status', status)
+  const q = document.getElementById('q').value.trim();
+  const status = document.getElementById('status').value;
+  const includeArchived = document.getElementById('includeArchived').checked;
+
+  const qs = new URLSearchParams();
+  if (q) qs.set('q', q);
+  if (status) qs.set('status', status);
+  if (includeArchived) qs.set('includeArchived', '1');
 
   const res = await fetch(`${API}/admin-list-submissions?${qs.toString()}`, {
     headers: { Authorization: `Bearer ${token}` }
-  })
+  });
 
-  const data = await res.json().catch(()=>null)
+  const data = await res.json().catch(()=>null);
   if (!res.ok || !data?.ok) {
-    msg.textContent = data?.error || 'Failed'
-    document.getElementById('rows').innerHTML = `<tr><td class="muted" colspan="5">Error loading</td></tr>`
-    return
+    msg.textContent = data?.error || 'Failed';
+    document.getElementById('rows').innerHTML =
+      `<tr><td class="muted" colspan="5">Error loading</td></tr>`;
+    return;
   }
 
-  msg.textContent = `Loaded ${data.data.length}`
-  const rows = data.data.map(x => `
+  msg.textContent = `Loaded ${data.data.length}`;
+
+  const rowsHtml = (data.data || []).map(x => `
     <tr>
       <td class="muted">${x.created_at ? new Date(x.created_at).toLocaleString() : ''}</td>
-      <td>${esc(x.plan || '')}</td>
+      <td>
+        ${esc(x.plan || '')}
+        ${x.archived ? `<div class="muted small">archived</div>` : ``}
+      </td>
       <td>
         <strong>${esc(x.artist_name || '')}</strong><br/>
         ${esc(x.track_title || '')}<br/>
         <span class="muted">${esc(x.email || '')}</span>
       </td>
       <td>
-        ${x.audio_url ? `<a href="${escAttr(x.audio_url)}" target="_blank">Audio</a>` : '<span class="muted">—</span>'}
-        ${x.cover_url ? ` • <a href="${escAttr(x.cover_url)}" target="_blank">Cover</a>` : ''}
+        ${x.audio_url ? `<a href="${escAttr(x.audio_url)}" target="_blank">Audio</a>` : `<span class="muted">—</span>`}
+        ${x.cover_url ? ` • <a href="${escAttr(x.cover_url)}" target="_blank">Cover</a>` : ``}
+        ${x.notes ? `<div class="muted small" style="margin-top:6px">${esc(x.notes)}</div>` : ``}
       </td>
-      <td>${esc(x.status || 'new')}</td>
+      <td>
+        <select onchange="updateStatus('${escAttr(x.id)}', this.value)">
+          ${['new','reviewing','accepted','rejected'].map(s => `
+            <option value="${s}" ${s === (x.status || 'new') ? 'selected' : ''}>${s}</option>
+          `).join('')}
+        </select>
+        <div style="height:8px"></div>
+        <button onclick="archiveSubmission('${escAttr(x.id)}')">Archive</button>
+      </td>
     </tr>
-  `).join('')
+  `).join('');
 
-  document.getElementById('rows').innerHTML = rows || `<tr><td class="muted" colspan="5">No submissions</td></tr>`
+  document.getElementById('rows').innerHTML =
+    rowsHtml || `<tr><td class="muted" colspan="5">No submissions</td></tr>`;
 }
 
-load()
+window.updateStatus = async function(id, status) {
+  try {
+    await fetch(`${API}/admin-update-submission-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ id, status })
+    });
+  } catch (e) {
+    alert('Status update failed.');
+  }
+};
+
+window.archiveSubmission = async function(id) {
+  if (!confirm('Archive this submission?')) return;
+  try {
+    await fetch(`${API}/admin-archive-submission`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ id })
+    });
+    load();
+  } catch (e) {
+    alert('Archive failed.');
+  }
+};
+
+load();
 </script>
 </body>
 </html>
+
