@@ -2,132 +2,226 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TKFM DJ Upload</title>
+  <title>TKFM DJ — Upload Mixtape</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    body {
-      background:#000;
-      color:#fff;
-      font-family:Arial,sans-serif;
-      padding:30px;
-      max-width:700px;
-      margin:0 auto;
-    }
-    h1 { margin-bottom:10px }
-    .card {
-      background:#111;
-      border:1px solid #222;
-      border-radius:14px;
-      padding:20px;
-      margin-top:20px;
-    }
-    input, button {
-      width:100%;
-      padding:12px;
-      margin-top:10px;
-      border-radius:10px;
-      border:1px solid #333;
-      background:#0b0b0b;
-      color:#fff;
-    }
-    button {
-      cursor:pointer;
-      font-weight:bold;
-    }
-    button:hover {
-      border-color:#555;
-    }
-    .error { color:#ff7c7c; margin-top:10px }
-    .ok { color:#7cffb2; margin-top:10px }
-    .muted { color:#aaa; font-size:13px }
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;margin:0;padding:24px;max-width:900px;margin:0 auto}
+    .top{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .card{background:#111;border:1px solid #222;border-radius:14px;padding:16px;margin:14px 0}
+    input,button,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
+    button{cursor:pointer;font-weight:700;background:#1b1b1b}
+    button:hover{border-color:#555}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .muted{color:#aaa;font-size:13px}
+    .error{color:#ff7c7c;margin-top:10px}
+    .ok{color:#7cffb2;margin-top:10px}
+    .badge{display:inline-block;padding:4px 10px;border:1px solid #333;border-radius:999px;font-size:12px;color:#ddd}
+    @media (max-width:720px){ .row{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
 
-<h1>🎧 Upload Mixtape</h1>
-<p class="muted">DJ access only. Accepted: MP3 / WAV (max 200MB).</p>
+  <div class="top">
+    <div>
+      <h1 style="margin:0">⬆️ Upload Mixtape</h1>
+      <div class="muted">DJ-only upload. This page requires a DJ token.</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="badge" href="/dj/dashboard.html" style="text-decoration:none;color:#ddd">← Dashboard</a>
+      <button id="btnLogout" type="button">Logout</button>
+    </div>
+  </div>
 
-<div class="card">
-  <input id="title" placeholder="Mixtape Title" />
-  <input id="djName" placeholder="DJ Name" />
-  <input id="audio" type="file" accept="audio/*" />
-  <button onclick="upload()">Upload Mixtape</button>
+  <div class="card">
+    <div class="badge">Upload limits</div>
+    <p class="muted" style="margin:10px 0 0">
+      Netlify Functions cannot reliably handle huge base64 uploads.
+      Keep audio files small here. If you need 100–200MB support, we’ll switch to direct-to-Cloudinary uploads.
+    </p>
+  </div>
 
-  <div id="msg"></div>
-</div>
+  <div class="card">
+    <div class="row">
+      <div>
+        <label class="muted">Mixtape Title</label>
+        <input id="title" placeholder="e.g. DJ X — Winter Heat Vol. 1" />
+      </div>
+      <div>
+        <label class="muted">DJ Name</label>
+        <input id="djName" placeholder="e.g. DJ X" />
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label class="muted">Audio File (MP3/WAV)</label>
+      <input id="audio" type="file" accept="audio/*" />
+      <div class="muted" id="fileInfo" style="margin-top:8px"></div>
+    </div>
+
+    <div style="margin-top:12px">
+      <button id="btnUpload" type="button">Upload + Publish</button>
+      <div id="msg" class="muted" style="margin-top:10px"></div>
+    </div>
+  </div>
 
 <script>
-const API = '/.netlify/functions'
-const TOKEN_KEY = 'tkfm_dj_token'
+  const API = '/.netlify/functions'
+  const TOKEN_KEY = 'tkfm_dj_token'
 
-function setMsg(text, cls) {
-  const el = document.getElementById('msg')
-  el.textContent = text
-  el.className = cls || ''
-}
+  // Keep this conservative for base64-in-function.
+  // If you later move to direct Cloudinary upload, you can raise it.
+  const MAX_BYTES = 12 * 1024 * 1024 // 12MB
 
-async function upload() {
-  const token = localStorage.getItem(TOKEN_KEY)
-  if (!token) {
-    setMsg('Not logged in as DJ', 'error')
-    return
+  const $ = (id) => document.getElementById(id)
+
+  function setMsg(text, cls) {
+    const el = $('msg')
+    el.textContent = text || ''
+    el.className = cls || 'muted'
   }
 
-  const title = document.getElementById('title').value.trim()
-  const djName = document.getElementById('djName').value.trim()
-  const file = document.getElementById('audio').files[0]
-
-  if (!title || !djName || !file) {
-    setMsg('All fields are required', 'error')
-    return
+  async function djLogout() {
+    try { await fetch(`${API}/dj-logout`, { method: 'POST' }) } catch {}
+    localStorage.removeItem(TOKEN_KEY)
+    window.location.href = '/dj/login.html'
   }
 
-  // Hard limits (client-side)
-  if (file.size > 200 * 1024 * 1024) {
-    setMsg('File too large (200MB max)', 'error')
-    return
+  function requireTokenOrRedirect() {
+    const token = localStorage.getItem(TOKEN_KEY)
+    if (!token) {
+      window.location.href = '/dj/login.html'
+      return null
+    }
+    return token
   }
 
-  if (!file.type.startsWith('audio/')) {
-    setMsg('Invalid file type', 'error')
-    return
+  function formatBytes(n) {
+    const u = ['B','KB','MB','GB']
+    let i = 0
+    while (n >= 1024 && i < u.length-1) { n /= 1024; i++ }
+    return `${n.toFixed(i === 0 ? 0 : 1)} ${u[i]}`
   }
 
-  const form = new FormData()
-  form.append('title', title)
-  form.append('djName', djName)
-  form.append('audio', file)
+  function escapeHTML(s){
+    s = String(s ?? '')
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')
+  }
 
-  setMsg('Uploading...', 'muted')
-
-  try {
-    const res = await fetch(`${API}/dj-upload-mixtape`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: form
+  function readAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader()
+      r.onload = () => resolve(r.result)
+      r.onerror = () => reject(new Error('File read failed'))
+      r.readAsDataURL(file)
     })
+  }
 
-    const json = await res.json()
+  $('btnLogout').addEventListener('click', djLogout)
 
-    if (!res.ok || !json.ok) {
-      setMsg(json.error || 'Upload failed', 'error')
+  $('audio').addEventListener('change', () => {
+    const f = $('audio').files[0]
+    if (!f) { $('fileInfo').textContent = ''; return }
+
+    $('fileInfo').textContent =
+      `Selected: ${f.name} (${formatBytes(f.size)}) — type: ${f.type || 'unknown'}`
+  })
+
+  $('btnUpload').addEventListener('click', async () => {
+    const token = requireTokenOrRedirect()
+    if (!token) return
+
+    const title = $('title').value.trim()
+    const djName = $('djName').value.trim()
+    const file = $('audio').files[0]
+
+    if (!title || !djName || !file) {
+      setMsg('Title, DJ name, and audio file are required.', 'error')
       return
     }
 
-    setMsg('Upload successful!', 'ok')
-    document.getElementById('audio').value = ''
-  } catch {
-    setMsg('Network error', 'error')
-  }
-}
+    if (!file.type.startsWith('audio/')) {
+      setMsg('Invalid file type. Please select an audio file.', 'error')
+      return
+    }
 
-// Auto-block if not logged in
-if (!localStorage.getItem(TOKEN_KEY)) {
-  document.body.innerHTML = '<p style="color:#ff7c7c">DJ login required.</p>'
-}
+    if (file.size > MAX_BYTES) {
+      setMsg(
+        `File too large for this upload mode (${formatBytes(file.size)}). ` +
+        `Max is ${formatBytes(MAX_BYTES)}. We can switch to direct-to-Cloudinary for big files.`,
+        'error'
+      )
+      return
+    }
+
+    setMsg('Reading file…', 'muted')
+
+    let dataUrl
+    try {
+      dataUrl = await readAsDataURL(file)
+    } catch {
+      setMsg('Could not read file.', 'error')
+      return
+    }
+
+    setMsg('Uploading audio to Cloudinary…', 'muted')
+
+    // 1) Upload to Cloudinary via locked function
+    let audioUrl
+    try {
+      const up = await fetch(`${API}/dj-upload-to-cloudinary`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ file: dataUrl })
+      })
+      const upJson = await up.json().catch(()=>null)
+
+      if (!up.ok || !upJson?.url) {
+        setMsg(upJson?.error || 'Cloud upload failed', 'error')
+        return
+      }
+
+      audioUrl = upJson.url
+    } catch {
+      setMsg('Network error uploading to Cloudinary.', 'error')
+      return
+    }
+
+    setMsg('Saving mixtape to store…', 'muted')
+
+    // 2) Save mixtape record (JSON mode)
+    try {
+      const save = await fetch(`${API}/dj-upload-mixtape`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title,
+          djName,
+          audioUrl
+        })
+      })
+      const saveJson = await save.json().catch(()=>null)
+      if (!save.ok || !saveJson?.ok) {
+        setMsg(saveJson?.error || 'Failed to save mixtape', 'error')
+        return
+      }
+    } catch {
+      setMsg('Network error saving mixtape.', 'error')
+      return
+    }
+
+    setMsg('✅ Upload complete. Redirecting to dashboard…', 'ok')
+    setTimeout(() => window.location.href = '/dj/dashboard.html', 900)
+  })
+
+  // block immediately if not logged in
+  requireTokenOrRedirect()
 </script>
 
 </body>
