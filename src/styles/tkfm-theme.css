@@ -1,4 +1,4 @@
-/* 🔒 TKFM GLOBAL THEME — PRODUCTION LOCK */
+/* 🔒 TKFM GLOBAL THEME — PRODUCTION LOCK (DEDUPED) */
 
 :root {
   --tkfm-bg: #000000;
@@ -67,7 +67,7 @@ body {
   border-radius: 16px;
   position: relative;
   box-shadow: 0 0 12px rgba(160, 0, 255, 0.25);
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .mixtape-card:hover {
@@ -87,12 +87,16 @@ body {
     0 0 45px rgba(140, 0, 255, 0.9);
 }
 
+/* IMPORTANT: keep transform effects consistent */
 .mixtape-card.tier-elite {
   border: 3px solid var(--tkfm-gold);
   box-shadow:
     0 0 35px rgba(255, 200, 0, 0.9),
     0 0 70px rgba(255, 0, 255, 1);
-  transform: scale(1.04);
+}
+
+.mixtape-card.tier-elite:hover {
+  transform: translateY(-4px) scale(1.03);
 }
 
 /* ───────────────── FEATURE BADGE ───────────────── */
@@ -135,60 +139,7 @@ body {
   margin-top: 6px;
 }
 
-/* ───────────────── SINGLE SOURCE ANIMATION ───────────────── */
-
-@keyframes tkfmPulseGlow {
-  from {
-    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-  }
-  to {
-    box-shadow: 0 0 40px rgba(255, 0, 255, 1);
-  }
-}
-
-.sponsor-card {
-  display: block;
-  background: #0b0014;
-  border-radius: 14px;
-  padding: 14px;
-  text-align: center;
-  box-shadow: 0 0 25px rgba(255,0,255,.6);
-}
-
-.sponsor-card img {
-  max-width: 100%;
-  border-radius: 10px;
-}
-
-.sponsor-label {
-  margin-top: 8px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: #ff00ff;
-}
-
-
-.sponsor-card {
-  display: inline-block;
-  background: #0f001a;
-  border-radius: 14px;
-  padding: 16px;
-  text-align: center;
-  box-shadow: 0 0 25px rgba(255,0,255,.5);
-}
-
-.sponsor-card img {
-  max-width: 180px;
-}
-
-.sponsor-card .badge {
-  margin-top: 8px;
-  font-weight: bold;
-  background: linear-gradient(135deg,#ff00ff,#7f00ff);
-  padding: 6px 12px;
-  border-radius: 999px;
-  display: inline-block;
-}
+/* ───────────────── BADGES ───────────────── */
 
 .badge {
   background: linear-gradient(135deg, gold, orange);
@@ -200,4 +151,45 @@ body {
   margin: 10px auto;
   box-shadow: 0 0 15px rgba(255, 200, 0, 0.9);
   text-align: center;
+}
+
+/* ───────────────── SPONSOR CARD (SINGLE SOURCE) ───────────────── */
+
+.sponsor-card {
+  display: inline-block;
+  background: #0f001a;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(255, 0, 255, 0.5);
+  text-decoration: none;
+  color: inherit;
+}
+
+.sponsor-card img {
+  max-width: 180px;
+  border-radius: 10px;
+}
+
+.sponsor-label {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--tkfm-neon-pink);
+}
+
+.sponsor-card .badge {
+  margin-top: 8px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff00ff, #7f00ff);
+  padding: 6px 12px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+/* ───────────────── SINGLE SOURCE ANIMATION ───────────────── */
+
+@keyframes tkfmPulseGlow {
+  from { box-shadow: 0 0 15px rgba(255, 0, 255, 0.5); }
+  to   { box-shadow: 0 0 40px rgba(255, 0, 255, 1); }
 }
