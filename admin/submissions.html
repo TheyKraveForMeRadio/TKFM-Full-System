@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM Admin — Submissions</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;margin:0;padding:30px 16px;max-width:1100px;margin:auto}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .card{background:#111;border:1px solid #222;border-radius:16px;padding:16px;margin-top:14px}
+    button{padding:10px 14px;border-radius:10px;border:1px solid #333;background:#1b1b1b;color:#fff;font-weight:700;cursor:pointer}
+    button:hover{border-color:#555}
+    input,select{padding:10px 12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
+    .muted{color:#aaa;font-size:13px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border-bottom:1px solid #222;padding:10px;text-align:left;vertical-align:top}
+    a{color:#ff00e6;text-decoration:none}
+    a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div>
+      <h1 style="margin:0">📥 Admin — Submissions</h1>
+      <div class="muted">JWT-protected</div>
+    </div>
+    <div class="row">
+      <a href="/admin/news.html">News</a>
+      <a href="/admin/login.html">Login</a>
+      <button id="logout">Logout</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <input id="q" placeholder="Search title / artist / email" style="min-width:260px" />
+      <select id="status">
+        <option value="">All statuses</option>
+        <option value="new">new</option>
+        <option value="reviewing">reviewing</option>
+        <option value="accepted">accepted</option>
+        <option value="rejected">rejected</option>
+      </select>
+      <button id="refresh">Refresh</button>
+      <span id="msg" class="muted"></span>
+    </div>
+
+    <div style="overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Created</th>
+            <th>Plan</th>
+            <th>Artist / Track</th>
+            <th>Links</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td class="muted" colspan="5">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+const API = '/.netlify/functions'
+const TOKEN_KEY = 'tkfm_admin_token'
+const token = localStorage.getItem(TOKEN_KEY)
+
+if (!token) location.href = '/admin/login.html'
+
+document.getElementById('logout').onclick = () => {
+  localStorage.removeItem(TOKEN_KEY)
+  location.href = '/admin/login.html'
+}
+
+document.getElementById('refresh').onclick = load
+document.getElementById('q').addEventListener('keydown', (e)=>{ if(e.key==='Enter') load() })
+document.getElementById('status').onchange = load
+
+function esc(s){ s=String(s??''); return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function escAttr(s){ s=String(s??''); return s.replace(/"/g,'&quot;') }
+
+async function load(){
+  const msg = document.getElementById('msg')
+  msg.textContent = 'Loading…'
+  const q = document.getElementById('q').value.trim()
+  const status = document.getElementById('status').value
+
+  const qs = new URLSearchParams()
+  if (q) qs.set('q', q)
+  if (status) qs.set('status', status)
+
+  const res = await fetch(`${API}/admin-list-submissions?${qs.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+
+  const data = await res.json().catch(()=>null)
+  if (!res.ok || !data?.ok) {
+    msg.textContent = data?.error || 'Failed'
+    document.getElementById('rows').innerHTML = `<tr><td class="muted" colspan="5">Error loading</td></tr>`
+    return
+  }
+
+  msg.textContent = `Loaded ${data.data.length}`
+  const rows = data.data.map(x => `
+    <tr>
+      <td class="muted">${x.created_at ? new Date(x.created_at).toLocaleString() : ''}</td>
+      <td>${esc(x.plan || '')}</td>
+      <td>
+        <strong>${esc(x.artist_name || '')}</strong><br/>
+        ${esc(x.track_title || '')}<br/>
+        <span class="muted">${esc(x.email || '')}</span>
+      </td>
+      <td>
+        ${x.audio_url ? `<a href="${escAttr(x.audio_url)}" target="_blank">Audio</a>` : '<span class="muted">—</span>'}
+        ${x.cover_url ? ` • <a href="${escAttr(x.cover_url)}" target="_blank">Cover</a>` : ''}
+      </td>
+      <td>${esc(x.status || 'new')}</td>
+    </tr>
+  `).join('')
+
+  document.getElementById('rows').innerHTML = rows || `<tr><td class="muted" colspan="5">No submissions</td></tr>`
+}
+
+load()
+</script>
+</body>
+</html>
