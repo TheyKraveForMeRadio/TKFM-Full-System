@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TKFM Admin — Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;padding:24px;max-width:1000px;margin:0 auto}
+    .card{background:#111;border:1px solid #222;border-radius:12px;padding:16px;margin:14px 0}
+    input,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
+    textarea{min-height:260px;resize:vertical}
+    button{padding:10px 12px;border-radius:10px;border:1px solid #333;background:#1b1b1b;color:#fff;cursor:pointer}
+    button:hover{border-color:#555}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .muted{color:#aaa}
+    .ok{color:#7CFFB2}
+    .danger{color:#FF7C7C}
+  </style>
+</head>
+<body>
+
+  <h1>Create Blog Post</h1>
+  <p class="muted">Admin-only. Uses locked Netlify functions + Supabase service role.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Title</label>
+        <input id="title" placeholder="Blog title..." />
+      </div>
+      <div>
+        <label>Slug (optional, a-z 0-9 -)</label>
+        <input id="slug" placeholder="my-blog-post" />
+      </div>
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Excerpt (optional)</label>
+      <input id="excerpt" placeholder="Short summary..." />
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Body</label>
+      <textarea id="body" placeholder="Write the post..."></textarea>
+    </div>
+
+    <div class="toolbar" style="margin-top:10px">
+      <label class="muted"><input id="published" type="checkbox" /> Publish now</label>
+      <button id="btnPublish">Save</button>
+      <span id="msg" class="muted"></span>
+    </div>
+  </div>
+
+  <script>
+    const API = '/.netlify/functions'
+    const TOKEN_KEY = 'tkfm_admin_token'
+
+    async function fetchJSON(url, opts = {}) {
+      const res = await fetch(url, opts)
+      const text = await res.text()
+      let json = null
+      try { json = text ? JSON.parse(text) : null } catch {}
+      return { ok: res.ok, status: res.status, json }
+    }
+
+    document.getElementById('btnPublish').addEventListener('click', async () => {
+      const token = localStorage.getItem(TOKEN_KEY)
+      const msg = document.getElementById('msg')
+      if (!token) { msg.textContent = 'Missing admin token — login first'; msg.className='danger'; return }
+
+      msg.textContent = 'Saving...'
+      msg.className = 'muted'
+
+      const payload = {
+        title: document.getElementById('title').value.trim(),
+        slug: document.getElementById('slug').value.trim() || null,
+        excerpt: document.getElementById('excerpt').value.trim() || null,
+        body: document.getElementById('body').value.trim(),
+        published: document.getElementById('published').checked
+      }
+
+      const { ok, json } = await fetchJSON(`${API}/admin-create-blog`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (!ok || !json?.ok) {
+        msg.textContent = 'Save failed'
+        msg.className = 'danger'
+        return
+      }
+
+      msg.textContent = `Saved (${json.data.status})`
+      msg.className = 'ok'
+      document.getElementById('title').value = ''
+      document.getElementById('slug').value = ''
+      document.getElementById('excerpt').value = ''
+      document.getElementById('body').value = ''
+      document.getElementById('published').checked = false
+    })
+  </script>
+
+</body>
+</html>
