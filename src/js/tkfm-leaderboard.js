@@ -1,32 +1,77 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const res = await fetch('/.netlify/functions/public-get-mixtapes')
-  const data = await res.json()
+function escapeHTML(str) {
+  if (typeof str !== 'string') return ''
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
 
-  const ranked = data
-    .filter(m => m.featured)
-    .sort((a, b) => (b.featuredViews || 0) - (a.featuredViews || 0))
-    .slice(0, 10)
+function safeTier(tier) {
+  const allowed = new Set(['basic', 'pro', 'elite'])
+  return allowed.has(tier) ? tier : 'basic'
+}
 
+function safeNum(n, fallback = 0) {
+  const x = Number(n)
+  return Number.isFinite(x) ? x : fallback
+}
+
+async function safeFetchJSON(url, timeoutMs = 8000) {
+  const controller = new AbortController()
+  const t = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const res = await fetch(url, { signal: controller.signal })
+    if (!res.ok) return null
+    return await res.json()
+  } catch {
+    return null
+  } finally {
+    clearTimeout(t)
+  }
+}
+
+async function renderLeaderboard() {
   const box = document.getElementById('tkfm-leaderboard')
   if (!box) return
 
-  box.innerHTML = ranked.map((m, i) => `
-    <div class="mixtape-card tier-${m.featureTier}">
-      <strong>#${i + 1} ${m.title}</strong><br/>
-      👁 ${(m.featuredViews || 0).toLocaleString()} views<br/>
-      🏷 ${m.featureTier.toUpperCase()}
-    </div>
-  `).join('')
+  const payload = await safeFetchJSON('/.netlify/functions/public-get-mixtapes')
+  const data = Array.isArray(payload) ? payload : (Array.isArray(payload?.data) ? payload.data : [])
+  if (!data.length) return
+
+  const ranked = data
+    .filter(m => m && m.featured === true)
+    .sort((a, b) => safeNum(b.featuredViews) - safeNum(a.featuredViews))
+    .slice(0, 10)
+
+  if (!ranked.length) {
+    box.innerHTML = `<p>No featured leaderboard yet.</p>`
+    return
+  }
+
+  box.innerHTML = ranked.map((m, i) => {
+    const tier = safeTier(m.featureTier)
+    const title = escapeHTML(m.title || 'Untitled')
+    const views = safeNum(m.featuredViews, 0)
+    const tierLabel = tier.toUpperCase()
+
+    return `
+      <div class="mixtape-card tier-${tier}">
+        <strong>#${i + 1} ${title}</strong><br/>
+        👁 ${views.toLocaleString()} views<br/>
+        🏷 ${tierLabel}
+      </div>
+    `
+  }).join('')
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderLeaderboard()
 })
 
-fetch('/.netlify/functions/feature-revenue-engine')
-.then(r=>r.json())
-.then(data=>{
-  document.getElementById('tkfm-leaderboard').innerHTML =
-    data.map(m=>`
-      <div class="mixtape-card">
-        🏆 #${m.rank} — ${m.title}<br/>
-        👁 ${m.featuredViews} views
-      </div>
-    `).join('')
-})
+/**
+ * FINAL LOCK NOTE:
+ * Do NOT call internal engines (e.g., feature-revenue-engine) from the browser.
+ * That endpoint should be cron/admin-only.
+ */

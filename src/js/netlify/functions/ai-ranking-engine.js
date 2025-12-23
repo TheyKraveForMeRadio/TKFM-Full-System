@@ -1,7 +1,12 @@
-import { getStore, setStore } from './_helpers.js'
+import { getStore, setStore } from "./_helpers.js"
 
-export async function handler() {
-  const mixtapes = await getStore('mixtapes')
+export async function handler(event) {
+  // 🔒 INTERNAL EXECUTION ONLY
+  if (event.headers["x-tkfm-internal-key"] !== process.env.INTERNAL_CRON_KEY) {
+    return { statusCode: 403, body: "Forbidden" }
+  }
+
+  const mixtapes = await getStore("mixtapes") || []
   const now = Date.now()
 
   const tierWeight = {
@@ -11,40 +16,44 @@ export async function handler() {
   }
 
   mixtapes.forEach(m => {
-    const views = m.featuredViews || 0
+    const views = Number(m.featuredViews) || 0
     const tierScore = tierWeight[m.featureTier] || 0
-    const ageHours = (now - m.createdAt) / 36e5
+    const createdAt = Number(m.createdAt) || now
+    const ageHours = Math.max((now - createdAt) / 36e5, 0)
 
-    // 🧠 AI SCORE (CORE FORMULA)
-    m.aiScore = Math.round(
+    // 🧠 AI SCORE (ENTERPRISE FORMULA)
+    const score =
       (views * 1.4) +
       (tierScore * 250) -
       (ageHours * 1.2)
-    )
+
+    m.aiScore = Math.max(Math.round(score), 0)
   })
 
-  mixtapes.sort((a, b) => b.aiScore - a.aiScore)
+  // 📊 SORT BY INTELLIGENCE
+  mixtapes.sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))
 
-  // 👑 HOMEPAGE KING
-  mixtapes.forEach(m => m.homepagePin = false)
+  // 👑 HOMEPAGE KING (ONE ONLY)
+  mixtapes.forEach(m => { m.homepagePin = false })
   if (mixtapes[0]) mixtapes[0].homepagePin = true
 
-  // 🔄 AUTO DEMOTION
+  // 🔄 AUTO DEMOTION (QUALITY CONTROL)
   mixtapes.forEach(m => {
-    if (m.featured && m.aiScore < 100) {
+    if (m.featured === true && m.aiScore < 100) {
       m.featured = false
       m.featureTier = null
       m.featureExpiresAt = null
     }
   })
 
-  await setStore('mixtapes', mixtapes)
+  await setStore("mixtapes", mixtapes)
 
   return {
     statusCode: 200,
     body: JSON.stringify({
       ok: true,
-      homepageKing: mixtapes[0]?.title || null
+      homepageKing: mixtapes[0]?.title || null,
+      totalRanked: mixtapes.length
     })
   }
 }

@@ -1,42 +1,57 @@
-import { getStore } from './_helpers.js';
+import { getStore } from "./_helpers.js"
 
 export async function handler() {
   try {
-    const store = await getStore('mixtapes');
-    const mixtapes = store || [];
+    const mixtapes = (await getStore("mixtapes")) || []
 
-    const tierWeight = {
-      elite: 3,
-      pro: 2,
-      basic: 1
-    };
+    const tierWeight = { elite: 3, pro: 2, basic: 1 }
+    const now = Date.now()
 
-    const now = Date.now();
+    const items = mixtapes
+      .filter(m => m.featured === true && Number(m.featureExpiresAt) > now)
+      .map(m => {
+        const tier = (m.featureTier || "").toLowerCase()
+        const views = Number(m.featuredViews) || 0
+        const score = views * (tierWeight[tier] || 1)
 
-    const leaderboard = mixtapes
-      .filter(m => m.featured && m.featureExpiresAt > now)
-      .map(m => ({
-        id: m.id,
-        title: m.title,
-        djName: m.djName,
-        audioUrl: m.audioUrl,
-        tier: m.featureTier,
-        views: m.featuredViews || 0,
-        score: (m.featuredViews || 0) * (tierWeight[m.featureTier] || 1)
-      }))
+        return {
+          // ✅ public-safe fields
+          id: m.id,
+          title: m.title,
+          djName: m.djName || m.dj || null,
+          tier: tier || null,
+          views,
+          score,
+
+          // Optional: only keep if your audio is meant to be publicly playable
+          audioUrl: m.audioUrl || null
+        }
+      })
       .sort((a, b) => b.score - a.score)
-      .slice(0, 10); // TOP 10
+      .slice(0, 10)
 
     return {
       statusCode: 200,
-      body: JSON.stringify(leaderboard)
-    };
-
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "public, max-age=60"
+      },
+      body: JSON.stringify({
+        ok: true,
+        total: items.length,
+        items
+      })
+    }
   } catch (err) {
-    console.error('Leaderboard error', err);
+    console.error("Leaderboard error", err)
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Leaderboard failed' })
-    };
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify({ ok: false, error: "Leaderboard failed" })
+    }
   }
 }

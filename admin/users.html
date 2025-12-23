@@ -1,12 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head><title>Users</title></head>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM Admin — Users</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body{background:#000;color:#fff;font-family:Arial;margin:0;padding:24px;max-width:900px;margin:auto}
+    .card{background:#111;border:1px solid #222;border-radius:14px;padding:16px}
+    .muted{color:#aaa}
+    a{color:#ddd}
+  </style>
+</head>
 <body>
-<h1>User Management</h1>
-<ul>
-<li>Artist — Active</li>
-<li>DJ — Active</li>
-<li>Sponsor — Active</li>
-</ul>
+  <h1>👥 Admin — Users</h1>
+  <div class="card">
+    <p class="muted">User management is not enabled yet.</p>
+    <p class="muted">This page is admin-gated to prevent public exposure.</p>
+    <p><a href="/admin/news.html">← Back to Admin</a></p>
+  </div>
+
+  <script>
+    const API = '/.netlify/functions'
+    const TOKEN_KEY = 'tkfm_admin_token'
+    const token = localStorage.getItem(TOKEN_KEY)
+    if (!token) location.href = '/admin/login.html'
+
+    // Optional: verify token live (if your admin-verify endpoint exists)
+    fetch(`${API}/admin-verify`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .catch(() => location.href = '/admin/login.html')
+  </script>
 </body>
 </html>
+

@@ -1,32 +1,41 @@
-let index = 0
-const INTERVAL = 6000
+import { getStore, setStore } from './_helpers.js'
 
-async function loadSponsors() {
-  const res = await fetch('/.netlify/functions/public-get-sponsors')
-  const sponsors = await res.json()
-
-  if (!sponsors.length) return
-
-  const box = document.getElementById('sponsor-rotation')
-
-  setInterval(() => {
-    const s = sponsors[index % sponsors.length]
-    index++
-
-    box.innerHTML = `
-      <div class="sponsor-card">
-        <div class="badge">OFFICIAL PARTNER</div>
-        <img src="${s.logoUrl}" alt="${s.brandName}" />
-        <h4>${s.brandName}</h4>
-      </div>
-    `
-
-    fetch('/.netlify/functions/track-sponsor-impression', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sponsorId: s.id })
-    })
-  }, INTERVAL)
+function resp(statusCode, bodyObj) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify(bodyObj),
+  }
 }
 
-document.addEventListener('DOMContentLoaded', loadSponsors)
+export async function handler(event) {
+  // Preflight safe response (even without CORS)
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, body: '' }
+
+  if (event.httpMethod !== 'POST') return resp(405, { error: 'Method Not Allowed' })
+
+  let payload
+  try {
+    payload = event.body ? JSON.parse(event.body) : null
+  } catch {
+    return resp(400, { error: 'Invalid JSON' })
+  }
+
+  const sponsorId = payload?.sponsorId
+  if (typeof sponsorId !== 'string' || sponsorId.length < 3 || sponsorId.length > 128) {
+    return resp(400, { error: 'Invalid sponsorId' })
+  }
+
+  const sponsors = (await getStore('sponsors')) || []
+  if (!Array.isArray(sponsors)) return resp(500, { error: 'Store shape invalid' })
+
+  const s = sponsors.find(x => x && x.id === sponsorId)
+  if (s) {
+    s.views = (s.views || 0) + 1
+    s.lastViewedAt = Date.now()
+    await setStore('sponsors', sponsors)
+  }
+
+  return resp(200, { ok: true })
+}
+

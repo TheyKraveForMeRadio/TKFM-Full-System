@@ -1,61 +1,100 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('mixtapes');
-  if (!container) return;
+document.addEventListener("DOMContentLoaded", async function () {
+  try {
+    var container = document.getElementById("mixtapes")
+    if (!container) return
 
-  const res = await fetch('/.netlify/functions/public-get-mixtapes');
-  const mixtapes = await res.json();
+    var res = await fetch("/.netlify/functions/public-get-mixtapes")
+    if (!res.ok) throw new Error("Failed to load mixtapes")
 
-  // FEATURED FIRST
-  mixtapes.sort((a, b) => {
-    if (a.featured && !b.featured) return -1;
-    if (!a.featured && b.featured) return 1;
-    return 0;
-  });
+    var data = await res.json()
 
-  container.innerHTML = mixtapes.map(m => {
-    const featuredActive =
-      m.featured && m.featuredUntil && Date.now() < m.featuredUntil;
+    // Support either: [ ... ] OR { ok:true, items:[ ... ] }
+    var mixtapes = Array.isArray(data) ? data : (data && data.items ? data.items : [])
+    if (!Array.isArray(mixtapes)) mixtapes = []
 
-    return `
-      <div class="mixtape-card ${featuredActive ? 'featured' : ''}">
-        ${featuredActive ? `<div class="badge">🔥 FEATURED</div>` : ''}
+    var now = Date.now()
 
-        <h3>${m.title}</h3>
-        <p>${m.artist || ''}</p>
+    // FEATURED ACTIVE FIRST (based on featureExpiresAt)
+    mixtapes.sort(function (a, b) {
+      var aActive = a && a.featured === true && Number(a.featureExpiresAt) > now
+      var bActive = b && b.featured === true && Number(b.featureExpiresAt) > now
+      if (aActive && !bActive) return -1
+      if (!aActive && bActive) return 1
+      // secondary sort: views desc if present
+      var av = Number(a && a.featuredViews) || 0
+      var bv = Number(b && b.featuredViews) || 0
+      return bv - av
+    })
 
-        ${featuredActive ? `
-          <p class="countdown"
-             data-expire="${m.featuredUntil}">
-            ⏳ Loading countdown…
-          </p>
-        ` : ''}
+    container.innerHTML = mixtapes
+      .map(function (m) {
+        m = m || {}
+        var expiresAt = Number(m.featureExpiresAt) || 0
+        var featuredActive = m.featured === true && expiresAt > now
 
-        <audio controls src="${m.audioUrl}"></audio>
-      </div>
-    `;
-  }).join('');
+        var title = escapeHtml(m.title || "Untitled")
+        var artist = escapeHtml(m.artist || m.djName || m.dj || "")
+        var audioUrl = m.audioUrl || ""
 
-  startCountdowns();
-});
+        return (
+          '<div class="mixtape-card ' + (featuredActive ? "featured" : "") + '">' +
+            (featuredActive ? '<div class="badge">🔥 FEATURED</div>' : "") +
+            "<h3>" + title + "</h3>" +
+            (artist ? "<p>" + artist + "</p>" : "") +
+            (featuredActive
+              ? '<p class="countdown" data-expire="' + expiresAt + '">⏳ Loading countdown…</p>'
+              : "") +
+            (audioUrl
+              ? '<audio controls src="' + escapeAttr(audioUrl) + '"></audio>'
+              : "<p>No audio available.</p>") +
+          "</div>"
+        )
+      })
+      .join("")
+
+    startCountdowns()
+  } catch (err) {
+    console.error("Mixtapes render error:", err)
+  }
+})
 
 function startCountdowns() {
-  const timers = document.querySelectorAll('.countdown');
+  var timers = document.querySelectorAll(".countdown")
+  if (!timers || !timers.length) return
 
-  setInterval(() => {
-    timers.forEach(el => {
-      const expire = Number(el.dataset.expire);
-      const diff = expire - Date.now();
+  function tick() {
+    var now = Date.now()
+    timers.forEach(function (el) {
+      var expire = Number(el.dataset.expire) || 0
+      var diff = expire - now
 
       if (diff <= 0) {
-        el.textContent = '⏳ Feature expired';
-        return;
+        el.textContent = "⏳ Feature expired"
+        return
       }
 
-      const days = Math.floor(diff / 86400000);
-      const hrs = Math.floor((diff % 86400000) / 3600000);
-      const mins = Math.floor((diff % 3600000) / 60000);
+      var days = Math.floor(diff / 86400000)
+      var hrs = Math.floor((diff % 86400000) / 3600000)
+      var mins = Math.floor((diff % 3600000) / 60000)
 
-      el.textContent = `⏳ ${days}d ${hrs}h ${mins}m left`;
-    });
-  }, 60000);
+      el.textContent = "⏳ " + days + "d " + hrs + "h " + mins + "m left"
+    })
+  }
+
+  tick() // ✅ run immediately
+  setInterval(tick, 60000)
+}
+
+// --- tiny sanitizers (prevents broken HTML / injection) ---
+function escapeHtml(str) {
+  str = String(str || "")
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/`/g, "&#096;")
 }
