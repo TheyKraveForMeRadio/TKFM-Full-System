@@ -1,71 +1,76 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>TKFM DJ Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <title>DJ Login | TKFM</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    body{background:#000;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:24px}
-    .box{background:#111;border:1px solid #222;border-radius:14px;padding:24px;width:100%;max-width:380px}
-    h1{margin:0 0 14px;text-align:center}
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;margin:0;padding:50px 20px}
+    .box{max-width:520px;margin:auto;background:#111;border:1px solid #222;border-radius:16px;padding:22px}
     input,button{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
-    button{cursor:pointer;font-weight:700;margin-top:10px;background:#1b1b1b}
+    button{cursor:pointer;font-weight:700;background:#1b1b1b}
     button:hover{border-color:#555}
-    .error{color:#ff7c7c;margin-top:10px;text-align:center}
-    .muted{color:#aaa;font-size:12px;text-align:center;margin-top:12px}
+    .muted{color:#aaa;font-size:13px}
+    .err{color:#ff7c7c}
+    a{color:#ff00e6;text-decoration:none}
+    a:hover{text-decoration:underline}
   </style>
 </head>
 <body>
   <div class="box">
-    <h1>🎧 DJ Login</h1>
+    <h1 style="margin-top:0">🎧 DJ Login</h1>
+    <p class="muted">Authorized DJs only.</p>
 
-    <input id="djEmail" type="email" placeholder="DJ Email" autocomplete="username" />
-    <input id="djPassword" type="password" placeholder="Password" autocomplete="current-password" />
-    <button id="btnLogin">Login</button>
+    <input id="email" placeholder="DJ Email" autocomplete="username" />
+    <div style="height:10px"></div>
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+    <div style="height:12px"></div>
 
-    <div id="err" class="error"></div>
-    <div class="muted">Authorized DJs only</div>
+    <button id="btn">Login</button>
+    <p id="msg" class="muted"></p>
+
+    <p class="muted" style="margin-top:14px">
+      ← <a href="/dj.html">Back to DJ Portal</a>
+    </p>
   </div>
 
   <script>
     const API = '/.netlify/functions'
     const TOKEN_KEY = 'tkfm_dj_token'
 
-    function setErr(msg){ document.getElementById('err').textContent = msg || '' }
+    // If already logged in, go dashboard
+    if (localStorage.getItem(TOKEN_KEY)) location.href = '/dj/dashboard.html'
 
-    async function login(){
-      setErr('')
-      const email = document.getElementById('djEmail').value.trim()
-      const password = document.getElementById('djPassword').value
+    const msg = document.getElementById('msg')
+    document.getElementById('btn').addEventListener('click', async () => {
+      msg.textContent = 'Logging in…'
+      msg.className = 'muted'
 
-      if(!email || !password){ setErr('Email and password required'); return }
-
-      try{
+      try {
         const res = await fetch(`${API}/dj-login`, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ email, password })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+          })
         })
-        const json = await res.json().catch(()=>null)
 
-        if(!res.ok || !json?.token){
-          setErr(json?.error || 'Login failed')
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok || !data.ok || !data.token) {
+          msg.textContent = data.error || 'Login failed'
+          msg.className = 'err'
           return
         }
 
-        localStorage.setItem(TOKEN_KEY, json.token)
-        window.location.href = '/dj/dashboard.html'
-      }catch{
-        setErr('Network error')
+        localStorage.setItem(TOKEN_KEY, data.token)
+        location.href = '/dj/dashboard.html'
+      } catch (e) {
+        msg.textContent = 'Network error'
+        msg.className = 'err'
       }
-    }
-
-    document.getElementById('btnLogin').addEventListener('click', login)
-
-    // Auto-forward if already logged in
-    if(localStorage.getItem(TOKEN_KEY)){
-      window.location.href = '/dj/dashboard.html'
-    }
+    })
   </script>
 </body>
 </html>
+
