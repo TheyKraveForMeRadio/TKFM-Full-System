@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TKFM DJ Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:24px}
+    .box{background:#111;border:1px solid #222;border-radius:14px;padding:24px;width:100%;max-width:380px}
+    h1{margin:0 0 14px;text-align:center}
+    input,button{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
+    button{cursor:pointer;font-weight:700;margin-top:10px;background:#1b1b1b}
+    button:hover{border-color:#555}
+    .error{color:#ff7c7c;margin-top:10px;text-align:center}
+    .muted{color:#aaa;font-size:12px;text-align:center;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🎧 DJ Login</h1>
+
+    <input id="djEmail" type="email" placeholder="DJ Email" autocomplete="username" />
+    <input id="djPassword" type="password" placeholder="Password" autocomplete="current-password" />
+    <button id="btnLogin">Login</button>
+
+    <div id="err" class="error"></div>
+    <div class="muted">Authorized DJs only</div>
+  </div>
+
+  <script>
+    const API = '/.netlify/functions'
+    const TOKEN_KEY = 'tkfm_dj_token'
+
+    function setErr(msg){ document.getElementById('err').textContent = msg || '' }
+
+    async function login(){
+      setErr('')
+      const email = document.getElementById('djEmail').value.trim()
+      const password = document.getElementById('djPassword').value
+
+      if(!email || !password){ setErr('Email and password required'); return }
+
+      try{
+        const res = await fetch(`${API}/dj-login`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email, password })
+        })
+        const json = await res.json().catch(()=>null)
+
+        if(!res.ok || !json?.token){
+          setErr(json?.error || 'Login failed')
+          return
+        }
+
+        localStorage.setItem(TOKEN_KEY, json.token)
+        window.location.href = '/dj/dashboard.html'
+      }catch{
+        setErr('Network error')
+      }
+    }
+
+    document.getElementById('btnLogin').addEventListener('click', login)
+
+    // Auto-forward if already logged in
+    if(localStorage.getItem(TOKEN_KEY)){
+      window.location.href = '/dj/dashboard.html'
+    }
+  </script>
+</body>
+</html>

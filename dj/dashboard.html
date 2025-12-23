@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TKFM DJ Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;margin:0;padding:24px;max-width:1100px;margin:0 auto}
+    .top{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .card{background:#111;border:1px solid #222;border-radius:14px;padding:16px;margin:14px 0}
+    button,a.btn{padding:10px 12px;border-radius:10px;border:1px solid #333;background:#1b1b1b;color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+    button:hover,a.btn:hover{border-color:#555}
+    .muted{color:#aaa}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .badge{display:inline-block;padding:4px 10px;border:1px solid #333;border-radius:999px;font-size:12px;color:#ddd}
+    audio{width:100%}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div>
+      <h1 style="margin:0">🎚️ DJ Dashboard</h1>
+      <div class="muted">Upload and manage your mixtapes</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn" href="/dj/upload.html">⬆️ Upload Mixtape</a>
+      <button id="btnRefresh">Refresh</button>
+      <button id="btnLogout">Logout</button>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="badge">Token: <span id="tokenStatus">checking…</span></div>
+    <div id="msg" class="muted" style="margin-top:10px"></div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin:0 0 10px">Your Mixtapes (feed)</h2>
+    <div id="list" class="grid"></div>
+  </section>
+
+  <script>
+    const API = '/.netlify/functions'
+    const TOKEN_KEY = 'tkfm_dj_token'
+
+    function setMsg(t){ document.getElementById('msg').textContent = t || '' }
+
+    async function djLogout(){
+      try{ await fetch(`${API}/dj-logout`, { method:'POST' }) }catch{}
+      localStorage.removeItem(TOKEN_KEY)
+      window.location.href = '/dj/login.html'
+    }
+
+    async function load(){
+      const token = localStorage.getItem(TOKEN_KEY)
+      if(!token){
+        document.getElementById('tokenStatus').textContent = 'missing'
+        window.location.href = '/dj/login.html'
+        return
+      }
+      document.getElementById('tokenStatus').textContent = 'present'
+
+      setMsg('Loading mixtapes…')
+
+      // For now we show the main feed (public endpoint).
+      // Later, you can add a dj-list-mixtapes endpoint to filter by DJ.
+      const res = await fetch(`${API}/public-get-mixtapes`)
+      const json = await res.json().catch(()=>null)
+
+      const data = json?.data || json || []
+      if(!Array.isArray(data) || !data.length){
+        setMsg('No mixtapes found.')
+        document.getElementById('list').innerHTML = ''
+        return
+      }
+
+      setMsg(`Loaded ${data.length} mixtapes.`)
+
+      document.getElementById('list').innerHTML = data.slice(0, 24).map(m => `
+        <div class="card">
+          <div class="badge">${m.featured ? (m.featureTier || 'featured').toUpperCase() : 'STANDARD'}</div>
+          <h3 style="margin:8px 0 6px">${escapeHTML(m.title || 'Untitled')}</h3>
+          <div class="muted">DJ: ${escapeHTML(m.djName || m.dj || m.artist || 'Unknown')}</div>
+          ${m.audioUrl ? `<audio controls src="${escapeAttr(m.audioUrl)}"></audio>` : `<div class="muted">No audio URL</div>`}
+          <div class="muted">Views: ${(m.featuredViews || 0)}</div>
+        </div>
+      `).join('')
+    }
+
+    function escapeHTML(s){
+      s = String(s ?? '')
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')
+    }
+    function escapeAttr(s){
+      return escapeHTML(s).replace(/`/g,'')
+    }
+
+    document.getElementById('btnLogout').addEventListener('click', djLogout)
+    document.getElementById('btnRefresh').addEventListener('click', load)
+
+    load()
+  </script>
+</body>
+</html>
