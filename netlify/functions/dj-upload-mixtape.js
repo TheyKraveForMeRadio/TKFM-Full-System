@@ -1,4 +1,4 @@
-// netlify/functions/dj-upload-mixtape.js — ENTERPRISE LOCKED
+// netlify/functions/dj-upload-mixtape.js — ENTERPRISE LOCKED (tightened)
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 import { getStore, setStore } from './_helpers.js'
@@ -37,9 +37,74 @@ function safeUrl(v) {
   }
 }
 
+function isAllowedAudioHost(urlStr) {
+  try {
+    const u = new URL(urlStr)
+    // Allow Cloudinary by default
+    if (u.hostname.endsWith('cloudinary.com')) return true
+
+    // Optional: allow your own domain/CDN
+    const extra = String(process.env.ALLOWED_AUDIO_HOSTS || '')
+      .split(',')
+      .map(s => s.trim().toLowerCase())
+      .filter(Boolean)
+
+    return extra.includes(u.hostname.toLowerCase())
+  } catch {
+    return false
+  }
+}
+
+function getIP(event) {
+  const h = event.headers || {}
+  const ip =
+    h['x-nf-client-connection-ip'] ||
+    (typeof h['x-forwarded-for'] === 'string' ? h['x-forwarded-for'].split(',')[0].trim() : '') ||
+    ''
+  return ip || 'unknown'
+}
+
+async function throttle(ipOrUserKey) {
+  // 30 writes / 10 minutes
+  const store = (await getStore('rate_limits')) || {}
+  const now = Date.now()
+  const windowMs = 10 * 60 * 1000
+  const max = 30
+
+  const key = `dj_upload_${ipOrUserKey}`
+  const entry = store[key] || { count: 0, resetAt: now + windowMs }
+  if (now > entry.resetAt) {
+    entry.count = 0
+    entry.resetAt = now + windowMs
+  }
+  entry.count += 1
+  store[key] = entry
+
+  // hygiene cap
+  const keys = Object.keys(store)
+  if (keys.length > 5000) {
+    keys
+      .sort((a, b) => (store[a]?.resetAt || 0) - (store[b]?.resetAt || 0))
+      .slice(0, 1000)
+      .forEach(k => delete store[k])
+  }
+
+  await setStore('rate_limits', store)
+
+  if (entry.count > max) {
+    const err = new Error('Rate limited')
+    err.statusCode = 429
+    throw err
+  }
+}
+
 function requireDJ(event) {
   const SECRET = process.env.DJ_JWT_SECRET
-  if (!SECRET) throw new Error('Server not configured')
+  if (!SECRET) {
+    const err = new Error('Server not configured')
+    err.statusCode = 500
+    throw err
+  }
 
   const token = getBearer(event)
   if (!token) {
@@ -71,20 +136,13 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method Not Allowed' })
 
   try {
-    // ✅ DJ AUTH
     const decoded = requireDJ(event)
-
-    // =========================================
-    // ENTERPRISE NOTE:
-    // Netlify Functions are NOT designed for 200MB multipart uploads.
-    // We support:
-    //   A) JSON mode (recommended): title,djName,audioUrl,coverUrl
-    //   B) Multipart mode (small only): rejected with 413 if too large
-    // =========================================
+    const ip = getIP(event)
+    await throttle(decoded.email || ip)
 
     const ct = (event.headers?.['content-type'] || event.headers?.['Content-Type'] || '').toLowerCase()
 
-    // ---- A) JSON mode (recommended) ----
+    // JSON mode only (recommended)
     if (ct.includes('application/json') || !ct) {
       const payload = (() => { try { return JSON.parse(event.body || '{}') } catch { return null } })()
       if (!payload) return json(400, { error: 'Invalid JSON' })
@@ -95,7 +153,11 @@ export const handler = async (event) => {
       const coverUrl = safeUrl(payload.coverUrl)
 
       if (!title) return json(400, { error: 'Missing title' })
-      if (!audioUrl) return json(400, { error: 'Missing audioUrl (upload audio to storage, then send URL)' })
+      if (!audioUrl) return json(400, { error: 'Missing audioUrl' })
+
+      if (!isAllowedAudioHost(audioUrl)) {
+        return json(400, { error: 'audioUrl host not allowed' })
+      }
 
       const store = (await getStore('mixtapes')) || []
 
@@ -107,16 +169,14 @@ export const handler = async (event) => {
         coverUrl: coverUrl || null,
         createdAt: Date.now(),
 
-        // monetization fields
         featured: false,
         featureTier: null,
         featureExpiresAt: null,
         featuredViews: 0,
         homepagePin: false,
 
-        // audit fields
         uploadedBy: decoded.email || null,
-        uploadSource: 'dj-json',
+        uploadSource: 'dj-json-cloudinary',
       }
 
       store.unshift(mixtape)
@@ -125,15 +185,8 @@ export const handler = async (event) => {
       return json(200, { ok: true, mixtapeId: mixtape.id })
     }
 
-    // ---- B) Multipart mode (small only) ----
-    // Netlify will base64 encode and size-limit bodies; large uploads will fail upstream.
-    // We fail fast to avoid false “success”.
-    return json(413, {
-      error: 'Multipart uploads are not supported for large files on Netlify Functions.',
-      fix: 'Upload audio to storage (Supabase Storage/S3) directly, then call this endpoint with JSON {title,djName,audioUrl,coverUrl}.',
-    })
+    return json(415, { error: 'Unsupported Media Type (use application/json)' })
   } catch (err) {
-    const statusCode = err.statusCode || 500
-    return json(statusCode, { error: err.message || 'Internal Error' })
+    return json(err.statusCode || 500, { error: err.message || 'Internal Error' })
   }
 }
