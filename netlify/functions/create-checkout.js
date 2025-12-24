@@ -1,98 +1,56 @@
-const Stripe = require('stripe')
-const crypto = require('crypto')
+import { getStripe, json, corsPreflight } from "./_stripe.js";
+import { LOOKUP_KEYS, MODE_BY_KEY } from "./_price-lookup.js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-
-// FINAL LOCK: allowlist prices (do NOT accept arbitrary priceId from client)
-const PRICE_ALLOWLIST = new Set(
-  (process.env.STRIPE_PRICE_ALLOWLIST || '')
-    .split(',')
-    .map(s => s.trim())
-    .filter(Boolean)
-)
-
-// FINAL LOCK: allowlist redirect origins/domains
-const REDIRECT_ALLOWLIST = new Set(
-  (process.env.REDIRECT_ALLOWLIST || '')
-    .split(',')
-    .map(s => s.trim())
-    .filter(Boolean)
-)
-
-function json(statusCode, obj) {
-  return {
-    statusCode,
-    headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify(obj),
-  }
-}
-
-function safeParse(body) {
-  if (!body || typeof body !== 'string') return null
-  try { return JSON.parse(body) } catch { return null }
-}
-
-function isAllowedRedirect(url) {
-  if (typeof url !== 'string' || url.length > 500) return false
-  try {
-    const u = new URL(url)
-    // require https in production
-    if (u.protocol !== 'https:' && u.hostname !== 'localhost') return false
-
-    const origin = u.origin
-    return REDIRECT_ALLOWLIST.size > 0 && REDIRECT_ALLOWLIST.has(origin)
-  } catch {
-    return false
-  }
-}
-
-export const handler = async (event) => {
-  // Preflight
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, body: '' }
-
-  // Method lock
-  if (event.httpMethod !== 'POST') return json(405, { error: 'Method Not Allowed' })
-
-  // Must be configured
-  if (!process.env.STRIPE_SECRET_KEY) return json(500, { error: 'Server not configured' })
-  if (PRICE_ALLOWLIST.size === 0) return json(500, { error: 'Pricing not configured' })
-  if (REDIRECT_ALLOWLIST.size === 0) return json(500, { error: 'Redirects not configured' })
-
-  const payload = safeParse(event.body)
-  if (!payload) return json(400, { error: 'Invalid JSON' })
-
-  const priceId = payload.priceId
-  const successUrl = payload.successUrl
-  const cancelUrl = payload.cancelUrl
-
-  if (typeof priceId !== 'string' || !PRICE_ALLOWLIST.has(priceId)) {
-    return json(400, { error: 'Invalid price' })
-  }
-
-  if (!isAllowedRedirect(successUrl) || !isAllowedRedirect(cancelUrl)) {
-    return json(400, { error: 'Invalid redirect URL' })
-  }
-
-  // Idempotency (prevents duplicate sessions on retries)
-  const idem =
-    event.headers?.['x-idempotency-key'] ||
-    event.headers?.['X-Idempotency-Key'] ||
-    crypto.createHash('sha256').update(`${priceId}|${successUrl}|${cancelUrl}|${event.headers?.['x-forwarded-for'] || ''}`).digest('hex')
+export async function handler(event) {
+  const pre = corsPreflight(event);
+  if (pre) return pre;
 
   try {
-    const session = await stripe.checkout.sessions.create(
-      {
-        mode: 'payment',
-        line_items: [{ price: priceId, quantity: 1 }],
-        success_url: successUrl,
-        cancel_url: cancelUrl,
-      },
-      { idempotencyKey: idem }
-    )
+    const { key, quantity, successUrl, cancelUrl } = JSON.parse(event.body || "{}");
 
-    return json(200, { url: session.url })
-  } catch {
-    // Don’t leak Stripe error details to public client
-    return json(500, { error: 'Checkout creation failed' })
+    if (!key || !LOOKUP_KEYS[key]) {
+      return json(400, { error: "Invalid checkout key" });
+    }
+
+    const stripe = getStripe();
+
+    // Look up Stripe Price by lookup_key
+    const lookupKey = LOOKUP_KEYS[key];
+    const prices = await stripe.prices.list({
+      lookup_keys: [lookupKey],
+      active: true,
+      limit: 1,
+      expand: ["data.product"],
+    });
+
+    const price = prices.data?.[0];
+    if (!price) {
+      return json(404, { error: `No active Stripe price found for lookup_key: ${lookupKey}` });
+    }
+
+    const mode = MODE_BY_KEY[key] || (price.type === "recurring" ? "subscription" : "payment");
+
+    // Hard safety: don’t allow subscription mode if price is not recurring
+    if (mode === "subscription" && !price.recurring) {
+      return json(400, { error: "Requested subscription mode but price is not recurring" });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      mode,
+      line_items: [
+        {
+          price: price.id,
+          quantity: Number.isFinite(quantity) ? quantity : 1,
+        },
+      ],
+      success_url: successUrl || "https://tkfmradio.com/success.html?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url: cancelUrl || "https://tkfmradio.com/",
+      // Optional: tag the purchase
+      metadata: { tkfm_key: key, lookup_key: lookupKey },
+    });
+
+    return json(200, { url: session.url, id: session.id });
+  } catch (err) {
+    return json(500, { error: err?.message || "Server error" });
   }
 }
