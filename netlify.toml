@@ -1,23 +1,36 @@
+# =========================
+# BUILD CONFIG
+# =========================
 [build]
   command = "npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
+# =========================
+# DEV CONFIG (Netlify Dev)
+# =========================
 [dev]
   command = "npm run dev"
   targetPort = 5173
-  port = 8888
+  port = 8899
   framework = "vite"
 
+# =========================
+# FUNCTIONS CONFIG
+# =========================
 [functions]
   node_bundler = "esbuild"
   external_node_modules = [
     "stripe",
     "uuid",
-    "jsonwebtoken"
+    "jsonwebtoken",
+    "@supabase/supabase-js",
+    "cloudinary"
   ]
 
+# =========================
 # 🔁 AUTOPILOT CRONS
+# =========================
 [functions."expire-features"]
   schedule = "@daily"
 
@@ -31,10 +44,10 @@
   schedule = "@hourly"
 
 # =========================
-# 🔒 HEADERS (ENTERPRISE)
+# 🔒 PRODUCTION HEADERS
 # =========================
 
-# 1) Protected functions — DO NOT allow wildcard origins
+# ADMIN FUNCTIONS
 [[headers]]
   for = "/.netlify/functions/admin-*"
   [headers.values]
@@ -43,6 +56,7 @@
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
     Vary = "Origin"
 
+# STAFF FUNCTIONS
 [[headers]]
   for = "/.netlify/functions/staff-*"
   [headers.values]
@@ -51,6 +65,7 @@
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
     Vary = "Origin"
 
+# DJ FUNCTIONS
 [[headers]]
   for = "/.netlify/functions/dj-*"
   [headers.values]
@@ -59,16 +74,16 @@
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Vary = "Origin"
 
-# Stripe checkout creators should not be wildcard either
+# STRIPE / CHECKOUT FUNCTIONS (FIXED)
 [[headers]]
   for = "/.netlify/functions/create-*"
   [headers.values]
-    Access-Control-Allow-Origin = "https://YOUR_DOMAIN_HERE"
+    Access-Control-Allow-Origin = "https://tkfmradio.com"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "POST, OPTIONS"
     Vary = "Origin"
 
-# 2) Public functions (GET-only) — can be open
+# PUBLIC FUNCTIONS (SAFE TO OPEN)
 [[headers]]
   for = "/.netlify/functions/public-*"
   [headers.values]
@@ -76,7 +91,7 @@
     Access-Control-Allow-Headers = "Content-Type"
     Access-Control-Allow-Methods = "GET, OPTIONS"
 
-# 3) Default fallback (avoid letting everything be *)
+# FALLBACK FUNCTIONS (LOCKED)
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
@@ -86,7 +101,52 @@
     Vary = "Origin"
 
 # =========================
-# 🔒 SECURITY HEADERS (STATIC)
+# 🧪 DEV-ONLY CORS OVERRIDES
+# =========================
+[context.dev]
+
+  [[context.dev.headers]]
+    for = "/.netlify/functions/admin-*"
+    [context.dev.headers.values]
+      Access-Control-Allow-Origin = "http://localhost:8899"
+      Access-Control-Allow-Headers = "Content-Type, Authorization"
+      Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+      Vary = "Origin"
+
+  [[context.dev.headers]]
+    for = "/.netlify/functions/staff-*"
+    [context.dev.headers.values]
+      Access-Control-Allow-Origin = "http://localhost:8899"
+      Access-Control-Allow-Headers = "Content-Type, Authorization"
+      Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+      Vary = "Origin"
+
+  [[context.dev.headers]]
+    for = "/.netlify/functions/dj-*"
+    [context.dev.headers.values]
+      Access-Control-Allow-Origin = "http://localhost:8899"
+      Access-Control-Allow-Headers = "Content-Type, Authorization"
+      Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+      Vary = "Origin"
+
+  [[context.dev.headers]]
+    for = "/.netlify/functions/create-*"
+    [context.dev.headers.values]
+      Access-Control-Allow-Origin = "http://localhost:8899"
+      Access-Control-Allow-Headers = "Content-Type, Authorization"
+      Access-Control-Allow-Methods = "POST, OPTIONS"
+      Vary = "Origin"
+
+  [[context.dev.headers]]
+    for = "/.netlify/functions/*"
+    [context.dev.headers.values]
+      Access-Control-Allow-Origin = "http://localhost:8899"
+      Access-Control-Allow-Headers = "Content-Type, Authorization"
+      Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+      Vary = "Origin"
+
+# =========================
+# 🔐 STATIC SECURITY HEADERS
 # =========================
 [[headers]]
   for = "/*"
@@ -100,7 +160,6 @@
 # =========================
 # ROUTES / ALIASES
 # =========================
-
 [[redirects]]
   from = "/dj"
   to = "/dj.html"

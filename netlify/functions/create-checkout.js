@@ -46,7 +46,7 @@ function isAllowedRedirect(url) {
   }
 }
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   // Preflight
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, body: '' }
 

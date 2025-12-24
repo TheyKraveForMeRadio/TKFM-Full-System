@@ -14,6 +14,8 @@
     "vite": "^5.4.0"
   },
   "dependencies": {
-    "@netlify/blobs": "^10.5.0"
+    "@netlify/blobs": "^10.5.0",
+    "@supabase/supabase-js": "^2.89.0",
+    "cloudinary": "^2.8.0"
   }
 }
