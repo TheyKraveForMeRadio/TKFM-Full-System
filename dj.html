@@ -2,38 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>DJ Portal | TKFM</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    body{background:#000;color:#fff;font-family:Arial,sans-serif;margin:0;padding:50px 20px;text-align:center}
-    .box{max-width:720px;margin:auto;background:#111;border:1px solid #222;border-radius:16px;padding:26px}
-    a{color:#ff00e6;font-weight:bold;text-decoration:none}
-    a:hover{text-decoration:underline}
-    .muted{color:#aaa}
-    button{margin-top:14px;width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#1b1b1b;color:#fff;font-weight:700;cursor:pointer}
-  </style>
+  <title>TKFM DJs</title>
+  <link rel="stylesheet" href="/tkfm-theme.css">
 </head>
 <body>
-  <div class="box">
-    <h1>🎧 TKFM DJ Portal</h1>
-    <p class="muted">Login required to upload and manage mixtapes.</p>
-
-    <p>
-      <a href="/dj/login.html">Go to DJ Login</a>
-    </p>
-
-    <button onclick="go()">Continue</button>
-  </div>
-
-  <script>
-    // If you already have a token, jump to dashboard
-    const token = localStorage.getItem('tkfm_dj_token')
-    function go(){
-      if (token) location.href = '/dj/dashboard.html'
-      else location.href = '/dj/login.html'
-    }
-    // Auto-redirect after brief delay
-    setTimeout(go, 650)
-  </script>
+  <header class="tkfm-header">
+    <h1>TKFM DJs</h1>
+    <p>DJ portal is being finalized. Check back soon.</p>
+    <p><a href="/" style="color:#ff00ff">Return Home</a></p>
+  </header>
 </body>
 </html>
+

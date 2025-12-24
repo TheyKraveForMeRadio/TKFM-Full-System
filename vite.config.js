@@ -9,6 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
+        
         main: resolve(__dirname, 'index.html'),
         news: resolve(__dirname, 'news.html'),
         submit: resolve(__dirname, 'submit.html'),
@@ -16,6 +17,7 @@ export default defineConfig({
         mixtapes: resolve(__dirname, 'mixtapes.html'),
         success: resolve(__dirname, 'success.html'),
         media: resolve(__dirname, 'tkfm-media-kit.html'),
+        dj: resolve(__dirname, 'dj.html'),
       },
     },
   },
