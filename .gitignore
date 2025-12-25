@@ -3,4 +3,9 @@
 .env
 dist/
 node_modules/
+<<<<<<< HEAD
 v2/node_modules/
+=======
+dist/
+.vite/
+>>>>>>> v2-clean-neon

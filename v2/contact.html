@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — TKFM</title>
+  <meta name="description" content="Contact TKFM for business, submissions, DJs, and sponsorships." />
+  <meta property="og:image" content="/tkfm-logo.jpg" />
+</head>
+<body>
+  <div id="tkfm-header"></div>
+
+  <main class="container">
+    <section class="page-hero">
+      <h1><span class="gradient">Contact</span></h1>
+      <p>For artists, DJs, sponsors, and business inquiries. Clean, professional communication only.</p>
+    </section>
+
+    <div class="panel"><div class="panel-inner">
+      <div class="grid3">
+        <div class="card"><div class="inner">
+          <h3>Artists</h3>
+          <p>Rotation, features, interviews, and submissions.</p>
+          <div style="margin-top:12px;"><a class="btn btn-primary" href="/submit.html">Submit</a></div>
+        </div></div>
+        <div class="card"><div class="inner">
+          <h3>DJs</h3>
+          <p>Slots, memberships, and platform placement.</p>
+          <div style="margin-top:12px;"><a class="btn btn-primary" href="/djs.html">DJ Info</a></div>
+        </div></div>
+        <div class="card"><div class="inner">
+          <h3>Sponsors</h3>
+          <p>Premium packages built for real brands.</p>
+          <div style="margin-top:12px;"><a class="btn btn-primary" href="/sponsors.html">Packages</a></div>
+        </div></div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="card">
+        <div class="inner">
+          <h3>Contact Form (wire later)</h3>
+          <p>Use Netlify Forms or a function. This layout is ready.</p>
+          <form class="form">
+            <input class="input" placeholder="Name" />
+            <input class="input" placeholder="Email" />
+            <input class="input" placeholder="What is this about? (Artist/DJ/Sponsor)" />
+            <input class="input" placeholder="Message" />
+            <button class="btn btn-primary" type="button">Send (connect)</button>
+          </form>
+        </div>
+      </div>
+
+    </div></div>
+  </main>
+
+  <div id="tkfm-footer"></div>
+
+  <script type="module">
+    import { mountShell } from "/src/_page.js";
+    mountShell("contact");
+  </script>
+</body>
+</html>
