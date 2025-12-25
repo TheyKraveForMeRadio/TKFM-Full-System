@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Submit Music — TKFM Radio</title>
+  <meta name="description" content="Submit music to TKFM. Premium independent artist services. Launching 2026." />
+  <meta property="og:image" content="/tkfm-logo.jpg" />
+</head>
+<body>
+  <div id="tkfm-header"></div>
+
+  <main class="container">
+    <section class="page-hero">
+      <h1><span class="gradient">Submit Music</span></h1>
+      <p>Clean process. Premium positioning. Choose your lane and submit your release.</p>
+    </section>
+
+    <div class="panel"><div class="panel-inner">
+      <div class="section-title"><h2>Submission Lanes</h2><span>Premium pricing (recommended)</span></div>
+
+      <div class="list">
+        <div class="item">
+          <div><strong>1 Track Submission</strong><span>Reviewed by real ears. Clean editorial intent.</span></div>
+          <div class="tag">$75</div>
+        </div>
+        <div class="item">
+          <div><strong>3 Track Package</strong><span>Best value to showcase range.</span></div>
+          <div class="tag">$175</div>
+        </div>
+        <div class="item">
+          <div><strong>Featured Spotlight Upgrade</strong><span>Homepage + profile + track spotlight.</span></div>
+          <div class="tag">$250</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="card">
+        <div class="inner">
+          <h3>Checkout Wiring</h3>
+          <p>This page is ready to connect to your Netlify Stripe checkout function (lookup_key flow).</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+            <button class="btn btn-primary" type="button">Checkout (connect)</button>
+            <a class="btn" href="/contact.html">Need help?</a>
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+  </main>
+
+  <div id="tkfm-footer"></div>
+
+  <script type="module">
+    import { mountShell } from "/src/_page.js";
+    mountShell("submit");
+  </script>
+</body>
+</html>
