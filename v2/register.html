@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Account — TKFM Power Station</title>
+  <meta name="description" content="Create your TKFM Radio account as an artist, DJ, sponsor or label." />
+
+  <style>
+    body.tkfm-graphfx-root {
+      position: relative !important;
+      min-height: 100vh !important;
+      overflow: hidden !important;
+      background: radial-gradient(circle at top left, #020617, #020014 55%, #000000 100%) !important;
+      color: #f9fafb !important;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .tkfm-bg-main {
+      position: fixed;
+      inset: -25%;
+      pointer-events: none;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.42), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(244, 63, 94, 0.42), transparent 60%);
+      filter: blur(10px);
+      animation: tkfmGlowReg 26s linear infinite alternate;
+      opacity: 0.9;
+    }
+
+    @keyframes tkfmGlowReg {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(3%, -3%, 0) scale(1.02); }
+      100% { transform: translate3d(-3%, 3%, 0) scale(1.03); }
+    }
+
+    main.tkfm-auth-main {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 2.25rem 1.2rem 3.5rem;
+    }
+
+    .tkfm-auth-card {
+      position: relative;
+      border-radius: 22px;
+      padding: 1.6rem 1.5rem 1.4rem;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.78), rgba(15,23,42,0.98));
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.95),
+        0 0 32px rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+    }
+
+    .tkfm-auth-card::before {
+      content: "";
+      position: absolute;
+      inset: -25%;
+      background: conic-gradient(
+        from 200deg,
+        rgba(56, 189, 248, 0.3),
+        rgba(255, 0, 128, 0.3),
+        rgba(250, 204, 21, 0.16),
+        rgba(56, 189, 248, 0.3)
+      );
+      opacity: 0.4;
+      filter: blur(30px);
+      z-index: -1;
+    }
+
+    .tkfm-auth-header {
+      text-align: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .tkfm-auth-kicker {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(191, 219, 254, 0.98);
+      margin-bottom: 0.3rem;
+    }
+
+    .tkfm-auth-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0 0 0.3rem;
+      background: linear-gradient(90deg, #ff007f, #00f5ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 14px rgba(255, 0, 128, 0.6);
+    }
+
+    .tkfm-auth-sub {
+      font-size: 0.8rem;
+      color: rgba(226, 232, 240, 0.95);
+    }
+
+    form.tkfm-auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .tkfm-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+    }
+
+    .tkfm-field label {
+      color: rgba(226, 232, 240, 0.9);
+    }
+
+    .tkfm-input,
+    .tkfm-select {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.5rem 0.9rem;
+      font-size: 0.82rem;
+      color: #e5e7eb;
+      outline: none;
+      transition:
+        border-color 0.15s ease-out,
+        box-shadow 0.15s ease-out,
+        background 0.15s ease-out;
+    }
+
+    .tkfm-input:focus,
+    .tkfm-select:focus {
+      border-color: rgba(56, 189, 248, 0.95);
+      box-shadow:
+        0 0 0 1px rgba(56, 189, 248, 0.7),
+        0 0 12px rgba(56, 189, 248, 0.7);
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .tkfm-role-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.4rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0.3rem;
+    }
+
+    @media (max-width: 480px) {
+      .tkfm-role-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .tkfm-role-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 0.35rem 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition:
+        border-color 0.14s ease-out,
+        box-shadow 0.14s ease-out,
+        background 0.14s ease-out,
+        transform 0.14s ease-out;
+    }
+
+    .tkfm-role-pill.active {
+      border-color: rgba(56, 189, 248, 0.95);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.72), rgba(15,23,42,0.98));
+      box-shadow:
+        0 10px 24px rgba(15, 23, 42, 0.9),
+        0 0 16px rgba(56, 189, 248, 0.7);
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    .tkfm-auth-footer-row {
+      margin-top: 0.9rem;
+    }
+
+    .tkfm-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.75);
+      color: #e0f2fe;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.52), rgba(15,23,42,0.98));
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform 0.16s ease-out,
+        box-shadow 0.16s ease-out,
+        border-color 0.16s ease-out,
+        background 0.16s ease-out;
+      width: 100%;
+    }
+
+    .tkfm-btn-primary {
+      border-color: rgba(219, 39, 119, 0.9);
+      background: radial-gradient(circle at top left, rgba(219,39,119,0.8), rgba(15,23,42,0.98));
+      color: #fdf2f8;
+    }
+
+    .tkfm-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.4), transparent 60%);
+      opacity: 0;
+      transform: translate3d(-40%, -40%, 0);
+      transition:
+        opacity 0.18s ease-out,
+        transform 0.24s ease-out;
+      pointer-events: none;
+    }
+
+    .tkfm-btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.9),
+        0 0 18px rgba(56, 189, 248, 0.65);
+      border-color: rgba(56, 189, 248, 0.98);
+    }
+
+    .tkfm-btn-primary:hover {
+      box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.9),
+        0 0 20px rgba(244, 63, 94, 0.85);
+      border-color: rgba(244, 63, 94, 0.98);
+    }
+
+    .tkfm-btn:hover::after {
+      opacity: 0.7;
+      transform: translate3d(0,0,0);
+    }
+
+    .tkfm-auth-alt {
+      font-size: 0.76rem;
+      color: rgba(226, 232, 240, 0.9);
+      margin-top: 0.7rem;
+      text-align: center;
+    }
+
+    .tkfm-auth-alt a {
+      color: rgba(129, 230, 217, 0.96);
+      text-decoration: none;
+    }
+
+    .tkfm-auth-alt a:hover {
+      text-decoration: underline;
+    }
+
+    .tkfm-auth-status {
+      font-size: 0.75rem;
+      margin-top: 0.65rem;
+      min-height: 1em;
+      color: rgba(248, 250, 252, 0.95);
+    }
+
+    .tkfm-auth-status.error {
+      color: #fecaca;
+    }
+
+    .tkfm-auth-status.ok {
+      color: #bbf7d0;
+    }
+  </style>
+</head>
+<body class="tkfm-graphfx-root">
+  <div class="tkfm-bg-main"></div>
+
+  <div id="tkfm-header"></div>
+
+  <main class="tkfm-auth-main">
+    <div class="tkfm-auth-card">
+      <div class="tkfm-auth-header">
+        <div class="tkfm-auth-kicker">TKFM Power Station</div>
+        <h1 class="tkfm-auth-title">Create Your Account</h1>
+        <p class="tkfm-auth-sub">
+          One login. Choose your lane — artist, DJ, sponsor or label — and plug into the TKFM ecosystem.
+        </p>
+      </div>
+
+      <form id="register-form" class="tkfm-auth-form">
+        <div class="tkfm-field">
+          <label for="reg-email">Email</label>
+          <input id="reg-email" type="email" class="tkfm-input" autocomplete="email" required />
+        </div>
+
+        <div class="tkfm-field">
+          <label for="reg-password">Password</label>
+          <input id="reg-password" type="password" class="tkfm-input" autocomplete="new-password" required />
+        </div>
+
+        <div class="tkfm-field">
+          <label>Choose your lane</label>
+          <div class="tkfm-role-grid">
+            <div class="tkfm-role-pill active" data-role="artist">Artist</div>
+            <div class="tkfm-role-pill" data-role="dj">DJ</div>
+            <div class="tkfm-role-pill" data-role="sponsor">Sponsor</div>
+            <div class="tkfm-role-pill" data-role="label">Label</div>
+          </div>
+          <input type="hidden" id="reg-role" value="artist" />
+        </div>
+
+        <div class="tkfm-auth-footer-row">
+          <button type="submit" class="tkfm-btn tkfm-btn-primary">Create Account</button>
+        </div>
+
+        <div id="register-status" class="tkfm-auth-status"></div>
+      </form>
+
+      <div class="tkfm-auth-alt">
+        Already have an account?
+        <a href="/login.html">Log in instead</a>
+      </div>
+    </div>
+  </main>
+
+  <div id="tkfm-footer"></div>
+
+  <script type="module">
+    import { mountShell } from "/src/_page.js";
+    import { supabase } from "/src/supabaseClient.js";
+
+    mountShell("");
+
+    const form = document.getElementById("register-form");
+    const emailInput = document.getElementById("reg-email");
+    const passwordInput = document.getElementById("reg-password");
+    const roleInput = document.getElementById("reg-role");
+    const statusEl = document.getElementById("register-status");
+    const rolePills = document.querySelectorAll(".tkfm-role-pill");
+
+    function setStatus(msg, type = "") {
+      statusEl.textContent = msg || "";
+      statusEl.className = "tkfm-auth-status" + (type ? " " + type : "");
+    }
+
+    rolePills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        rolePills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        roleInput.value = pill.getAttribute("data-role");
+      });
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      setStatus("Creating your account...", "");
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const role = roleInput.value || "artist";
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { role }
+          }
+        });
+
+        if (error) {
+          console.error(error);
+          setStatus(error.message || "Sign up failed", "error");
+          return;
+        }
+
+        setStatus("Account created. Check your email if confirmation is required, or continue to log in.", "ok");
+        // You can auto-redirect if email confirmation is disabled:
+        // window.location.href = "/dashboard.html";
+      } catch (err) {
+        console.error(err);
+        setStatus("Unexpected error during sign up", "error");
+      }
+    });
+  </script>
+</body>
+</html>

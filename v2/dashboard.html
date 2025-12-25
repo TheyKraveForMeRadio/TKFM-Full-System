@@ -6,14 +6,14 @@
   <title>Dashboard — TKFM Radio Power Station</title>
   <meta name="description" content="TKFM dashboard for artists, DJs, sponsors, and label partners. Unlock premium tools." />
 
-  <!-- GRAPHFX: heavy visual layer, isolated under .tkfm-graphfx -->
+  <!-- GRAPHFX: strong neon visuals, forced with !important -->
   <style>
-    .tkfm-graphfx-root {
-      position: relative;
-      min-height: 100vh;
-      overflow: hidden;
-      background: radial-gradient(circle at top left, #1a0027, #02020b 55%, #000000 100%);
-      color: #f9fafb;
+    body.tkfm-graphfx-root {
+      position: relative !important;
+      min-height: 100vh !important;
+      overflow-x: hidden !important;
+      background: radial-gradient(circle at top left, #1a0027, #02020b 55%, #000000 100%) !important;
+      color: #f9fafb !important;
     }
 
     .tkfm-graphfx-bg {
@@ -59,7 +59,6 @@
       100% { transform: rotate(360deg) scale(1.05); }
     }
 
-    /* HERO */
     .tkfm-hero {
       position: relative;
       padding-top: 2.5rem;
@@ -86,7 +85,6 @@
       color: rgba(249, 250, 251, 0.85);
     }
 
-    /* PANELS */
     .tkfm-panel {
       position: relative;
       border-radius: 22px;
@@ -120,7 +118,6 @@
       z-index: 1;
     }
 
-    /* SECTION TITLES */
     .tkfm-section-header {
       display: flex;
       flex-direction: column;
@@ -156,7 +153,6 @@
       color: rgba(148, 163, 184, 0.9);
     }
 
-    /* LIVE365 EMBED */
     .tkfm-live365-wrap {
       display: flex;
       flex-wrap: wrap;
@@ -180,7 +176,6 @@
         0 0 40px rgba(56, 189, 248, 0.55);
     }
 
-    /* ACCOUNT LIST */
     .tkfm-account-row {
       display: flex;
       align-items: center;
@@ -210,7 +205,6 @@
       text-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
     }
 
-    /* GRID / CARDS */
     .tkfm-grid3 {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -218,15 +212,10 @@
     }
 
     @media (max-width: 900px) {
-      .tkfm-grid3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .tkfm-grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-
     @media (max-width: 640px) {
-      .tkfm-grid3 {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      .tkfm-grid3 { grid-template-columns: minmax(0, 1fr); }
     }
 
     .tkfm-card {
@@ -306,7 +295,6 @@
       opacity: 1;
     }
 
-    /* BUTTON FX */
     .tkfm-btn {
       position: relative;
       display: inline-flex;
@@ -368,7 +356,6 @@
       transform: translate3d(0, 0, 0);
     }
 
-    /* FOOTER SECTION */
     .tkfm-footer-note {
       font-size: 0.8rem;
       color: rgba(148, 163, 184, 0.9);
@@ -377,14 +364,12 @@
   </style>
 </head>
 <body class="tkfm-graphfx-root">
-  <!-- Big moving neon background elements -->
   <div class="tkfm-graphfx-bg"></div>
   <div class="tkfm-graphfx-orbit"></div>
 
   <div id="tkfm-header"></div>
 
   <main class="container" style="position:relative;z-index:1;">
-    <!-- HERO + LIVE365 -->
     <section class="tkfm-hero">
       <h1 class="tkfm-hero-title">TKFM Control Room</h1>
       <p id="dash-hero-sub" class="tkfm-hero-sub">
@@ -403,7 +388,6 @@
           </div>
 
           <div class="tkfm-live365-player">
-            <!-- 🔊 LIVE365: replace href + src with your real Live365 player link -->
             <a
               id="live365-link"
               href="https://streaming.live365.com/a71526"
@@ -417,7 +401,7 @@
             <iframe
               id="live365-embed"
               class="tkfm-live365-iframe"
-              src="https://streaming.live365.com/a71526"
+              src="https://your-live365-player-url-here"
               allow="autoplay"
             ></iframe>
             <small style="color:rgba(148,163,184,0.85);font-size:0.7rem;display:block;margin-top:0.4rem;">
@@ -428,7 +412,6 @@
       </div>
     </section>
 
-    <!-- ACCOUNT SUMMARY -->
     <section class="tkfm-panel">
       <div class="tkfm-panel-inner">
         <div class="tkfm-section-header">
@@ -452,7 +435,6 @@
       </div>
     </section>
 
-    <!-- ARTIST TOOLS -->
     <section class="tkfm-panel">
       <div class="tkfm-panel-inner">
         <div class="tkfm-section-header">
@@ -491,7 +473,6 @@
       </div>
     </section>
 
-    <!-- DJ TOOLS -->
     <section class="tkfm-panel">
       <div class="tkfm-panel-inner">
         <div class="tkfm-section-header">
@@ -530,7 +511,6 @@
       </div>
     </section>
 
-    <!-- SPONSOR & LABEL -->
     <section class="tkfm-panel">
       <div class="tkfm-panel-inner">
         <div class="tkfm-section-header">
@@ -569,7 +549,6 @@
       </div>
     </section>
 
-    <!-- FOOTER NOTE -->
     <section class="tkfm-panel">
       <div class="tkfm-panel-inner">
         <h3 style="margin-top:0;margin-bottom:0.35rem;">Next Moves</h3>
