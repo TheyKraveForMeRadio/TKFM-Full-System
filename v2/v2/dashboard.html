@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard — TKFM Radio Power Station</title>
+  <meta name="description" content="TKFM dashboard for artists, DJs, sponsors, and label partners. Unlock premium tools." />
+
+  <!-- GRAPHFX: heavy visual layer, isolated under .tkfm-graphfx -->
+  <style>
+    .tkfm-graphfx-root {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at top left, #1a0027, #02020b 55%, #000000 100%);
+      color: #f9fafb;
+    }
+
+    .tkfm-graphfx-bg {
+      position: fixed;
+      inset: -25%;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 0, 128, 0.45), transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(0, 255, 255, 0.35), transparent 60%);
+      filter: blur(8px);
+      animation: tkfmGraphDrift 26s linear infinite alternate;
+      opacity: 0.9;
+    }
+
+    .tkfm-graphfx-orbit {
+      position: fixed;
+      inset: -40%;
+      pointer-events: none;
+      z-index: -2;
+      background:
+        conic-gradient(
+          from 180deg,
+          rgba(255, 0, 128, 0.2),
+          rgba(0, 255, 255, 0.2),
+          rgba(255, 255, 0, 0.12),
+          rgba(255, 0, 128, 0.2)
+        );
+      mix-blend-mode: screen;
+      opacity: 0.45;
+      filter: blur(45px);
+      animation: tkfmOrbit 40s linear infinite;
+    }
+
+    @keyframes tkfmGraphDrift {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(-4%, 3%, 0) scale(1.02); }
+      100% { transform: translate3d(3%, -3%, 0) scale(1.04); }
+    }
+
+    @keyframes tkfmOrbit {
+      0% { transform: rotate(0deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1.05); }
+    }
+
+    /* HERO */
+    .tkfm-hero {
+      position: relative;
+      padding-top: 2.5rem;
+      padding-bottom: 1.75rem;
+    }
+
+    .tkfm-hero-title {
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.35rem;
+      background: linear-gradient(90deg, #ff007f, #00f5ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 16px rgba(255, 0, 128, 0.6),
+        0 0 26px rgba(0, 245, 255, 0.55);
+    }
+
+    .tkfm-hero-sub {
+      font-size: 0.95rem;
+      max-width: 40rem;
+      color: rgba(249, 250, 251, 0.85);
+    }
+
+    /* PANELS */
+    .tkfm-panel {
+      position: relative;
+      border-radius: 22px;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.09), rgba(15,23,42,0.98));
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.85),
+        0 0 30px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+    }
+
+    .tkfm-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08),
+        rgba(15, 23, 42, 0.9)
+      );
+      mix-blend-mode: soft-light;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .tkfm-panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SECTION TITLES */
+    .tkfm-section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .tkfm-section-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      position: relative;
+      padding-bottom: 0.2rem;
+    }
+
+    .tkfm-section-header h2::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 34%;
+      height: 2px;
+      background: linear-gradient(90deg, #ff007f, #00f5ff);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.65);
+      border-radius: 999px;
+    }
+
+    .tkfm-section-header span {
+      font-size: 0.8rem;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    /* LIVE365 EMBED */
+    .tkfm-live365-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tkfm-live365-player {
+      min-width: 260px;
+      max-width: 390px;
+    }
+
+    .tkfm-live365-iframe {
+      width: 100%;
+      height: 80px;
+      border-radius: 999px;
+      border: none;
+      box-shadow:
+        0 0 24px rgba(147, 51, 234, 0.7),
+        0 0 40px rgba(56, 189, 248, 0.55);
+    }
+
+    /* ACCOUNT LIST */
+    .tkfm-account-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.65rem 0.5rem;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.35);
+    }
+
+    .tkfm-account-row strong {
+      font-size: 0.9rem;
+    }
+
+    .tkfm-account-row span {
+      display: block;
+      font-size: 0.82rem;
+      color: rgba(148, 163, 184, 0.95);
+    }
+
+    .tkfm-tag {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: #e0f2fe;
+      text-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
+    }
+
+    /* GRID / CARDS */
+    .tkfm-grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+
+    @media (max-width: 900px) {
+      .tkfm-grid3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .tkfm-grid3 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .tkfm-card {
+      position: relative;
+      border-radius: 18px;
+      padding: 1rem 1rem;
+      border: 1px solid rgba(51, 65, 85, 0.75);
+      background: radial-gradient(circle at top, rgba(30,64,175,0.75), rgba(15,23,42,0.97));
+      box-shadow:
+        0 16px 40px rgba(15, 23, 42, 0.95),
+        0 0 25px rgba(15, 23, 42, 0.9);
+      transform: translateY(0) scale(1);
+      transition:
+        transform 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        border-color 0.18s ease-out,
+        background 0.18s ease-out;
+      overflow: hidden;
+    }
+
+    .tkfm-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(
+        from 200deg,
+        rgba(255, 0, 128, 0.3),
+        rgba(56, 189, 248, 0.3),
+        rgba(250, 204, 21, 0.15),
+        rgba(255, 0, 128, 0.3)
+      );
+      filter: blur(26px);
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+      z-index: -1;
+    }
+
+    .tkfm-card h3 {
+      margin: 0 0 0.3rem;
+      font-size: 0.98rem;
+    }
+
+    .tkfm-card p {
+      margin: 0 0 0.5rem;
+      font-size: 0.82rem;
+      color: rgba(226, 232, 240, 0.86);
+    }
+
+    .tkfm-card-price {
+      display: flex;
+      align-items: baseline;
+      gap: 0.28rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tkfm-card-price strong {
+      font-size: 1.05rem;
+    }
+
+    .tkfm-card-price em {
+      font-style: normal;
+      font-size: 0.78rem;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    .tkfm-card:hover {
+      transform: translateY(-5px) scale(1.01);
+      border-color: rgba(56, 189, 248, 0.9);
+      box-shadow:
+        0 22px 52px rgba(15, 23, 42, 0.95),
+        0 0 36px rgba(56, 189, 248, 0.7);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.85), rgba(15,23,42,0.96));
+    }
+
+    .tkfm-card:hover::before {
+      opacity: 1;
+    }
+
+    /* BUTTON FX */
+    .tkfm-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.75);
+      color: #e0f2fe;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.52), rgba(15,23,42,0.98));
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform 0.14s ease-out,
+        box-shadow 0.14s ease-out,
+        border-color 0.14s ease-out,
+        background 0.14s ease-out;
+    }
+
+    .tkfm-btn-primary {
+      border-color: rgba(219, 39, 119, 0.85);
+      background: radial-gradient(circle at top left, rgba(219,39,119,0.68), rgba(15,23,42,0.98));
+      color: #fdf2f8;
+    }
+
+    .tkfm-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.45), transparent 60%);
+      opacity: 0;
+      transform: translate3d(-40%, -40%, 0);
+      transition:
+        opacity 0.16s ease-out,
+        transform 0.2s ease-out;
+      pointer-events: none;
+    }
+
+    .tkfm-btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.85),
+        0 0 18px rgba(56, 189, 248, 0.55);
+      border-color: rgba(56, 189, 248, 0.98);
+    }
+
+    .tkfm-btn-primary:hover {
+      box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.85),
+        0 0 20px rgba(244, 63, 94, 0.75);
+      border-color: rgba(244, 63, 94, 0.95);
+    }
+
+    .tkfm-btn:hover::after {
+      opacity: 0.6;
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* FOOTER SECTION */
+    .tkfm-footer-note {
+      font-size: 0.8rem;
+      color: rgba(148, 163, 184, 0.9);
+      max-width: 60ch;
+    }
+  </style>
+</head>
+<body class="tkfm-graphfx-root">
+  <!-- Big moving neon background elements -->
+  <div class="tkfm-graphfx-bg"></div>
+  <div class="tkfm-graphfx-orbit"></div>
+
+  <div id="tkfm-header"></div>
+
+  <main class="container" style="position:relative;z-index:1;">
+    <!-- HERO + LIVE365 -->
+    <section class="tkfm-hero">
+      <h1 class="tkfm-hero-title">TKFM Control Room</h1>
+      <p id="dash-hero-sub" class="tkfm-hero-sub">
+        Your power station. Unlock rotation, placements, DJ slots, sponsors, and label tools.
+      </p>
+    </section>
+
+    <section class="tkfm-panel">
+      <div class="tkfm-panel-inner">
+        <div class="tkfm-live365-wrap">
+          <div>
+            <div class="tkfm-section-header">
+              <h2>Live Now on TKFM</h2>
+              <span>Keep the station playing while you move your plays behind the scenes.</span>
+            </div>
+          </div>
+
+          <div class="tkfm-live365-player">
+            <!-- 🔊 LIVE365: replace href + src with your real Live365 player link -->
+            <a
+              id="live365-link"
+              href="https://streaming.live365.com/a71526"
+              target="_blank"
+              rel="noopener"
+              class="tkfm-btn tkfm-btn-primary"
+              style="width:100%;justify-content:center;margin-bottom:0.5rem;"
+            >
+              Listen Live on Live365
+            </a>
+            <iframe
+              id="live365-embed"
+              class="tkfm-live365-iframe"
+              src="https://streaming.live365.com/a71526"
+              allow="autoplay"
+            ></iframe>
+            <small style="color:rgba(148,163,184,0.85);font-size:0.7rem;display:block;margin-top:0.4rem;">
+              Edit <code>dashboard.html</code> and replace the Live365 URL with your official player link.
+            </small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCOUNT SUMMARY -->
+    <section class="tkfm-panel">
+      <div class="tkfm-panel-inner">
+        <div class="tkfm-section-header">
+          <h2>Account</h2>
+          <span id="dash-role-label">Loading...</span>
+        </div>
+
+        <div class="tkfm-account-row">
+          <div>
+            <strong>Email</strong>
+            <span id="dash-email">Loading...</span>
+          </div>
+          <div class="tkfm-tag" id="dash-role">—</div>
+        </div>
+
+        <div style="padding-top:0.6rem;">
+          <button class="tkfm-btn" id="dash-logout" type="button">
+            Sign out
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARTIST TOOLS -->
+    <section class="tkfm-panel">
+      <div class="tkfm-panel-inner">
+        <div class="tkfm-section-header">
+          <h2>Artist Tools</h2>
+          <span>Independent artist infrastructure: visibility, submissions, and serious motion.</span>
+        </div>
+
+        <div class="tkfm-grid3">
+          <div class="tkfm-card">
+            <h3>Artist Pro Monthly</h3>
+            <p>Unlock submissions, dashboards, spotlight options and performance analytics.</p>
+            <div class="tkfm-card-price"><strong>$39</strong><em>/month</em></div>
+            <button class="tkfm-btn tkfm-btn-primary js-checkout" data-lookup="artist_pro_monthly" data-mode="subscription">
+              Unlock Artist Pro
+            </button>
+          </div>
+
+          <div class="tkfm-card">
+            <h3>Elite Rotation</h3>
+            <p>High-exposure rotation for campaigns that need constant motion on the dial.</p>
+            <div class="tkfm-card-price"><strong>$500</strong><em>one-time</em></div>
+            <button class="tkfm-btn js-checkout" data-lookup="artist_rotation_elite" data-mode="payment">
+              Buy Elite Rotation
+            </button>
+          </div>
+
+          <div class="tkfm-card">
+            <h3>Homepage Takeover</h3>
+            <p>Lock in front-page visibility for your next drop or project run.</p>
+            <div class="tkfm-card-price"><strong>$800</strong><em>one-time</em></div>
+            <button class="tkfm-btn js-checkout" data-lookup="artist_homepage_takeover" data-mode="payment">
+              Homepage Takeover
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DJ TOOLS -->
+    <section class="tkfm-panel">
+      <div class="tkfm-panel-inner">
+        <div class="tkfm-section-header">
+          <h2>DJ Tools</h2>
+          <span>For DJs building shows, residencies, and brand power on TKFM.</span>
+        </div>
+
+        <div class="tkfm-grid3">
+          <div class="tkfm-card">
+            <h3>DJ Membership</h3>
+            <p>Access DJ slots, tools, and a permanent footprint on the station.</p>
+            <div class="tkfm-card-price"><strong>$199</strong><em>/month</em></div>
+            <button class="tkfm-btn tkfm-btn-primary js-checkout" data-lookup="dj_membership_monthly" data-mode="subscription">
+              Unlock DJ Membership
+            </button>
+          </div>
+
+          <div class="tkfm-card">
+            <h3>Guest DJ Slot</h3>
+            <p>Feature set to introduce your sound and test the waters.</p>
+            <div class="tkfm-card-price"><strong>$300</strong><em>one-time</em></div>
+            <button class="tkfm-btn js-checkout" data-lookup="dj_slot_guest" data-mode="payment">
+              Book Guest Slot
+            </button>
+          </div>
+
+          <div class="tkfm-card">
+            <h3>Prime-Time DJ Slot</h3>
+            <p>High-impact prime-time set for serious DJ campaigns.</p>
+            <div class="tkfm-card-price"><strong>$1,200</strong><em>one-time</em></div>
+            <button class="tkfm-btn js-checkout" data-lookup="dj_slot_prime" data-mode="payment">
+              Book Prime-Time
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPONSOR & LABEL -->
+    <section class="tkfm-panel">
+      <div class="tkfm-panel-inner">
+        <div class="tkfm-section-header">
+          <h2>Sponsor & Label</h2>
+          <span>For brands and label plays that need structured visibility and deals.</span>
+        </div>
+
+        <div class="tkfm-grid3">
+          <div class="tkfm-card">
+            <h3>Bronze Sponsor</h3>
+            <p>Entry-level monthly sponsor presence across TKFM touchpoints.</p>
+            <div class="tkfm-card-price"><strong>$1,000</strong><em>/month</em></div>
+            <button class="tkfm-btn js-checkout" data-lookup="sponsor_bronze" data-mode="subscription">
+              Become Bronze Sponsor
+            </button>
+          </div>
+
+          <div class="tkfm-card">
+            <h3>Silver Sponsor</h3>
+            <p>Premium mention frequency, placements and brand alignment.</p>
+            <div class="tkfm-card-price"><strong>$2,500</strong><em>/month</em></div>
+            <button class="tkfm-btn js-checkout" data-lookup="sponsor_silver" data-mode="subscription">
+              Become Silver Sponsor
+            </button>
+          </div>
+
+          <div class="tkfm-card">
+            <h3>Label Artist Package</h3>
+            <p>Label-level campaign & support for select artists on the roster.</p>
+            <div class="tkfm-card-price"><strong>$2,500</strong><em>one-time</em></div>
+            <button class="tkfm-btn js-checkout" data-lookup="label_artist_package" data-mode="payment">
+              Start Label Package
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER NOTE -->
+    <section class="tkfm-panel">
+      <div class="tkfm-panel-inner">
+        <h3 style="margin-top:0;margin-bottom:0.35rem;">Next Moves</h3>
+        <p class="tkfm-footer-note">
+          From here you can wire up uploads, leaderboards, AI tools and revenue analytics into these tiers.
+          The dashboard already knows your role (artist, DJ, sponsor, label) and can be extended with role-specific stats.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div id="tkfm-footer"></div>
+
+  <script type="module">
+    import { mountShell } from "/src/_page.js";
+    import { supabase } from "/src/supabaseClient.js";
+    mountShell("");
+
+    const emailEl = document.getElementById("dash-email");
+    const roleEl = document.getElementById("dash-role");
+    const roleLabelEl = document.getElementById("dash-role-label");
+    const heroSub = document.getElementById("dash-hero-sub");
+    const logoutBtn = document.getElementById("dash-logout");
+
+    async function loadUser() {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
+        window.location.href = "/login.html";
+        return;
+      }
+      const user = data.user;
+      const role = (user.user_metadata?.role || "artist").toLowerCase();
+
+      emailEl.textContent = user.email || "—";
+      roleEl.textContent = role.toUpperCase();
+      roleLabelEl.textContent = "Signed in as " + role;
+
+      if (role === "artist") {
+        heroSub.textContent = "Artist hub: control your submissions, rotation, and visibility from one place.";
+      } else if (role === "dj") {
+        heroSub.textContent = "DJ hub: manage your slots, sets, and presence on the station.";
+      } else if (role === "sponsor") {
+        heroSub.textContent = "Sponsor hub: track presence, placements, and campaign upgrades.";
+      } else if (role === "label") {
+        heroSub.textContent = "Label hub: manage rosters, campaigns, and TKFM plays.";
+      }
+    }
+
+    logoutBtn.addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.href = "/login.html";
+    });
+
+    async function startCheckout(lookupKey, mode = "payment") {
+      try {
+        const res = await fetch("/.netlify/functions/create-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lookup_key: lookupKey, mode })
+        });
+
+        if (!res.ok) {
+          alert("Checkout error");
+          return;
+        }
+
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert("No checkout URL returned. Adjust payload to match your function.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Checkout failed.");
+      }
+    }
+
+    document.querySelectorAll(".js-checkout").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const lookup = btn.getAttribute("data-lookup");
+        const mode = btn.getAttribute("data-mode") || "payment";
+        startCheckout(lookup, mode);
+      });
+    });
+
+    loadUser();
+  </script>
+</body>
+</html>
