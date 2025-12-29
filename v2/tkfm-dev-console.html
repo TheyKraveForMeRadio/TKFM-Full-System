@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM Dev Console — Neon Control Room</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 10% 0,rgba(56,189,248,0.20),transparent 55%),
+        radial-gradient(circle at 90% 0,rgba(236,72,153,0.20),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.26),transparent 55%);
+    }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen flex flex-col">
+
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            They Krave For Me Radio
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-emerald-300">Dev Console</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">👁 GOD VIEW</a>
+        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📈 Momentum</a>
+        <a href="artist-upload.html" class="px-3 py-1 rounded-full border border-pink-500/80 bg-pink-500/10 text-pink-200">🎨 Artist Upload</a>
+        <a href="dj-mixtape-hosting.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🔥 Mixtape Hosting</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
+      <!-- HERO -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-emerald-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Dev • Local Storage Brain
+          </div>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            Inspect, edit + reset the <span class="text-cyan-300 drop-shadow-[0_0_22px_rgba(56,189,248,0.9)]">TKFM brain</span> (this browser).
+          </h1>
+          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+            This console lets you read and edit the keys that power TKFM v2:
+            uploads, mixtape orders, fan profiles, rotation packs, contracts, DJ schedule, news and more.
+          </p>
+          <p class="text-[0.75rem] text-slate-400 max-w-xl">
+            Dev-only: everything here is stored in <span class="font-mono text-cyan-300 text-[0.75rem]">localStorage</span>.
+            Production would point the same UI at a real database + auth.
+          </p>
+        </div>
+
+        <!-- SNAPSHOT -->
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_140deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+          <div class="relative space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  Local Storage Snapshot
+                </p>
+                <p class="text-xs text-slate-300">
+                  TKFM-related keys discovered in this browser.
+                </p>
+              </div>
+              <button id="dev-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Rescan
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">TKFM Keys</div>
+                <div id="dev-tkfm-count" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">All Keys</div>
+                <div id="dev-all-count" class="text-lg font-bold">0</div>
+              </div>
+            </div>
+
+            <p class="text-[0.7rem] text-slate-300">
+              Uses <span class="font-mono text-cyan-300">tkfm_*</span> prefix plus important keys like
+              <span class="font-mono text-cyan-300">mixtapeOrders</span>.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- GRID: LEFT = KEY LIST, RIGHT = EDITOR + NEWS -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)]">
+        <!-- LEFT COLUMN: KEY BROWSER -->
+        <div class="space-y-4">
+          <!-- Key List -->
+          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+                TKFM Keys
+              </h2>
+              <span class="text-[0.7rem] text-slate-400">
+                Click a key to inspect / edit
+              </span>
+            </div>
+            <div id="dev-key-empty" class="text-[0.8rem] text-slate-400">
+              No TKFM keys found yet. Use the other pages to create data, then rescan.
+            </div>
+            <div id="dev-key-list" class="space-y-1 text-[0.8rem] max-h-[260px] overflow-y-auto"></div>
+          </div>
+
+          <!-- Global TKFM Controls -->
+          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-xs space-y-2">
+            <p class="text-[0.7rem] uppercase tracking-[0.26em] text-slate-400">
+              Global Controls (This Browser Only)
+            </p>
+            <p class="text-[0.8rem] text-slate-300">
+              These actions affect only <strong>localStorage</strong> in this browser. Safe for dev.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button id="dev-clear-tkfm" class="px-3 py-1.5 rounded-full border border-red-500/80 bg-red-500/10 text-red-200 uppercase tracking-[0.22em]">
+                Clear All TKFM Keys
+              </button>
+              <button id="dev-export-tkfm" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-200 uppercase tracking-[0.22em]">
+                Export TKFM → JSON
+              </button>
+            </div>
+            <p id="dev-status" class="text-[0.7rem] text-emerald-300"></p>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: EDITOR + NEWS TOOLS -->
+        <div class="space-y-4">
+          <!-- Key Editor -->
+          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-xs uppercase tracking-[0.3em] text-slate-400">
+                  Key Editor
+                </p>
+                <p id="dev-current-key-label" class="text-[0.8rem] text-slate-300">
+                  No key selected.
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2 text-[0.75rem]">
+                <button id="dev-format" class="px-2.5 py-1 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-200">
+                  Pretty Format
+                </button>
+                <button id="dev-save" class="px-2.5 py-1 rounded-full border border-emerald-500/80 bg-emerald-500/10 text-emerald-200">
+                  Save JSON
+                </button>
+                <button id="dev-clear-key" class="px-2.5 py-1 rounded-full border border-red-500/80 bg-red-500/10 text-red-200">
+                  Clear Key
+                </button>
+              </div>
+            </div>
+            <textarea
+              id="dev-editor"
+              class="w-full h-64 rounded-xl bg-slate-950/90 border border-slate-800 text-xs font-mono p-3 resize-vertical text-slate-100"
+              placeholder="// JSON for selected key will appear here. Edit, then click Save JSON."
+            ></textarea>
+            <p class="text-[0.7rem] text-slate-400">
+              If the value is not valid JSON, it will show raw text. When you hit Save, the console will try
+              <span class="font-mono text-cyan-300">JSON.parse</span> — if it fails, you’ll see an error.
+            </p>
+          </div>
+
+          <!-- Manual News Tools -->
+          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <p class="text-xs uppercase tracking-[0.3em] text-slate-400">
+                  Manual News Injector
+                </p>
+                <p class="text-[0.8rem] text-slate-300">
+                  Append a news card to <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_news_manual</span>.
+                </p>
+              </div>
+              <span class="text-[0.7rem] text-slate-400">
+                Feeds <span class="text-emerald-300">news.html</span>
+              </span>
+            </div>
+
+            <form id="dev-news-form" class="grid gap-2 text-[0.8rem]">
+              <div class="grid gap-2 sm:grid-cols-2">
+                <label class="space-y-1">
+                  <span class="text-slate-300">Title</span>
+                  <input id="dev-news-title" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
+                </label>
+                <label class="space-y-1">
+                  <span class="text-slate-300">Subtitle (optional)</span>
+                  <input id="dev-news-subtitle" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
+                </label>
+              </div>
+
+              <label class="space-y-1">
+                <span class="text-slate-300">Body</span>
+                <textarea id="dev-news-body" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5 h-16"></textarea>
+              </label>
+
+              <div class="grid gap-2 sm:grid-cols-3">
+                <label class="space-y-1">
+                  <span class="text-slate-300">Channel</span>
+                  <select id="dev-news-channel" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
+                    <option value="artist">Artist</option>
+                    <option value="label">Label</option>
+                    <option value="system">System</option>
+                  </select>
+                </label>
+                <label class="space-y-1">
+                  <span class="text-slate-300">City (optional)</span>
+                  <input id="dev-news-city" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
+                </label>
+                <label class="space-y-1">
+                  <span class="text-slate-300">Actor (optional)</span>
+                  <input id="dev-news-actor" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
+                </label>
+              </div>
+
+              <label class="space-y-1">
+                <span class="text-slate-300">Tags (comma separated)</span>
+                <input id="dev-news-tags" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" placeholder="mixtape, spotlight, premiere" />
+              </label>
+
+              <div class="flex justify-end">
+                <button
+                  type="submit"
+                  class="px-3 py-1.5 rounded-full border border-emerald-500/80 bg-emerald-500/10 text-emerald-200 text-[0.8rem] uppercase tracking-[0.22em]"
+                >
+                  Add News Item
+                </button>
+              </div>
+            </form>
+
+            <p id="dev-news-status" class="text-[0.7rem] text-emerald-300"></p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/50">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — Dev Console.</span>
+      <span class="opacity-80">
+        Inspects tkfm_* keys • mixtapeOrders • and more in localStorage.
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    const IMPORTANT_KEYS = [
+      'tkfm_artist_uploads',
+      'mixtapeOrders',
+      'tkfm_fan_profiles',
+      'tkfm_autopilot_last_pack',
+      'tkfm_contract_latest',
+      'tkfm_dj_schedule',
+      'tkfm_djs',
+      'tkfm_news_manual',
+      'tkfm_radio_state',
+      'tkfm_radio_now_playing'
+    ];
+
+    let currentKey = null;
+
+    function devEscape(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function devGetAllKeys() {
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        keys.push(k);
+      }
+      return keys;
+    }
+
+    function devScanKeys() {
+      const allKeys = devGetAllKeys();
+      const tkfmKeys = [];
+      const lowerImportant = new Set(IMPORTANT_KEYS.map(k => k.toLowerCase()));
+
+      allKeys.forEach(k => {
+        if (k.toLowerCase().startsWith('tkfm_') || lowerImportant.has(k.toLowerCase())) {
+          tkfmKeys.push(k);
+        }
+      });
+
+      // Sort: important first, then rest
+      tkfmKeys.sort((a, b) => {
+        const ai = IMPORTANT_KEYS.indexOf(a);
+        const bi = IMPORTANT_KEYS.indexOf(b);
+        if (ai !== -1 && bi !== -1) return ai - bi;
+        if (ai !== -1) return -1;
+        if (bi !== -1) return 1;
+        return a.localeCompare(b);
+      });
+
+      return { allKeys, tkfmKeys };
+    }
+
+    function devPrettyJson(raw) {
+      if (raw === null || raw === undefined) return '';
+      if (typeof raw !== 'string') {
+        try {
+          return JSON.stringify(raw, null, 2);
+        } catch {
+          return String(raw);
+        }
+      }
+
+      try {
+        const parsed = JSON.parse(raw);
+        return JSON.stringify(parsed, null, 2);
+      } catch {
+        // not JSON, show raw
+        return raw;
+      }
+    }
+
+    function devLoadKey(k) {
+      currentKey = k;
+      const label = document.getElementById('dev-current-key-label');
+      const editor = document.getElementById('dev-editor');
+
+      const raw = localStorage.getItem(k);
+      if (raw === null) {
+        label.textContent = 'Key "' + k + '" (not set)';
+        editor.value = '';
+        return;
+      }
+
+      // compute size/summary
+      let summary = '';
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          summary = 'Array length: ' + parsed.length;
+        } else if (parsed && typeof parsed === 'object') {
+          const keysCount = Object.keys(parsed).length;
+          summary = 'Object keys: ' + keysCount;
+        } else {
+          summary = 'Primitive JSON value';
+        }
+      } catch {
+        summary = 'Non-JSON string value';
+      }
+
+      label.textContent = 'Key "' + k + '" — ' + summary;
+      editor.value = devPrettyJson(raw);
+    }
+
+    function devRenderKeyList() {
+      const { allKeys, tkfmKeys } = devScanKeys();
+      const list = document.getElementById('dev-key-list');
+      const empty = document.getElementById('dev-key-empty');
+      const tkfmCountEl = document.getElementById('dev-tkfm-count');
+      const allCountEl = document.getElementById('dev-all-count');
+
+      tkfmCountEl.textContent = tkfmKeys.length;
+      allCountEl.textContent = allKeys.length;
+
+      if (!tkfmKeys.length) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      list.innerHTML = tkfmKeys.map(k => {
+        const raw = localStorage.getItem(k);
+        let summary = '';
+        let badge = '';
+
+        if (raw === null) {
+          summary = 'not set';
+        } else {
+          try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              summary = 'Array[' + parsed.length + ']';
+            } else if (parsed && typeof parsed === 'object') {
+              const count = Object.keys(parsed).length;
+              summary = 'Object{' + count + '}';
+            } else {
+              summary = 'JSON value';
+            }
+          } catch {
+            summary = 'String length ' + raw.length;
+          }
+
+          if (k === 'tkfm_artist_uploads' || k === 'mixtapeOrders' || k === 'tkfm_fan_profiles') {
+            try {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed)) {
+                badge = parsed.length + ' items';
+              }
+            } catch { /* ignore */ }
+          }
+        }
+
+        return (
+          '<button type="button" data-dev-key="' + devEscape(k) + '" ' +
+          'class="w-full text-left rounded-xl border border-slate-800 bg-slate-950/90 px-3 py-2 flex items-center justify-between gap-2 hover:border-cyan-400/80 hover:bg-cyan-400/10 transition">' +
+            '<div class="min-w-0">' +
+              '<p class="text-[0.8rem] font-semibold truncate">' + devEscape(k) + '</p>' +
+              '<p class="text-[0.7rem] text-slate-400 truncate">' + devEscape(summary) + '</p>' +
+            '</div>' +
+            (badge
+              ? '<span class="text-[0.7rem] px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200">' + devEscape(badge) + '</span>'
+              : ''
+            ) +
+          '</button>'
+        );
+      }).join('');
+
+      list.querySelectorAll('[data-dev-key]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const k = btn.getAttribute('data-dev-key');
+          if (k) devLoadKey(k);
+        });
+      });
+    }
+
+    function devSetStatus(msg, isError) {
+      const el = document.getElementById('dev-status');
+      if (!msg) {
+        el.textContent = '';
+        return;
+      }
+      el.textContent = msg;
+      el.style.color = isError ? '#fca5a5' : '#6ee7b7';
+    }
+
+    function devSetNewsStatus(msg, isError) {
+      const el = document.getElementById('dev-news-status');
+      if (!msg) {
+        el.textContent = '';
+        return;
+      }
+      el.textContent = msg;
+      el.style.color = isError ? '#fca5a5' : '#6ee7b7';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const btnRefresh = document.getElementById('dev-refresh');
+      const btnClearTkfm = document.getElementById('dev-clear-tkfm');
+      const btnExport = document.getElementById('dev-export-tkfm');
+      const btnFormat = document.getElementById('dev-format');
+      const btnSave = document.getElementById('dev-save');
+      const btnClearKey = document.getElementById('dev-clear-key');
+      const editor = document.getElementById('dev-editor');
+      const newsForm = document.getElementById('dev-news-form');
+
+      devRenderKeyList();
+
+      btnRefresh?.addEventListener('click', () => {
+        devSetStatus('', false);
+        devRenderKeyList();
+      });
+
+      btnClearTkfm?.addEventListener('click', () => {
+        const { tkfmKeys } = devScanKeys();
+        if (!tkfmKeys.length) {
+          devSetStatus('No TKFM keys to clear.', false);
+          return;
+        }
+        if (!confirm('Clear all TKFM-related keys on THIS DEVICE?')) return;
+        tkfmKeys.forEach(k => localStorage.removeItem(k));
+        devSetStatus('Cleared ' + tkfmKeys.length + ' TKFM keys.', false);
+        devRenderKeyList();
+        if (currentKey && tkfmKeys.includes(currentKey)) {
+          currentKey = null;
+          document.getElementById('dev-current-key-label').textContent = 'No key selected.';
+          editor.value = '';
+        }
+      });
+
+      btnExport?.addEventListener('click', () => {
+        const { tkfmKeys } = devScanKeys();
+        const exportObj = {};
+        tkfmKeys.forEach(k => {
+          const raw = localStorage.getItem(k);
+          exportObj[k] = raw;
+        });
+        const text = JSON.stringify(exportObj, null, 2);
+        editor.value = text;
+        currentKey = null;
+        document.getElementById('dev-current-key-label').textContent = 'Export snapshot (not a single key).';
+        devSetStatus('Exported TKFM keys into editor. Copy/paste as needed.', false);
+      });
+
+      btnFormat?.addEventListener('click', () => {
+        const raw = editor.value;
+        if (!raw.trim()) return;
+        try {
+          const parsed = JSON.parse(raw);
+          editor.value = JSON.stringify(parsed, null, 2);
+          devSetStatus('Formatted JSON.', false);
+        } catch (e) {
+          devSetStatus('Format failed: not valid JSON. ' + e.message, true);
+        }
+      });
+
+      btnSave?.addEventListener('click', () => {
+        if (!currentKey) {
+          devSetStatus('Select a key in the left list before saving.', true);
+          return;
+        }
+        const text = editor.value;
+        if (!text.trim()) {
+          // treat empty as remove
+          if (!confirm('Empty value will remove the key "' + currentKey + '". Continue?')) return;
+          localStorage.removeItem(currentKey);
+          devSetStatus('Removed key "' + currentKey + '".', false);
+          devRenderKeyList();
+          currentKey = null;
+          document.getElementById('dev-current-key-label').textContent = 'No key selected.';
+          editor.value = '';
+          return;
+        }
+        try {
+          const parsed = JSON.parse(text);
+          localStorage.setItem(currentKey, JSON.stringify(parsed));
+          devSetStatus('Saved JSON to "' + currentKey + '".', false);
+          devRenderKeyList();
+        } catch (e) {
+          devSetStatus('Save failed: editor content is not valid JSON. ' + e.message, true);
+        }
+      });
+
+      btnClearKey?.addEventListener('click', () => {
+        if (!currentKey) {
+          devSetStatus('No key selected to clear.', true);
+          return;
+        }
+        if (!confirm('Clear key "' + currentKey + '" on THIS DEVICE?')) return;
+        localStorage.removeItem(currentKey);
+        devSetStatus('Cleared key "' + currentKey + '".', false);
+        devRenderKeyList();
+        currentKey = null;
+        document.getElementById('dev-current-key-label').textContent = 'No key selected.';
+        editor.value = '';
+      });
+
+      newsForm?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const title = document.getElementById('dev-news-title').value.trim();
+        const subtitle = document.getElementById('dev-news-subtitle').value.trim();
+        const body = document.getElementById('dev-news-body').value.trim();
+        const channel = document.getElementById('dev-news-channel').value;
+        const city = document.getElementById('dev-news-city').value.trim();
+        const actor = document.getElementById('dev-news-actor').value.trim();
+        const tagsRaw = document.getElementById('dev-news-tags').value.trim();
+
+        if (!title) {
+          devSetNewsStatus('Title is required for a news item.', true);
+          return;
+        }
+
+        const tags = tagsRaw
+          ? tagsRaw.split(',').map(s => s.trim()).filter(Boolean)
+          : [];
+
+        let manual = nSafeParse('tkfm_news_manual', []);
+        if (!Array.isArray(manual)) manual = [];
+
+        const now = new Date().toISOString();
+
+        manual.push({
+          title,
+          subtitle,
+          body,
+          channel,
+          city,
+          actor,
+          tags,
+          createdAt: now
+        });
+
+        try {
+          localStorage.setItem('tkfm_news_manual', JSON.stringify(manual));
+          devSetNewsStatus('News item added. Check news.html to see it in the feed.', false);
+
+          document.getElementById('dev-news-title').value = '';
+          document.getElementById('dev-news-subtitle').value = '';
+          document.getElementById('dev-news-body').value = '';
+          document.getElementById('dev-news-city').value = '';
+          document.getElementById('dev-news-actor').value = '';
+          document.getElementById('dev-news-tags').value = '';
+        } catch (err) {
+          devSetNewsStatus('Failed to save news: ' + err.message, true);
+        }
+      });
+
+      // helper reused from news script style
+      function nSafeParse(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return fallback;
+          const parsed = JSON.parse(raw);
+          return parsed ?? fallback;
+        } catch (e) {
+          console.warn('Dev console: failed to parse', key, e);
+          return fallback;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
