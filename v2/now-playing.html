@@ -1,430 +1,172 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>TKFM — Now Playing Widget</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
+  <meta charset="utf-8" />
+  <title>TKFM — Now Playing</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
   <style>
-    :root{
-      --bg:#020617;
-      --card:#020617;
-      --card-inner:#020617;
-      --neon-pink:#ec4899;
-      --neon-cyan:#22d3ee;
-      --neon-gold:#facc15;
-      --muted:#9ca3af;
-      --text:#e5e7eb;
-    }
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
-    }
     body{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:
-        radial-gradient(circle at 0 0,rgba(236,72,153,.25),transparent 55%),
-        radial-gradient(circle at 100% 100%,rgba(34,211,238,.25),transparent 55%),
-        linear-gradient(to bottom,#020617,#020617 60%,#000 100%);
-      color:var(--text);
-    }
-
-    .widget-shell{
-      width:100%;
-      max-width:420px;
-      padding:1.1rem;
-    }
-
-    .widget{
-      border-radius:22px;
-      padding:0.9rem 1rem 1rem;
-      border:1px solid rgba(250,204,21,.7);
-      background:
-        radial-gradient(circle at 0 0,rgba(250,204,21,.24),transparent 60%),
-        radial-gradient(circle at 100% 100%,rgba(34,211,238,.16),transparent 55%),
-        rgba(15,23,42,.96);
-      box-shadow:
-        0 0 35px rgba(0,0,0,1),
-        0 0 26px rgba(250,204,21,.6);
-    }
-
-    .header-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:.7rem;
-      margin-bottom:.45rem;
-    }
-    .brand-row{
-      display:flex;
-      align-items:center;
-      gap:.55rem;
-    }
-    .brand-dot{
-      width:26px;height:26px;border-radius:999px;
-      border:1px solid rgba(250,204,21,.8);
-      background:
-        radial-gradient(circle at 20% 0,#facc15,#fb923c 55%,#ec4899 90%,#020617 100%);
-      box-shadow:
-        0 0 14px rgba(250,204,21,.9),
-        0 0 16px rgba(236,72,153,.8);
-    }
-    .brand-text{
-      display:flex;
-      flex-direction:column;
-      gap:.06rem;
-    }
-    .brand-kicker{
-      font-size:.62rem;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--muted);
-    }
-    .brand-main{
-      font-size:.86rem;
-      font-weight:650;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-    }
-    .live-pill{
-      font-size:.64rem;
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      padding:.16rem .6rem;
-      border-radius:999px;
-      border:1px solid rgba(34,197,94,.9);
-      color:#bbf7d0;
-      background:radial-gradient(circle at 0 0,rgba(34,197,94,.28),transparent 65%);
-      display:flex;
-      align-items:center;
-      gap:.25rem;
-      white-space:nowrap;
-    }
-    .live-dot{
-      width:7px;height:7px;border-radius:999px;
-      background:#22c55e;
-      box-shadow:0 0 12px rgba(34,197,94,.9);
-      animation:pulse 1.4s infinite;
-    }
-    @keyframes pulse{
-      0%{transform:scale(1);opacity:1;}
-      50%{transform:scale(1.4);opacity:.5;}
-      100%{transform:scale(1);opacity:1;}
-    }
-
-    .now-playing-label{
-      font-size:.65rem;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--muted);
-      margin-bottom:.25rem;
-    }
-
-    .now-card{
-      border-radius:16px;
-      border:1px solid rgba(148,163,184,.6);
-      padding:.5rem .65rem .55rem;
-      background:
-        radial-gradient(circle at 0 0,rgba(236,72,153,.24),transparent 65%),
-        rgba(15,23,42,.98);
-      margin-bottom:.55rem;
-    }
-    .track-title{
-      font-size:1rem;
-      font-weight:650;
-      margin-bottom:.12rem;
-    }
-    .track-artist{
-      font-size:.88rem;
-      color:var(--muted);
-      margin-bottom:.25rem;
-    }
-    .meta-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:.5rem;
-      font-size:.72rem;
-      color:var(--muted);
-    }
-    .tag-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.25rem;
-    }
-    .tag{
-      font-size:.63rem;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      padding:.14rem .42rem;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.7);
-    }
-    .tag.tier{
-      border-color:var(--neon-cyan);
-      color:var(--neon-cyan);
-    }
-    .tag.featured{
-      border-color:var(--neon-gold);
-      color:var(--neon-gold);
-    }
-    .tag.elite{
-      border-color:var(--neon-pink);
-      color:var(--neon-pink);
-    }
-
-    .upnext{
-      margin-top:.35rem;
-      padding-top:.35rem;
-      border-top:1px dashed rgba(51,65,85,.9);
-      font-size:.74rem;
-      color:var(--muted);
-    }
-    .upnext span.label{
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      font-size:.63rem;
-      color:var(--muted);
-    }
-    .upnext-main{
-      margin-top:.1rem;
-      font-size:.8rem;
-      color:var(--text);
-    }
-
-    .footer{
-      margin-top:.5rem;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:.4rem;
-      font-size:.68rem;
-      color:var(--muted);
-    }
-    .footer a{
-      color:var(--neon-cyan);
-      text-decoration:none;
-    }
-    .controls{
-      display:flex;
-      gap:.2rem;
-    }
-    .ctrl-btn{
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.7);
-      background:rgba(15,23,42,.96);
-      padding:.16rem .35rem;
-      font-size:.65rem;
-      cursor:pointer;
-      color:var(--muted);
-    }
-    .ctrl-btn.primary{
-      border-color:var(--neon-cyan);
-      color:var(--neon-cyan);
-    }
-
-    .empty{
-      font-size:.78rem;
-      color:var(--muted);
-      padding:.15rem .05rem .1rem;
-    }
-
-    @media (max-width:480px){
-      .widget-shell{padding:.8rem;}
-      .widget{padding:.75rem .8rem .85rem;}
-      .brand-main{font-size:.8rem;}
-      .hero-btn{font-size:.75rem;}
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.25),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.25),transparent 60%);
     }
   </style>
 </head>
+<body class="text-slate-50 min-h-screen flex items-center justify-center">
 
-<body>
-<div class="widget-shell">
-  <div class="widget">
-    <div class="header-row">
-      <div class="brand-row">
-        <div class="brand-dot"></div>
-        <div class="brand-text">
-          <div class="brand-kicker">They Krave For Me Radio</div>
-          <div class="brand-main">TKFM • Now Playing</div>
+  <main class="w-full max-w-md px-4">
+    <section class="rounded-2xl border border-slate-800 bg-slate-950/90 p-4 text-sm space-y-3 shadow-[0_0_35px_rgba(15,23,42,0.9)]">
+      <header class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_0_4px_rgba(52,211,153,0.45)]"></span>
+          <div>
+            <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400">
+              They Krave For Me Radio
+            </p>
+            <p class="text-xs text-slate-300">
+              Now Playing (Local Dev)
+            </p>
+          </div>
+        </div>
+        <a href="radio-hub.html" class="text-[0.7rem] text-cyan-300 hover:text-cyan-100">
+          Hub ↗
+        </a>
+      </header>
+
+      <div id="np-empty" class="text-[0.85rem] text-slate-300">
+        No active rotation yet. Open <span class="text-cyan-300">Radio Hub</span> and load an Autopilot pack.
+      </div>
+
+      <div id="np-main" class="hidden space-y-2">
+        <div>
+          <p id="np-title" class="text-lg font-semibold truncate">
+            —
+          </p>
+          <p id="np-artist" class="text-sm text-slate-200 truncate">
+            —
+          </p>
+          <p id="np-meta" class="text-xs text-slate-400 truncate">
+            —
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 text-[0.75rem] text-slate-300">
+          <div class="flex flex-wrap gap-2">
+            <span id="np-mode" class="px-2.5 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-100">
+              Mode: —
+            </span>
+            <span id="np-index" class="px-2.5 py-1 rounded-full border border-slate-700/80 bg-slate-900/90">
+              —
+            </span>
+          </div>
+          <span id="np-updated" class="text-[0.7rem] text-slate-400">
+            —
+          </span>
         </div>
       </div>
-      <div class="live-pill">
-        <div class="live-dot"></div>
-        Live
-      </div>
-    </div>
+    </section>
+  </main>
 
-    <div class="now-playing-label">Now Playing</div>
-
-    <div id="emptyState" class="empty" style="display:none;">
-      No Autopilot pack found. Generate a pack in <strong>autopilot-engine.html</strong>
-      to feed this widget from <code>tkfm_autopilot_last_pack</code>.
-    </div>
-
-    <div id="nowCard" class="now-card" style="display:none;">
-      <div id="trackTitle" class="track-title">—</div>
-      <div id="trackArtist" class="track-artist">—</div>
-      <div class="meta-row">
-        <div class="tag-row" id="tagRow"></div>
-        <div id="slotInfo">Slot 0 / 0</div>
-      </div>
-
-      <div class="upnext" id="upNextBox" style="display:none;">
-        <span class="label">Up Next</span>
-        <div id="upNextMain" class="upnext-main"></div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <div>Powered by <a href="radio-hub.html" target="_blank" rel="noreferrer">TKFM Autopilot</a></div>
-      <div class="controls">
-        <button type="button" class="ctrl-btn" id="prevBtn">◀</button>
-        <button type="button" class="ctrl-btn primary" id="nextBtn">▶</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-  import { getRotationForAIDJ } from './js/tkfm-core.js';
-
-  const nowCard    = document.getElementById('nowCard');
-  const emptyState = document.getElementById('emptyState');
-
-  const trackTitle  = document.getElementById('trackTitle');
-  const trackArtist = document.getElementById('trackArtist');
-  const tagRow      = document.getElementById('tagRow');
-  const slotInfo    = document.getElementById('slotInfo');
-
-  const upNextBox  = document.getElementById('upNextBox');
-  const upNextMain = document.getElementById('upNextMain');
-
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-
-  const INDEX_KEY = 'tkfm_now_playing_index';
-
-  function getIndex(max){
-    try{
-      const raw = localStorage.getItem(INDEX_KEY);
-      const n = Number(raw);
-      if(isNaN(n) || n < 0) return 0;
-      if(max <= 0) return 0;
-      return n % max;
-    }catch{
-      return 0;
-    }
-  }
-
-  function setIndex(i){
-    try{
-      localStorage.setItem(INDEX_KEY,String(i));
-    }catch{}
-  }
-
-  function normalizeTrack(t){
-    return {
-      artist: t.artistName || t.artist || 'Unknown Artist',
-      title:  t.trackTitle  || t.title  || 'Untitled',
-      tier:   (t.tier || 'standard').toLowerCase(),
-      featured: !!t.featured,
-      elite:    !!t.elite
-    };
-  }
-
-  function render(){
-    const packRaw = getRotationForAIDJ();
-    const pack = Array.isArray(packRaw) ? packRaw : [];
-
-    if(!pack.length){
-      nowCard.style.display = 'none';
-      emptyState.style.display = 'block';
-      return;
+  <script>
+    function npSafeParse(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (e) {
+        console.warn('Now Playing: failed to parse', key, e);
+        return fallback;
+      }
     }
 
-    emptyState.style.display = 'none';
-    nowCard.style.display = 'block';
-
-    let idx = getIndex(pack.length);
-    if(idx >= pack.length) idx = 0;
-    setIndex(idx);
-
-    const current = normalizeTrack(pack[idx]);
-    const next    = pack[(idx+1) % pack.length];
-
-    trackTitle.textContent  = `"${current.title}"`;
-    trackArtist.textContent = current.artist;
-
-    // tags
-    tagRow.innerHTML = '';
-    const tierTag = document.createElement('span');
-    tierTag.className = 'tag tier';
-    tierTag.textContent = current.tier.toUpperCase();
-    tagRow.appendChild(tierTag);
-
-    if(current.featured){
-      const t = document.createElement('span');
-      t.className = 'tag featured';
-      t.textContent = 'FEATURED';
-      tagRow.appendChild(t);
-    }
-    if(current.elite){
-      const t = document.createElement('span');
-      t.className = 'tag elite';
-      t.textContent = 'ELITE';
-      tagRow.appendChild(t);
+    function npPrettyDate(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleTimeString();
+      } catch {
+        return '';
+      }
     }
 
-    slotInfo.textContent = `Slot ${idx+1} / ${pack.length}`;
-
-    if(next){
-      const nn = normalizeTrack(next);
-      upNextBox.style.display = 'block';
-      upNextMain.textContent = `${nn.artist} — "${nn.title}"`;
-    }else{
-      upNextBox.style.display = 'none';
-      upNextMain.textContent = '';
+    function npEscape(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
     }
-  }
 
-  prevBtn.addEventListener('click',()=>{
-    const pack = getRotationForAIDJ() || [];
-    if(!pack.length) return;
-    const max = pack.length;
-    let idx = getIndex(max);
-    idx = (idx - 1 + max) % max;
-    setIndex(idx);
-    render();
-  });
+    function npRender() {
+      const emptyEl = document.getElementById('np-empty');
+      const mainEl = document.getElementById('np-main');
+      const titleEl = document.getElementById('np-title');
+      const artistEl = document.getElementById('np-artist');
+      const metaEl = document.getElementById('np-meta');
+      const modeEl = document.getElementById('np-mode');
+      const indexEl = document.getElementById('np-index');
+      const updatedEl = document.getElementById('np-updated');
 
-  nextBtn.addEventListener('click',()=>{
-    const pack = getRotationForAIDJ() || [];
-    if(!pack.length) return;
-    const max = pack.length;
-    let idx = getIndex(max);
-    idx = (idx + 1) % max;
-    setIndex(idx);
-    render();
-  });
+      const pack = npSafeParse('tkfm_autopilot_last_pack', null);
+      const now = npSafeParse('tkfm_radio_now_playing', null);
 
-  // optional auto-advance every 45s just to feel alive
-  setInterval(()=>{
-    const pack = getRotationForAIDJ() || [];
-    if(!pack.length) return;
-    const max = pack.length;
-    let idx = getIndex(max);
-    idx = (idx + 1) % max;
-    setIndex(idx);
-    render();
-  }, 45000);
+      const tracks = pack && Array.isArray(pack.tracks)
+        ? pack.tracks
+        : pack && Array.isArray(pack.items)
+          ? pack.items
+          : [];
 
-  render();
-</script>
+      if (!pack || !now || !tracks.length) {
+        mainEl.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      const idx = Number.isInteger(now.index) ? now.index : 0;
+      const track = tracks[idx] || now.track || null;
+
+      if (!track) {
+        mainEl.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      const title = track.trackTitle || track.title || 'Untitled Record';
+      const artist = track.artistName || track.artist || 'Unknown Artist';
+      const city = track.city || '';
+      const tag = track.tag || track.tier || '';
+      const source = track.source || track.sourceKey || '';
+
+      titleEl.textContent = title;
+      artistEl.textContent = artist;
+      metaEl.textContent = [
+        city ? 'City: ' + city : '',
+        tag ? 'Tag: ' + tag : '',
+        source ? 'Source: ' + source : ''
+      ].filter(Boolean).join(' • ') || 'Rotation record';
+
+      const mode = pack.mode || pack.profile || now.mode || 'default';
+      modeEl.textContent = 'Mode: ' + mode;
+      indexEl.textContent = (idx + 1) + ' / ' + tracks.length;
+
+      const updated = now.updatedAt || pack.createdAt || pack.timestamp || '';
+      updatedEl.textContent = updated ? ('Updated ' + npPrettyDate(updated)) : '';
+
+      emptyEl.classList.add('hidden');
+      mainEl.classList.remove('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      npRender();
+      // Optional small auto-refresh so the widget stays synced if Radio Hub moves tracks
+      setInterval(npRender, 4000);
+    });
+  </script>
 </body>
 </html>
