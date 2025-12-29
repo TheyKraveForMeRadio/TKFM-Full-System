@@ -2,92 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>TKFM — GOD VIEW (Owner Control Room)</title>
+  <title>TKFM — GOD VIEW (Owner Master Dashboard)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/logo-check.js" defer></script>
   <style>
-    body {
+    body{
       background:#020617;
       background-image:
         radial-gradient(circle at 10% 0,rgba(56,189,248,0.16),transparent 55%),
         radial-gradient(circle at 90% 0,rgba(236,72,153,0.16),transparent 55%),
         radial-gradient(circle at 50% 100%,rgba(168,85,247,0.18),transparent 55%);
     }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
   </style>
 </head>
 <body class="text-slate-50 min-h-screen flex flex-col">
 
-  <!-- TOP NAV (OWNER) -->
-  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+  <!-- TOP BAR -->
+  <header class="w-full border-b border-slate-800/80 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
       <a href="index.html" class="flex items-center gap-3">
         <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
         <div class="leading-tight">
           <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
-            Owner Console • TKFM
+            TKFM — The Independent Artist Power Station
           </div>
           <div class="text-sm font-semibold">
-            GOD VIEW <span class="text-cyan-300">— Radio + Label + Revenue</span>
+            GOD VIEW <span class="text-emerald-300">Owner Master Dashboard</span>
           </div>
         </div>
       </a>
+
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">📻 Radio Hub</a>
-        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">🎫 Creator Pass</a>
-        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">⭐ Fan Pass</a>
-        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-100">🏛 TKFM Records</a>
+        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🎫 Creator Pass</a>
+        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">⭐ Fan Pass</a>
+        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-300">📈 Momentum Engine</a>
+        <a href="tkfm-dev-console.html" class="px-3 py-1 rounded-full border border-slate-500/80 bg-slate-900/90 text-slate-200">🛠 Dev Console</a>
       </nav>
     </div>
   </header>
 
   <!-- MAIN -->
   <main class="flex-1">
-    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-8">
-
-      <!-- HERO ROW -->
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
+      <!-- HERO -->
       <div class="flex flex-col lg:flex-row gap-6 items-start">
-        <div class="flex-1">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.28em] text-cyan-200 mb-3">
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-emerald-200">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            GOD VIEW • Owner Only
+            Owner • GOD VIEW
           </div>
-          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight mb-2">
-            One board for <span class="text-purple-400 drop-shadow-[0_0_25px_rgba(168,85,247,0.95)]">radio, label, mixtapes & sponsors.</span>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            One screen that shows the whole <span class="text-emerald-300 drop-shadow-[0_0_22px_rgba(52,211,153,0.9)]">TKFM machine</span> (this browser).
           </h1>
-          <p class="text-sm md:text-base text-slate-200/90 max-w-xl mb-4">
-            Reads the same localStorage brain as your engines:
-            uploads, mixtape orders, fan profiles, Autopilot pack and latest contract.
-            Jump into deep pages in one click.
+          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+            GOD VIEW reads the same keys the engines use:
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">mixtapeOrders</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_fan_profiles</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_autopilot_last_pack</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_contract_latest</span>.
           </p>
-          <div class="flex flex-wrap gap-2 text-[0.7rem] text-slate-300">
-            <span class="px-2.5 py-1 rounded-full border border-pink-500/70 bg-pink-500/10 uppercase tracking-[0.2em]">
-              tkfm_artist_uploads
-            </span>
-            <span class="px-2.5 py-1 rounded-full border border-purple-500/70 bg-purple-500/10 uppercase tracking-[0.2em]">
-              mixtapeOrders
-            </span>
-            <span class="px-2.5 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 uppercase tracking-[0.2em]">
-              tkfm_autopilot_last_pack
-            </span>
-            <span class="px-2.5 py-1 rounded-full border border-emerald-400/70 bg-emerald-400/10 uppercase tracking-[0.2em]">
-              tkfm_fan_profiles
-            </span>
-            <span class="px-2.5 py-1 rounded-full border border-yellow-400/70 bg-yellow-400/10 uppercase tracking-[0.2em]">
-              tkfm_contract_latest
-            </span>
-          </div>
+          <p class="text-[0.75rem] text-slate-400 max-w-xl">
+            This v2 dashboard is **local dev only** — production would use a shared database + auth. Right now it’s the fastest way
+            for you (DJ KRAVE) to see how uploads, orders, fans, contracts and autopilot packs line up.
+          </p>
         </div>
 
         <!-- SNAPSHOT CARD -->
         <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
-          <div class="pointer-events-none absolute -inset-16 opacity-35 blur-2xl bg-[conic-gradient(from_150deg,_#22d3ee,_#ec4899,_#a855f7,_#facc15,_#22d3ee)]"></div>
+          <div class="pointer-events-none absolute -inset-16 opacity-35 blur-2xl bg-[conic-gradient(from_160deg,_#22d3ee,_#ec4899,_#a855f7,_#22d3ee)]"></div>
           <div class="relative space-y-3 text-sm">
             <div class="flex items-center justify-between gap-3">
               <div>
-                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">Live Snapshot</p>
+                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  GOD VIEW Snapshot (This Device)
+                </p>
                 <p class="text-xs text-slate-300">
-                  Pulled from the browser you’re on right now.
+                  Summarized from your local TKFM data.
                 </p>
               </div>
               <button id="gv-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
@@ -98,309 +94,469 @@
             <div class="grid grid-cols-3 gap-3 text-xs">
               <div>
                 <div class="text-slate-400 mb-0.5">Uploads</div>
-                <div id="gv-uploads" class="text-lg font-bold">0</div>
+                <div id="gv-uploads-count" class="text-lg font-bold">0</div>
               </div>
               <div>
-                <div class="text-slate-400 mb-0.5">Mixtapes</div>
-                <div id="gv-mixtapes" class="text-lg font-bold">0</div>
+                <div class="text-slate-400 mb-0.5">Mixtape Orders</div>
+                <div id="gv-orders-count" class="text-lg font-bold">0</div>
               </div>
               <div>
-                <div class="text-slate-400 mb-0.5">Fans</div>
-                <div id="gv-fans" class="text-lg font-bold">0</div>
+                <div class="text-slate-400 mb-0.5">Fan Profiles</div>
+                <div id="gv-fans-count" class="text-lg font-bold">0</div>
               </div>
             </div>
 
-            <div class="space-y-1 text-[0.7rem]">
-              <p class="text-slate-300">
-                Autopilot Pack:
-                <span id="gv-pack" class="font-mono text-cyan-300 break-all">(none)</span>
-              </p>
-              <p class="text-slate-300">
-                Latest Contract:
-                <span id="gv-contract" class="font-mono text-yellow-300 break-all">(none)</span>
-              </p>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Cities Seen</div>
+                <div id="gv-cities-count" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Est. Mixtape Gross</div>
+                <div id="gv-gross" class="text-lg font-bold">$0</div>
+              </div>
             </div>
 
-            <p class="text-[0.68rem] text-slate-400">
-              Use this as a quick “is the brain alive?” check before touching label offers or sponsor inventory.
+            <p class="text-[0.7rem] text-slate-300">
+              Tap the quick links below to drop into **Momentum Engine**, **Mixtape Orders**, or **Label Revenue Console** with the same data.
             </p>
           </div>
         </aside>
       </div>
 
-      <!-- GRIDS -->
-      <div class="grid gap-5 lg:grid-cols-3">
-
-        <!-- RADIO SYSTEMS -->
-        <div class="space-y-3">
+      <!-- ROW: PIPELINE + QUICK LINKS -->
+      <section class="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <!-- PIPELINE OVERVIEW -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
           <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Radio & Rotation
+            TKFM Pipeline Overview (Local)
           </h2>
+          <p class="text-[0.8rem] text-slate-200">
+            This summarizes the **system flow** you’ve been building:
+          </p>
+          <ol class="list-decimal list-inside text-[0.8rem] text-slate-200 space-y-1">
+            <li>Artists submit via <span class="text-pink-300 font-semibold">Artist Upload</span> → <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>.</li>
+            <li>Label / owner review inside **Artist Submissions Console** and tag records.</li>
+            <li>Mixtape clients lock in hosted tapes via <span class="text-purple-300 font-semibold">DJ Mixtape Hosting</span> → <span class="font-mono text-cyan-300 text-[0.75rem]">mixtapeOrders</span>.</li>
+            <li>Fans activate **Fan Pass** → <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_fan_profiles</span>.</li>
+            <li>Autopilot Engine builds rotation packs → <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_autopilot_last_pack</span>.</li>
+            <li>Contracts from label side land in <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_contract_latest</span>.</li>
+          </ol>
+          <p class="text-[0.75rem] text-slate-400">
+            GOD VIEW doesn’t replace those pages — it just tells you at a glance **where the motion is** and where to click next.
+          </p>
+        </div>
 
-          <a href="radio-hub.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-purple-500/80 hover:shadow-[0_0_20px_rgba(168,85,247,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>📻</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Public</p>
-                  <p class="font-semibold text-purple-200">Radio Hub</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Public radio surface wired into Autopilot + AI DJ Engine.
-            </p>
-          </a>
+        <!-- QUICK LINKS -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Quick control room links
+          </h2>
+          <div class="flex flex-wrap gap-2 text-[0.8rem]">
+            <a href="artist-upload.html" class="px-3 py-1.5 rounded-full border border-pink-400/80 bg-pink-500/10 text-pink-100">
+              🎧 Artist Upload
+            </a>
+            <a href="artist-submissions-console.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100">
+              📂 Submissions Console
+            </a>
+            <a href="dj-mixtape-hosting.html" class="px-3 py-1.5 rounded-full border border-purple-400/80 bg-purple-500/10 text-purple-100">
+              🔥 DJ Mixtape Hosting
+            </a>
+            <a href="dj-mixtape-orders.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100">
+              📂 Mixtape Orders
+            </a>
+            <a href="label-revenue-console.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
+              💰 Label Revenue Console
+            </a>
+            <a href="fan-pass.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100">
+              ⭐ Fan Pass
+            </a>
+            <a href="momentum-engine.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
+              📈 Momentum Engine
+            </a>
+            <a href="label-contract-lab.html" class="px-3 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-500/10 text-yellow-100">
+              📜 Contract Lab
+            </a>
+            <a href="label-contract-output.html" class="px-3 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-500/10 text-yellow-100">
+              🖨 Latest Contract
+            </a>
+          </div>
+          <p class="text-[0.75rem] text-slate-400">
+            Use GOD VIEW to choose your **next move**, then jump straight into the page that needs your attention.
+          </p>
+        </div>
+      </section>
 
-          <a href="autopilot-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-cyan-400/80 hover:shadow-[0_0_20px_rgba(34,211,238,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>🛠</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Rotation Brain</p>
-                  <p class="font-semibold text-cyan-200">Autopilot Engine</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Build & save <span class="font-mono text-cyan-200 text-[0.7rem]">tkfm_autopilot_last_pack</span>, which feeds AI DJ Engine.
-            </p>
-          </a>
-
-          <a href="ai-dj-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-pink-500/80 hover:shadow-[0_0_20px_rgba(236,72,153,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>🤖</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">AI DJ</p>
-                  <p class="font-semibold text-pink-200">AI DJ Engine</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Consumes the latest Autopilot pack and turns it into rotation / breaks.
-            </p>
-          </a>
-
-          <a href="momentum-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-emerald-400/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>📈</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Heat Check</p>
-                  <p class="font-semibold text-emerald-200">Momentum Engine</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Leaderboard built from the same keys GOD VIEW is reading right now.
-            </p>
+      <!-- ROW: AUTOPILOT + CONTRACT -->
+      <section class="grid gap-4 md:grid-cols-2">
+        <!-- AUTOPILOT PACK -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Autopilot Engine — Last Rotation Pack
+          </h2>
+          <p class="text-[0.8rem] text-slate-200">
+            Reads <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_autopilot_last_pack</span>.
+          </p>
+          <div id="gv-pack-empty" class="text-[0.8rem] text-slate-400">
+            No Autopilot pack found yet. Once Autopilot Engine runs on this browser, the last pack summary will appear here.
+          </div>
+          <div id="gv-pack" class="hidden space-y-1 text-[0.8rem]"></div>
+          <a href="autopilot-engine.html" class="inline-flex items-center gap-2 text-[0.75rem] text-emerald-300 mt-2">
+            <span>⚙ Open Autopilot Engine</span>
+            <span class="text-xs">↗</span>
           </a>
         </div>
 
-        <!-- LABEL & ARTIST PIPELINE -->
-        <div class="space-y-3">
+        <!-- CONTRACT LAB SNAPSHOT -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
           <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Label • Artists • Contracts
+            Label Contract — Latest Draft
           </h2>
-
-          <a href="records-application.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-yellow-400/80 hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>📩</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Entry</p>
-                  <p class="font-semibold text-yellow-200">TKFM Records Applications</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Where serious artists jump from radio world into label world.
-            </p>
-          </a>
-
-          <a href="label-records-applications.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-yellow-400/80 hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>📂</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Queue</p>
-                  <p class="font-semibold text-yellow-200">Label Applications Queue</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Internal read on who’s waiting, paired with applicant statements.
-            </p>
-          </a>
-
-          <a href="label-contract-lab.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-emerald-400/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>📜</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Contracts</p>
-                  <p class="font-semibold text-emerald-200">Contract Lab</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Generates deals and writes them to
-              <span class="font-mono text-emerald-200 text-[0.7rem]">tkfm_contract_latest</span>.
-            </p>
-          </a>
-
-          <a href="label-mixtape-spotlight.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-pink-500/80 hover:shadow-[0_0_20px_rgba(236,72,153,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>🌟</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Spotlight</p>
-                  <p class="font-semibold text-pink-200">Label Mixtape Spotlight</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Decides which hosted projects get gold treatment across radio & social.
-            </p>
+          <p class="text-[0.8rem] text-slate-200">
+            Reads <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_contract_latest</span> from Contract Lab.
+          </p>
+          <div id="gv-contract-empty" class="text-[0.8rem] text-slate-400">
+            No saved contract yet. Use Contract Lab to generate and save a deal, then GOD VIEW will show a preview.
+          </div>
+          <pre id="gv-contract" class="hidden text-[0.7rem] text-slate-200 bg-slate-900/80 border border-slate-800 rounded-xl p-3 max-h-48 overflow-y-auto whitespace-pre-wrap"></pre>
+          <a href="label-contract-lab.html" class="inline-flex items-center gap-2 text-[0.75rem] text-yellow-300 mt-2">
+            <span>📜 Open Contract Lab</span>
+            <span class="text-xs">↗</span>
           </a>
         </div>
+      </section>
 
-        <!-- MONEY, OPS & DEV -->
-        <div class="space-y-3">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Revenue • Sponsors • Ops
-          </h2>
-
-          <a href="label-revenue-console.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-emerald-400/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>💰</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Owner</p>
-                  <p class="font-semibold text-emerald-200">Label Revenue Console</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Mixtape hosting, social campaigns and sponsor deals in one owner view.
-            </p>
-          </a>
-
-          <a href="label-sponsor-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-yellow-400/80 hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>🏷</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Brands</p>
-                  <p class="font-semibold text-yellow-200">Sponsor Engine</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Label-colored sponsor tiers that plug into placements and rotators.
-            </p>
-          </a>
-
-          <a href="sponsor-rotator.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-cyan-400/80 hover:shadow-[0_0_20px_rgba(34,211,238,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>♻️</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Inventory</p>
-                  <p class="font-semibold text-cyan-200">Sponsor Rotator</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Rotates sponsor placements to match the heat + schedule.
-            </p>
-          </a>
-
-          <a href="tkfm-dev-console.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-slate-500/80 hover:shadow-[0_0_20px_rgba(148,163,184,0.6)] transition">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <div class="flex items-center gap-2">
-                <span>🛠</span>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Tech</p>
-                  <p class="font-semibold text-slate-100">TKFM Dev Console</p>
-                </div>
-              </div>
-              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
-            </div>
-            <p class="text-[0.7rem] text-slate-300">
-              Where you debug Netlify functions, Stripe keys and internal cron.
-            </p>
-          </a>
+      <!-- ROW: RECENT ITEMS -->
+      <section class="grid gap-4 lg:grid-cols-3">
+        <!-- RECENT UPLOADS -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+              Recent Artist Uploads
+            </h2>
+            <a href="artist-submissions-console.html" class="text-[0.7rem] text-cyan-300">View all ↗</a>
+          </div>
+          <div id="gv-recent-uploads-empty" class="text-[0.8rem] text-slate-400">
+            No uploads yet on this device.
+          </div>
+          <div id="gv-recent-uploads" class="space-y-1 text-[0.8rem] max-h-64 overflow-y-auto"></div>
         </div>
 
-      </div>
+        <!-- RECENT MIXTAPE ORDERS -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+              Recent Mixtape Orders
+            </h2>
+            <a href="dj-mixtape-orders.html" class="text-[0.7rem] text-cyan-300">View all ↗</a>
+          </div>
+          <div id="gv-recent-orders-empty" class="text-[0.8rem] text-slate-400">
+            No mixtape orders yet on this device.
+          </div>
+          <div id="gv-recent-orders" class="space-y-1 text-[0.8rem] max-h-64 overflow-y-auto"></div>
+        </div>
+
+        <!-- RECENT FAN PROFILES -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+              Recent Fan Pass Profiles
+            </h2>
+            <a href="fan-pass.html" class="text-[0.7rem] text-cyan-300">Manage ↗</a>
+          </div>
+          <div id="gv-recent-fans-empty" class="text-[0.8rem] text-slate-400">
+            No Fan Pass profiles yet on this device.
+          </div>
+          <div id="gv-recent-fans" class="space-y-1 text-[0.8rem] max-h-64 overflow-y-auto"></div>
+        </div>
+      </section>
+
+      <!-- BOTTOM BAR: UTILITIES -->
+      <section class="flex flex-wrap items-center justify-between gap-3 border border-slate-800 rounded-2xl bg-slate-950/80 px-3 py-3 text-xs">
+        <div class="space-y-1 text-[0.75rem] text-slate-300 max-w-md">
+          <p class="uppercase tracking-[0.24em] text-slate-400">Local Dev Controls</p>
+          <p>These buttons only affect your browser. Production TKFM would use real auth + shared storage.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <button id="gv-clear-local" class="px-3 py-1.5 rounded-full border border-red-500/70 bg-red-500/10 text-red-300 uppercase tracking-[0.22em]">
+            Clear All TKFM Local Data
+          </button>
+        </div>
+      </section>
     </section>
   </main>
 
   <!-- FOOTER -->
-  <footer class="border-t border-slate-800/80 bg-black/40">
+  <footer class="border-t border-slate-800/80 bg-black/50">
     <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
       <span>© 2025 TKFM — GOD VIEW.</span>
-      <span class="opacity-70">
-        Reads browser-side keys only — every stat you see here is what AI + label + sponsors are reacting to.
+      <span class="opacity-80">
+        Owner snapshot over tkfm_artist_uploads • mixtapeOrders • tkfm_fan_profiles • tkfm_autopilot_last_pack • tkfm_contract_latest.
       </span>
     </div>
   </footer>
 
   <script>
-    function safeGet(key, fallback) {
+    const GV_PRICE_TABLE = {
+      Starter: 500,
+      Pro: 1000,
+      Elite: 2500
+    };
+
+    function gvSafeParse(key, fallback) {
       try {
         const raw = localStorage.getItem(key);
         if (!raw) return fallback;
         const parsed = JSON.parse(raw);
-        return parsed || fallback;
+        return parsed ?? fallback;
       } catch (e) {
         console.warn('GOD VIEW: failed to parse', key, e);
         return fallback;
       }
     }
 
-    function refreshGodView() {
-      const uploads = safeGet('tkfm_artist_uploads', []);
-      const mixtapes = safeGet('mixtapeOrders', []);
-      const fans = safeGet('tkfm_fan_profiles', []);
-      const pack = safeGet('tkfm_autopilot_last_pack', null);
-      const contract = safeGet('tkfm_contract_latest', null);
+    function gvGetArray(key) {
+      const v = gvSafeParse(key, []);
+      return Array.isArray(v) ? v : [];
+    }
 
-      document.getElementById('gv-uploads').textContent =
-        Array.isArray(uploads) ? uploads.length : 0;
-      document.getElementById('gv-mixtapes').textContent =
-        Array.isArray(mixtapes) ? mixtapes.length : 0;
-      document.getElementById('gv-fans').textContent =
-        Array.isArray(fans) ? fans.length : 0;
+    function gvFormatMoney(num) {
+      const n = Number(num) || 0;
+      return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
 
-      const packStr = pack
-        ? (pack.key || pack.id || pack.name || JSON.stringify(pack).slice(0, 60) + '…')
-        : '(none)';
-      document.getElementById('gv-pack').textContent = packStr;
+    function gvPrettyDate(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleString();
+      } catch {
+        return '';
+      }
+    }
 
-      const contractStr = contract
-        ? (contract.artistName || contract.title || JSON.stringify(contract).slice(0, 60) + '…')
-        : '(none)';
-      document.getElementById('gv-contract').textContent = contractStr;
+    function gvEscape(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function gvSplitTags(str) {
+      if (!str) return [];
+      return String(str)
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    function gvRender() {
+      const uploads = gvGetArray('tkfm_artist_uploads');
+      const orders = gvGetArray('mixtapeOrders');
+      const fans = gvGetArray('tkfm_fan_profiles');
+
+      // Snapshot counts
+      document.getElementById('gv-uploads-count').textContent = uploads.length;
+      document.getElementById('gv-orders-count').textContent = orders.length;
+      document.getElementById('gv-fans-count').textContent = fans.length;
+
+      // Cities
+      const citySet = new Set();
+      uploads.forEach(u => u.city && citySet.add(u.city.toLowerCase()));
+      orders.forEach(o => o.city && citySet.add(o.city.toLowerCase()));
+      fans.forEach(f => f.city && citySet.add(f.city.toLowerCase()));
+      document.getElementById('gv-cities-count').textContent = citySet.size;
+
+      // Gross estimate
+      let gross = 0;
+      orders.forEach(o => {
+        const tier = (o.tier || '').trim();
+        gross += GV_PRICE_TABLE[tier] || 0;
+      });
+      document.getElementById('gv-gross').textContent = gvFormatMoney(gross);
+
+      // Autopilot pack summary
+      const packRaw = gvSafeParse('tkfm_autopilot_last_pack', null);
+      const packContainer = document.getElementById('gv-pack');
+      const packEmpty = document.getElementById('gv-pack-empty');
+
+      if (!packRaw) {
+        packContainer.classList.add('hidden');
+        packEmpty.classList.remove('hidden');
+      } else {
+        packEmpty.classList.add('hidden');
+        packContainer.classList.remove('hidden');
+
+        let summaryLines = [];
+        try {
+          const pack = packRaw;
+          const created = pack.createdAt || pack.timestamp || null;
+          const size = Array.isArray(pack.tracks || pack.items) ? (pack.tracks || pack.items).length : (pack.size || 0);
+          const mode = pack.mode || pack.profile || 'default';
+          const sourceLabel = pack.source || 'Autopilot Engine';
+
+          if (created) summaryLines.push('Created: ' + gvPrettyDate(created));
+          summaryLines.push('Mode: ' + mode);
+          if (size) summaryLines.push('Items: ' + size);
+          summaryLines.push('Source: ' + sourceLabel);
+
+          packContainer.textContent = summaryLines.join('\\n');
+        } catch (e) {
+          console.warn('GOD VIEW: failed to summarize autopilot pack', e);
+          packContainer.textContent = JSON.stringify(packRaw, null, 2);
+        }
+      }
+
+      // Contract preview
+      const contractRaw = gvSafeParse('tkfm_contract_latest', null);
+      const contractEl = document.getElementById('gv-contract');
+      const contractEmpty = document.getElementById('gv-contract-empty');
+
+      if (!contractRaw) {
+        contractEl.classList.add('hidden');
+        contractEmpty.classList.remove('hidden');
+      } else {
+        contractEmpty.classList.add('hidden');
+        contractEl.classList.remove('hidden');
+        try {
+          if (typeof contractRaw === 'string') {
+            contractEl.textContent = contractRaw;
+          } else if (contractRaw.text) {
+            contractEl.textContent = contractRaw.text;
+          } else {
+            contractEl.textContent = JSON.stringify(contractRaw, null, 2);
+          }
+        } catch (e) {
+          console.warn('GOD VIEW: failed to render contract', e);
+          contractEl.textContent = String(contractRaw);
+        }
+      }
+
+      // Recent uploads
+      const uploadsWrap = document.getElementById('gv-recent-uploads');
+      const uploadsEmpty = document.getElementById('gv-recent-uploads-empty');
+
+      if (!uploads.length) {
+        uploadsWrap.innerHTML = '';
+        uploadsEmpty.classList.remove('hidden');
+      } else {
+        uploadsEmpty.classList.add('hidden');
+        const sorted = uploads
+          .slice()
+          .sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+          .slice(0, 8);
+
+        uploadsWrap.innerHTML = sorted.map(u => {
+          return \`
+            <div class="flex items-start justify-between gap-2 border border-slate-800/80 rounded-xl px-3 py-1.5 bg-slate-950/90">
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-[0.8rem]">
+                  \${gvEscape(u.artistName || 'Unknown Artist')}
+                </p>
+                <p class="truncate text-[0.75rem] text-slate-400">
+                  \${gvEscape(u.trackTitle || '')}
+                </p>
+                <p class="text-[0.65rem] text-slate-500">
+                  \${u.city ? gvEscape(u.city) + ' • ' : ''}\${u.status ? gvEscape(u.status) : 'new'}
+                </p>
+              </div>
+            </div>
+          \`;
+        }).join('');
+      }
+
+      // Recent orders
+      const ordersWrap = document.getElementById('gv-recent-orders');
+      const ordersEmpty = document.getElementById('gv-recent-orders-empty');
+
+      if (!orders.length) {
+        ordersWrap.innerHTML = '';
+        ordersEmpty.classList.remove('hidden');
+      } else {
+        ordersEmpty.classList.add('hidden');
+        const sorted = orders
+          .slice()
+          .sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+          .slice(0, 8);
+
+        ordersWrap.innerHTML = sorted.map(o => {
+          const tier = o.tier || '—';
+          const price = GV_PRICE_TABLE[tier] || 0;
+          return \`
+            <div class="flex items-start justify-between gap-2 border border-slate-800/80 rounded-xl px-3 py-1.5 bg-slate-950/90">
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-[0.8rem]">
+                  \${gvEscape(o.clientName || 'Unknown Client')}
+                </p>
+                <p class="truncate text-[0.75rem] text-slate-400">
+                  \${gvEscape(o.projectTitle || '')}
+                </p>
+                <p class="text-[0.65rem] text-slate-500">
+                  Tier: \${gvEscape(tier)}\${price ? ' • ' + gvFormatMoney(price) : ''} • \${gvEscape(o.status || 'new')}
+                </p>
+              </div>
+            </div>
+          \`;
+        }).join('');
+      }
+
+      // Recent fans
+      const fansWrap = document.getElementById('gv-recent-fans');
+      const fansEmpty = document.getElementById('gv-recent-fans-empty');
+
+      if (!fans.length) {
+        fansWrap.innerHTML = '';
+        fansEmpty.classList.remove('hidden');
+      } else {
+        fansEmpty.classList.add('hidden');
+        const sorted = fans
+          .slice()
+          .sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+          .slice(0, 8);
+
+        fansWrap.innerHTML = sorted.map(f => {
+          const tags = Array.isArray(f.soundTags) ? f.soundTags.join(', ') : String(f.soundTags || '');
+          const points = Number.isFinite(f.points) ? f.points : 0;
+          return \`
+            <div class="flex items-start justify-between gap-2 border border-slate-800/80 rounded-xl px-3 py-1.5 bg-slate-950/90">
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-[0.8rem]">
+                  \${gvEscape(f.displayName || 'Unknown Fan')}
+                </p>
+                <p class="truncate text-[0.75rem] text-slate-400">
+                  \${f.city ? gvEscape(f.city) : 'City: —'}
+                </p>
+                \${tags ? \`<p class="text-[0.65rem] text-slate-500 truncate">Tags: \${gvEscape(tags)}</p>\` : ''}
+              </div>
+              <div class="text-[0.7rem] text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-400/80 bg-emerald-400/10">
+                Pts: \${points}
+              </div>
+            </div>
+          \`;
+        }).join('');
+      }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      refreshGodView();
-      const btn = document.getElementById('gv-refresh');
-      if (btn) btn.addEventListener('click', refreshGodView);
+      const btnRefresh = document.getElementById('gv-refresh');
+      const btnClear = document.getElementById('gv-clear-local');
+
+      btnRefresh?.addEventListener('click', gvRender);
+
+      btnClear?.addEventListener('click', function () {
+        if (!confirm('Clear all TKFM local keys on THIS DEVICE? (uploads, orders, fans, autopilot pack, contract)')) return;
+        localStorage.removeItem('tkfm_artist_uploads');
+        localStorage.removeItem('mixtapeOrders');
+        localStorage.removeItem('tkfm_fan_profiles');
+        localStorage.removeItem('tkfm_autopilot_last_pack');
+        localStorage.removeItem('tkfm_contract_latest');
+        gvRender();
+      });
+
+      gvRender();
     });
   </script>
 </body>
