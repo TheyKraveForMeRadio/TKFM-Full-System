@@ -139,6 +139,9 @@
               <button id="dev-export-tkfm" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-200 uppercase tracking-[0.22em]">
                 Export TKFM → JSON
               </button>
+              <button id="dev-seed-demo" class="px-3 py-1.5 rounded-full border border-emerald-500/80 bg-emerald-500/10 text-emerald-200 uppercase tracking-[0.22em]">
+                Load Demo Data
+              </button>
             </div>
             <p id="dev-status" class="text-[0.7rem] text-emerald-300"></p>
           </div>
@@ -259,7 +262,7 @@
     <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
       <span>© 2025 TKFM — Dev Console.</span>
       <span class="opacity-80">
-        Inspects tkfm_* keys • mixtapeOrders • and more in localStorage.
+        Inspects tkfm_* keys • mixtapeOrders • and more in localStorage. Includes demo seeding for fast TKFM v2 demos.
       </span>
     </div>
   </footer>
@@ -309,7 +312,6 @@
         }
       });
 
-      // Sort: important first, then rest
       tkfmKeys.sort((a, b) => {
         const ai = IMPORTANT_KEYS.indexOf(a);
         const bi = IMPORTANT_KEYS.indexOf(b);
@@ -331,12 +333,10 @@
           return String(raw);
         }
       }
-
       try {
         const parsed = JSON.parse(raw);
         return JSON.stringify(parsed, null, 2);
       } catch {
-        // not JSON, show raw
         return raw;
       }
     }
@@ -353,7 +353,6 @@
         return;
       }
 
-      // compute size/summary
       let summary = '';
       try {
         const parsed = JSON.parse(raw);
@@ -409,17 +408,14 @@
             } else {
               summary = 'JSON value';
             }
-          } catch {
-            summary = 'String length ' + raw.length;
-          }
 
-          if (k === 'tkfm_artist_uploads' || k === 'mixtapeOrders' || k === 'tkfm_fan_profiles') {
-            try {
-              const parsed = JSON.parse(raw);
+            if (k === 'tkfm_artist_uploads' || k === 'mixtapeOrders' || k === 'tkfm_fan_profiles') {
               if (Array.isArray(parsed)) {
                 badge = parsed.length + ' items';
               }
-            } catch { /* ignore */ }
+            }
+          } catch {
+            summary = 'String length ' + raw.length;
           }
         }
 
@@ -466,6 +462,248 @@
       el.style.color = isError ? '#fca5a5' : '#6ee7b7';
     }
 
+    // Simple helper used for news + demo reads
+    function nSafeParse(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (e) {
+        console.warn('Dev console: failed to parse', key, e);
+        return fallback;
+      }
+    }
+
+    // ---- Demo Seeder ----
+    function devSeedDemoData() {
+      const now = new Date().toISOString();
+      const earlier = offsetDays => new Date(Date.now() - offsetDays * 86400000).toISOString();
+
+      // Artist uploads
+      const uploads = [
+        {
+          id: 'u1',
+          artistName: 'Lil Wave Runner',
+          trackTitle: 'City on My Back',
+          city: 'Detroit, MI',
+          notes: 'Street single, heavy bass, wants late night rotation.',
+          status: 'pending',
+          source: 'artist-upload',
+          createdAt: earlier(2)
+        },
+        {
+          id: 'u2',
+          artistName: 'Nova Rose',
+          trackTitle: 'Midnight Motions',
+          city: 'Atlanta, GA',
+          notes: 'R&B / melodic trap hybrid.',
+          status: 'featured',
+          source: 'artist-upload',
+          createdAt: earlier(5)
+        },
+        {
+          id: 'u3',
+          artistName: 'Block Poet',
+          trackTitle: 'Concrete Dreams',
+          city: 'Chicago, IL',
+          notes: 'Storytelling joint, wants interview + writeup.',
+          status: 'accepted',
+          source: 'artist-upload',
+          createdAt: earlier(9)
+        }
+      ];
+
+      // Mixtape orders
+      const orders = [
+        {
+          id: 'm1',
+          clientName: 'Big Motion ENT',
+          projectTitle: 'They Crave Volume 1',
+          city: 'Detroit, MI',
+          goals: 'Host the city, break 5 new artists, make a visual rollout.',
+          tier: 'Elite',
+          status: 'paid',
+          createdAt: earlier(3)
+        },
+        {
+          id: 'm2',
+          clientName: 'Skyline Sounds',
+          projectTitle: 'Rooftop Frequency',
+          city: 'New York, NY',
+          goals: 'Midnight vibe tape for influencers + playlisting.',
+          tier: 'Pro',
+          status: 'intake-complete',
+          createdAt: earlier(7)
+        },
+        {
+          id: 'm3',
+          clientName: 'Ground Floor Records',
+          projectTitle: 'Lobby Heat',
+          city: 'Atlanta, GA',
+          goals: 'Entry tape to test TKFM audience.',
+          tier: 'Starter',
+          status: 'draft',
+          createdAt: earlier(12)
+        }
+      ];
+
+      // Fan profiles
+      const fans = [
+        {
+          id: 'f1',
+          displayName: 'Tee from the D',
+          city: 'Detroit, MI',
+          joinedFrom: 'fan-pass',
+          createdAt: earlier(1)
+        },
+        {
+          id: 'f2',
+          displayName: 'LateNightLex',
+          city: 'Los Angeles, CA',
+          joinedFrom: 'fan-pass',
+          createdAt: earlier(4)
+        },
+        {
+          id: 'f3',
+          displayName: 'Southside J',
+          city: 'Atlanta, GA',
+          joinedFrom: 'fan-pass',
+          createdAt: earlier(8)
+        }
+      ];
+
+      // DJ schedule
+      const djSchedule = {
+        slots: [
+          { djId: 'dj-krave', djName: 'DJ KRAVE', day: 'Friday', time: '10PM–12AM' },
+          { djId: 'dj-krave', djName: 'DJ KRAVE', day: 'Saturday', time: '10PM–1AM' },
+          { djId: 'johnny-steelo', djName: 'Johnny Steelo', day: 'Thursday', time: '9PM–11PM' }
+        ],
+        updatedAt: now
+      };
+
+      // DJ roster override (optional)
+      const djs = [
+        {
+          id: 'dj-krave',
+          name: 'DJ KRAVE',
+          alias: 'They Krave For Me',
+          role: 'Founder • Mixtape Architect • Program Director',
+          city: 'Detroit / Midwest',
+          bio: 'Breaks independent artists, curates heavy rotation tapes, and runs the TKFM empire.',
+          styleTags: ['club energy', 'street heat', 'exclusive drops'],
+          links: {
+            ig: '@TheyKraveForMeRadio',
+            x: '@TheyKraveForMe'
+          },
+          avatarEmoji: '🔥'
+        },
+        {
+          id: 'johnny-steelo',
+          name: 'Johnny Steelo',
+          alias: 'The Smooth Operator',
+          role: 'On-Air DJ • Night Shift',
+          city: 'Late Night Frequency',
+          bio: 'Smooth blends, story-driven sets, and after-hours waves.',
+          styleTags: ['r&b', 'smooth trap', 'midnight rides'],
+          links: {
+            ig: '@JohnnySteelo'
+          },
+          avatarEmoji: '🌙'
+        }
+      ];
+
+      // Autopilot pack seeded from uploads
+      const packTracks = [
+        {
+          id: 'u1',
+          artistName: 'Lil Wave Runner',
+          trackTitle: 'City on My Back',
+          city: 'Detroit, MI',
+          tier: 'Elite',
+          tag: 'ELITE ROTATION',
+          source: 'artist-upload'
+        },
+        {
+          id: 'u2',
+          artistName: 'Nova Rose',
+          trackTitle: 'Midnight Motions',
+          city: 'Atlanta, GA',
+          tier: 'Featured',
+          tag: 'FEATURED NIGHT DRIVE',
+          source: 'artist-upload'
+        },
+        {
+          id: 'u3',
+          artistName: 'Block Poet',
+          trackTitle: 'Concrete Dreams',
+          city: 'Chicago, IL',
+          tier: 'Standard',
+          tag: 'STORYTELLER',
+          source: 'artist-upload'
+        }
+      ];
+
+      const autopilotPack = {
+        mode: 'demo-showcase',
+        profile: 'TKFM Demo',
+        createdAt: earlier(0.5),
+        tracks: packTracks
+      };
+
+      // Manual news
+      const manualNews = [
+        {
+          title: 'Big Motion ENT locks in Elite mixtape with DJ KRAVE',
+          subtitle: 'They Crave Volume 1 in production',
+          body: 'TKFM just locked in an Elite tier mixtape with Big Motion ENT — expect exclusives, city anthems and DJ KRAVE narration.',
+          channel: 'label',
+          city: 'Detroit, MI',
+          actor: 'Big Motion ENT',
+          tags: ['mixtape', 'elite', 'label'],
+          createdAt: earlier(1)
+        },
+        {
+          title: 'Nova Rose enters heavy night rotation',
+          subtitle: '“Midnight Motions” added to Autopilot pack',
+          body: 'Late night R&B / trap blend from Nova Rose just hit the Autopilot rotation for TKFM after strong feedback from early listeners.',
+          channel: 'artist',
+          city: 'Atlanta, GA',
+          actor: 'Nova Rose',
+          tags: ['upload', 'featured', 'night-drive'],
+          createdAt: earlier(2)
+        }
+      ];
+
+      // Seed keys
+      localStorage.setItem('tkfm_artist_uploads', JSON.stringify(uploads));
+      localStorage.setItem('mixtapeOrders', JSON.stringify(orders));
+      localStorage.setItem('tkfm_fan_profiles', JSON.stringify(fans));
+      localStorage.setItem('tkfm_dj_schedule', JSON.stringify(djSchedule));
+      localStorage.setItem('tkfm_djs', JSON.stringify(djs));
+      localStorage.setItem('tkfm_autopilot_last_pack', JSON.stringify(autopilotPack));
+
+      const existingManual = nSafeParse('tkfm_news_manual', []);
+      const mergedManual = Array.isArray(existingManual)
+        ? existingManual.concat(manualNews)
+        : manualNews;
+      localStorage.setItem('tkfm_news_manual', JSON.stringify(mergedManual));
+
+      // Optional: simple radio state / now playing pointing to first track
+      const radioState = {
+        index: 0,
+        updatedAt: now
+      };
+      const nowPlaying = {
+        index: 0,
+        track: packTracks[0],
+        updatedAt: now
+      };
+      localStorage.setItem('tkfm_radio_state', JSON.stringify(radioState));
+      localStorage.setItem('tkfm_radio_now_playing', JSON.stringify(nowPlaying));
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       const btnRefresh = document.getElementById('dev-refresh');
       const btnClearTkfm = document.getElementById('dev-clear-tkfm');
@@ -473,6 +711,7 @@
       const btnFormat = document.getElementById('dev-format');
       const btnSave = document.getElementById('dev-save');
       const btnClearKey = document.getElementById('dev-clear-key');
+      const btnSeedDemo = document.getElementById('dev-seed-demo');
       const editor = document.getElementById('dev-editor');
       const newsForm = document.getElementById('dev-news-form');
 
@@ -533,7 +772,6 @@
         }
         const text = editor.value;
         if (!text.trim()) {
-          // treat empty as remove
           if (!confirm('Empty value will remove the key "' + currentKey + '". Continue?')) return;
           localStorage.removeItem(currentKey);
           devSetStatus('Removed key "' + currentKey + '".', false);
@@ -565,6 +803,20 @@
         currentKey = null;
         document.getElementById('dev-current-key-label').textContent = 'No key selected.';
         editor.value = '';
+      });
+
+      // Demo data seed button
+      btnSeedDemo?.addEventListener('click', () => {
+        if (!confirm('Load TKFM demo data on THIS DEVICE? This will overwrite demo-related keys like uploads, mixtapeOrders, fans, autopilot pack, news and DJ schedule.')) {
+          return;
+        }
+        try {
+          devSeedDemoData();
+          devSetStatus('Demo data loaded. Check Radio Hub, Momentum, DJs, News, and AI DJ Engine.', false);
+          devRenderKeyList();
+        } catch (err) {
+          devSetStatus('Failed to load demo data: ' + err.message, true);
+        }
       });
 
       newsForm?.addEventListener('submit', function (e) {
@@ -616,19 +868,6 @@
           devSetNewsStatus('Failed to save news: ' + err.message, true);
         }
       });
-
-      // helper reused from news script style
-      function nSafeParse(key, fallback) {
-        try {
-          const raw = localStorage.getItem(key);
-          if (!raw) return fallback;
-          const parsed = JSON.parse(raw);
-          return parsed ?? fallback;
-        } catch (e) {
-          console.warn('Dev console: failed to parse', key, e);
-          return fallback;
-        }
-      }
     });
   </script>
 </body>
