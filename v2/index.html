@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>They Krave For Me Radio — TKFM</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="/tkfm-radio-logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/logo-check.js" defer></script>
@@ -11,63 +11,235 @@
     body {
       background:#020617;
       background-image:
-      radial-gradient(circle at 20% 20%, rgba(93,91,255,.13) 0%, transparent 60%),
-      radial-gradient(circle at 80% 0%, rgba(236,72,153,.12) 0%, transparent 50%),
-      radial-gradient(circle at 50% 100%, rgba(168,85,247,.09) 0%, transparent 55%);
+        radial-gradient(circle at 20% 10%, rgba(56,189,248,0.16) 0, transparent 60%),
+        radial-gradient(circle at 80% 0%, rgba(236,72,153,0.16) 0, transparent 55%),
+        radial-gradient(circle at 50% 100%, rgba(168,85,247,0.18) 0, transparent 55%);
     }
   </style>
 </head>
-<body class="text-white font-sans overflow-x-hidden">
+<body class="text-slate-50 font-sans min-h-screen flex flex-col overflow-x-hidden">
 
-<!-- 🔥 STICKY NAV -->
-<header class="flex items-center justify-between p-4 bg-black/40 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
-  <a href="index.html" class="flex items-center gap-3">
-    <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-10 w-auto object-contain" onerror="this.style.display='none'"/>
-    <span class="text-xl font-bold text-purple-400 tracking-wider">TKFM RADIO</span>
-  </a>
-  <nav class="flex gap-6 text-sm font-semibold">
-    <a href="radio-hub.html">📻 Radio Hub</a>
-    <a href="creator-pass.html">🎫 Creator Pass</a>
-    <a href="fan-pass.html">⭐ Fan Pass</a>
-    <a href="label-home.html">🏛 TKFM Records</a>
-    <a href="god-view.html">👁 GOD VIEW</a>
-  </nav>
-</header>
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.65rem] uppercase tracking-[0.25em] text-slate-400">
+            They Krave For Me
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM Radio <span class="text-purple-400">• The Independent Artist Power Station</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">📻 Radio Hub</a>
+        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">🎫 Creator Pass</a>
+        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">⭐ Fan Pass</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
 
-<!-- 🔥 HERO -->
-<section class="min-h-[70vh] flex flex-col items-center justify-center text-center p-10">
-  <img src="/tkfm-radio-logo.png" class="h-32 w-auto mx-auto mb-6 animate-pulse" />
-  <h1 class="text-5xl font-bold text-purple-400 drop-shadow-[0_0_25px_#a855f7]">
-    They Krave For Me Radio
-  </h1>
-  <h2 class="text-xl text-white/70 mt-4 italic">
-    “The Independent Artist Power Station.”
-  </h2>
-  <a href="creator-pass.html" class="mt-10 inline-block px-8 py-4 rounded-full text-lg bg-purple-600 hover:bg-purple-500 transition shadow-[0_0_25px_rgba(168,85,247,0.6)]">
-    Become a Creator →
-  </a>
-</section>
+  <!-- MAIN -->
+  <main class="flex-1">
+    <!-- HERO -->
+    <section class="max-w-6xl mx-auto px-4 pt-10 pb-8 flex flex-col lg:flex-row gap-8 items-center">
+      <div class="flex-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/60 bg-purple-500/10 text-[0.7rem] uppercase tracking-[0.28em] text-purple-200 mb-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+          TKFM Radio • Neon World
+        </div>
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3">
+          The <span class="text-purple-400 drop-shadow-[0_0_25px_rgba(168,85,247,0.9)]">Independent Artist Power Station.</span>
+        </h1>
+        <p class="text-sm md:text-base text-slate-200/90 max-w-xl mb-5">
+          Upload your records, book mixtape hosting with DJ KRAVE, tap into Autopilot rotation and let the AI DJ Engine
+          push your sound across TKFM Radio + TKFM Records.
+        </p>
+        <div class="flex flex-wrap gap-3 mb-4">
+          <a href="creator-pass.html" class="px-5 py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 text-sm font-semibold shadow-[0_0_25px_rgba(168,85,247,0.7)] transition">
+            🎫 Get Your Creator Pass
+          </a>
+          <a href="momentum-engine.html" class="px-5 py-2.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200 text-[0.8rem] uppercase tracking-[0.22em]">
+            🔥 Momentum Engine
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-2 text-[0.7rem] text-slate-300">
+          <span class="px-2.5 py-1 rounded-full border border-pink-500/70 bg-pink-500/10 uppercase tracking-[0.2em]">
+            Artist Upload → Label Review → Autopilot
+          </span>
+          <span class="px-2.5 py-1 rounded-full border border-slate-700 bg-slate-950/80 uppercase tracking-[0.2em]">
+            Mixtape Hosting • DJ KRAVE
+          </span>
+        </div>
+      </div>
 
-<!-- 🔥 FEATURE GRID -->
-<section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 p-10">
-  <a href="artist-upload.html" class="p-8 bg-black/40 border border-white/10 rounded-2xl hover:bg-black/60 transition">
-    <h3 class="text-xl font-bold text-cyan-300">🎧 Upload Music</h3>
-    <p class="text-white/70 mt-2">Enter the rotation pipeline.</p>
-  </a>
-  <a href="dj-mixtape-hosting.html" class="p-8 bg-black/40 border border-white/10 rounded-2xl hover:bg-black/60 transition">
-    <h3 class="text-xl font-bold text-pink-400">🔥 Mixtape Hosting</h3>
-    <p class="text-white/70 mt-2">Get your tape hosted by DJ KRAVE.</p>
-  </a>
-  <a href="autopilot-engine.html" class="p-8 bg-black/40 border border-white/10 rounded-2xl hover:bg-black/60 transition">
-    <h3 class="text-xl font-bold text-purple-300">🛠 Autopilot Engine</h3>
-    <p class="text-white/70 mt-2">Weighted rotation system.</p>
-  </a>
-</section>
+      <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
+        <div class="pointer-events-none absolute -inset-20 bg-[conic-gradient(from_160deg,_#22d3ee,_#ec4899,_#a855f7,_#3b82f6,_#22d3ee)] opacity-40 blur-2xl"></div>
+        <div class="relative space-y-3 text-sm">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400">
+                TKFM Radio Brain
+              </p>
+              <p class="text-xs text-slate-300">
+                LocalStorage keys powering your world:
+              </p>
+            </div>
+            <span class="px-2 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+              Owner Tech View
+            </span>
+          </div>
+          <ul class="text-[0.75rem] font-mono space-y-1">
+            <li><span class="text-cyan-300">tkfm_artist_uploads</span> — artist upload console</li>
+            <li><span class="text-cyan-300">mixtapeOrders</span> — DJ KRAVE mixtape hosting</li>
+            <li><span class="text-cyan-300">tkfm_autopilot_last_pack</span> — rotation pack</li>
+            <li><span class="text-cyan-300">tkfm_fan_profiles</span> — fan accounts + motion</li>
+          </ul>
+          <p class="text-[0.7rem] text-slate-400">
+            GOD VIEW + Momentum Engine read the same brain so labels, sponsors and fans are all reacting to the
+            same heat.
+          </p>
+          <a href="god-view.html" class="inline-flex items-center gap-2 text-[0.7rem] text-cyan-300 mt-1">
+            <span>Open GOD VIEW</span>
+            <span class="text-xs">↗</span>
+          </a>
+        </div>
+      </aside>
+    </section>
 
-<!-- 🔥 FOOTER -->
-<footer class="text-center text-white/40 py-10 text-sm border-t border-white/10 mt-20">
-  © 2025 TKFM — DJ KRAVE. All Rights Reserved.
-</footer>
+    <!-- FEATURE GRID -->
+    <section class="max-w-6xl mx-auto px-4 pb-12">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <h2 class="text-sm uppercase tracking-[0.3em] text-slate-400">
+          TKFM Engines • Artist, DJ, Label
+        </h2>
+        <a href="app-hub.html" class="text-[0.7rem] uppercase tracking-[0.2em] text-cyan-300 border-b border-dotted border-cyan-500/70">
+          Open App Hub
+        </a>
+      </div>
 
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <!-- ARTIST UPLOAD -->
+        <a href="artist-upload.html" class="group rounded-2xl border border-slate-800 bg-slate-950/70 p-4 flex flex-col justify-between hover:border-pink-500/80 hover:shadow-[0_0_22px_rgba(236,72,153,0.6)] transition">
+          <div>
+            <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400 mb-1">Artist Engine</p>
+            <h3 class="text-sm font-semibold mb-1 text-pink-300">🎧 Upload Music to TKFM</h3>
+            <p class="text-xs text-slate-300">
+              Drop singles and records directly into the TKFM upload pipeline: submissions console → label review →
+              Autopilot rotation → AI DJ Engine.
+            </p>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[0.7rem] text-slate-400">
+            <span class="px-2 py-1 rounded-full border border-pink-500/70 bg-pink-500/10 uppercase tracking-[0.18em]">
+              Enter Upload Flow
+            </span>
+            <span class="opacity-70 group-hover:translate-x-0.5 transition">↗</span>
+          </div>
+        </a>
+
+        <!-- MIXTAPE HOSTING -->
+        <a href="dj-mixtape-hosting.html" class="group rounded-2xl border border-slate-800 bg-slate-950/70 p-4 flex flex-col justify-between hover:border-purple-500/80 hover:shadow-[0_0_22px_rgba(168,85,247,0.6)] transition">
+          <div>
+            <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400 mb-1">Mixtape Hosting</p>
+            <h3 class="text-sm font-semibold mb-1 text-purple-300">🔥 Get Hosted by DJ KRAVE</h3>
+            <p class="text-xs text-slate-300">
+              Starter • Pro • Elite tiers using Stripe + Netlify Functions.
+              Submit your project, upload stems, and let DJ KRAVE host your tape.
+            </p>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[0.7rem] text-slate-400">
+            <span class="px-2 py-1 rounded-full border border-purple-500/70 bg-purple-500/10 uppercase tracking-[0.18em]">
+              View Hosting Tiers
+            </span>
+            <span class="opacity-70 group-hover:translate-x-0.5 transition">↗</span>
+          </div>
+        </a>
+
+        <!-- AUTOPILOT ENGINE -->
+        <a href="autopilot-engine.html" class="group rounded-2xl border border-slate-800 bg-slate-950/70 p-4 flex flex-col justify-between hover:border-cyan-400/80 hover:shadow-[0_0_22px_rgba(34,211,238,0.6)] transition">
+          <div>
+            <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400 mb-1">Rotation Brain</p>
+            <h3 class="text-sm font-semibold mb-1 text-cyan-300">🛠 Autopilot Engine</h3>
+            <p class="text-xs text-slate-300">
+              Build weighted rotation packs from uploads, label tags, spotlights and boosts.
+              Latest pack saved as <span class="font-mono text-cyan-200">tkfm_autopilot_last_pack</span>.
+            </p>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[0.7rem] text-slate-400">
+            <span class="px-2 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 uppercase tracking-[0.18em]">
+              Tune Rotations
+            </span>
+            <span class="opacity-70 group-hover:translate-x-0.5 transition">↗</span>
+          </div>
+        </a>
+
+        <!-- MOMENTUM ENGINE -->
+        <a href="momentum-engine.html" class="group rounded-2xl border border-slate-800 bg-slate-950/70 p-4 flex flex-col justify-between hover:border-emerald-400/80 hover:shadow-[0_0_22px_rgba(52,211,153,0.6)] transition">
+          <div>
+            <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400 mb-1">Heat Check</p>
+            <h3 class="text-sm font-semibold mb-1 text-emerald-300">📈 TKFM Momentum Engine</h3>
+            <p class="text-xs text-slate-300">
+              Live scoreboard that reads uploads, mixtape orders, fan profiles and Autopilot packs.
+              Ranks who’s actually moving right now across TKFM.
+            </p>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[0.7rem] text-slate-400">
+            <span class="px-2 py-1 rounded-full border border-emerald-400/70 bg-emerald-400/10 uppercase tracking-[0.18em]">
+              View Heat Map
+            </span>
+            <span class="opacity-70 group-hover:translate-x-0.5 transition">↗</span>
+          </div>
+        </a>
+
+        <!-- LABEL WORLD -->
+        <a href="label-home.html" class="group rounded-2xl border border-slate-800 bg-slate-950/70 p-4 flex flex-col justify-between hover:border-yellow-400/80 hover:shadow-[0_0_22px_rgba(250,204,21,0.7)] transition">
+          <div>
+            <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400 mb-1">Label World</p>
+            <h3 class="text-sm font-semibold mb-1 text-yellow-300">💎 TKFM Records Label Home</h3>
+            <p class="text-xs text-slate-300">
+              Gold / marble HQ for TKFM Records: applications, label tags, sponsor engine and mixtape spotlight
+              feeding back into Autopilot + AI DJ Engine.
+            </p>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[0.7rem] text-slate-400">
+            <span class="px-2 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 uppercase tracking-[0.18em]">
+              Enter Label Side
+            </span>
+            <span class="opacity-70 group-hover:translate-x-0.5 transition">↗</span>
+          </div>
+        </a>
+
+        <!-- GOD VIEW -->
+        <a href="god-view.html" class="group rounded-2xl border border-slate-800 bg-slate-950/70 p-4 flex flex-col justify-between hover:border-cyan-400/80 hover:shadow-[0_0_22px_rgba(34,211,238,0.7)] transition">
+          <div>
+            <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400 mb-1">Owner Only</p>
+            <h3 class="text-sm font-semibold mb-1 text-cyan-300">👁 GOD VIEW — Owner Dashboard</h3>
+            <p class="text-xs text-slate-300">
+              Master control: crossfire view for TKFM Radio + TKFM Records, reading the same
+              localStorage keys as the engines on this page.
+            </p>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[0.7rem] text-slate-400">
+            <span class="px-2 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 uppercase tracking-[0.18em]">
+              Open GOD VIEW
+            </span>
+            <span class="opacity-70 group-hover:translate-x-0.5 transition">↗</span>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/40">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — DJ KRAVE. All Rights Reserved.</span>
+      <span class="opacity-70">Radio • Mixtape Hosting • Label • Sponsor Engine • Momentum Engine</span>
+    </div>
+  </footer>
 </body>
 </html>
