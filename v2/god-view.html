@@ -2,832 +2,406 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>TKFM — GOD VIEW (Owner Control Room)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TKFM • GOD VIEW</title>
-
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
   <style>
-    :root {
-      --bg-deep: #020617;
-      --bg-card: rgba(15,23,42,0.98);
-      --accent-orange: #fb923c;
-      --accent-pink: #ec4899;
-      --accent-cyan: #22d3ee;
-      --accent-purple: #6366f1;
-      --accent-gold: #facc15;
-      --accent-lime: #22c55e;
-      --accent-danger: #fb7185;
-      --border-subtle: rgba(148,163,184,0.55);
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    }
-
     body {
-      min-height: 100vh;
-      color: var(--text-main);
-      background:
-        radial-gradient(circle at 0 0, rgba(236,72,153,0.22), transparent 55%),
-        radial-gradient(circle at 100% 0, rgba(56,189,248,0.22), transparent 55%),
-        radial-gradient(circle at 0 100%, rgba(250,204,21,0.16), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(37,99,235,0.16), transparent 55%),
-        linear-gradient(to bottom, #020617, #020617 40%, #020617 100%);
-    }
-
-    .page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.1rem 0.9rem 1.6rem;
-      position: relative;
-    }
-
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      background-image: linear-gradient(
-        to bottom,
-        rgba(15,23,42,0) 0px,
-        rgba(15,23,42,0.6) 1px,
-        rgba(15,23,42,0) 2px
-      );
-      background-size: 100% 3px;
-      mix-blend-mode: soft-light;
-      opacity: .4;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .nav-shell {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      backdrop-filter: blur(20px);
-      background: linear-gradient(
-        to bottom,
-        rgba(15,23,42,0.98),
-        rgba(15,23,42,0.85),
-        transparent
-      );
-      border-bottom: 1px solid rgba(250,204,21,0.65);
-      margin: 0 -0.9rem 1.4rem;
-      padding: .5rem .9rem .65rem;
-    }
-
-    .nav-row {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-    }
-
-    .nav-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      border: 1px solid rgba(250,204,21,0.7);
-      background:
-        radial-gradient(circle at 20% 0%, #facc15, #fb923c 40%, #ec4899 65%, #020617 100%);
-      box-shadow:
-        0 0 26px rgba(250,204,21,0.9),
-        0 0 26px rgba(236,72,153,0.7);
-    }
-
-    .nav-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: .1rem;
-    }
-    .nav-kicker {
-      font-size: .7rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .nav-main {
-      font-size: .95rem;
-      font-weight: 650;
-    }
-
-    .nav-links {
-      margin-left: auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: .4rem;
-      font-size: .75rem;
-    }
-    .nav-link {
-      padding: .24rem .7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.6);
-      color: var(--text-muted);
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: .14em;
-      background: radial-gradient(circle at top, rgba(15,23,42,0.9), transparent 70%);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .nav-link.primary {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      box-shadow: 0 0 16px rgba(250,204,21,0.7);
-    }
-
-    @media (max-width: 860px) {
-      .nav-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .nav-links {
-        margin-left: 0;
-      }
-    }
-
-    .hero {
-      border-radius: 30px;
-      border: 1px solid rgba(250,204,21,0.78);
-      background:
-        radial-gradient(circle at 0 0, rgba(250,204,21,0.22), transparent 60%),
-        radial-gradient(circle at 100% 0, rgba(56,189,248,0.18), transparent 60%),
-        radial-gradient(circle at 50% 120%, rgba(15,23,42,0.98), #020617 70%);
-      padding: 1.7rem 1.5rem 1.8rem;
-      margin-bottom: 1.8rem;
-      box-shadow:
-        0 0 70px rgba(15,23,42,0.9),
-        0 0 36px rgba(0,0,0,1);
-      color: #f9fafb;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr);
-      gap: 1.2rem;
-    }
-    @media (max-width: 900px) {
-      .hero-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .hero-tagline {
-      font-size: .78rem;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: rgba(248,250,252,0.7);
-      margin-bottom: .4rem;
-    }
-    .hero-title {
-      font-size: 1.7rem;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      margin-bottom: .5rem;
-    }
-    .hero-sub {
-      font-size: .9rem;
-      color: #e5e7eb;
-      max-width: 32rem;
-      margin-bottom: .7rem;
-    }
-
-    .hero-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .35rem;
-      margin-bottom: 1rem;
-    }
-    .pill {
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      padding: .26rem .7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.6);
-      background: rgba(15,23,42,0.85);
-      color: var(--text-muted);
-    }
-    .pill.orange {
-      border-color: var(--accent-orange);
-      color: var(--accent-orange);
-    }
-    .pill.pink {
-      border-color: var(--accent-pink);
-      color: var(--accent-pink);
-    }
-    .pill.cyan {
-      border-color: var(--accent-cyan);
-      color: var(--accent-cyan);
-    }
-    .pill.gold {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-    }
-
-    .hero-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-      margin-top: .3rem;
-    }
-    .hero-btn {
-      font-size: .8rem;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      padding: .4rem .9rem;
-      border-radius: 999px;
-      border: 1px solid rgba(248,250,252,0.45);
-      background: rgba(15,23,42,0.9);
-      cursor: pointer;
-      color: #f9fafb;
-      text-decoration: none;
-    }
-    .hero-btn.main {
-      border-color: var(--accent-gold);
-      color: #0f172a;
-      background: radial-gradient(circle at 0 0, #facc15, #fb923c 55%, #f97316 100%);
-      box-shadow:
-        0 0 40px rgba(250,204,21,0.9),
-        0 0 24px rgba(249,115,22,0.9);
-    }
-
-    .hero-meta {
-      margin-top: .7rem;
-      font-size: .74rem;
-      color: var(--text-muted);
-    }
-
-    .hero-right-card {
-      border-radius: 20px;
-      border: 1px solid rgba(148,163,184,0.7);
-      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.15), transparent 60%), rgba(15,23,42,0.96);
-      padding: .85rem .9rem;
-      display: flex;
-      flex-direction: column;
-      gap: .6rem;
-    }
-    .hero-right-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: .6rem;
-    }
-    .hero-right-title {
-      font-size: .9rem;
-      font-weight: 600;
-    }
-    .hero-right-tag {
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      padding: .22rem .65rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      color: var(--text-muted);
-    }
-    .hero-right-body {
-      font-size: .78rem;
-      color: var(--text-muted);
-    }
-    .hero-owner-line {
-      font-size: .75rem;
-      margin-top: .35rem;
-      color: var(--accent-cyan);
-    }
-    .hero-right-buttons {
-      margin-top: .6rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: .4rem;
-    }
-    .hero-right-btn {
-      font-size: .7rem;
-      padding: .32rem .7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      background: rgba(15,23,42,0.96);
-      color: #e5e7eb;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .hero-right-btn.danger {
-      border-color: var(--accent-danger);
-      color: var(--accent-danger);
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    @media (max-width: 980px) {
-      .cards-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .world-card {
-      border-radius: 20px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-card);
-      padding: .95rem .9rem 1rem;
-      box-shadow: 0 0 32px rgba(15,23,42,0.95);
-    }
-    .world-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: .5rem;
-      margin-bottom: .5rem;
-    }
-    .world-title {
-      font-size: .9rem;
-      font-weight: 600;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-    }
-    .world-tag {
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      padding: .2rem .6rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      color: var(--text-muted);
-    }
-    .world-sub {
-      font-size: .77rem;
-      color: var(--text-muted);
-      margin-bottom: .5rem;
-    }
-
-    .world-links {
-      margin-top: .4rem;
-      display: flex;
-      flex-direction: column;
-      gap: .25rem;
-      font-size: .78rem;
-    }
-    .world-link {
-      display: flex;
-      justify-content: space-between;
-      gap: .5rem;
-      padding: .3rem .45rem;
-      border-radius: .6rem;
-      border: 1px solid rgba(31,41,55,0.9);
-      background: rgba(15,23,42,0.97);
-      text-decoration: none;
-      color: inherit;
-      cursor: pointer;
-    }
-    .world-link-main {
-      display: flex;
-      flex-direction: column;
-      gap: .05rem;
-    }
-    .world-link-title {
-      font-size: .8rem;
-      font-weight: 500;
-    }
-    .world-link-sub {
-      font-size: .72rem;
-      color: var(--text-muted);
-    }
-    .world-link-tag {
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--accent-cyan);
-      white-space: nowrap;
-      align-self: center;
-    }
-
-    .world-link.highlight {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 16px rgba(250,204,21,0.6);
-    }
-    .world-link.label {
-      border-color: rgba(236,72,153,0.75);
-    }
-    .world-link.radio {
-      border-color: rgba(56,189,248,0.8);
-    }
-    .world-link.dj {
-      border-color: rgba(34,197,94,0.85);
-    }
-    .world-link.ops {
-      border-color: rgba(129,140,248,0.8);
-    }
-
-    .footer-note {
-      margin-top: .6rem;
-      font-size: .7rem;
-      color: var(--text-muted);
-      text-align: right;
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 10% 0,rgba(56,189,248,0.16),transparent 55%),
+        radial-gradient(circle at 90% 0,rgba(236,72,153,0.16),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.18),transparent 55%);
     }
   </style>
 </head>
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-<body>
-<div class="scanlines"></div>
-<div class="page">
-
-  <div class="nav-shell">
-    <div class="nav-row">
-      <div class="nav-logo"></div>
-      <div class="nav-title-block">
-        <div class="nav-kicker">THEY KRAVE FOR ME RADIO · OWNER</div>
-        <div class="nav-main">TKFM • GOD VIEW</div>
-      </div>
-
-      <div class="nav-links">
-        <a class="nav-link primary" href="owner-ops-dashboard.html">Ops Dashboard</a>
-        <a class="nav-link" href="label-hub.html">Label Hub</a>
-        <a class="nav-link" href="radio-hub.html">Radio Hub</a>
-        <a class="nav-link" href="dj-mixtape-orders.html">DJ Orders</a>
-        <a class="nav-link" href="tkfm-dev-console.html">Dev Console</a>
-      </div>
+  <!-- TOP NAV (OWNER) -->
+  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            Owner Console • TKFM
+          </div>
+          <div class="text-sm font-semibold">
+            GOD VIEW <span class="text-cyan-300">— Radio + Label + Revenue</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">📻 Radio Hub</a>
+        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">🎫 Creator Pass</a>
+        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">⭐ Fan Pass</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <section class="hero">
-    <div class="hero-grid">
-      <div>
-        <div class="hero-tagline">ALL SIGNALS · ONE DESK</div>
-        <div class="hero-title">You are the program director now.</div>
-        <div class="hero-sub">
-          GOD VIEW sits above TKFM v2. Slide between artist uploads, label decisions,
-          AI Autopilot packs, radio rotation, and DJ mixtape hosting without ever leaving
-          the cockpit.
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-8">
+
+      <!-- HERO ROW -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <div class="flex-1">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.28em] text-cyan-200 mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            GOD VIEW • Owner Only
+          </div>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight mb-2">
+            One board for <span class="text-purple-400 drop-shadow-[0_0_25px_rgba(168,85,247,0.95)]">radio, label, mixtapes & sponsors.</span>
+          </h1>
+          <p class="text-sm md:text-base text-slate-200/90 max-w-xl mb-4">
+            Reads the same localStorage brain as your engines:
+            uploads, mixtape orders, fan profiles, Autopilot pack and latest contract.
+            Jump into deep pages in one click.
+          </p>
+          <div class="flex flex-wrap gap-2 text-[0.7rem] text-slate-300">
+            <span class="px-2.5 py-1 rounded-full border border-pink-500/70 bg-pink-500/10 uppercase tracking-[0.2em]">
+              tkfm_artist_uploads
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-purple-500/70 bg-purple-500/10 uppercase tracking-[0.2em]">
+              mixtapeOrders
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 uppercase tracking-[0.2em]">
+              tkfm_autopilot_last_pack
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-emerald-400/70 bg-emerald-400/10 uppercase tracking-[0.2em]">
+              tkfm_fan_profiles
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-yellow-400/70 bg-yellow-400/10 uppercase tracking-[0.2em]">
+              tkfm_contract_latest
+            </span>
+          </div>
         </div>
 
-        <div class="hero-pills">
-          <div class="pill orange">Artist → Label Pipeline</div>
-          <div class="pill pink">Mixtape Hosting</div>
-          <div class="pill cyan">Autopilot + AI DJ</div>
-          <div class="pill gold">Contracts + Sponsors</div>
-        </div>
+        <!-- SNAPSHOT CARD -->
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-35 blur-2xl bg-[conic-gradient(from_150deg,_#22d3ee,_#ec4899,_#a855f7,_#facc15,_#22d3ee)]"></div>
+          <div class="relative space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">Live Snapshot</p>
+                <p class="text-xs text-slate-300">
+                  Pulled from the browser you’re on right now.
+                </p>
+              </div>
+              <button id="gv-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
 
-        <div class="hero-buttons">
-          <a class="hero-btn main" href="owner-ops-dashboard.html">Open Owner Ops Dashboard</a>
-          <a class="hero-btn" href="label-hub.html">Jump to Label Hub</a>
-          <a class="hero-btn" href="radio-hub.html">Jump to Radio Hub</a>
-        </div>
+            <div class="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Uploads</div>
+                <div id="gv-uploads" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Mixtapes</div>
+                <div id="gv-mixtapes" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Fans</div>
+                <div id="gv-fans" class="text-lg font-bold">0</div>
+              </div>
+            </div>
 
-        <div class="hero-meta" id="owner-line">
-          Checking owner session via Supabase&hellip;
-        </div>
+            <div class="space-y-1 text-[0.7rem]">
+              <p class="text-slate-300">
+                Autopilot Pack:
+                <span id="gv-pack" class="font-mono text-cyan-300 break-all">(none)</span>
+              </p>
+              <p class="text-slate-300">
+                Latest Contract:
+                <span id="gv-contract" class="font-mono text-yellow-300 break-all">(none)</span>
+              </p>
+            </div>
+
+            <p class="text-[0.68rem] text-slate-400">
+              Use this as a quick “is the brain alive?” check before touching label offers or sponsor inventory.
+            </p>
+          </div>
+        </aside>
       </div>
 
-      <div class="hero-right-card">
-        <div class="hero-right-header">
-          <div class="hero-right-title">Pipeline Overview</div>
-          <div class="hero-right-tag">TKFM v2</div>
+      <!-- GRIDS -->
+      <div class="grid gap-5 lg:grid-cols-3">
+
+        <!-- RADIO SYSTEMS -->
+        <div class="space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Radio & Rotation
+          </h2>
+
+          <a href="radio-hub.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-purple-500/80 hover:shadow-[0_0_20px_rgba(168,85,247,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>📻</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Public</p>
+                  <p class="font-semibold text-purple-200">Radio Hub</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Public radio surface wired into Autopilot + AI DJ Engine.
+            </p>
+          </a>
+
+          <a href="autopilot-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-cyan-400/80 hover:shadow-[0_0_20px_rgba(34,211,238,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>🛠</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Rotation Brain</p>
+                  <p class="font-semibold text-cyan-200">Autopilot Engine</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Build & save <span class="font-mono text-cyan-200 text-[0.7rem]">tkfm_autopilot_last_pack</span>, which feeds AI DJ Engine.
+            </p>
+          </a>
+
+          <a href="ai-dj-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-pink-500/80 hover:shadow-[0_0_20px_rgba(236,72,153,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>🤖</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">AI DJ</p>
+                  <p class="font-semibold text-pink-200">AI DJ Engine</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Consumes the latest Autopilot pack and turns it into rotation / breaks.
+            </p>
+          </a>
+
+          <a href="momentum-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-emerald-400/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>📈</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Heat Check</p>
+                  <p class="font-semibold text-emerald-200">Momentum Engine</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Leaderboard built from the same keys GOD VIEW is reading right now.
+            </p>
+          </a>
         </div>
-        <div class="hero-right-body">
-          GOD VIEW is just a switchboard. All the real numbers live in:
-          <ul style="margin-top:.4rem;padding-left:1.1rem;">
-            <li><strong>owner-ops-dashboard.html</strong> &mdash; metrics for every world.</li>
-            <li><strong>tkfm-dev-console.html</strong> &mdash; raw localStorage inspector.</li>
-            <li><strong>radio-hub.html</strong> &mdash; what the AI DJ actually sees.</li>
-          </ul>
+
+        <!-- LABEL & ARTIST PIPELINE -->
+        <div class="space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Label • Artists • Contracts
+          </h2>
+
+          <a href="records-application.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-yellow-400/80 hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>📩</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Entry</p>
+                  <p class="font-semibold text-yellow-200">TKFM Records Applications</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Where serious artists jump from radio world into label world.
+            </p>
+          </a>
+
+          <a href="label-records-applications.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-yellow-400/80 hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>📂</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Queue</p>
+                  <p class="font-semibold text-yellow-200">Label Applications Queue</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Internal read on who’s waiting, paired with applicant statements.
+            </p>
+          </a>
+
+          <a href="label-contract-lab.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-emerald-400/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>📜</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Contracts</p>
+                  <p class="font-semibold text-emerald-200">Contract Lab</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Generates deals and writes them to
+              <span class="font-mono text-emerald-200 text-[0.7rem]">tkfm_contract_latest</span>.
+            </p>
+          </a>
+
+          <a href="label-mixtape-spotlight.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-pink-500/80 hover:shadow-[0_0_20px_rgba(236,72,153,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>🌟</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Spotlight</p>
+                  <p class="font-semibold text-pink-200">Label Mixtape Spotlight</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Decides which hosted projects get gold treatment across radio & social.
+            </p>
+          </a>
         </div>
-        <div class="hero-owner-line">
-          Signed in user and role will appear here once Supabase auth resolves.
+
+        <!-- MONEY, OPS & DEV -->
+        <div class="space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Revenue • Sponsors • Ops
+          </h2>
+
+          <a href="label-revenue-console.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-emerald-400/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>💰</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Owner</p>
+                  <p class="font-semibold text-emerald-200">Label Revenue Console</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Mixtape hosting, social campaigns and sponsor deals in one owner view.
+            </p>
+          </a>
+
+          <a href="label-sponsor-engine.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-yellow-400/80 hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>🏷</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Brands</p>
+                  <p class="font-semibold text-yellow-200">Sponsor Engine</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Label-colored sponsor tiers that plug into placements and rotators.
+            </p>
+          </a>
+
+          <a href="sponsor-rotator.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-cyan-400/80 hover:shadow-[0_0_20px_rgba(34,211,238,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>♻️</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Inventory</p>
+                  <p class="font-semibold text-cyan-200">Sponsor Rotator</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Rotates sponsor placements to match the heat + schedule.
+            </p>
+          </a>
+
+          <a href="tkfm-dev-console.html" class="group block rounded-2xl border border-slate-800 bg-slate-950/80 p-3.5 text-sm hover:border-slate-500/80 hover:shadow-[0_0_20px_rgba(148,163,184,0.6)] transition">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <div class="flex items-center gap-2">
+                <span>🛠</span>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Tech</p>
+                  <p class="font-semibold text-slate-100">TKFM Dev Console</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 group-hover:translate-x-0.5 transition">↗</span>
+            </div>
+            <p class="text-[0.7rem] text-slate-300">
+              Where you debug Netlify functions, Stripe keys and internal cron.
+            </p>
+          </a>
         </div>
-        <div class="hero-right-buttons">
-          <a class="hero-right-btn" href="owner-ops-dashboard.html">View Ops Dashboard</a>
-          <a class="hero-right-btn" href="tkfm-dev-console.html">Open Dev Console</a>
-          <button class="hero-right-btn danger" id="logout-btn" type="button">Logout</button>
-        </div>
+
       </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/40">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — GOD VIEW.</span>
+      <span class="opacity-70">
+        Reads browser-side keys only — every stat you see here is what AI + label + sponsors are reacting to.
+      </span>
     </div>
-  </section>
+  </footer>
 
-  <section class="cards-grid">
-    <!-- LABEL WORLD -->
-    <article class="world-card">
-      <div class="world-header">
-        <div class="world-title">Label World</div>
-        <div class="world-tag">Sign Artists · Drop Deals</div>
-      </div>
-      <div class="world-sub">
-        From raw submissions to signed contracts and spotlight features.
-      </div>
+  <script>
+    function safeGet(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed || fallback;
+      } catch (e) {
+        console.warn('GOD VIEW: failed to parse', key, e);
+        return fallback;
+      }
+    }
 
-      <div class="world-links">
-        <a href="label-hub.html" class="world-link world-link label highlight">
-          <div class="world-link-main">
-            <div class="world-link-title">Label Hub</div>
-            <div class="world-link-sub">Single control room for submissions, pipeline, and actions.</div>
-          </div>
-          <div class="world-link-tag">Home</div>
-        </a>
+    function refreshGodView() {
+      const uploads = safeGet('tkfm_artist_uploads', []);
+      const mixtapes = safeGet('mixtapeOrders', []);
+      const fans = safeGet('tkfm_fan_profiles', []);
+      const pack = safeGet('tkfm_autopilot_last_pack', null);
+      const contract = safeGet('tkfm_contract_latest', null);
 
-        <a href="artist-submissions-console.html" class="world-link world-link label">
-          <div class="world-link-main">
-            <div class="world-link-title">Artist Submissions Console</div>
-            <div class="world-link-sub">Review artistUploads and move the ones that are ready.</div>
-          </div>
-          <div class="world-link-tag">Queue</div>
-        </a>
+      document.getElementById('gv-uploads').textContent =
+        Array.isArray(uploads) ? uploads.length : 0;
+      document.getElementById('gv-mixtapes').textContent =
+        Array.isArray(mixtapes) ? mixtapes.length : 0;
+      document.getElementById('gv-fans').textContent =
+        Array.isArray(fans) ? fans.length : 0;
 
-        <a href="label-mixtape-spotlight.html" class="world-link world-link label">
-          <div class="world-link-main">
-            <div class="world-link-title">Label Mixtape Spotlight</div>
-            <div class="world-link-sub">Curate spotlight campaigns from hosted mixtapes.</div>
-          </div>
-          <div class="world-link-tag">Spotlight</div>
-        </a>
+      const packStr = pack
+        ? (pack.key || pack.id || pack.name || JSON.stringify(pack).slice(0, 60) + '…')
+        : '(none)';
+      document.getElementById('gv-pack').textContent = packStr;
 
-        <a href="label-contract-lab.html" class="world-link world-link label">
-          <div class="world-link-main">
-            <div class="world-link-title">Contract Lab</div>
-            <div class="world-link-sub">Generate offers and deal structures into tkfm_contract_latest.</div>
-          </div>
-          <div class="world-link-tag">Draft</div>
-        </a>
+      const contractStr = contract
+        ? (contract.artistName || contract.title || JSON.stringify(contract).slice(0, 60) + '…')
+        : '(none)';
+      document.getElementById('gv-contract').textContent = contractStr;
+    }
 
-        <a href="label-contract-output.html" class="world-link world-link label">
-          <div class="world-link-main">
-            <div class="world-link-title">Contract Output</div>
-            <div class="world-link-sub">Printable contract from the latest tkfm_contract_latest object.</div>
-          </div>
-          <div class="world-link-tag">Print</div>
-        </a>
-
-        <a href="label-accounts.html" class="world-link world-link label">
-          <div class="world-link-main">
-            <div class="world-link-title">Label Accounts</div>
-            <div class="world-link-sub">Label-side account management and access control.</div>
-          </div>
-          <div class="world-link-tag">Accounts</div>
-        </a>
-
-        <a href="label-sponsor-engine.html" class="world-link world-link label">
-          <div class="world-link-main">
-            <div class="world-link-title">Sponsor Engine</div>
-            <div class="world-link-sub">Pair campaigns and shows with sponsor placements.</div>
-          </div>
-          <div class="world-link-tag">Sponsors</div>
-        </a>
-      </div>
-    </article>
-
-    <!-- RADIO WORLD -->
-    <article class="world-card">
-      <div class="world-header">
-        <div class="world-title">Radio World</div>
-        <div class="world-tag">Autopilot · AI DJ · Rotation</div>
-      </div>
-      <div class="world-sub">
-        Build weighted packs, feed the AI DJ, and watch the on-air rotation.
-      </div>
-
-      <div class="world-links">
-        <a href="radio-hub.html" class="world-link world-link radio highlight">
-          <div class="world-link-main">
-            <div class="world-link-title">Radio Hub</div>
-            <div class="world-link-sub">See catalog size, current pack, and active mixtape pipelines.</div>
-          </div>
-          <div class="world-link-tag">Control</div>
-        </a>
-
-        <a href="autopilot-engine.html" class="world-link world-link radio">
-          <div class="world-link-main">
-            <div class="world-link-title">Autopilot Engine</div>
-            <div class="world-link-sub">Generate tkfm_autopilot_last_pack from tkfm_catalog with weights.</div>
-          </div>
-          <div class="world-link-tag">Packs</div>
-        </a>
-
-        <a href="ai-dj-engine.html" class="world-link world-link radio">
-          <div class="world-link-main">
-            <div class="world-link-title">AI DJ Engine</div>
-            <div class="world-link-sub">Consume the pack, inject drops, and simulate live runs.</div>
-          </div>
-          <div class="world-link-tag">AI</div>
-        </a>
-
-        <a href="ai-dj-console.html" class="world-link world-link radio">
-          <div class="world-link-main">
-            <div class="world-link-title">AI DJ Console</div>
-            <div class="world-link-sub">Operator view for managing AI DJ behavior on-air.</div>
-          </div>
-          <div class="world-link-tag">Console</div>
-        </a>
-
-        <a href="mixtape-catalog.html" class="world-link world-link radio">
-          <div class="world-link-main">
-            <div class="world-link-title">Mixtape Catalog</div>
-            <div class="world-link-sub">Hosted tapes and projects available for rotation and promo.</div>
-          </div>
-          <div class="world-link-tag">Catalog</div>
-        </a>
-
-        <a href="mixtape-label-console.html" class="world-link world-link radio">
-          <div class="world-link-main">
-            <div class="world-link-title">Mixtape Label Console</div>
-            <div class="world-link-sub">Label-side view of hosted tapes and their performance.</div>
-          </div>
-          <div class="world-link-tag">Label View</div>
-        </a>
-      </div>
-    </article>
-
-    <!-- ARTIST + DJ FUNNEL -->
-    <article class="world-card">
-      <div class="world-header">
-        <div class="world-title">Artist + DJ Funnel</div>
-        <div class="world-tag">Uploads · Intakes · Hosting</div>
-      </div>
-      <div class="world-sub">
-        Where artists submit, DJs host, and the label scouts what’s next.
-      </div>
-
-      <div class="world-links">
-        <a href="artist-upload.html" class="world-link world-link dj highlight">
-          <div class="world-link-main">
-            <div class="world-link-title">Artist Upload Portal</div>
-            <div class="world-link-sub">Entry point for artists to send records into artistUploads.</div>
-          </div>
-          <div class="world-link-tag">Intake</div>
-        </a>
-
-        <a href="mixtape-intake-dashboard.html" class="world-link world-link dj">
-          <div class="world-link-main">
-            <div class="world-link-title">Mixtape Intake Dashboard</div>
-            <div class="world-link-sub">Track incoming tapes, briefs, and intake forms.</div>
-          </div>
-          <div class="world-link-tag">Intake</div>
-        </a>
-
-        <a href="mixtape-brief.html" class="world-link world-link dj">
-          <div class="world-link-main">
-            <div class="world-link-title">Mixtape Brief</div>
-            <div class="world-link-sub">Questionnaire for artists before they lock in a hosted tape.</div>
-          </div>
-          <div class="world-link-tag">Brief</div>
-        </a>
-
-        <a href="dj-mixtape-hosting.html" class="world-link world-link dj">
-          <div class="world-link-main">
-            <div class="world-link-title">DJ KRAVE Mixtape Hosting</div>
-            <div class="world-link-sub">Public-facing pricing tiers for Starter / Pro / Elite tapes.</div>
-          </div>
-          <div class="world-link-tag">Pricing</div>
-        </a>
-
-        <a href="dj-mixtape-orders.html" class="world-link world-link dj">
-          <div class="world-link-main">
-            <div class="world-link-title">DJ Mixtape Orders Console</div>
-            <div class="world-link-sub">View Stripe-fed mixtapeOrders and move them to delivered.</div>
-          </div>
-          <div class="world-link-tag">Orders</div>
-        </a>
-
-        <a href="dj-portal.html" class="world-link world-link dj">
-          <div class="world-link-main">
-            <div class="world-link-title">DJ Portal</div>
-            <div class="world-link-sub">Tools and access for TKFM DJs on the network.</div>
-          </div>
-          <div class="world-link-tag">DJs</div>
-        </a>
-
-        <a href="dj-schedule.html" class="world-link world-link dj">
-          <div class="world-link-main">
-            <div class="world-link-title">DJ Schedule</div>
-            <div class="world-link-sub">Slotting, rotations, and upcoming live blocks.</div>
-          </div>
-          <div class="world-link-tag">Schedule</div>
-        </a>
-      </div>
-    </article>
-
-    <!-- SYSTEM BRAIN + BUSINESS -->
-    <article class="world-card">
-      <div class="world-header">
-        <div class="world-title">System Brain + Business</div>
-        <div class="world-tag">Core · Revenue · Access</div>
-      </div>
-      <div class="world-sub">
-        The shared brain, revenue levers, and access control for TKFM v2.
-      </div>
-
-      <div class="world-links">
-        <a href="owner-ops-dashboard.html" class="world-link world-link ops highlight">
-          <div class="world-link-main">
-            <div class="world-link-title">Owner Ops Dashboard</div>
-            <div class="world-link-sub">Top-level metrics for uploads, catalog, packs, orders, contracts.</div>
-          </div>
-          <div class="world-link-tag">Ops</div>
-        </a>
-
-        <a href="tkfm-dev-console.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">TKFM Dev Console</div>
-            <div class="world-link-sub">Inspect artistUploads, tkfm_catalog, packs, orders & stats.</div>
-          </div>
-          <div class="world-link-tag">Dev</div>
-        </a>
-
-        <a href="feature-engine.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">Feature Engine</div>
-            <div class="world-link-sub">Configure boosts, placements, and special feature logic.</div>
-          </div>
-          <div class="world-link-tag">Features</div>
-        </a>
-
-        <a href="feature-revenue.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">Revenue Engine</div>
-            <div class="world-link-sub">Map features, spins, and spots back to monetization.</div>
-          </div>
-          <div class="world-link-tag">Revenue</div>
-        </a>
-
-        <a href="pricing.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">Pricing Page</div>
-            <div class="world-link-sub">Live view of subscription tiers and public pricing.</div>
-          </div>
-          <div class="world-link-tag">Pricing</div>
-        </a>
-
-        <a href="creator-pass.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">Creator Pass</div>
-            <div class="world-link-sub">Gatekeeper for who gets deeper platform tools.</div>
-          </div>
-          <div class="world-link-tag">Access</div>
-        </a>
-
-        <a href="app-hub.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">App Hub</div>
-            <div class="world-link-sub">App launchpad for TKFM tools and microsites.</div>
-          </div>
-          <div class="world-link-tag">Apps</div>
-        </a>
-
-        <a href="owner-login.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">Owner Login</div>
-            <div class="world-link-sub">Supabase entry point for owner + staff.</div>
-          </div>
-          <div class="world-link-tag">Login</div>
-        </a>
-
-        <a href="login.html" class="world-link world-link ops">
-          <div class="world-link-main">
-            <div class="world-link-title">User Login</div>
-            <div class="world-link-sub">General user / member login entry.</div>
-          </div>
-          <div class="world-link-tag">Users</div>
-        </a>
-      </div>
-    </article>
-  </section>
-
-  <div class="footer-note">
-    GOD VIEW is a safe map &mdash; real data lives in tkfm-core.js + localStorage keys.
-  </div>
-
-</div>
-
-<script type="module">
-  import { supabase } from "./src/supabaseClient.js";
-  import { protectPage, logoutAndReturnToLogin } from "./auth-gateway.js";
-
-  // 1) Protect: owner only
-  protectPage(["owner"]);
-
-  // 2) Personalize the owner line
-  const ownerLine = document.getElementById("owner-line");
-  const logoutBtn = document.getElementById("logout-btn");
-
-  async function initOwner() {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data?.user) return;
-
-    const email = data.user.email || "owner";
-    const role = data.user.user_metadata?.tkfm_role || "owner";
-
-    ownerLine.textContent = `Signed in as ${email} • role: ${role.toUpperCase()} • GOD VIEW unlocked.`;
-  }
-
-  initOwner();
-
-  logoutBtn.addEventListener("click", async () => {
-    await logoutAndReturnToLogin();
-  });
-</script>
+    document.addEventListener('DOMContentLoaded', function () {
+      refreshGodView();
+      const btn = document.getElementById('gv-refresh');
+      if (btn) btn.addEventListener('click', refreshGodView);
+    });
+  </script>
 </body>
 </html>
