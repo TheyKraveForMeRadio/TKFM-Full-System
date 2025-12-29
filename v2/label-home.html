@@ -1,249 +1,413 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>TKFM Records — Label Home</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <title>TKFM Records — Gold Label Home</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="TKFM Records — gold-label home for serious independent artists. Applications, contracts, spotlights and Autopilot radio rotation powered by They Krave For Me Radio." />
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/logo-check.js" defer></script>
   <style>
-    :root {
-      --bg-deep: #020617;
-      --bg-card: rgba(6,8,20,0.98);
-      --bg-soft: rgba(15,23,42,0.96);
-      --gold: #facc15;
-      --gold-deep: #eab308;
-      --amber: #f97316;
-      --accent-purple: #a855f7;
-      --accent-pink: #ec4899;
-      --accent-cyan: #22d3ee;
-      --text-main: #f9fafb;
-      --text-muted: #94a3b8;
-      --text-soft: #64748b;
-      --border-subtle: rgba(148,163,184,0.35);
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
     body{
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top,#111827 0,transparent 52%),
-        radial-gradient(circle at top right,rgba(234,179,8,0.55) 0,transparent 60%),
-        radial-gradient(circle at top left,rgba(248,113,113,0.45) 0,transparent 60%),
-        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
-      color:var(--text-main);
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
-      -webkit-font-smoothing:antialiased;
-      padding:1.6rem .9rem 2.3rem;
-      overflow-x:hidden;
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.12),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(234,179,8,0.16),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(248,250,252,0.04),transparent 55%);
     }
-    a{text-decoration:none;color:inherit;}
-    .shell{max-width:1120px;margin:0 auto;}
-
-    /* NAV */
-    .nav{
-      margin:-1.6rem -.9rem 1.1rem;
-      padding:.75rem .9rem;
-      background:linear-gradient(to right,rgba(6,8,20,0.98),rgba(15,23,42,0.98));
-      border-bottom:1px solid var(--border-subtle);
-      backdrop-filter:blur(18px);
-      display:flex;
-      align-items:center;
-      gap:.8rem;
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+    .marble-card{
+      background-image:
+        radial-gradient(circle at 0 0,rgba(148,163,184,0.18),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(15,23,42,0.9),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(15,23,42,1),transparent 55%);
+      background-color: #020617;
     }
-    .nav-left{display:flex;align-items:center;gap:.7rem;}
-    .logo-orb{
-      width:2.4rem;height:2.4rem;border-radius:999px;
-      background:radial-gradient(circle at 10% 0,var(--gold),var(--amber) 40%,var(--accent-purple) 80%);
-      box-shadow:0 0 22px rgba(250,204,21,.9),0 0 24px rgba(248,113,113,.9);
-      border:1px solid rgba(250,204,21,.9);
-      display:flex;align-items:center;justify-content:center;
-      font-size:.85rem;font-weight:800;letter-spacing:.12em;
-      text-transform:uppercase;color:#020617;
-    }
-    .brand-text{display:flex;flex-direction:column;line-height:1.05;}
-    .brand-kicker{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-soft);}
-    .brand-main{font-size:.95rem;font-weight:700;}
-    .nav-right{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap;max-width:580px;justify-content:flex-end;}
-    .nav-pill{
-      font-size:.64rem;text-transform:uppercase;letter-spacing:.18em;
-      padding:.34rem .72rem;border-radius:999px;
-      border:1px solid var(--border-subtle);
-      background:var(--bg-soft);color:var(--text-soft);
-      display:flex;align-items:center;gap:.3rem;
-      white-space:nowrap;
-    }
-    .nav-pill.gold{
-      border-color:var(--gold);color:#020617;
-      background:linear-gradient(135deg,var(--gold),var(--amber));
-      box-shadow:0 0 18px rgba(250,204,21,.9);font-weight:650;
-    }
-    .nav-pill.owner{
-      border-color:var(--accent-cyan);color:var(--accent-cyan);
-      background:rgba(6,8,20,0.98);box-shadow:0 0 16px rgba(34,211,238,0.75);
-    }
-    @media(max-width:980px){.nav-right{display:none;}}
-
-    /* HERO */
-    .hero{display:grid;grid-template-columns:1.4fr 1fr;gap:1.1rem;align-items:center;margin-bottom:1.5rem;}
-    @media(max-width:900px){.hero{grid-template-columns:1fr;}}
-    .hero-kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.26em;color:var(--text-soft);margin-bottom:.4rem;}
-    .hero-title{font-size:clamp(2.1rem,3.5vw,2.6rem);font-weight:800;line-height:1.04;margin-bottom:.4rem;}
-    .hero-title span{
-      background:linear-gradient(135deg,var(--gold),var(--amber),var(--accent-pink));
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-    }
-    .hero-sub{font-size:.86rem;color:var(--text-muted);max-width:34rem;margin-bottom:.8rem;}
-    .hero-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.7rem;}
-    .btn-main{
-      font-size:.74rem;text-transform:uppercase;letter-spacing:.18em;
-      padding:.52rem 1.15rem;border-radius:999px;border:1px solid var(--gold);
-      background:linear-gradient(135deg,var(--gold),var(--amber));
-      color:#020617;cursor:pointer;font-weight:650;
-      box-shadow:0 0 20px rgba(250,204,21,.9);
-    }
-    .btn-ghost{
-      font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;
-      padding:.48rem 1.05rem;border-radius:999px;
-      border:1px solid var(--border-subtle);
-      background:var(--bg-soft);color:var(--text-soft);cursor:pointer;
-    }
-    .hero-tags{display:flex;flex-wrap:wrap;gap:.4rem;font-size:.68rem;}
-    .hero-pill{
-      padding:.3rem .7rem;border-radius:999px;border:1px solid var(--border-subtle);
-      background:var(--bg-soft);text-transform:uppercase;letter-spacing:.18em;color:var(--text-soft);
-    }
-
-    .hero-card{
-      border-radius:1rem;border:1px solid var(--border-subtle);
-      background:radial-gradient(circle at 0 0,rgba(250,204,21,0.25),transparent 55%),
-                 radial-gradient(circle at 100% 100%,rgba(248,113,113,0.24),transparent 55%),
-                 #020617;
-      padding:.9rem .95rem 1rem;box-shadow:0 0 26px rgba(0,0,0,0.98);font-size:.8rem;position:relative;overflow:hidden;
-    }
-    .hero-card::before{
-      content:"";position:absolute;inset:-50%;opacity:0.22;
-      background:conic-gradient(from 130deg,var(--gold),var(--amber),var(--accent-pink),var(--accent-purple),var(--gold));
-      filter:blur(28px);z-index:-1;
-    }
-    .hero-card-title{font-size:.92rem;font-weight:650;margin-bottom:.25rem;}
-    .hero-card-sub{font-size:.78rem;color:var(--text-muted);margin-bottom:.55rem;}
-    .hero-card-row{display:flex;flex-wrap:wrap;gap:.35rem;font-size:.68rem;}
-    .badge-soft{padding:.26rem .6rem;border-radius:999px;border:1px solid rgba(148,163,184,0.6);background:rgba(15,23,42,0.96);text-transform:uppercase;letter-spacing:.16em;color:var(--text-soft);}
-    .badge-gold{border-color:var(--gold);color:var(--gold);}
-    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;}
-
-    /* GRID + TILES */
-    .section{margin-bottom:1.35rem;}
-    .section-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.2em;color:var(--text-soft);margin-bottom:.55rem;}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
-    @media(max-width:960px){.grid-3{grid-template-columns:repeat(2,1fr);} }
-    @media(max-width:720px){.grid-3{grid-template-columns:1fr;} }
-    .tile{
-      border-radius:.9rem;border:1px solid var(--border-subtle);
-      background:var(--bg-card);padding:.7rem .78rem .8rem;font-size:.76rem;
-      position:relative;overflow:hidden;cursor:pointer;transition:.12s;
-    }
-    .tile:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 0 18px rgba(250,204,21,0.8);}
-    .tile::before{
-      content:"";position:absolute;inset:-40%;opacity:0;
-      background:conic-gradient(from 180deg,var(--gold),var(--amber),var(--accent-pink),var(--accent-purple),var(--gold));
-      filter:blur(26px);z-index:-1;transition:.18s;
-    }
-    .tile:hover::before{opacity:.22;}
-    .tile-label{font-size:.64rem;text-transform:uppercase;letter-spacing:.18em;color:var(--text-soft);margin-bottom:.16rem;}
-    .tile-title{font-size:.9rem;font-weight:650;margin-bottom:.16rem;}
-    .tile-sub{font-size:.72rem;color:var(--text-muted);margin-bottom:.36rem;}
-    .tile-bottom{display:flex;justify-content:space-between;align-items:center;font-size:.7rem;color:var(--text-soft);}
-    .pill{padding:.22rem .55rem;border-radius:999px;border:1px solid rgba(148,163,184,0.6);text-transform:uppercase;letter-spacing:.15em;font-size:.64rem;}
-    .pill.hot{border-color:var(--gold);color:var(--gold);}
-    .pill.link{border:none;color:var(--accent-cyan);padding:0;}
-
-    footer{margin-top:1.1rem;font-size:.7rem;color:var(--text-soft);}
-    footer code{color:var(--accent-cyan);}
+    .gold-border{border-color:rgba(250,204,21,0.7);}
   </style>
 </head>
-<body>
-<div class="shell">
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-  <!-- TOP NAV -->
-  <header class="nav">
-    <div class="nav-left">
-      <img src="/tkfm-records-logo.png" onerror="this.style.display='none'" class="h-10 w-auto object-contain">
-      <div class="brand-text">
-        <div class="brand-kicker">They Krave For Me • Label World</div>
-        <div class="brand-main">TKFM Records — Label Home</div>
-      </div>
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/70 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-records-logo.png" alt="TKFM Records" class="h-10 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-amber-300/80">
+            TKFM Records
+          </div>
+          <div class="text-sm font-semibold">
+            Gold Label <span class="text-yellow-300">Control</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
+          <span>📻</span><span>Radio Hub</span>
+        </a>
+        <a href="label-hub.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200 flex items-center gap-1">
+          <span>🏛</span><span>Label Hub</span>
+        </a>
+        <a href="records-application.html" class="px-3 py-1 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-200 flex items-center gap-1">
+          <span>📝</span><span>Apply</span>
+        </a>
+        <a href="label-records-applications.html" class="px-3 py-1 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-200 flex items-center gap-1">
+          <span>📂</span><span>Review Queue</span>
+        </a>
+        <a href="label-contract-lab.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200 flex items-center gap-1">
+          <span>📜</span><span>Contract Lab</span>
+        </a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-yellow-300/80 bg-yellow-300/10 text-yellow-100 flex items-center gap-1">
+          <span>👁</span><span>GOD VIEW</span>
+        </a>
+      </nav>
     </div>
-    <nav class="nav-right">
-      <a href="index.html" class="nav-pill">🎧 TKFM Radio</a>
-      <a href="records-application.html" class="nav-pill gold">📩 Apply to Label</a>
-      <a href="label-records-applications.html" class="nav-pill">📂 Applications Queue</a>
-      <a href="label-hub.html" class="nav-pill">🏛 Label Hub</a>
-      <a href="god-view.html" class="nav-pill owner">👁 GOD VIEW</a>
-    </nav>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div>
-      <div class="hero-kicker">Label Side</div>
-      <h1 class="hero-title">The <span>TKFM Records</span> control room for artists, A&R and sponsors.</h1>
-      <p class="hero-sub">
-        This is the gold-and-amber world behind They Krave For Me Radio. Artists apply here, A&R reviews,
-        flips label tags, and brands plug sponsor inventory.
-      </p>
-      <div class="hero-row">
-        <button class="btn-main" data-link="records-application.html">Apply to TKFM Records</button>
-        <button class="btn-ghost" data-link="label-records-applications.html">View Applications</button>
-        <button class="btn-ghost" data-link="label-hub.html">Enter Label Hub</button>
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-12 space-y-8">
+
+      <!-- HERO ROW -->
+      <div class="flex flex-col lg:flex-row gap-7 items-start">
+        <!-- HERO COPY -->
+        <div class="flex-1 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-yellow-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse"></span>
+            TKFM Records • Gold Label World
+          </div>
+
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            The <span class="text-yellow-300 drop-shadow-[0_0_26px_rgba(234,179,8,0.85)]">label layer</span> of
+            <span class="whitespace-nowrap">They Krave For Me.</span>
+          </h1>
+
+          <p class="text-sm md:text-base text-slate-100/90 max-w-2xl">
+            TKFM Records is the **gold, marble, contract-first side** of
+            <span class="font-semibold text-slate-50">They Krave For Me Radio</span> —
+            built for serious independents ready for structure, paperwork, and real rotation.
+          </p>
+
+          <p class="text-[0.8rem] text-slate-300 max-w-xl">
+            Pipeline: <span class="font-semibold text-yellow-300">Applications</span> →
+            <span class="font-semibold text-yellow-300">Review Queue</span> →
+            <span class="font-semibold text-yellow-300">Contract Lab</span> →
+            <span class="font-semibold text-yellow-300">Spotlight / Label Tags</span> →
+            <span class="font-semibold text-yellow-300">Autopilot-boosted rotation on TKFM Radio</span>.
+          </p>
+
+          <!-- CTA STRIP -->
+          <div class="flex flex-wrap gap-3 mt-1 text-[0.8rem]">
+            <a href="records-application.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-yellow-400/90 bg-yellow-400/10 text-yellow-100 font-medium">
+              <span>📝</span>
+              <span>Apply to TKFM Records</span>
+            </a>
+            <a href="label-records-applications.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100">
+              <span>📂</span>
+              <span>View Label Queue</span>
+            </a>
+            <a href="label-contract-lab.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
+              <span>📜</span>
+              <span>Open Contract Lab</span>
+            </a>
+          </div>
+
+          <p class="text-[0.75rem] text-slate-400">
+            Brand anchor: <span class="italic text-slate-100">“The Independent Artist Power Station.”</span>  
+            TKFM Records is where that turns into **paperwork, positioning, and percentage splits**.
+          </p>
+        </div>
+
+        <!-- GOLD LABEL CARD -->
+        <aside class="w-full max-w-sm rounded-3xl border border-yellow-500/70 bg-slate-950/90 marble-card relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-20 opacity-30 blur-3xl bg-[conic-gradient(from_120deg,_#facc15,_#eab308,_#f97316,_#facc15)]"></div>
+          <div class="relative p-4 space-y-4">
+            <!-- Crest -->
+            <div class="flex items-center gap-3 border-b border-yellow-500/40 pb-3">
+              <div class="relative">
+                <div class="h-11 w-11 rounded-full border border-yellow-400/70 bg-slate-950/90 flex items-center justify-center">
+                  <span class="text-xl">👑</span>
+                </div>
+                <div class="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center text-[0.6rem]">
+                  <span>ON</span>
+                </div>
+              </div>
+              <div class="leading-tight">
+                <p class="text-[0.7rem] uppercase tracking-[0.3em] text-yellow-300/90">
+                  Label Status
+                </p>
+                <p class="text-xs text-slate-100">
+                  TKFM Records is <span class="text-emerald-300 font-semibold">live in dev mode</span>.
+                </p>
+              </div>
+            </div>
+
+            <!-- Checklist -->
+            <div class="space-y-2 text-xs">
+              <p class="text-[0.7rem] uppercase tracking-[0.25em] text-slate-400">
+                Gold Label Pipeline
+              </p>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2">
+                  <span class="mt-0.5 text-emerald-300">✓</span>
+                  <div>
+                    <p class="text-slate-100">Application Intake</p>
+                    <p class="text-[0.75rem] text-slate-400">
+                      `records-application.html` feeds `label-records-applications.html`.
+                    </p>
+                  </div>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="mt-0.5 text-emerald-300">✓</span>
+                  <div>
+                    <p class="text-slate-100">Contract Lab</p>
+                    <p class="text-[0.75rem] text-slate-400">
+                      `label-contract-lab.html` → `label-contract-output.html` saved as
+                      <span class="font-mono text-emerald-300 text-[0.7rem]">tkfm_contract_latest</span>.
+                    </p>
+                  </div>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="mt-0.5 text-emerald-300">✓</span>
+                  <div>
+                    <p class="text-slate-100">Spotlight & Tags</p>
+                    <p class="text-[0.75rem] text-slate-400">
+                      Label tags weight Autopilot packs + spotlights in `label-mixtape-spotlight.html`.
+                    </p>
+                  </div>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="mt-0.5 text-yellow-300">◎</span>
+                  <div>
+                    <p class="text-slate-100">Radio Boost</p>
+                    <p class="text-[0.75rem] text-slate-400">
+                      Tagged records are boosted into `tkfm_autopilot_last_pack` for TKFM Radio rotation.
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Quick links -->
+            <div class="border-t border-yellow-500/40 pt-3 flex flex-wrap gap-2 text-[0.75rem]">
+              <a href="label-mixtape-spotlight.html" class="px-3 py-1.5 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-2">
+                <span>🌟</span><span>Spotlight Console</span>
+              </a>
+              <a href="label-sponsor-engine.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+                <span>💼</span><span>Label Sponsors</span>
+              </a>
+              <a href="label-revenue-console.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-2">
+                <span>📊</span><span>Revenue Console</span>
+              </a>
+            </div>
+          </div>
+        </aside>
       </div>
-      <div class="hero-tags">
-        <div class="hero-pill">Artists</div><div class="hero-pill">A&R</div>
-        <div class="hero-pill">Management</div><div class="hero-pill">Sponsors</div>
-      </div>
+
+      <!-- PIPELINE STRIP -->
+      <section class="rounded-3xl border border-yellow-500/50 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 px-4 md:px-6 py-4">
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-3">
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-full border border-yellow-400/80 bg-slate-950 flex items-center justify-center">
+              <span class="text-yellow-300 text-lg">⚡</span>
+            </div>
+            <p class="text-[0.78rem] md:text-[0.8rem] text-slate-100">
+              <span class="font-semibold text-yellow-300">Label Pipeline:</span>
+              Applications → Review queue → Contract Lab → Label tags → Spotlight →
+              boosted into Autopilot engine packs for TKFM Radio.
+            </p>
+          </div>
+          <div class="flex-1 flex justify-end w-full">
+            <a href="label-hub.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-100 text-[0.78rem] uppercase tracking-[0.22em]">
+              <span>Open Label Hub</span>
+              <span class="text-xs">↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- TWO-COLUMN GRID: ARTIST VS LABEL SIDE -->
+      <section class="grid gap-4 lg:grid-cols-2">
+        <!-- ARTIST VIEW -->
+        <article class="rounded-3xl border border-slate-800/90 bg-slate-950/80 p-4 md:p-5 space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Artist View
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                “I’m applying into the TKFM ecosystem.”
+              </h2>
+            </div>
+            <span class="text-xl">🎤</span>
+          </header>
+          <p class="text-[0.8rem] text-slate-300">
+            From the artist side, TKFM Records is the **paperwork + positioning upgrade** on top of TKFM Radio:
+            your story, your city, your leverage.
+          </p>
+          <ul class="space-y-1.5 text-[0.8rem] text-slate-200">
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-emerald-300">•</span>
+              <span>Submit a full label application with vision, catalog and goals.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-emerald-300">•</span>
+              <span>Get reviewed as a **brand**, not just a song.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-emerald-300">•</span>
+              <span>Graduate into structured release, spotlight and rotation support.</span>
+            </li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
+            <a href="records-application.html" class="px-3 py-1.5 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-2">
+              <span>📝</span><span>Start Label Application</span>
+            </a>
+            <a href="creator-pass.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+              <span>🎫</span><span>Creator Pass</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- LABEL OPS VIEW -->
+        <article class="rounded-3xl border border-yellow-500/60 marble-card p-4 md:p-5 space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-yellow-300/90">
+                Label Ops View
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                “I’m running TKFM Records from the marble table.”
+              </h2>
+            </div>
+            <span class="text-xl">💼</span>
+          </header>
+          <p class="text-[0.8rem] text-slate-200">
+            On the back-end, TKFM Records gives you a **single control layer** over applications, contracts,
+            spotlights and label-weighted revenue.
+          </p>
+          <ul class="space-y-1.5 text-[0.8rem] text-slate-100">
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-yellow-300">•</span>
+              <span>Review full label apps in <span class="font-mono text-emerald-300 text-[0.75rem]">label-records-applications.html</span>.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-yellow-300">•</span>
+              <span>Draft & save contracts with **Contract Lab** (localStorage key <span class="font-mono text-emerald-300 text-[0.75rem]">tkfm_contract_latest</span>).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-yellow-300">•</span>
+              <span>Tag approved records and feed them into Autopilot packs + radio spotlights.</span>
+            </li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
+            <a href="label-hub.html" class="px-3 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-100 flex items-center gap-2">
+              <span>🏛</span><span>Open Label Hub</span>
+            </a>
+            <a href="label-contract-lab.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-2">
+              <span>📜</span><span>Contract Workspace</span>
+            </a>
+          </div>
+        </article>
+      </section>
+
+      <!-- BOTTOM ROW: SPONSORS + RADIO LINK -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.8fr)]">
+        <!-- SPONSOR / REVENUE -->
+        <article class="rounded-3xl border border-slate-800/90 bg-slate-950/80 p-4 md:p-5 space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Label Sponsors & Revenue
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Gold label deserves gold sponsors.
+              </h2>
+            </div>
+            <span class="text-xl">📊</span>
+          </header>
+          <p class="text-[0.8rem] text-slate-300">
+            Use the **Label Sponsor Engine** and **Revenue Console** to connect TKFM Records plays, spotlights and
+            mixtape hosting into real brand dollars.
+          </p>
+          <ul class="space-y-1.5 text-[0.8rem] text-slate-200">
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-emerald-300">•</span>
+              <span>Define sponsor inventory across radio, site placement and spotlight segments.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-emerald-300">•</span>
+              <span>Track label-side revenue KPIs alongside mixtape tiers (Starter / Pro / Elite).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-emerald-300">•</span>
+              <span>Use Autopilot + Momentum Engine data to justify higher sponsor tiers.</span>
+            </li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
+            <a href="label-sponsor-engine.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+              <span>💼</span><span>Open Sponsor Engine</span>
+            </a>
+            <a href="label-revenue-console.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-2">
+              <span>📈</span><span>Open Revenue Console</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- RADIO BRIDGE -->
+        <article class="rounded-3xl border border-yellow-400/60 marble-card p-4 md:p-5 space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-yellow-300/90">
+                Radio Bridge
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                From marble table to neon booth.
+              </h2>
+            </div>
+            <span class="text-xl">📻</span>
+          </header>
+          <p class="text-[0.8rem] text-slate-200">
+            TKFM Records doesn’t live in a vacuum — every high-value move here is designed to **echo through
+            TKFM Radio** via Autopilot packs, AI DJ talk breaks and on-air spotlights.
+          </p>
+          <ul class="space-y-1.5 text-[0.8rem] text-slate-100">
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-yellow-300">•</span>
+              <span>Label tags affect Autopilot weighting and which records get night-drive / elite rotation.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-yellow-300">•</span>
+              <span>AI DJ Engine can call out label signings and spotlight moments between records.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-[3px] text-yellow-300">•</span>
+              <span>Momentum Engine shows how label-side decisions affect uploads, orders and fan motion.</span>
+            </li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
+            <a href="radio-hub.html" class="px-3 py-1.5 rounded-full border border-slate-700/80 bg-slate-950/90 text-slate-100 flex items-center gap-2">
+              <span>📻</span><span>Go to Radio Hub</span>
+            </a>
+            <a href="ai-dj-engine.html" class="px-3 py-1.5 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-100 flex items-center gap-2">
+              <span>🤖</span><span>AI DJ Engine</span>
+            </a>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/70">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM Records — Gold Label World.</span>
+      <span class="opacity-80">
+        Connected to TKFM Radio via label applications, contract lab, spotlight tags and Autopilot rotation packs.
+      </span>
     </div>
-
-    <aside class="hero-card">
-      <div class="hero-card-title">Label pipeline in one glance.</div>
-      <div class="hero-card-sub">
-        TKFM Records sits on top of your radio brain. Uploads hit <span class="mono">tkfm_artist_uploads</span>,
-        orders in <span class="mono">mixtapeOrders</span>, sponsor tags push Autopilot →
-        AI DJ Engine amplifies label-tagged artists.
-      </div>
-      <div class="hero-card-row">
-        <span class="badge-soft badge-gold">Applications</span>
-        <span class="badge-soft">Mixtape Revenue</span>
-        <span class="badge-soft">Sponsor Inventory</span>
-      </div>
-    </aside>
-  </section>
-
-  <!-- SECTIONS -->
-  <section class="section"><div class="section-title">For artists & creators</div>
-    <div class="grid-3">
-      <article class="tile" data-link="records-application.html"><div class="tile-label">Entry</div><div class="tile-title">Apply to TKFM Records</div><div class="tile-sub">Application for artists, DJs, producers tagged for WATCH / OFFER / SPONSOR.</div><div class="tile-bottom"><span class="pill hot">Application</span><span class="pill link">Open Form</span></div></article>
-      <article class="tile" data-link="creator-pass.html"><div class="tile-label">Ecosystem</div><div class="tile-title">Creator Pass Hub</div><div class="tile-sub">Upload records, order mixtapes, run campaigns, come back for offers.</div><div class="tile-bottom"><span class="pill">Creator Portal</span><span class="pill link">Go</span></div></article>
-      <article class="tile" data-link="creator-statement.html"><div class="tile-label">Transparency</div><div class="tile-title">Creator Statement</div><div class="tile-sub">Creator can see spend + spins when enabled by label.</div><div class="tile-bottom"><span class="pill">Optional</span><span class="pill link">View</span></div></article>
-    </div>
-  </section>
-
-  <section class="section"><div class="section-title">For A&R and label staff</div>
-    <div class="grid-3">
-      <article class="tile" data-link="label-records-applications.html"><div class="tile-label">Queue</div><div class="tile-title">Records Applications Queue</div><div class="tile-sub">Internal queue of label applications.</div><div class="tile-bottom"><span class="pill hot">Internal</span><span class="pill link">View</span></div></article>
-      <article class="tile" data-link="label-applicant-statement.html"><div class="tile-label">Decision</div><div class="tile-title">Applicant Statement</div><div class="tile-sub">Snapshot per applicant: uploads, orders, tags + contract status.</div><div class="tile-bottom"><span class="pill hot">A&R</span><span class="pill link">Open</span></div></article>
-      <article class="tile" data-link="label-hub.html"><div class="tile-label">Back office</div><div class="tile-title">Label Hub</div><div class="tile-sub">Deals, contracts, internal HQ.</div><div class="tile-bottom"><span class="pill">HQ</span><span class="pill link">Enter</span></div></article>
-    </div>
-  </section>
-
-  <footer>TKFM Records + TKFM Radio share local neon brain: <code>tkfm_artist_uploads</code> → <code>tkfm_autopilot_last_pack</code> → <code>AI DJ Engine</code>.</footer>
-
-</div>
-
-<script>
-window.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('[data-link]').forEach(el=>{
-    el.onclick=()=>location.href=el.dataset.link;
-  });
-});
-</script>
+  </footer>
 </body>
 </html>
