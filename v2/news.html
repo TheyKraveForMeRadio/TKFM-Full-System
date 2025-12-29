@@ -2,55 +2,490 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>TKFM News — Independent Artist Motion Feed</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>News — TKFM</title>
-  <meta name="description" content="TKFM updates, drops, and platform announcements." />
-  <meta property="og:image" content="/tkfm-logo.jpg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 12% 0,rgba(56,189,248,0.20),transparent 55%),
+        radial-gradient(circle at 88% 0,rgba(236,72,153,0.20),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.24),transparent 55%);
+    }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+  </style>
 </head>
-<body>
-  <div id="tkfm-header"></div>
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-  <main class="container">
-    <section class="page-hero">
-      <h1><span class="gradient">News</span></h1>
-      <p>Announcements, drops, weekly “Break List” posts, and sponsor spotlights. (SEO traffic lives here.)</p>
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            They Krave For Me Radio
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-emerald-300">News & Motion Feed</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
+        <a href="djs.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">🎧 DJs</a>
+        <a href="artist-upload.html" class="px-3 py-1 rounded-full border border-pink-500/80 bg-pink-500/10 text-pink-200">🎨 Artist Upload</a>
+        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📈 Momentum</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-300/80 bg-emerald-300/10 text-emerald-200">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
+      <!-- HERO -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-emerald-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            TKFM • Motion Log
+          </div>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            A live feed of who’s making <span class="text-emerald-300 drop-shadow-[0_0_22px_rgba(52,211,153,0.9)]">motion</span> on TKFM (this browser).
+          </h1>
+          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+            This News page auto-builds from your TKFM engine keys:
+            uploads, mixtape orders, contracts, Autopilot packs and manual posts.
+          </p>
+          <p class="text-[0.75rem] text-slate-400 max-w-xl">
+            Dev mode: all data comes from localStorage keys like
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">mixtapeOrders</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_autopilot_last_pack</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_contract_latest</span>,
+            and optional <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_news_manual</span>.
+          </p>
+        </div>
+
+        <!-- SNAPSHOT -->
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_140deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+          <div class="relative space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  News Snapshot (This Device)
+                </p>
+                <p class="text-xs text-slate-300">
+                  Pulled from TKFM engine events.
+                </p>
+              </div>
+              <button id="news-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Total Items</div>
+                <div id="news-total" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Uploads</div>
+                <div id="news-uploads" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Mixtape Orders</div>
+                <div id="news-orders" class="text-lg font-bold">0</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Contracts</div>
+                <div id="news-contracts" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Autopilot Packs</div>
+                <div id="news-packs" class="text-lg font-bold">0</div>
+              </div>
+            </div>
+
+            <p class="text-[0.7rem] text-slate-300">
+              Use the filters below to switch between “All Motion”, “Artist / Label”, or “System” events.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- FILTER BAR -->
+      <section class="flex flex-wrap gap-3 items-center justify-between border border-slate-800 rounded-2xl bg-slate-950/80 px-3 py-3 text-xs">
+        <div class="flex flex-wrap gap-2 items-center">
+          <span class="uppercase tracking-[0.24em] text-slate-400">Filter</span>
+          <select id="news-filter" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
+            <option value="all">All motion</option>
+            <option value="artist">Artist / DJ focused</option>
+            <option value="label">Label / contracts / tapes</option>
+            <option value="system">System / autopilot</option>
+          </select>
+          <select id="news-limit" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
+            <option value="15">Latest 15</option>
+            <option value="30">Latest 30</option>
+            <option value="60">Latest 60</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <input id="news-search" placeholder="Search artist / tape / city / tag" class="text-[0.72rem] bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 w-52 md:w-64" />
+        </div>
+      </section>
+
+      <!-- TIMELINE -->
+      <section class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Motion Timeline
+          </h2>
+          <span id="news-meta" class="text-[0.72rem] text-slate-300"></span>
+        </div>
+
+        <div id="news-empty" class="border border-dashed border-slate-700 rounded-2xl p-6 text-center text-sm text-slate-300">
+          No news items yet. As you create uploads, mixtape orders, contracts and Autopilot packs in this browser, this feed will start filling up.
+        </div>
+
+        <div id="news-list" class="space-y-2 text-sm max-h-[480px] overflow-y-auto relative">
+          <div class="pointer-events-none absolute left-[10px] top-0 bottom-0 border-l border-slate-800"></div>
+        </div>
+      </section>
     </section>
-
-    <div class="panel"><div class="panel-inner">
-      <div class="list">
-        <div class="item">
-          <div>
-            <strong>TKFM Launch Roadmap</strong>
-            <span>Coming 2026 — founder access, services, and platform rollout.</span>
-          </div>
-          <div class="tag">Pinned</div>
-        </div>
-
-        <div class="item">
-          <div>
-            <strong>Weekly Break List (Template)</strong>
-            <span>Copy this structure weekly for easy traffic + shares.</span>
-          </div>
-          <div class="tag">Weekly</div>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="card">
-        <div class="inner">
-          <h3>Pro Traffic Move</h3>
-          <p>Post 2–4 times a month here. Keep titles consistent: “TKFM Break List — Week of …”</p>
-        </div>
-      </div>
-    </div></div>
   </main>
 
-  <div id="tkfm-footer"></div>
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/50">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — News & Motion Feed.</span>
+      <span class="opacity-80">
+        Built from tkfm_artist_uploads • mixtapeOrders • tkfm_autopilot_last_pack • tkfm_contract_latest • tkfm_news_manual.
+      </span>
+    </div>
+  </footer>
 
-  <script type="module">
-    import { mountShell } from "/src/_page.js";
-    mountShell("news");
+  <script>
+    function nSafeParse(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (e) {
+        console.warn('News page: failed to parse', key, e);
+        return fallback;
+      }
+    }
+
+    function nGetArray(key) {
+      const val = nSafeParse(key, []);
+      return Array.isArray(val) ? val : [];
+    }
+
+    function nPrettyDate(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleString();
+      } catch {
+        return '';
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function buildNewsItems() {
+      const uploads = nGetArray('tkfm_artist_uploads');
+      const orders = nGetArray('mixtapeOrders');
+      const manual = nGetArray('tkfm_news_manual');
+      const pack = nSafeParse('tkfm_autopilot_last_pack', null);
+      const contract = nSafeParse('tkfm_contract_latest', null);
+
+      /** Each news item:
+       * {
+       *   id, type, channel, // type: upload|order|contract|pack|manual
+       *   title, subtitle, body,
+       *   actor, city, tags:[],
+       *   createdAt
+       * }
+       */
+
+      const items = [];
+
+      uploads.forEach(u => {
+        const createdAt = u.createdAt || u.timestamp || null;
+        items.push({
+          id: 'upload_' + (createdAt || Math.random()),
+          type: 'upload',
+          channel: 'artist',
+          title: (u.artistName || 'Unknown Artist') + ' submitted new music',
+          subtitle: u.trackTitle || '',
+          body: u.notes || u.bio || '',
+          actor: u.artistName || '',
+          city: u.city || '',
+          tags: ['upload'].concat(u.status ? [u.status] : []),
+          createdAt
+        });
+      });
+
+      orders.forEach(o => {
+        const createdAt = o.createdAt || o.timestamp || null;
+        const tier = o.tier || '';
+        items.push({
+          id: 'order_' + (createdAt || Math.random()),
+          type: 'order',
+          channel: 'label',
+          title: (o.clientName || 'Unknown Client') + ' locked in a mixtape',
+          subtitle: o.projectTitle || '',
+          body: o.goals || '',
+          actor: o.clientName || '',
+          city: o.city || '',
+          tags: ['mixtape', tier || '', o.status || ''].filter(Boolean),
+          createdAt
+        });
+      });
+
+      if (contract) {
+        const createdAt = contract.createdAt || contract.timestamp || null;
+        const artist = contract.artistName || contract.artist || '';
+        items.push({
+          id: 'contract_' + (createdAt || 'latest'),
+          type: 'contract',
+          channel: 'label',
+          title: 'New label contract drafted' + (artist ? ' for ' + artist : ''),
+          subtitle: contract.dealTitle || contract.summary || '',
+          body: contract.text ? String(contract.text).slice(0, 280) : '',
+          actor: artist,
+          city: contract.city || '',
+          tags: ['contract'],
+          createdAt
+        });
+      }
+
+      if (pack) {
+        const createdAt = pack.createdAt || pack.timestamp || null;
+        const size = Array.isArray(pack.tracks || pack.items)
+          ? (pack.tracks || pack.items).length
+          : (pack.size || 0);
+        const mode = pack.mode || pack.profile || 'default';
+
+        items.push({
+          id: 'pack_' + (createdAt || 'latest'),
+          type: 'pack',
+          channel: 'system',
+          title: 'Autopilot rotation pack generated',
+          subtitle: size ? (size + ' tracks • mode ' + mode) : ('Mode ' + mode),
+          body: 'Latest pack key: tkfm_autopilot_last_pack',
+          actor: 'Autopilot Engine',
+          city: '',
+          tags: ['autopilot', 'rotation'],
+          createdAt
+        });
+      }
+
+      manual.forEach(m => {
+        const createdAt = m.createdAt || m.timestamp || null;
+        items.push({
+          id: 'manual_' + (createdAt || Math.random()),
+          type: 'manual',
+          channel: m.channel || 'artist',
+          title: m.title || 'TKFM Update',
+          subtitle: m.subtitle || '',
+          body: m.body || '',
+          actor: m.actor || '',
+          city: m.city || '',
+          tags: (Array.isArray(m.tags) ? m.tags : []).concat('manual'),
+          createdAt
+        });
+      });
+
+      return { items, uploadsCount: uploads.length, ordersCount: orders.length, hasContract: !!contract, hasPack: !!pack };
+    }
+
+    function renderNews() {
+      const filterSel = document.getElementById('news-filter');
+      const limitSel = document.getElementById('news-limit');
+      const searchInput = document.getElementById('news-search');
+
+      const filterVal = filterSel?.value || 'all';
+      const limitVal = parseInt(limitSel?.value || '15', 10);
+      const query = (searchInput?.value || '').toLowerCase().trim();
+
+      const listEl = document.getElementById('news-list');
+      const emptyEl = document.getElementById('news-empty');
+      const metaEl = document.getElementById('news-meta');
+
+      const totalEl = document.getElementById('news-total');
+      const uploadsEl = document.getElementById('news-uploads');
+      const ordersEl = document.getElementById('news-orders');
+      const contractsEl = document.getElementById('news-contracts');
+      const packsEl = document.getElementById('news-packs');
+
+      const data = buildNewsItems();
+      let items = data.items.slice();
+
+      // Snapshot counts
+      totalEl.textContent = items.length;
+      uploadsEl.textContent = data.uploadsCount;
+      ordersEl.textContent = data.ordersCount;
+      contractsEl.textContent = data.hasContract ? 1 : 0;
+      packsEl.textContent = data.hasPack ? 1 : 0;
+
+      if (!items.length) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        metaEl.textContent = '';
+        return;
+      }
+
+      // Filter
+      items = items.filter(it => {
+        if (filterVal === 'artist') {
+          return it.type === 'upload' || (it.type === 'manual' && it.channel === 'artist');
+        }
+        if (filterVal === 'label') {
+          return it.type === 'order' || it.type === 'contract' || (it.type === 'manual' && it.channel === 'label');
+        }
+        if (filterVal === 'system') {
+          return it.type === 'pack' || (it.type === 'manual' && it.channel === 'system');
+        }
+        return true;
+      });
+
+      if (query) {
+        items = items.filter(it => {
+          const hay = [
+            it.title,
+            it.subtitle,
+            it.body,
+            it.actor,
+            it.city,
+            (it.tags || []).join(' ')
+          ].join(' ').toLowerCase();
+          return hay.includes(query);
+        });
+      }
+
+      // Sort newest first
+      items.sort((a, b) => {
+        const ad = a.createdAt || '';
+        const bd = b.createdAt || '';
+        return bd.localeCompare(ad);
+      });
+
+      const limited = items.slice(0, limitVal);
+
+      if (!limited.length) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        metaEl.textContent = '0 items match filters';
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      metaEl.textContent = `${limited.length} of ${items.length} items shown`;
+
+      listEl.innerHTML = limited.map(it => {
+        const dateLabel = it.createdAt ? nPrettyDate(it.createdAt) : 'Time unknown';
+        const tagHtml = (it.tags || []).map(t => `
+          <span class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-[0.65rem]">
+            ${escapeHtml(t)}
+          </span>
+        `).join('');
+
+        const icon =
+          it.type === 'upload' ? '🎨' :
+          it.type === 'order' ? '🔥' :
+          it.type === 'contract' ? '📜' :
+          it.type === 'pack' ? '📡' :
+          '✨';
+
+        const typeLabel =
+          it.type === 'upload' ? 'Artist Upload' :
+          it.type === 'order' ? 'Mixtape Order' :
+          it.type === 'contract' ? 'Contract' :
+          it.type === 'pack' ? 'Autopilot' :
+          'Manual';
+
+        return `
+          <article class="relative pl-9">
+            <div class="absolute left-[6px] top-2 w-4 h-4 rounded-full border border-slate-700 bg-slate-950 flex items-center justify-center text-[0.7rem]">
+              ${icon}
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="text-[0.8rem] text-slate-400 uppercase tracking-[0.24em]">
+                    ${escapeHtml(typeLabel)}
+                  </p>
+                  <p class="text-sm font-semibold text-slate-50 truncate">
+                    ${escapeHtml(it.title || '')}
+                  </p>
+                  ${it.subtitle ? `
+                    <p class="text-[0.8rem] text-slate-300 truncate">
+                      ${escapeHtml(it.subtitle)}
+                    </p>` : ''
+                  }
+                  ${it.body ? `
+                    <p class="mt-1 text-[0.75rem] text-slate-300 line-clamp-3">
+                      ${escapeHtml(it.body)}
+                    </p>` : ''
+                  }
+                  <div class="mt-1 flex flex-wrap gap-2 text-[0.7rem] text-slate-400">
+                    ${it.actor ? `<span>${escapeHtml(it.actor)}</span>` : ''}
+                    ${it.city ? `<span>• ${escapeHtml(it.city)}</span>` : ''}
+                  </div>
+                </div>
+                <div class="text-right text-[0.7rem] text-slate-400 flex flex-col items-end gap-1">
+                  <span>${escapeHtml(dateLabel)}</span>
+                  <div class="flex flex-wrap justify-end gap-1">
+                    ${tagHtml}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const filterSel = document.getElementById('news-filter');
+      const limitSel = document.getElementById('news-limit');
+      const searchInput = document.getElementById('news-search');
+      const btnRefresh = document.getElementById('news-refresh');
+
+      filterSel?.addEventListener('change', renderNews);
+      limitSel?.addEventListener('change', renderNews);
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          clearTimeout(searchInput._tkfmTimer);
+          searchInput._tkfmTimer = setTimeout(renderNews, 150);
+        });
+      }
+
+      btnRefresh?.addEventListener('click', renderNews);
+
+      renderNews();
+    });
   </script>
 </body>
 </html>

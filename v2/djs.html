@@ -2,54 +2,311 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>TKFM DJs — They Krave For Me Radio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DJs — TKFM Radio</title>
-  <meta name="description" content="DJ slots, memberships, and premium platform presence. Build influence with TKFM." />
-  <meta property="og:image" content="/tkfm-logo.jpg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 15% 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 85% 0,rgba(236,72,153,0.22),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.26),transparent 55%);
+    }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+  </style>
 </head>
-<body>
-  <div id="tkfm-header"></div>
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-  <main class="container">
-    <section class="page-hero">
-      <h1><span class="gradient">DJ Services</span></h1>
-      <p>Premium slots and platform positioning for DJs building a real brand and audience.</p>
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            They Krave For Me Radio
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-cyan-300">DJs</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
+        <a href="dj-schedule.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📅 DJ Schedule</a>
+        <a href="dj-mixtape-hosting.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🔥 Mixtape Hosting</a>
+        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📈 Momentum</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-300/80 bg-emerald-300/10 text-emerald-200">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
+      <!-- HERO -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-cyan-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            TKFM • DJ Lineup
+          </div>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            The DJs powering <span class="text-pink-400 drop-shadow-[0_0_22px_rgba(236,72,153,0.9)]">The Independent Artist Power Station</span>.
+          </h1>
+          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+            This page auto-builds from a DJ config and (when present) your
+            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_dj_schedule</span> key.
+            You can override the roster in localStorage later if you want to experiment.
+          </p>
+          <p class="text-[0.75rem] text-slate-400 max-w-xl">
+            In production, this same format can be driven from a database or CMS.
+            For now, it’s a clean dev roster synced with the rest of your TKFM brain.
+          </p>
+        </div>
+
+        <!-- SNAPSHOT -->
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_140deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+          <div class="relative space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  DJ Snapshot (This Device)
+                </p>
+                <p class="text-xs text-slate-300">
+                  Pulled from default TKFM config + local schedule.
+                </p>
+              </div>
+              <button id="dj-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">DJs Listed</div>
+                <div id="dj-count" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Schedule Slots</div>
+                <div id="dj-slots" class="text-lg font-bold">0</div>
+              </div>
+            </div>
+
+            <p class="text-[0.7rem] text-slate-300">
+              Schedule info is read from <span class="font-mono text-cyan-300">tkfm_dj_schedule</span> if
+              your <span class="text-emerald-300">dj-schedule.html</span> page has saved it.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- DJ GRID -->
+      <section class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            TKFM DJ Lineup
+          </h2>
+          <div class="flex flex-wrap gap-2 text-[0.75rem]">
+            <span class="px-2.5 py-1 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-300">
+              Data source: static config (overridable via tkfm_djs)
+            </span>
+          </div>
+        </div>
+
+        <div id="dj-empty" class="border border-dashed border-slate-700 rounded-2xl p-6 text-center text-sm text-slate-300">
+          No DJs configured. This should never happen with the default config — check your script.
+        </div>
+
+        <div id="dj-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+      </section>
     </section>
-
-    <div class="panel"><div class="panel-inner">
-      <div class="list">
-        <div class="item">
-          <div><strong>Guest DJ Feature</strong><span>Pop-in slot to show your style and presence.</span></div>
-          <div class="tag">$150</div>
-        </div>
-        <div class="item">
-          <div><strong>Monthly DJ Slot</strong><span>Consistency builds audience and authority.</span></div>
-          <div class="tag">$300</div>
-        </div>
-        <div class="item">
-          <div><strong>Prime-Time DJ Slot</strong><span>Top visibility lane. Limited placements.</span></div>
-          <div class="tag">$500+</div>
-        </div>
-        <div class="item">
-          <div><strong>DJ Elite Membership</strong><span>Priority placement + growth perks.</span></div>
-          <div class="tag">$99/mo</div>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a class="btn btn-primary" href="/contact.html">Apply / Contact</a>
-        <a class="btn" href="/sponsors.html">Sponsor Packages</a>
-      </div>
-    </div></div>
   </main>
 
-  <div id="tkfm-footer"></div>
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/50">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — DJ Lineup.</span>
+      <span class="opacity-80">
+        Reads tkfm_dj_schedule for slots when available.
+      </span>
+    </div>
+  </footer>
 
-  <script type="module">
-    import { mountShell } from "/src/_page.js";
-    mountShell("djs");
+  <script>
+    const DEFAULT_DJS = [
+      {
+        id: 'dj-krave',
+        name: 'DJ KRAVE',
+        alias: 'They Krave For Me',
+        role: 'Founder • Mixtape Architect • Program Director',
+        city: 'Detroit / Midwest',
+        bio: 'Breaks independent artists, curates heavy rotation tapes, and runs the TKFM empire.',
+        styleTags: ['club energy', 'street heat', 'exclusive drops'],
+        links: {
+          ig: '@TheyKraveForMeRadio',
+          x: '@TheyKraveForMe',
+          site: null
+        },
+        avatarEmoji: '🔥'
+      },
+      {
+        id: 'johnny-steelo',
+        name: 'Johnny Steelo',
+        alias: 'The Smooth Operator',
+        role: 'On-Air DJ • Night Shift',
+        city: 'Late Night Frequency',
+        bio: 'Smooth blends, story-driven sets, and after-hours waves.',
+        styleTags: ['r&b', 'smooth trap', 'midnight rides'],
+        links: {
+          ig: '@JohnnySteelo',
+          x: null,
+          site: null
+        },
+        avatarEmoji: '🌙'
+      }
+    ];
+
+    function djSafeParse(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (e) {
+        console.warn('DJ page: failed to parse', key, e);
+        return fallback;
+      }
+    }
+
+    function getDjConfig() {
+      const override = djSafeParse('tkfm_djs', null);
+      if (Array.isArray(override) && override.length) return override;
+      return DEFAULT_DJS;
+    }
+
+    function getDjSchedule() {
+      const sched = djSafeParse('tkfm_dj_schedule', null);
+      if (!sched) return [];
+      if (Array.isArray(sched)) return sched;
+      if (Array.isArray(sched.slots)) return sched.slots;
+      return [];
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function renderDjs() {
+      const grid = document.getElementById('dj-grid');
+      const empty = document.getElementById('dj-empty');
+      const countEl = document.getElementById('dj-count');
+      const slotsEl = document.getElementById('dj-slots');
+
+      const djs = getDjConfig();
+      const schedule = getDjSchedule();
+
+      const totalSlots = Array.isArray(schedule) ? schedule.length : 0;
+      countEl.textContent = djs.length;
+      slotsEl.textContent = totalSlots;
+
+      if (!djs.length) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      // attempt to associate simple slots
+      function slotsForDj(djNameOrId) {
+        const nameLower = (djNameOrId || '').toLowerCase();
+        if (!schedule || !schedule.length) return [];
+        return schedule.filter(s => {
+          const n = (s.djName || s.dj || '').toLowerCase();
+          const id = (s.djId || '').toLowerCase();
+          return n.includes(nameLower) || id === nameLower;
+        });
+      }
+
+      grid.innerHTML = djs.map(dj => {
+        const slots = slotsForDj(dj.name || dj.id);
+        const tagList = dj.styleTags || [];
+        const avatar = dj.avatarEmoji || '🎧';
+
+        const slotHtml = slots.slice(0,3).map(s => {
+          const day = s.day || s.dayOfWeek || '';
+          const time = s.time || s.slot || '';
+          return `<div class="text-[0.7rem] text-slate-300">${escapeHtml(day)} ${time ? '• ' + escapeHtml(time) : ''}</div>`;
+        }).join('');
+
+        const linkBits = [];
+        if (dj.links?.ig) linkBits.push(`IG: ${escapeHtml(dj.links.ig)}`);
+        if (dj.links?.x) linkBits.push(`X: ${escapeHtml(dj.links.x)}`);
+        if (dj.links?.site) linkBits.push(escapeHtml(dj.links.site));
+
+        return `
+          <article class="rounded-2xl border border-slate-800 bg-slate-950/85 px-4 py-3 flex flex-col gap-2">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-2xl border border-cyan-400/70 bg-cyan-400/10 flex items-center justify-center text-xl">
+                ${escapeHtml(avatar)}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold truncate">
+                  ${escapeHtml(dj.name || 'Unknown DJ')}
+                </p>
+                <p class="text-[0.8rem] text-slate-300 truncate">
+                  ${escapeHtml(dj.role || '')}
+                </p>
+                <p class="text-[0.7rem] text-slate-400">
+                  ${dj.alias ? escapeHtml(dj.alias) + ' • ' : ''}${dj.city ? escapeHtml(dj.city) : ''}
+                </p>
+              </div>
+            </div>
+            <p class="text-[0.78rem] text-slate-200">
+              ${escapeHtml(dj.bio || '')}
+            </p>
+            <div class="flex flex-wrap gap-1 text-[0.7rem] text-slate-200">
+              ${tagList.map(t => `
+                <span class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90">
+                  ${escapeHtml(t)}
+                </span>
+              `).join('')}
+            </div>
+            <div class="mt-1 space-y-1">
+              ${slots.length ? `
+                <p class="text-[0.7rem] uppercase tracking-[0.24em] text-slate-400">Schedule (local)</p>
+                ${slotHtml}
+              ` : `
+                <p class="text-[0.7rem] text-slate-500">
+                  No schedule saved yet for this DJ on this browser.
+                </p>
+              `}
+            </div>
+            ${linkBits.length ? `
+              <p class="text-[0.7rem] text-slate-400 mt-1">
+                ${escapeHtml(linkBits.join(' • '))}
+              </p>
+            ` : ''}
+          </article>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const btnRefresh = document.getElementById('dj-refresh');
+      btnRefresh?.addEventListener('click', renderDjs);
+      renderDjs();
+    });
   </script>
 </body>
 </html>
