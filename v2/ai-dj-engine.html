@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM AI DJ Engine — Talk Break Console</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 10% 0,rgba(56,189,248,0.20),transparent 55%),
+        radial-gradient(circle at 90% 0,rgba(236,72,153,0.20),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.24),transparent 55%);
+    }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen flex flex-col">
+
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            They Krave For Me Radio
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-pink-300">AI DJ Engine</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
+        <a href="now-playing.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">🎧 Now Playing</a>
+        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📈 Momentum</a>
+        <a href="news.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📰 News</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-300/80 bg-emerald-300/10 text-emerald-200">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
+      <!-- HERO -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-pink-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            TKFM • AI DJ Console
+          </div>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            Talk over the **exact** record Autopilot is spinning.
+          </h1>
+          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+            This console reads <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_autopilot_last_pack</span>,
+            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_radio_state</span>, and
+            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_radio_now_playing</span>
+            to build talk-break scripts around the current record, city, tier, and TKFM motion.
+          </p>
+          <p class="text-[0.75rem] text-slate-400 max-w-xl">
+            Dev mode: all data is local to this browser. In production, the same patterns can drive a real voice model or live DJ helper.
+          </p>
+        </div>
+
+        <!-- SNAPSHOT -->
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_140deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+          <div class="relative space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  On-Air Snapshot (This Device)
+                </p>
+                <p class="text-xs text-slate-300">
+                  Pulled from the same pack + state the Radio Hub uses.
+                </p>
+              </div>
+              <button id="dj-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Pack Size</div>
+                <div id="dj-pack-size" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Index</div>
+                <div id="dj-index" class="text-lg font-bold">—</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Mode</div>
+                <div id="dj-mode" class="text-sm font-semibold">—</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Pack Time</div>
+                <div id="dj-pack-time" class="text-[0.7rem]">—</div>
+              </div>
+            </div>
+
+            <p class="text-[0.7rem] text-slate-300">
+              Use the Talk Break Builder below to generate lines tailored to this exact record.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- NOW PLAYING + CONTEXT -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <!-- Current Record -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+              On Air Right Now
+            </h2>
+            <a href="radio-hub.html" class="text-[0.75rem] text-cyan-300 hover:text-cyan-100 flex items-center gap-1">
+              Go to Radio Hub ↗
+            </a>
+          </div>
+
+          <div id="dj-now-empty" class="text-[0.85rem] text-slate-300">
+            No Autopilot pack or radio state yet. Run the Autopilot Engine and use the Radio Hub once on this browser, then refresh.
+          </div>
+
+          <div id="dj-now" class="hidden space-y-3">
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex-1 min-w-[220px]">
+                <p id="dj-title" class="text-lg font-semibold truncate">—</p>
+                <p id="dj-artist" class="text-sm text-slate-200 truncate">—</p>
+                <p id="dj-meta" class="text-xs text-slate-400 truncate">—</p>
+              </div>
+              <div class="flex flex-col items-end text-[0.7rem] text-slate-400">
+                <span id="dj-tag-pill" class="px-2 py-0.5 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200 hidden"></span>
+                <span id="dj-source-pill" class="mt-1 px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 hidden"></span>
+              </div>
+            </div>
+
+            <div class="grid gap-2 sm:grid-cols-2 text-xs">
+              <div class="rounded-xl border border-slate-800 bg-slate-950/90 p-3 space-y-1">
+                <p class="text-[0.7rem] uppercase tracking-[0.26em] text-slate-400">Record Context</p>
+                <p id="dj-context-city" class="text-[0.8rem] text-slate-200">City: —</p>
+                <p id="dj-context-tier" class="text-[0.8rem] text-slate-200">Tier/Tag: —</p>
+                <p id="dj-context-source" class="text-[0.8rem] text-slate-200">Source: —</p>
+              </div>
+              <div class="rounded-xl border border-slate-800 bg-slate-950/90 p-3 space-y-1">
+                <p class="text-[0.7rem] uppercase tracking-[0.26em] text-slate-400">Station Motion</p>
+                <p id="dj-stat-uploads" class="text-[0.8rem] text-slate-200">Uploads: 0</p>
+                <p id="dj-stat-orders" class="text-[0.8rem] text-slate-200">Mixtape Orders: 0</p>
+                <p id="dj-stat-fans" class="text-[0.8rem] text-slate-200">Fan Profiles: 0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audience / Cities Snapshot -->
+        <aside class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Audience & City Heat (Local)
+          </h2>
+          <p class="text-[0.8rem] text-slate-200">
+            Pulled from <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_fan_profiles</span> and
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>.
+          </p>
+          <div id="dj-cities-empty" class="text-[0.8rem] text-slate-400">
+            No city info yet. Once uploads + fans include cities, this will populate for shout-outs.
+          </div>
+          <div id="dj-cities" class="hidden space-y-1 text-[0.8rem] max-h-44 overflow-y-auto"></div>
+        </aside>
+      </section>
+
+      <!-- TALK BREAK BUILDER -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <!-- Builder -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+              Talk Break Builder
+            </h2>
+            <span class="text-[0.7rem] text-slate-400">
+              Uses current record + motion stats
+            </span>
+          </div>
+
+          <div class="grid gap-2 md:grid-cols-3 text-[0.8rem]">
+            <label class="space-y-1">
+              <span class="text-slate-300">Break Type</span>
+              <select id="dj-break-type" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
+                <option value="intro">Intro / Song Setup</option>
+                <option value="mid">Mid-Show Momentum</option>
+                <option value="cta">Call-To-Action</option>
+                <option value="outro">Outro / Transition</option>
+              </select>
+            </label>
+            <label class="space-y-1">
+              <span class="text-slate-300">Tone</span>
+              <select id="dj-tone" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
+                <option value="standard">Standard TKFM</option>
+                <option value="highEnergy">High Energy</option>
+                <option value="smooth">Smooth / Late Night</option>
+                <option value="street">Street Talk</option>
+              </select>
+            </label>
+            <label class="space-y-1">
+              <span class="text-slate-300">Length</span>
+              <select id="dj-length" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
+                <option value="short">Short (1–2 bars)</option>
+                <option value="medium">Medium (3–4 bars)</option>
+                <option value="long">Long (4–6 bars)</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="flex flex-wrap gap-2 text-[0.78rem] mt-2">
+            <label class="inline-flex items-center gap-1">
+              <input id="dj-inc-city" type="checkbox" class="rounded border-slate-600 bg-slate-950" checked />
+              <span class="text-slate-300">Include city shout-out</span>
+            </label>
+            <label class="inline-flex items-center gap-1">
+              <input id="dj-inc-tier" type="checkbox" class="rounded border-slate-600 bg-slate-950" checked />
+              <span class="text-slate-300">Mention tier / tag</span>
+            </label>
+            <label class="inline-flex items-center gap-1">
+              <input id="dj-inc-station" type="checkbox" class="rounded border-slate-600 bg-slate-950" checked />
+              <span class="text-slate-300">Reinforce TKFM brand</span>
+            </label>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mt-3 text-[0.8rem]">
+            <button id="dj-generate" class="px-3 py-1.5 rounded-full border border-emerald-500/80 bg-emerald-500/10 text-emerald-200 uppercase tracking-[0.22em]">
+              Generate Break
+            </button>
+            <button id="dj-alt" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-200 uppercase tracking-[0.22em]">
+              Another Version
+            </button>
+            <button id="dj-copy" class="px-3 py-1.5 rounded-full border border-sky-500/80 bg-sky-500/10 text-sky-200 uppercase tracking-[0.22em]">
+              Copy to Clipboard
+            </button>
+          </div>
+
+          <label class="block mt-3 space-y-1 text-[0.8rem]">
+            <span class="text-slate-300">Talk Break Script</span>
+            <textarea
+              id="dj-script"
+              class="w-full h-40 rounded-xl bg-slate-950/90 border border-slate-800 text-xs font-mono p-3 resize-vertical text-slate-100"
+              placeholder="// Hit Generate to build a script around the current record."
+            ></textarea>
+          </label>
+
+          <p id="dj-status" class="text-[0.7rem] text-emerald-300"></p>
+        </div>
+
+        <!-- Quick Templates / Notes -->
+        <aside class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Quick Templates & Notes
+          </h2>
+          <p class="text-[0.8rem] text-slate-200">
+            Use these as mental anchors while you freestyle or feed lines into another system.
+          </p>
+          <ul class="list-disc list-inside text-[0.78rem] text-slate-300 space-y-1">
+            <li><span class="text-emerald-300">Intro:</span> Who you are + station + artist + city + vibe.</li>
+            <li><span class="text-emerald-300">Mid-show:</span> Momentum, uploads, tapes, fan motion.</li>
+            <li><span class="text-emerald-300">CTA:</span> Creator Pass, uploads, mixtape hosting, Fan Pass.</li>
+            <li><span class="text-emerald-300">Outro:</span> “Stay locked in”, next segment hint, brand line.</li>
+          </ul>
+          <p class="text-[0.75rem] text-slate-400">
+            Brand line anchor:
+            <span class="italic text-slate-200">“The Independent Artist Power Station.”</span>
+          </p>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/50">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — AI DJ Engine.</span>
+      <span class="opacity-80">
+        Reads tkfm_autopilot_last_pack • tkfm_radio_state • tkfm_radio_now_playing • tkfm_artist_uploads • mixtapeOrders • tkfm_fan_profiles.
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    // ---------- helpers ----------
+    function djSafeParse(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (e) {
+        console.warn('AI DJ: failed to parse', key, e);
+        return fallback;
+      }
+    }
+
+    function djPrettyDate(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleString();
+      } catch {
+        return '';
+      }
+    }
+
+    function djEscape(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function djGetArray(key) {
+      const v = djSafeParse(key, []);
+      return Array.isArray(v) ? v : [];
+    }
+
+    // ---------- pack + state ----------
+    function djLoadPack() {
+      const pack = djSafeParse('tkfm_autopilot_last_pack', null);
+      if (!pack) return null;
+
+      const tracks = Array.isArray(pack.tracks)
+        ? pack.tracks
+        : Array.isArray(pack.items)
+          ? pack.items
+          : [];
+
+      return {
+        ...pack,
+        tracks
+      };
+    }
+
+    function djLoadRadioState(packSize) {
+      const state = djSafeParse('tkfm_radio_state', null) || {};
+      let index = Number.isInteger(state.index) ? state.index : 0;
+
+      if (packSize && packSize > 0) {
+        if (index < 0) index = 0;
+        if (index >= packSize) index = packSize - 1;
+      } else {
+        index = 0;
+      }
+
+      return {
+        index,
+        updatedAt: state.updatedAt || null
+      };
+    }
+
+    function djGetCurrentTrack() {
+      const pack = djLoadPack();
+      if (!pack || !Array.isArray(pack.tracks) || !pack.tracks.length) {
+        return { pack: null, index: null, track: null };
+      }
+
+      const packSize = pack.tracks.length;
+
+      // Prefer explicit "now playing" snapshot if it exists
+      const now = djSafeParse('tkfm_radio_now_playing', null);
+      if (now && Number.isInteger(now.index) && now.index >= 0 && now.index < packSize) {
+        const t = now.track || pack.tracks[now.index] || null;
+        return { pack, index: now.index, track: t };
+      }
+
+      // Fallback: radio state index
+      const state = djLoadRadioState(packSize);
+      const idx = state.index;
+      const t = pack.tracks[idx] || null;
+      return { pack, index: idx, track: t };
+    }
+
+    // ---------- talk break generator ----------
+    function djPick(arr) {
+      if (!Array.isArray(arr) || !arr.length) return '';
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function djBuildBreak(params) {
+      const { type, tone, length, includeCity, includeTier, includeStation, track, stats, cities } = params;
+
+      const artist = track.artistName || track.artist || 'this artist';
+      const title = track.trackTitle || track.title || 'this joint';
+      const city = track.city || (cities && cities[0]) || '';
+      const tag = track.tag || track.tier || '';
+      const source = track.source || track.sourceKey || '';
+      const hasCity = !!city && includeCity;
+      const hasTag = !!tag && includeTier;
+
+      const uploads = stats.uploads || 0;
+      const orders = stats.orders || 0;
+      const fans = stats.fans || 0;
+
+      const pieces = [];
+
+      const brandLineBase = 'You locked into They Krave For Me Radio — the Independent Artist Power Station.';
+      let brandLine = brandLineBase;
+
+      if (tone === 'highEnergy') {
+        brandLine = 'You tapped in with They Krave For Me Radio — the Independent Artist Power Station, we break who they crave.';
+      } else if (tone === 'smooth') {
+        brandLine = 'You tuned into They Krave For Me Radio, the Independent Artist Power Station — smooth vibes, heavy motion.';
+      } else if (tone === 'street') {
+        brandLine = 'This is They Krave For Me Radio, the Independent Artist Power Station — if the streets love it, we spin it.';
+      }
+
+      const nameLineBase = `Right now you’re hearing ${title} from ${artist}`;
+      let nameLine = nameLineBase;
+
+      if (hasCity) {
+        nameLine += ` out of ${city}`;
+      }
+      nameLine += '.';
+
+      if (type === 'intro') {
+        pieces.push(nameLine);
+
+        if (hasTag) {
+          pieces.push(`This one is moving on our ${tag} lane inside TKFM.`);
+        } else if (source) {
+          pieces.push(`Straight from our ${source} pipeline into rotation.`);
+        }
+
+        if (includeStation) {
+          pieces.push(brandLine);
+        }
+      } else if (type === 'mid') {
+        if (includeStation) {
+          pieces.push(brandLine);
+        }
+
+        if (uploads || orders || fans) {
+          const motionBits = [];
+          if (uploads) motionBits.push(`${uploads} new uploads`);
+          if (orders) motionBits.push(`${orders} mixtape plays in motion`);
+          if (fans) motionBits.push(`${fans}+ fans locked in`);
+          pieces.push(`Station motion crazy right now — ${motionBits.join(' • ')} on TKFM.`);
+        }
+
+        if (hasCity) {
+          pieces.push(`Big energy from ${city} on this one from ${artist}.`);
+        } else {
+          pieces.push(`Heavy support coming in for ${artist} with this record.`);
+        }
+      } else if (type === 'cta') {
+        if (includeStation) {
+          pieces.push(brandLine);
+        }
+
+        pieces.push('If you’re an artist with heat, tap in with the TKFM Creator Pass and upload your record into the system.');
+        pieces.push('If you need your tape hosted and mixed right, lock in a mixtape slot with DJ KRAVE on the TKFM site.');
+
+        if (hasCity) {
+          pieces.push(`Artists from ${city} and beyond — we’re opening the doors right now.`);
+        }
+      } else if (type === 'outro') {
+        pieces.push(nameLine);
+
+        if (hasTag) {
+          pieces.push(`Another one stamped ${tag} in the TKFM rotation.`);
+        }
+
+        if (includeStation) {
+          pieces.push('Stay locked in — more independent heat on the way right here on They Krave For Me Radio.');
+        }
+      }
+
+      // adjust length: trim or expand
+      if (length === 'short' && pieces.length > 2) {
+        return pieces.slice(0, 2).join(' ');
+      }
+      if (length === 'medium' && pieces.length > 3) {
+        return pieces.slice(0, 3).join(' ');
+      }
+
+      return pieces.join(' ');
+    }
+
+    function djBuildCityList() {
+      const uploads = djGetArray('tkfm_artist_uploads');
+      const fans = djGetArray('tkfm_fan_profiles');
+      const cityMap = {};
+
+      function addCity(c) {
+        if (!c) return;
+        const key = String(c).trim().toLowerCase();
+        if (!key) return;
+        cityMap[key] = (cityMap[key] || 0) + 1;
+      }
+
+      uploads.forEach(u => addCity(u.city));
+      fans.forEach(f => addCity(f.city));
+
+      const entries = Object.entries(cityMap).sort((a,b) => b[1] - a[1]);
+      return entries.map(([key, count]) => ({ key, count }));
+    }
+
+    // ---------- render ----------
+    function djRender() {
+      const snapshot = djGetCurrentTrack();
+      const pack = snapshot.pack;
+      const idx = snapshot.index;
+      const track = snapshot.track;
+
+      const uploads = djGetArray('tkfm_artist_uploads');
+      const orders = djGetArray('mixtapeOrders');
+      const fans = djGetArray('tkfm_fan_profiles');
+
+      const packSizeEl = document.getElementById('dj-pack-size');
+      const indexEl = document.getElementById('dj-index');
+      const modeEl = document.getElementById('dj-mode');
+      const packTimeEl = document.getElementById('dj-pack-time');
+
+      const nowEmpty = document.getElementById('dj-now-empty');
+      const nowWrap = document.getElementById('dj-now');
+
+      const titleEl = document.getElementById('dj-title');
+      const artistEl = document.getElementById('dj-artist');
+      const metaEl = document.getElementById('dj-meta');
+      const tagPill = document.getElementById('dj-tag-pill');
+      const sourcePill = document.getElementById('dj-source-pill');
+
+      const ctxCity = document.getElementById('dj-context-city');
+      const ctxTier = document.getElementById('dj-context-tier');
+      const ctxSource = document.getElementById('dj-context-source');
+
+      const statUploads = document.getElementById('dj-stat-uploads');
+      const statOrders = document.getElementById('dj-stat-orders');
+      const statFans = document.getElementById('dj-stat-fans');
+
+      // snapshot card
+      if (!pack || !Array.isArray(pack.tracks) || !pack.tracks.length) {
+        packSizeEl.textContent = '0';
+        indexEl.textContent = '—';
+        modeEl.textContent = '—';
+        packTimeEl.textContent = '—';
+      } else {
+        packSizeEl.textContent = pack.tracks.length;
+        indexEl.textContent = (idx !== null && idx >= 0 ? (idx + 1) + ' / ' + pack.tracks.length : '—');
+        modeEl.textContent = pack.mode || pack.profile || 'default';
+        packTimeEl.textContent = djPrettyDate(pack.createdAt || pack.timestamp) || '—';
+      }
+
+      // stats
+      statUploads.textContent = 'Uploads: ' + uploads.length;
+      statOrders.textContent = 'Mixtape Orders: ' + orders.length;
+      statFans.textContent = 'Fan Profiles: ' + fans.length;
+
+      if (!track) {
+        nowWrap.classList.add('hidden');
+        nowEmpty.classList.remove('hidden');
+        return;
+      }
+
+      nowEmpty.classList.add('hidden');
+      nowWrap.classList.remove('hidden');
+
+      const artist = track.artistName || track.artist || 'Unknown Artist';
+      const title = track.trackTitle || track.title || 'Untitled Record';
+      const city = track.city || '';
+      const tag = track.tag || track.tier || '';
+      const source = track.source || track.sourceKey || '';
+
+      titleEl.textContent = title;
+      artistEl.textContent = artist;
+      metaEl.textContent = [
+        city ? 'City: ' + city : '',
+        tag ? 'Tag: ' + tag : '',
+        source ? 'Source: ' + source : ''
+      ].filter(Boolean).join(' • ') || 'Rotation record';
+
+      ctxCity.textContent = 'City: ' + (city || '—');
+      ctxTier.textContent = 'Tier/Tag: ' + (tag || '—');
+      ctxSource.textContent = 'Source: ' + (source || '—');
+
+      if (tag) {
+        tagPill.textContent = tag;
+        tagPill.classList.remove('hidden');
+      } else {
+        tagPill.classList.add('hidden');
+      }
+
+      if (source) {
+        sourcePill.textContent = source;
+        sourcePill.classList.remove('hidden');
+      } else {
+        sourcePill.classList.add('hidden');
+      }
+
+      // cities snapshot
+      const citiesWrap = document.getElementById('dj-cities');
+      const citiesEmpty = document.getElementById('dj-cities-empty');
+      const cityEntries = djBuildCityList();
+
+      if (!cityEntries.length) {
+        citiesWrap.classList.add('hidden');
+        citiesEmpty.classList.remove('hidden');
+      } else {
+        citiesEmpty.classList.add('hidden');
+        citiesWrap.classList.remove('hidden');
+        citiesWrap.innerHTML = cityEntries.slice(0, 12).map(({ key, count }) => {
+          const label = key.replace(/\b\w/g, c => c.toUpperCase());
+          return (
+            '<div class="flex items-center justify-between gap-2 border border-slate-800 rounded-xl px-3 py-1.5 bg-slate-950/90">' +
+              '<span class="text-slate-200">' + djEscape(label) + '</span>' +
+              '<span class="text-[0.8rem] px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200">' +
+                count + ' hit' + (count !== 1 ? 's' : '') +
+              '</span>' +
+            '</div>'
+          );
+        }).join('');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const btnRefresh = document.getElementById('dj-refresh');
+      const btnGenerate = document.getElementById('dj-generate');
+      const btnAlt = document.getElementById('dj-alt');
+      const btnCopy = document.getElementById('dj-copy');
+      const statusEl = document.getElementById('dj-status');
+      const scriptEl = document.getElementById('dj-script');
+
+      function setStatus(msg, isError) {
+        statusEl.textContent = msg || '';
+        statusEl.style.color = isError ? '#fca5a5' : '#6ee7b7';
+      }
+
+      function getCurrentContext() {
+        const snapshot = djGetCurrentTrack();
+        const track = snapshot.track;
+        const pack = snapshot.pack;
+
+        const uploads = djGetArray('tkfm_artist_uploads');
+        const orders = djGetArray('mixtapeOrders');
+        const fans = djGetArray('tkfm_fan_profiles');
+
+        const cityEntries = djBuildCityList();
+        const cities = cityEntries.map(e => {
+          return e.key.replace(/\b\w/g, c => c.toUpperCase());
+        });
+
+        return {
+          track,
+          pack,
+          stats: {
+            uploads: uploads.length,
+            orders: orders.length,
+            fans: fans.length
+          },
+          cities
+        };
+      }
+
+      function runGenerate() {
+        const typeSel = document.getElementById('dj-break-type');
+        const toneSel = document.getElementById('dj-tone');
+        const lengthSel = document.getElementById('dj-length');
+        const incCity = document.getElementById('dj-inc-city');
+        const incTier = document.getElementById('dj-inc-tier');
+        const incStation = document.getElementById('dj-inc-station');
+
+        const ctx = getCurrentContext();
+        if (!ctx.track) {
+          setStatus('No current record found. Make sure Autopilot + Radio Hub have run on this browser.', true);
+          return;
+        }
+
+        const text = djBuildBreak({
+          type: typeSel.value,
+          tone: toneSel.value,
+          length: lengthSel.value,
+          includeCity: !!incCity.checked,
+          includeTier: !!incTier.checked,
+          includeStation: !!incStation.checked,
+          track: ctx.track,
+          stats: ctx.stats,
+          cities: ctx.cities
+        });
+
+        scriptEl.value = text;
+        setStatus('Talk break generated from current record + station motion.', false);
+      }
+
+      btnRefresh?.addEventListener('click', function () {
+        setStatus('', false);
+        djRender();
+      });
+
+      btnGenerate?.addEventListener('click', runGenerate);
+      btnAlt?.addEventListener('click', runGenerate);
+
+      btnCopy?.addEventListener('click', function () {
+        const text = scriptEl.value.trim();
+        if (!text) {
+          setStatus('Nothing to copy yet. Generate a break first.', true);
+          return;
+        }
+        navigator.clipboard?.writeText(text).then(function () {
+          setStatus('Copied script to clipboard.', false);
+        }).catch(function () {
+          setStatus('Could not access clipboard. Copy manually.', true);
+        });
+      });
+
+      djRender();
+    });
+  </script>
+</body>
+</html>
