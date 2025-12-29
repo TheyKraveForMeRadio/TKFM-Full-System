@@ -1,69 +1,332 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>DJ KRAVE — Mixtape Hosting</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8" />
+  <title>TKFM — DJ Mixtape Hosting by DJ KRAVE</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 15% 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 85% 0,rgba(236,72,153,0.18),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.22),transparent 55%);
+    }
+    input,select,textarea{background:#020617;}
+  </style>
 </head>
-<body class="bg-black text-white font-mono">
-<header class="p-6 text-center border-b border-purple-700">
-  <h1 class="text-4xl font-bold neon">🔥 DJ KRAVE MIXTAPE HOSTING 🔥</h1>
-  <p class="text-purple-400 mt-2">Hosted • Mixed • Powered by TKFM Autopilot</p>
-</header>
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-<section class="grid md:grid-cols-3 gap-6 p-8">
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.65rem] uppercase tracking-[0.25em] text-slate-400">
+            They Krave For Me
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-purple-300">DJ Mixtape Hosting</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">📻 Radio Hub</a>
+        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🎫 Creator Pass</a>
+        <a href="dj-mixtape-orders.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">📂 Mixtape Orders</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-300">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
 
-  <!-- Tier 1 -->
-  <div class="border border-purple-700 p-6 rounded-xl shadow-xl bg-black/40">
-    <h2 class="text-2xl mb-2">Starter</h2>
-    <p class="text-purple-300 mb-4">$500 • 30 min tape</p>
-    <ul class="text-sm mb-6 space-y-1">
-      <li>✔️ Basic Blend / Transitions</li>
-      <li>✔️ Hosted on TKFM</li>
-      <li>✔️ Submission to Autopilot</li>
-    </ul>
-    <button data-tier="starter" class="buy bg-purple-600 w-full py-2 rounded">Book Now</button>
-  </div>
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-5xl mx-auto px-4 pt-8 pb-10 space-y-8">
+      <!-- HERO -->
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/70 bg-purple-500/10 text-[0.7rem] uppercase tracking-[0.3em] text-purple-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+          DJ KRAVE • Mixtape Hosting
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+          Get your mixtape <span class="text-pink-400 drop-shadow-[0_0_22px_rgba(236,72,153,0.9)]">hosted by DJ KRAVE</span> and plugged into TKFM.
+        </h1>
+        <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+          Choose a tier, send your project details, and lock in a hosted mixtape.
+          Orders are saved to <span class="font-mono text-cyan-300 text-[0.8rem]">mixtapeOrders</span> so label, revenue console and GOD VIEW all see the same play.
+        </p>
+      </div>
 
-  <!-- Tier 2 -->
-  <div class="border border-purple-700 p-6 rounded-xl shadow-xl bg-black/60">
-    <h2 class="text-2xl mb-2">Pro</h2>
-    <p class="text-purple-300 mb-4">$1,000 • 45-60 min tape</p>
-    <ul class="text-sm mb-6 space-y-1">
-      <li>✔️ Advanced Mixing + FX</li>
-      <li>✔️ TKFM Homepage Feature</li>
-      <li>✔️ 3 Autopilot promo blasts</li>
-    </ul>
-    <button data-tier="pro" class="buy bg-purple-600 w-full py-2 rounded">Book Now</button>
-  </div>
+      <!-- TIERS + FORM -->
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <!-- TIERS + FORM -->
+        <div class="space-y-4">
+          <!-- Tiers -->
+          <div class="grid gap-4 md:grid-cols-3">
+            <!-- Starter -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-3 text-sm relative overflow-hidden">
+              <div class="pointer-events-none absolute -inset-12 opacity-20 blur-2xl bg-[conic-gradient(from_160deg,_#22d3ee,_#a855f7,_#22d3ee)]"></div>
+              <div class="relative space-y-1">
+                <p class="text-[0.65rem] uppercase tracking-[0.26em] text-slate-400">Starter</p>
+                <h2 class="text-sm font-semibold text-slate-50">Starter Tape</h2>
+                <p class="text-xs text-slate-300">Intro hosted tape, light drops.</p>
+                <p class="text-lg font-bold text-slate-50 mt-1">$500</p>
+                <ul class="mt-1 space-y-1 text-[0.72rem] text-slate-300">
+                  <li>• Hosted by DJ KRAVE</li>
+                  <li>• Base sequencing + transitions</li>
+                  <li>• Light on-air drops</li>
+                </ul>
+                <button type="button"
+                        data-tier="Starter"
+                        class="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.7rem] text-cyan-200 select-tier">
+                  Choose Starter
+                </button>
+              </div>
+            </div>
 
-  <!-- Tier 3 -->
-  <div class="border border-yellow-600 p-6 rounded-xl shadow-xl bg-black/80">
-    <h2 class="text-2xl mb-2">Elite</h2>
-    <p class="text-yellow-300 mb-4">$2,500 • Full Project</p>
-    <ul class="text-sm mb-6 space-y-1">
-      <li>🔥 Full Production / Mix / Master</li>
-      <li>🔥 DJ KRAVE Co-Host Intro</li>
-      <li>🔥 Label Consideration Pipeline</li>
-      <li>🔥 Guaranteed Radio Rotation</li>
-    </ul>
-    <button data-tier="elite" class="buy bg-yellow-600 w-full py-2 rounded">Book Now</button>
-  </div>
-</section>
+            <!-- Pro -->
+            <div class="rounded-2xl border border-purple-500/80 bg-slate-950/80 p-3 text-sm relative overflow-hidden">
+              <div class="pointer-events-none absolute -inset-12 opacity-25 blur-2xl bg-[conic-gradient(from_160deg,_#ec4899,_#a855f7,_#22d3ee,_#ec4899)]"></div>
+              <div class="relative space-y-1">
+                <p class="text-[0.65rem] uppercase tracking-[0.26em] text-purple-200">Pro</p>
+                <h2 class="text-sm font-semibold text-purple-100">Pro Motion Tape</h2>
+                <p class="text-xs text-slate-300">Aggressive mix, more personality.</p>
+                <p class="text-lg font-bold text-slate-50 mt-1">$1,000</p>
+                <ul class="mt-1 space-y-1 text-[0.72rem] text-slate-300">
+                  <li>• Heavier drops + energy</li>
+                  <li>• Tight transitions + pacing</li>
+                  <li>• Priority in TKFM looks</li>
+                </ul>
+                <button type="button"
+                        data-tier="Pro"
+                        class="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-purple-300/80 bg-purple-500/20 text-[0.7rem] text-purple-100 select-tier">
+                  Choose Pro
+                </button>
+              </div>
+            </div>
 
-<script>
-document.querySelectorAll('.buy').forEach(btn=>{
-  btn.onclick = async () => {
-    const tier = btn.dataset.tier;
-    const res = await fetch('/.netlify/functions/create-mixtape-session',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ tier })
+            <!-- Elite -->
+            <div class="rounded-2xl border border-amber-400/80 bg-slate-950/80 p-3 text-sm relative overflow-hidden">
+              <div class="pointer-events-none absolute -inset-12 opacity-25 blur-2xl bg-[conic-gradient(from_160deg,_#facc15,_#f97316,_#ec4899,_#facc15)]"></div>
+              <div class="relative space-y-1">
+                <p class="text-[0.65rem] uppercase tracking-[0.26em] text-amber-200">Elite</p>
+                <h2 class="text-sm font-semibold text-amber-100">Elite Campaign Tape</h2>
+                <p class="text-xs text-slate-300">Full motion, maximum attention.</p>
+                <p class="text-lg font-bold text-slate-50 mt-1">$2,500+</p>
+                <ul class="mt-1 space-y-1 text-[0.72rem] text-slate-300">
+                  <li>• Custom campaign strategy</li>
+                  <li>• Integrated TKFM promo lanes</li>
+                  <li>• Label attention + sponsor fit</li>
+                </ul>
+                <button type="button"
+                        data-tier="Elite"
+                        class="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-amber-300/80 bg-amber-400/20 text-[0.7rem] text-amber-100 select-tier">
+                  Choose Elite
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- FORM -->
+          <form id="mixtape-form" class="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                  Artist / Client Name *
+                </label>
+                <input required name="clientName" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="Artist, group, or label" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                  Tier *
+                </label>
+                <select required name="tier" id="tier-select" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2">
+                  <option value="">Select tier</option>
+                  <option value="Starter">Starter — $500</option>
+                  <option value="Pro">Pro — $1,000</option>
+                  <option value="Elite">Elite — $2,500+</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                  Project / Mixtape Title *
+                </label>
+                <input required name="projectTitle" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="Mixtape / series name" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                  City / Region
+                </label>
+                <input name="city" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="City / Region" />
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                  Email *
+                </label>
+                <input type="email" required name="email" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="you@example.com" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                  IG / Social Handle
+                </label>
+                <input name="social" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="@handle" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Reference Links (playlist / demo / folder)
+              </label>
+              <textarea name="links" rows="2" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2 resize-y" placeholder="Dropbox / Google Drive folder, streaming links, notes on files."></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                What are you trying to make happen?
+              </label>
+              <textarea name="goals" rows="3" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2 resize-y" placeholder="Talk to DJ KRAVE — what’s the energy, who you’re targeting, any deadlines, radio / street / club goals."></textarea>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+              <div class="space-y-1 text-[0.7rem] text-slate-400 max-w-xs">
+                <p>This writes a new order into <span class="font-mono text-cyan-300">mixtapeOrders</span> on this device.</p>
+                <p>Owner / label read it inside <span class="text-cyan-300">DJ Mixtape Orders</span>, GOD VIEW + label revenue console.</p>
+              </div>
+              <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 text-sm font-semibold shadow-[0_0_20px_rgba(168,85,247,0.7)] transition">
+                <span>Lock in Your Mixtape</span>
+                <span class="text-xs">↗</span>
+              </button>
+            </div>
+
+            <p id="mixtape-message" class="text-[0.75rem] text-emerald-300 mt-2 hidden">
+              Locked. Your mixtape order is stored on this device for TKFM review.
+            </p>
+          </form>
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside class="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400 mb-1">
+            What each tier really means
+          </h2>
+          <ul class="space-y-2 text-[0.78rem] text-slate-200">
+            <li><span class="text-pink-300 font-semibold">Starter</span> — solid hosted tape, clean mix, lighter personality. Good for testing the waters + core fanbase.</li>
+            <li><span class="text-purple-300 font-semibold">Pro</span> — more drops, more aggression, more storytelling. Better for artists already moving who want extra motion.</li>
+            <li><span class="text-amber-300 font-semibold">Elite</span> — campaign energy. Strategy, branding and cross-TKFM support baked in.</li>
+          </ul>
+
+          <div class="border border-slate-800 rounded-xl p-3 text-[0.78rem] text-slate-200 space-y-1">
+            <p class="text-[0.7rem] uppercase tracking-[0.26em] text-slate-400">Pipeline</p>
+            <p>Orders feed TKFM's owner dashboards, label revenue console and can be connected to Stripe checkout flows via Netlify functions.</p>
+            <p class="text-slate-400 text-[0.7rem]">
+              Tech-side, this page talks to <span class="font-mono text-cyan-300">mixtapeOrders</span>.
+            </p>
+          </div>
+
+          <div class="border border-slate-800 rounded-xl p-3 text-[0.78rem] text-slate-200 space-y-1">
+            <p class="text-[0.7rem] uppercase tracking-[0.26em] text-slate-400">Check orders</p>
+            <p>Owner view: <a href="dj-mixtape-orders.html" class="text-cyan-300 underline">DJ Mixtape Orders</a> + GOD VIEW.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/40">
+    <div class="max-w-5xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — DJ Mixtape Hosting by DJ KRAVE.</span>
+      <span class="opacity-70">
+        Writes to mixtapeOrders → owner, label + revenue engines.
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    function safeGetOrders() {
+      try {
+        const raw = localStorage.getItem('mixtapeOrders');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.warn('Mixtape Hosting: failed to parse mixtapeOrders', e);
+        return [];
+      }
+    }
+
+    function saveOrders(list) {
+      try {
+        localStorage.setItem('mixtapeOrders', JSON.stringify(list));
+      } catch (e) {
+        console.error('Mixtape Hosting: failed to save mixtapeOrders', e);
+      }
+    }
+
+    function generateId() {
+      return 'mix_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('mixtape-form');
+      const msg = document.getElementById('mixtape-message');
+      const tierSelect = document.getElementById('tier-select');
+
+      document.querySelectorAll('.select-tier').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tier = btn.getAttribute('data-tier');
+          tierSelect.value = tier;
+          tierSelect.focus();
+        });
+      });
+
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const fd = new FormData(form);
+
+        const order = {
+          id: generateId(),
+          createdAt: new Date().toISOString(),
+          clientName: (fd.get('clientName') || '').toString().trim(),
+          projectTitle: (fd.get('projectTitle') || '').toString().trim(),
+          tier: (fd.get('tier') || '').toString().trim(),
+          city: (fd.get('city') || '').toString().trim(),
+          email: (fd.get('email') || '').toString().trim(),
+          social: (fd.get('social') || '').toString().trim(),
+          links: (fd.get('links') || '').toString().trim(),
+          goals: (fd.get('goals') || '').toString().trim(),
+          status: 'new',          // new / in_progress / complete / cancelled
+          labelTag: null,         // WATCH / OFFER / SPONSOR, etc
+          source: 'dj-mixtape-hosting'
+        };
+
+        if (!order.clientName || !order.projectTitle || !order.tier || !order.email) {
+          alert('Client name, tier, project title and email are required.');
+          return;
+        }
+
+        const orders = safeGetOrders();
+        orders.unshift(order);
+        saveOrders(orders);
+
+        form.reset();
+        msg.classList.remove('hidden');
+        msg.textContent = 'Locked. Your mixtape order is stored on this device for TKFM review.';
+        setTimeout(() => msg.classList.add('hidden'), 4500);
+      });
     });
-    const { url } = await res.json();
-    window.location = url;
-  }
-});
-</script>
+  </script>
 </body>
 </html>
