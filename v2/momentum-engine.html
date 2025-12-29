@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM Momentum Engine — Heat Check</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body {
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 10% 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 90% 0,rgba(244,114,182,0.16),transparent 60%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.18),transparent 55%);
+    }
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen flex flex-col">
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/40 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.65rem] uppercase tracking-[0.25em] text-slate-400">
+            They Krave For Me
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-cyan-300">Momentum Engine</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.2em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-900/70 text-slate-300">📻 Radio Hub</a>
+        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-900/70 text-slate-300">🎫 Creator Pass</a>
+        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-900/70 text-slate-300">⭐ Fan Pass</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 py-8">
+      <!-- HERO -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start mb-8">
+        <div class="flex-1">
+          <p class="text-[0.7rem] tracking-[0.35em] uppercase text-slate-400 mb-2">
+            Live Heat Check • TKFM Brain
+          </p>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight mb-3">
+            Who’s actually <span class="text-pink-400 drop-shadow-[0_0_18px_rgba(236,72,153,0.7)]">moving</span> right now?
+          </h1>
+          <p class="text-sm text-slate-300 max-w-xl mb-4">
+            This engine reads your local neon brain —
+            <span class="text-cyan-300">uploads</span>,
+            <span class="text-cyan-300">mixtapeOrders</span>,
+            <span class="text-cyan-300">tkfm_autopilot_last_pack</span>,
+            <span class="text-cyan-300">tkfm_fan_profiles</span> —
+            and turns it into a momentum scoreboard.
+          </p>
+          <div class="flex flex-wrap gap-2 text-[0.7rem]">
+            <span class="px-2.5 py-1 rounded-full border border-pink-500/70 bg-pink-500/15 uppercase tracking-[0.2em]">
+              Artist Heat
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 uppercase tracking-[0.2em]">
+              Autopilot Boosts
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-yellow-400/70 bg-yellow-400/10 uppercase tracking-[0.2em]">
+              Label Tags
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-slate-600 bg-slate-900/80 uppercase tracking-[0.2em]">
+              Fan Motion
+            </span>
+          </div>
+        </div>
+
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-700/80 bg-slate-950/80 p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_160deg,_#22d3ee,_#ec4899,_#a855f7,_#22d3ee)]"></div>
+          <div class="relative">
+            <p class="text-[0.7rem] uppercase tracking-[0.25em] text-slate-400 mb-1">System Snapshot</p>
+            <div class="grid grid-cols-3 gap-3 mb-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Uploads</div>
+                <div id="stat-uploads" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Mixtapes</div>
+                <div id="stat-mixtapes" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Fan Profiles</div>
+                <div id="stat-fans" class="text-lg font-bold">0</div>
+              </div>
+            </div>
+            <p class="text-[0.68rem] text-slate-300 mb-2">
+              Autopilot key:
+              <span id="stat-pack-key" class="font-mono text-cyan-300 text-[0.65rem] break-all">
+                (none saved yet)
+              </span>
+            </p>
+            <p class="text-[0.68rem] text-slate-400">
+              This page is owner-transparent but can be left <span class="text-pink-300">public</span> as a flex:
+              “If you’re hot, you show up here.”
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="mb-6 flex items-center justify-between gap-4">
+        <h2 class="text-sm uppercase tracking-[0.3em] text-slate-400">
+          Leaderboard — Momentum Engine
+        </h2>
+        <div class="flex flex-wrap gap-2 text-[0.7rem]">
+          <select id="filter-mode" class="bg-slate-950/80 border border-slate-700/80 rounded-full px-3 py-1 text-slate-200 text-[0.7rem]">
+            <option value="all">All Sources</option>
+            <option value="uploads">Uploads Only</option>
+            <option value="mixtapes">Mixtapes Only</option>
+            <option value="label">Label-Tagged Only</option>
+          </select>
+          <button id="btn-refresh" class="px-3 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 text-cyan-300 uppercase tracking-[0.2em]">
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div id="empty-state" class="hidden border border-dashed border-slate-700/80 rounded-2xl p-6 text-center text-sm text-slate-300">
+        No motion yet. Once artists upload, order mixtapes, or get label-tagged,
+        this page will light up with a live heat map.
+      </div>
+
+      <div id="leaderboard" class="space-y-2 text-sm"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/40 mt-6">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>TKFM Momentum Engine runs off localStorage keys:</span>
+      <code class="font-mono text-cyan-300 text-[0.7rem]">tkfm_artist_uploads</code>,
+      <code class="font-mono text-cyan-300 text-[0.7rem]">mixtapeOrders</code>,
+      <code class="font-mono text-cyan-300 text-[0.7rem]">tkfm_autopilot_last_pack</code>,
+      <code class="font-mono text-cyan-300 text-[0.7rem]">tkfm_fan_profiles</code>
+    </div>
+  </footer>
+
+  <script>
+    function safeGet(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed || fallback;
+      } catch (e) {
+        console.warn('Failed to parse', key, e);
+        return fallback;
+      }
+    }
+
+    function buildMomentum() {
+      const uploads = safeGet('tkfm_artist_uploads', []);
+      const orders = safeGet('mixtapeOrders', []);
+      const pack = safeGet('tkfm_autopilot_last_pack', null);
+      const fans = safeGet('tkfm_fan_profiles', []);
+
+      // Update snapshot stats
+      document.getElementById('stat-uploads').textContent = Array.isArray(uploads) ? uploads.length : 0;
+      document.getElementById('stat-mixtapes').textContent = Array.isArray(orders) ? orders.length : 0;
+      document.getElementById('stat-fans').textContent = Array.isArray(fans) ? fans.length : 0;
+      document.getElementById('stat-pack-key').textContent =
+        pack && (pack.key || pack.id || pack.name) ? (pack.key || pack.id || pack.name) : '(no pack key yet)';
+
+      const byId = new Map();
+
+      function ensureEntity(id, seed) {
+        if (!id) id = 'unknown-' + Math.random().toString(36).slice(2, 8);
+        if (!byId.has(id)) {
+          byId.set(id, Object.assign({
+            id,
+            artistName: 'Unknown Artist',
+            title: '',
+            typeFlags: new Set(),
+            plays: 0,
+            boosts: 0,
+            labelWeight: 0,
+            fanWeight: 0,
+            createdAt: null
+          }, seed || {}));
+        }
+        return byId.get(id);
+      }
+
+      // Pull from uploads
+      if (Array.isArray(uploads)) {
+        uploads.forEach(item => {
+          if (!item) return;
+          const id = item.id || item.trackId || item.slug;
+          const ent = ensureEntity(id, {
+            artistName: item.artistName || item.artist || 'Unknown Artist',
+            title: item.trackTitle || item.title || item.songTitle || ''
+          });
+          ent.typeFlags.add('upload');
+          ent.plays += item.plays || item.streams || 0;
+          ent.boosts += item.boostCount || item.boosts || 0;
+          if (item.labelTag || item.label_status) {
+            ent.labelWeight += 15;
+            ent.typeFlags.add('label');
+          }
+          if (item.spotlight || item.featured) {
+            ent.labelWeight += 25;
+          }
+          if (item.createdAt && !ent.createdAt) ent.createdAt = item.createdAt;
+        });
+      }
+
+      // Pull from mixtape orders
+      if (Array.isArray(orders)) {
+        orders.forEach(order => {
+          if (!order) return;
+          const id = order.projectId || order.artistId || order.id;
+          const ent = ensureEntity(id, {
+            artistName: order.artistName || order.clientName || 'Unknown Artist',
+            title: order.projectTitle || order.mixtapeTitle || 'Mixtape'
+          });
+          ent.typeFlags.add('mixtape');
+          ent.boosts += 5;
+          if (order.tier === 'Pro' || order.tier === 'pro') ent.boosts += 5;
+          if (order.tier === 'Elite' || order.tier === 'elite') ent.boosts += 12;
+        });
+      }
+
+      // Pull from Autopilot pack
+      if (pack) {
+        const tracks = Array.isArray(pack) ? pack : (pack.tracks || pack.entries || []);
+        tracks.forEach(t => {
+          if (!t) return;
+          const id = t.id || t.trackId || t.slug;
+          const ent = ensureEntity(id, {
+            artistName: t.artist || t.artistName || 'Unknown Artist',
+            title: t.title || t.trackTitle || ''
+          });
+          ent.typeFlags.add('autopilot');
+          ent.labelWeight += 10;
+          ent.plays += t.weight || t.spins || 0;
+        });
+      }
+
+      // Fan profiles: we just give small boosts based on favorites
+      if (Array.isArray(fans)) {
+        fans.forEach(f => {
+          const faves = f.favorites || f.favs || [];
+          if (!Array.isArray(faves)) return;
+          faves.forEach(fid => {
+            const ent = ensureEntity(fid);
+            ent.fanWeight += 3;
+          });
+        });
+      }
+
+      // Convert sets to arrays + compute score
+      const entries = Array.from(byId.values()).map(ent => {
+        const flags = Array.from(ent.typeFlags);
+        const score =
+          (ent.plays || 0) * 1 +
+          (ent.boosts || 0) * 5 +
+          (ent.labelWeight || 0) +
+          (ent.fanWeight || 0) +
+          (flags.includes('upload') ? 5 : 0) +
+          (flags.includes('mixtape') ? 10 : 0) +
+          (flags.includes('label') ? 10 : 0) +
+          (flags.includes('autopilot') ? 8 : 0);
+
+        return Object.assign({}, ent, { flags, score });
+      });
+
+      renderLeaderboard(entries);
+    }
+
+    function renderLeaderboard(entries) {
+      const lb = document.getElementById('leaderboard');
+      const empty = document.getElementById('empty-state');
+      const filterMode = document.getElementById('filter-mode').value;
+
+      const filtered = entries
+        .filter(e => {
+          if (filterMode === 'uploads') return e.flags.includes('upload');
+          if (filterMode === 'mixtapes') return e.flags.includes('mixtape');
+          if (filterMode === 'label') return e.flags.includes('label') || e.labelWeight > 0;
+          return true;
+        })
+        .filter(e => e.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 30);
+
+      if (!filtered.length) {
+        lb.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      lb.innerHTML = filtered.map((e, idx) => {
+        const tier =
+          idx === 0 ? 'S-TIER' :
+          idx < 3 ? 'A-TIER' :
+          idx < 10 ? 'B-TIER' : 'C-TIER';
+
+        const flagsLabel = e.flags.length
+          ? e.flags.map(f => {
+              if (f === 'upload') return 'Upload';
+              if (f === 'mixtape') return 'Mixtape';
+              if (f === 'autopilot') return 'Autopilot';
+              if (f === 'label') return 'Label';
+              return f;
+            }).join(' • ')
+          : 'Signal Only';
+
+        return `
+          <div class="flex items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-950/70 px-3 py-2.5">
+            <div class="w-8 text-center text-xs font-mono text-slate-400">
+              #${idx + 1}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline gap-2">
+                <div class="truncate text-sm font-semibold">
+                  ${escapeHtml(e.artistName || 'Unknown Artist')}
+                </div>
+                ${e.title ? `<div class="truncate text-[0.7rem] text-slate-400">— ${escapeHtml(e.title)}</div>` : ''}
+              </div>
+              <div class="mt-1 flex flex-wrap gap-2 items-center text-[0.68rem] text-slate-400">
+                <span class="px-2 py-0.5 rounded-full border border-slate-700/80">
+                  ${flagsLabel}
+                </span>
+                <span class="px-2 py-0.5 rounded-full border border-pink-500/60 text-pink-300">
+                  Score: ${Math.round(e.score)}
+                </span>
+                <span class="px-2 py-0.5 rounded-full border border-slate-700/80 text-slate-300">
+                  Tier: ${tier}
+                </span>
+                ${(e.plays || e.boosts) ? `
+                  <span class="text-[0.68rem] text-slate-500">
+                    Plays ~ ${(e.plays || 0)} • Boosts ~ ${(e.boosts || 0)}
+                  </span>` : ''
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      buildMomentum();
+      document.getElementById('filter-mode').addEventListener('change', buildMomentum);
+      document.getElementById('btn-refresh').addEventListener('click', buildMomentum);
+    });
+  </script>
+</body>
+</html>
