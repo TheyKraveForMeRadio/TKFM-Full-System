@@ -2,615 +2,635 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>TKFM — Momentum Engine</title>
+  <title>TKFM Momentum Engine — They Krave For Me Radio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="TKFM Momentum Engine — performance dashboard for They Krave For Me Radio & TKFM Records powered by TKFM v2 local brain keys." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/logo-check.js" defer></script>
   <style>
     body{
       background:#020617;
       background-image:
-        radial-gradient(circle at 10% 0,rgba(56,189,248,0.18),transparent 55%),
-        radial-gradient(circle at 90% 0,rgba(236,72,153,0.18),transparent 55%),
-        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.22),transparent 55%);
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.24),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(236,72,153,0.22),transparent 55%);
     }
     ::-webkit-scrollbar{height:6px;width:6px;}
     ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+    .glass{
+      background-color:rgba(15,23,42,0.96);
+      backdrop-filter:blur(22px);
+    }
   </style>
 </head>
 <body class="text-slate-50 min-h-screen flex flex-col">
 
   <!-- NAV -->
-  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+  <header class="w-full border-b border-slate-800/80 bg-black/70 backdrop-blur-xl sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
       <a href="index.html" class="flex items-center gap-3">
         <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
         <div class="leading-tight">
           <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
-            They Krave For Me
+            They Krave For Me Radio
           </div>
           <div class="text-sm font-semibold">
-            TKFM <span class="text-emerald-300">Momentum Engine</span>
+            TKFM <span class="text-cyan-300">Momentum Engine</span>
           </div>
         </div>
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">📻 Radio Hub</a>
-        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🎫 Creator Pass</a>
-        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">⭐ Fan Pass</a>
-        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
-        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-300">👁 GOD VIEW</a>
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
+          <span>📻</span><span>Radio Hub</span>
+        </a>
+        <a href="autopilot-engine.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200 flex items-center gap-1">
+          <span>⚙</span><span>Autopilot</span>
+        </a>
+        <a href="feature-revenue.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200 flex items-center gap-1">
+          <span>💰</span><span>Revenue Engine</span>
+        </a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200 flex items-center gap-1">
+          <span>🏛</span><span>TKFM Records</span>
+        </a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-300/80 bg-emerald-300/10 text-emerald-200 flex items-center gap-1">
+          <span>👁</span><span>GOD VIEW</span>
+        </a>
       </nav>
     </div>
   </header>
 
   <!-- MAIN -->
   <main class="flex-1">
-    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
-      <!-- HERO -->
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-12 space-y-7">
+
+      <!-- HERO + SNAPSHOT -->
       <div class="flex flex-col lg:flex-row gap-6 items-start">
         <div class="flex-1 space-y-3">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-emerald-200">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-cyan-200">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            Live Motion • Local Dev Brain
+            TKFM • Momentum Engine
           </div>
           <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
-            See who’s really <span class="text-emerald-300 drop-shadow-[0_0_22px_rgba(52,211,153,0.9)]">moving</span> on TKFM (this browser).
+            Watch how the <span class="text-pink-400 drop-shadow-[0_0_30px_rgba(236,72,153,0.9)]">Independent Artist Power Station</span> is moving.
           </h1>
-          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
-            Momentum score is calculated from three signals on this device:
-            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_artist_uploads</span>,
-            <span class="font-mono text-cyan-300 text-[0.8rem]">mixtapeOrders</span> and
-            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_fan_profiles</span>.
-            Artists, tapes and cities that show up across all three rise to the top.
+          <p class="text-sm md:text-base text-slate-100/90 max-w-2xl">
+            This is your **performance dashboard**: uploads, mixtape projects, fans, likes and spins —
+            all pulled from the same TKFM v2 brain the rest of your pages use.
           </p>
-          <p class="text-[0.75rem] text-slate-400 max-w-xl">
-            Note: this v2 engine runs entirely in your browser for dev.
-            Production would back this with a real database fed from TKFM’s flows.
+          <p class="text-[0.78rem] text-slate-300 max-w-xl">
+            Keys read:
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">mixtapeOrders</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_fan_profiles</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_radio_likes</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_radio_history</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">sponsors</span>,
+            <span class="font-mono text-cyan-300 text-[0.75rem]">stats</span>.
           </p>
         </div>
 
         <!-- SNAPSHOT -->
-        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
-          <div class="pointer-events-none absolute -inset-16 opacity-35 blur-2xl bg-[conic-gradient(from_160deg,_#22d3ee,_#ec4899,_#a855f7,_#22d3ee)]"></div>
-          <div class="relative space-y-3 text-sm">
+        <aside class="w-full max-w-sm rounded-3xl border border-slate-800 glass relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-20 opacity-40 blur-3xl bg-[conic-gradient(from_120deg,_#22d3ee,_#3b82f6,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+          <div class="relative p-4 space-y-3 text-sm">
             <div class="flex items-center justify-between gap-3">
               <div>
-                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
                   Momentum Snapshot (This Device)
                 </p>
-                <p class="text-xs text-slate-300">
-                  Aggregated from uploads, mixtape orders and fan profiles.
+                <p class="text-xs text-slate-100">
+                  Dev-mode only: reads from localStorage to give you a sense of motion.
                 </p>
               </div>
-              <button id="me-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+              <button id="mm-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
                 Refresh
               </button>
             </div>
 
             <div class="grid grid-cols-3 gap-3 text-xs">
               <div>
-                <div class="text-slate-400 mb-0.5">Artists</div>
-                <div id="me-artists-count" class="text-lg font-bold">0</div>
+                <p class="text-slate-300 mb-0.5">Artist Uploads</p>
+                <p id="mm-uploads" class="text-lg font-bold text-pink-300">0</p>
               </div>
               <div>
-                <div class="text-slate-400 mb-0.5">Mixtape Clients</div>
-                <div id="me-clients-count" class="text-lg font-bold">0</div>
+                <p class="text-slate-300 mb-0.5">Mixtape Orders</p>
+                <p id="mm-orders" class="text-lg font-bold text-emerald-300">0</p>
               </div>
               <div>
-                <div class="text-slate-400 mb-0.5">Fan Profiles</div>
-                <div id="me-fans-count" class="text-lg font-bold">0</div>
+                <p class="text-slate-300 mb-0.5">Fan Profiles</p>
+                <p id="mm-fans" class="text-lg font-bold text-sky-300">0</p>
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="grid grid-cols-3 gap-3 text-xs">
               <div>
-                <div class="text-slate-400 mb-0.5">Cities Seen</div>
-                <div id="me-cities-count" class="text-lg font-bold">0</div>
+                <p class="text-slate-300 mb-0.5">Likes</p>
+                <p id="mm-likes" class="text-lg font-bold text-rose-300">0</p>
               </div>
               <div>
-                <div class="text-slate-400 mb-0.5">Max Score</div>
-                <div id="me-max-score" class="text-lg font-bold">0</div>
+                <p class="text-slate-300 mb-0.5">Spins Logged</p>
+                <p id="mm-plays" class="text-lg font-bold text-amber-300">0</p>
+              </div>
+              <div>
+                <p class="text-slate-300 mb-0.5">Sponsors</p>
+                <p id="mm-sponsors" class="text-lg font-bold text-emerald-200">0</p>
               </div>
             </div>
 
-            <p class="text-[0.7rem] text-slate-300">
-              This is the same style of data GOD VIEW will use, just zoomed in to your current browser’s TKFM activity.
+            <p id="mm-score-label" class="text-[0.72rem] text-slate-300">
+              Momentum score: 0 (dev-mode estimate based on local counts).
             </p>
           </div>
         </aside>
       </div>
 
-      <!-- FILTER BAR -->
-      <section class="flex flex-wrap gap-3 items-center justify-between border border-slate-800 rounded-2xl bg-slate-950/80 px-3 py-3 text-xs">
-        <div class="flex flex-wrap gap-2 items-center">
-          <span class="uppercase tracking-[0.24em] text-slate-400">Leaderboard View</span>
-          <select id="me-view" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
-            <option value="artists">Artists / Names</option>
-            <option value="cities">Cities</option>
-          </select>
-          <select id="me-source" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
-            <option value="all">Signal: All</option>
-            <option value="uploads">Signal: Uploads only</option>
-            <option value="mixtapes">Signal: Mixtapes only</option>
-            <option value="fans">Signal: Fans only</option>
-          </select>
-          <select id="me-limit" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
-            <option value="10">Top 10</option>
-            <option value="20">Top 20</option>
-            <option value="50">Top 50</option>
-          </select>
-        </div>
-        <div class="flex flex-wrap gap-2 items-center">
-          <input id="me-search" placeholder="Search name / city / tag" class="text-[0.72rem] bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 w-52 md:w-64" />
-          <button id="me-clear-all" class="px-3 py-1 rounded-full border border-red-500/70 bg-red-500/10 text-red-300 uppercase tracking-[0.22em]">
-            Clear All Data (This Device)
-          </button>
-        </div>
-      </section>
+      <!-- ROW 2: POWER METER + INPUTS -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
 
-      <!-- TOP CITIES SUMMARY -->
-      <section class="grid gap-4 md:grid-cols-2">
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Top Cities (combined signal)
-          </h2>
-          <div id="me-top-cities-empty" class="text-[0.8rem] text-slate-400">
-            No city data yet. As artists, mixtapes and fans add city info, TKFM will show which places are really moving.
-          </div>
-          <div id="me-top-cities" class="space-y-1 text-[0.8rem]"></div>
-        </div>
+        <!-- POWER METER -->
+        <article class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Power Meter (Dev Estimate)
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Quick feel for platform momentum from orders & fans.
+              </h2>
+            </div>
+            <span class="text-xl">⚡</span>
+          </header>
 
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Signals feeding this engine
-          </h2>
-          <ul class="space-y-1 text-[0.8rem] text-slate-200">
-            <li>• <span class="font-semibold text-pink-300">Artist Uploads</span> → each new upload adds score to that artist’s name.</li>
-            <li>• <span class="font-semibold text-purple-300">Mixtape Orders</span> → paid hosted tapes add heavy weight.</li>
-            <li>• <span class="font-semibold text-emerald-300">Fan Pass</span> → favorites and commitment add points from the listener side.</li>
-          </ul>
-          <p class="text-[0.75rem] text-slate-400">
-            Labels and owners care about <em>overlap</em>: names that show up in all three are the ones ready for TKFM Records or sponsor attention.
+          <p class="text-[0.8rem] text-slate-300">
+            In dev mode we fake a “power score” by multiplying:
+            <span class="font-semibold">Starter / Pro / Elite mixtape orders</span> with rough multipliers,
+            then add contribution from **fans** and **sponsors**.
+            In production these would be real revenue metrics.
           </p>
-        </div>
+
+          <div class="grid gap-3 md:grid-cols-4 text-[0.78rem] mt-2">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-1">
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400">Starter</p>
+              <p id="mm-tier-starter" class="text-xl font-bold text-slate-100">0</p>
+              <p class="text-[0.75rem] text-slate-300">Orders at Starter tier.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-1">
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400">Pro</p>
+              <p id="mm-tier-pro" class="text-xl font-bold text-emerald-300">0</p>
+              <p class="text-[0.75rem] text-slate-300">Orders at Pro tier.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-1">
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400">Elite</p>
+              <p id="mm-tier-elite" class="text-xl font-bold text-pink-300">0</p>
+              <p class="text-[0.75rem] text-slate-300">Orders at Elite tier.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-1">
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400">Power Score</p>
+              <p id="mm-power" class="text-xl font-bold text-cyan-300">0</p>
+              <p class="text-[0.75rem] text-slate-300">Dev-only “heat” index.</p>
+            </div>
+          </div>
+
+          <p id="mm-stats-note" class="text-[0.75rem] text-slate-400 mt-2">
+            If you use a <span class="font-mono text-cyan-300 text-[0.75rem]">stats</span> object (ex: eliteSold), we’ll surface it below.
+          </p>
+          <div id="mm-stats-extra" class="text-[0.75rem] text-slate-300 mt-1"></div>
+        </article>
+
+        <!-- INPUT MIX SUMMARY -->
+        <article class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Input Mix
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Where TKFM motion is really coming from.
+              </h2>
+            </div>
+            <span class="text-xl">🎛</span>
+          </header>
+
+          <div class="grid gap-3 text-[0.78rem]">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-1">
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400">Artists</p>
+              <p id="mm-input-artists" class="text-lg font-semibold text-slate-100">0</p>
+              <p class="text-[0.75rem] text-slate-300">
+                Unique artist names found in <span class="font-mono text-cyan-300 text-[0.72rem]">tkfm_artist_uploads</span>.
+              </p>
+              <a href="artist-submissions-console.html" class="mt-1 inline-flex items-center gap-1 text-[0.75rem] text-pink-300">
+                <span>View submission console</span><span>↗</span>
+              </a>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-1">
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400">Mixtape Clients</p>
+              <p id="mm-input-clients" class="text-lg font-semibold text-emerald-300">0</p>
+              <p class="text-[0.75rem] text-slate-300">
+                Unique clients from <span class="font-mono text-cyan-300 text-[0.72rem]">mixtapeOrders</span>.
+              </p>
+              <a href="dj-mixtape-orders.html" class="mt-1 inline-flex items-center gap-1 text-[0.75rem] text-emerald-300">
+                <span>View orders console</span><span>↗</span>
+              </a>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-1">
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400">Active Fans</p>
+              <p id="mm-input-active-fans" class="text-lg font-semibold text-sky-300">0</p>
+              <p class="text-[0.75rem] text-slate-300">
+                Count of fan profiles with any saved interaction fields (likes, points, etc).
+              </p>
+              <a href="fan-pass.html" class="mt-1 inline-flex items-center gap-1 text-[0.75rem] text-sky-300">
+                <span>Open Fan Pass</span><span>↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
       </section>
 
-      <!-- LEADERBOARD -->
-      <section class="space-y-3">
-        <div class="flex items-center justify-between gap-3">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Leaderboard
-          </h2>
-          <span id="me-leaderboard-meta" class="text-[0.72rem] text-slate-300"></span>
-        </div>
+      <!-- ROW 3: FEEDS -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
 
-        <div id="me-empty" class="border border-dashed border-slate-700 rounded-2xl p-6 text-center text-sm text-slate-300">
-          No data yet. Submit an upload, place a mixtape order, or create a Fan Pass profile to feed the Momentum Engine.
-        </div>
+        <!-- LATEST UPLOADS + MIXTAPE ORDERS -->
+        <article class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Latest Inputs
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Fresh uploads + mixtape projects entering the TKFM universe.
+              </h2>
+            </div>
+            <span class="text-xl">🎶</span>
+          </header>
 
-        <div id="me-leaderboard" class="space-y-2 text-sm max-h-[440px] overflow-y-auto"></div>
+          <div class="grid gap-4 md:grid-cols-2 text-[0.78rem]">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Recent Artist Uploads
+              </p>
+              <div id="mm-uploads-empty" class="text-[0.78rem] text-slate-400">
+                No uploads found yet. Use the upload portal or Dev Console demo loader.
+              </div>
+              <div id="mm-uploads-list" class="hidden space-y-1.5 max-h-44 overflow-y-auto">
+                <!-- filled by JS -->
+              </div>
+            </div>
+
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Recent Mixtape Orders
+              </p>
+              <div id="mm-orders-empty" class="text-[0.78rem] text-slate-400">
+                No mixtape orders found yet. Use the mixtape hosting flows to add some.
+              </div>
+              <div id="mm-orders-list" class="hidden space-y-1.5 max-h-44 overflow-y-auto">
+                <!-- filled by JS -->
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- RECENT SPINS / LIKES -->
+        <article class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                On-Air Motion
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Recent spins & likes from this device.
+              </h2>
+            </div>
+            <a href="now-playing.html" class="text-[0.75rem] px-3 py-1 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-100 flex items-center gap-1">
+              <span>View Now Playing</span><span>↗</span>
+            </a>
+          </header>
+
+          <div>
+            <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400 mb-1">
+              Recent Spins
+            </p>
+            <div id="mm-plays-empty" class="text-[0.78rem] text-slate-400">
+              No radio history logged yet. Use Now Playing controls on this device to start a log.
+            </div>
+            <div id="mm-plays-list" class="hidden space-y-1.5 max-h-32 overflow-y-auto">
+              <!-- plays -->
+            </div>
+          </div>
+
+          <div>
+            <p class="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400 mb-1 mt-3">
+              Most Recent Likes
+            </p>
+            <div id="mm-likes-empty" class="text-[0.78rem] text-slate-400">
+              No likes recorded yet. Hit ♥ on Now Playing to seed this list.
+            </div>
+            <div id="mm-likes-list" class="hidden space-y-1.5 max-h-32 overflow-y-auto">
+              <!-- likes -->
+            </div>
+          </div>
+        </article>
       </section>
     </section>
   </main>
 
   <!-- FOOTER -->
-  <footer class="border-t border-slate-800/80 bg-black/40">
+  <footer class="border-t border-slate-800/80 bg-black/70">
     <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
       <span>© 2025 TKFM — Momentum Engine.</span>
-      <span class="opacity-70">
-        Local dev leaderboard over tkfm_artist_uploads • mixtapeOrders • tkfm_fan_profiles.
+      <span class="opacity-80">
+        Dev-mode dashboard built on TKFM v2 local keys. In production, mirror this to a shared DB + analytics.
       </span>
     </div>
   </footer>
 
   <script>
-    function safeParse(key) {
+    // ---------- helpers ----------
+    function mmSafeParse(key, fallback) {
       try {
         const raw = localStorage.getItem(key);
-        if (!raw) return [];
+        if (!raw) return fallback;
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
+        return parsed ?? fallback;
       } catch (e) {
-        console.warn('Momentum Engine: failed to parse', key, e);
-        return [];
+        console.warn('Momentum parse fail', key, e);
+        return fallback;
       }
     }
-
-    function getUploads() {
-      return safeParse('tkfm_artist_uploads');
+    function mmArr(key) {
+      const v = mmSafeParse(key, []);
+      return Array.isArray(v) ? v : [];
     }
-
-    function getOrders() {
-      return safeParse('mixtapeOrders');
-    }
-
-    function getFans() {
-      return safeParse('tkfm_fan_profiles');
-    }
-
-    function escapeHtml(str) {
+    function mmEscape(str) {
       return String(str || '')
         .replace(/&/g,'&amp;')
         .replace(/</g,'&lt;')
-        .replace(/>/g,'&quot;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
         .replace(/'/g,'&#039;');
     }
-
-    // Scoring weights (you can tweak later)
-    const SCORE = {
-      uploadBase: 5,
-      uploadStatus: {
-        new: 0,
-        reviewed: 3,
-        watch: 6,
-        pass: -2
-      },
-      labelTag: {
-        WATCH: 5,
-        OFFER: 15,
-        SPONSOR: 20
-      },
-      spotlight: 20,
-      mixtapeTier: {
-        Starter: 10,
-        Pro: 20,
-        Elite: 35
-      },
-      mixtapeStatus: {
-        new: 0,
-        in_progress: 5,
-        complete: 15,
-        cancelled: -5
-      },
-      fanProfileBase: 3,
-      fanPointsMultiplier: 1
-    };
-
-    function splitTags(str) {
-      if (!str) return [];
-      return String(str)
-        .split(',')
-        .map(s => s.trim())
-        .filter(Boolean);
+    function mmPrettyDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return '';
+      return d.toLocaleString();
     }
 
-    function computeMomentum(viewFilter, sourceFilter) {
-      const uploads = getUploads();
-      const orders = getOrders();
-      const fans = getFans();
+    function computePower(mixtapeOrders, fans, sponsors) {
+      const tiers = { starter: 0, pro: 0, elite: 0 };
+      mixtapeOrders.forEach(o => {
+        const t = (o.tier || '').toLowerCase();
+        if (t.includes('elite')) tiers.elite++;
+        else if (t.includes('pro')) tiers.pro++;
+        else tiers.starter++;
+      });
 
-      const artistsMap = new Map(); // key: name, value: stats
-      const citiesMap = new Map();  // key: city, value: score
+      const power =
+        tiers.starter * 1 +
+        tiers.pro * 3 +
+        tiers.elite * 6 +
+        fans.length * 0.5 +
+        sponsors.length * 2;
 
-      function touchArtist(name) {
-        const key = (name || '').trim();
-        if (!key) return null;
-        if (!artistsMap.has(key)) {
-          artistsMap.set(key, {
-            name: key,
-            score: 0,
-            fromUploads: 0,
-            fromMixtapes: 0,
-            fromFans: 0,
-            uploadsCount: 0,
-            mixtapesCount: 0,
-            fanMentions: 0,
-            cities: new Set(),
-            lastSeen: null
-          });
-        }
-        return artistsMap.get(key);
-      }
-
-      function bumpCity(city, amount) {
-        const key = (city || '').trim();
-        if (!key || !Number.isFinite(amount)) return;
-        const prev = citiesMap.get(key) || 0;
-        citiesMap.set(key, prev + amount);
-      }
-
-      // Upload signal
-      if (sourceFilter === 'all' || sourceFilter === 'uploads') {
-        uploads.forEach(u => {
-          const artistName = (u.artistName || '').trim();
-          const city = (u.city || '').trim();
-          const status = (u.status || 'new');
-          const labelTag = u.labelTag || '';
-          const spotlight = !!u.spotlight;
-          const createdAt = u.createdAt || null;
-
-          const artist = touchArtist(artistName);
-          if (!artist) return;
-
-          let s = SCORE.uploadBase;
-          s += SCORE.uploadStatus[status] || 0;
-          if (labelTag && SCORE.labelTag[labelTag]) {
-            s += SCORE.labelTag[labelTag];
-          }
-          if (spotlight) s += SCORE.spotlight;
-
-          artist.score += s;
-          artist.fromUploads += s;
-          artist.uploadsCount += 1;
-          if (city) artist.cities.add(city);
-          if (createdAt && (!artist.lastSeen || createdAt > artist.lastSeen)) {
-            artist.lastSeen = createdAt;
-          }
-          bumpCity(city, s * 0.7); // cities get a portion of the score
-        });
-      }
-
-      // Mixtape signal
-      if (sourceFilter === 'all' || sourceFilter === 'mixtapes') {
-        orders.forEach(o => {
-          const name = (o.clientName || '').trim();
-          const city = (o.city || '').trim();
-          const tier = (o.tier || '').trim();
-          const status = (o.status || 'new');
-          const labelTag = o.labelTag || '';
-          const createdAt = o.createdAt || null;
-
-          const artist = touchArtist(name);
-          if (!artist) return;
-
-          let s = SCORE.mixtapeTier[tier] || 0;
-          s += SCORE.mixtapeStatus[status] || 0;
-          if (labelTag && SCORE.labelTag[labelTag]) {
-            s += SCORE.labelTag[labelTag];
-          }
-
-          artist.score += s;
-          artist.fromMixtapes += s;
-          artist.mixtapesCount += 1;
-          if (city) artist.cities.add(city);
-          if (createdAt && (!artist.lastSeen || createdAt > artist.lastSeen)) {
-            artist.lastSeen = createdAt;
-          }
-          bumpCity(city, s); // mixtape money is heavy signal into a city
-        });
-      }
-
-      // Fan signal
-      if (sourceFilter === 'all' || sourceFilter === 'fans') {
-        fans.forEach(f => {
-          const city = (f.city || '').trim();
-          const points = Number.isFinite(f.points) ? f.points : 0;
-          const base = SCORE.fanProfileBase + points * SCORE.fanPointsMultiplier;
-          const favNames = Array.isArray(f.favorites) ? f.favorites : splitTags(f.favorites);
-
-          favNames.forEach(rawName => {
-            const name = (rawName || '').trim();
-            const artist = touchArtist(name);
-            if (!artist) return;
-            const s = base;
-            artist.score += s;
-            artist.fromFans += s;
-            artist.fanMentions += 1;
-            if (city) artist.cities.add(city);
-            bumpCity(city, s * 0.6);
-          });
-
-          // City-only boost for active fans
-          if (!favNames.length && city) {
-            bumpCity(city, base * 0.4);
-          }
-        });
-      }
-
-      // Convert sets to arrays + compute snapshot stats
-      let artists = Array.from(artistsMap.values()).map(a => ({
-        ...a,
-        cities: Array.from(a.cities)
-      }));
-
-      const fansCount = fans.length;
-      const uploadsCount = uploads.length;
-      const ordersCount = orders.length;
-
-      let maxScore = 0;
-      artists.forEach(a => { if (a.score > maxScore) maxScore = a.score; });
-
-      const citiesArr = Array.from(citiesMap.entries()).map(([city, score]) => ({ city, score }));
-
-      return {
-        artists,
-        cities: citiesArr,
-        summary: {
-          artistsCount: artists.length,
-          clientsCount: ordersCount,
-          fansCount,
-          citiesCount: citiesArr.length,
-          maxScore,
-          uploadsCount,
-          ordersCount
-        }
-      };
+      return { tiers, power: Math.round(power) };
     }
 
-    function renderMomentum() {
-      const viewSel = document.getElementById('me-view');
-      const sourceSel = document.getElementById('me-source');
-      const limitSel = document.getElementById('me-limit');
-      const searchInput = document.getElementById('me-search');
+    function countUnique(arr, getKey) {
+      const set = new Set();
+      arr.forEach(item => {
+        const k = getKey(item);
+        if (k) set.add(k.toLowerCase());
+      });
+      return set.size;
+    }
 
-      const view = viewSel?.value || 'artists';
-      const source = sourceSel?.value || 'all';
-      const limit = parseInt(limitSel?.value || '10', 10);
-      const query = (searchInput?.value || '').toLowerCase().trim();
+    function renderSnapshot() {
+      const uploads   = mmArr('tkfm_artist_uploads');
+      const orders    = mmArr('mixtapeOrders');
+      const fans      = mmArr('tkfm_fan_profiles');
+      const likes     = mmArr('tkfm_radio_likes');
+      const history   = mmArr('tkfm_radio_history');
+      const sponsors  = mmArr('sponsors');
 
-      const data = computeMomentum(view, source);
-      const { artists, cities, summary } = data;
+      document.getElementById('mm-uploads').textContent   = uploads.length;
+      document.getElementById('mm-orders').textContent    = orders.length;
+      document.getElementById('mm-fans').textContent      = fans.length;
+      document.getElementById('mm-likes').textContent     = likes.length;
+      document.getElementById('mm-plays').textContent     = history.length;
+      document.getElementById('mm-sponsors').textContent  = sponsors.length;
 
-      // Snapshot
-      document.getElementById('me-artists-count').textContent = summary.artistsCount;
-      document.getElementById('me-clients-count').textContent = summary.clientsCount;
-      document.getElementById('me-fans-count').textContent = summary.fansCount;
-      document.getElementById('me-cities-count').textContent = summary.citiesCount;
-      document.getElementById('me-max-score').textContent = Math.round(summary.maxScore);
+      const { tiers, power } = computePower(orders, fans, sponsors);
+      document.getElementById('mm-tier-starter').textContent = tiers.starter;
+      document.getElementById('mm-tier-pro').textContent     = tiers.pro;
+      document.getElementById('mm-tier-elite').textContent   = tiers.elite;
+      document.getElementById('mm-power').textContent        = power;
 
-      const leaderboardEl = document.getElementById('me-leaderboard');
-      const emptyEl = document.getElementById('me-empty');
-      const metaEl = document.getElementById('me-leaderboard-meta');
+      document.getElementById('mm-score-label').textContent =
+        'Momentum score: ' + power + ' (dev-mode estimate from orders, fans & sponsors).';
 
-      // Top cities card
-      const topCitiesWrap = document.getElementById('me-top-cities');
-      const topCitiesEmpty = document.getElementById('me-top-cities-empty');
-
-      let list = view === 'cities' ? cities.slice() : artists.slice();
-
-      if (query) {
-        if (view === 'cities') {
-          list = list.filter(c => c.city.toLowerCase().includes(query));
-        } else {
-          list = list.filter(a => {
-            const hay = [
-              a.name,
-              (a.cities || []).join(' ')
-            ].join(' ').toLowerCase();
-            return hay.includes(query);
-          });
-        }
-      }
-
-      list.sort((a, b) => (b.score || 0) - (a.score || 0));
-
-      const sliced = list.slice(0, limit);
-
-      if (!sliced.length) {
-        leaderboardEl.innerHTML = '';
-        emptyEl.classList.remove('hidden');
-        metaEl.textContent = '';
+      const stats = mmSafeParse('stats', null);
+      const statsExtra = document.getElementById('mm-stats-extra');
+      if (!stats) {
+        statsExtra.textContent = 'No stats object detected yet. You can store rollout info under a "stats" key if needed.';
       } else {
-        emptyEl.classList.add('hidden');
-        metaEl.textContent = `${sliced.length} of ${list.length} entries shown (${view === 'cities' ? 'cities' : 'artists'})`;
-
-        leaderboardEl.innerHTML = sliced.map((item, idx) => {
-          if (view === 'cities') {
-            const cityScore = item.score || 0;
-            return `
-              <article class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-2.5">
-                <div class="flex items-center justify-between gap-3">
-                  <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-7 h-7 rounded-full border border-emerald-400/70 flex items-center justify-center text-[0.7rem] text-emerald-200">
-                      #${idx + 1}
-                    </div>
-                    <div class="min-w-0">
-                      <p class="text-sm font-semibold truncate">
-                        ${escapeHtml(item.city || 'Unknown City')}
-                      </p>
-                      <p class="text-[0.7rem] text-slate-400">
-                        Combined score from uploads, mixtapes & fan activity.
-                      </p>
-                    </div>
-                  </div>
-                  <div class="text-right text-[0.75rem]">
-                    <div class="px-3 py-1 rounded-full border border-emerald-400/70 bg-emerald-400/10 text-emerald-100">
-                      Score: ${Math.round(cityScore)}
-                    </div>
-                  </div>
-                </div>
-              </article>
-            `;
-          } else {
-            const score = item.score || 0;
-            const cities = (item.cities || []).join(' • ');
-            const uploadsCount = item.uploadsCount || 0;
-            const mixCount = item.mixtapesCount || 0;
-            const fanMentions = item.fanMentions || 0;
-
-            return `
-              <article class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-2.5">
-                <div class="flex items-start justify-between gap-3">
-                  <div class="flex gap-3 min-w-0">
-                    <div class="w-7 h-7 mt-0.5 rounded-full border border-pink-500/70 flex items-center justify-center text-[0.7rem] text-pink-200">
-                      #${idx + 1}
-                    </div>
-                    <div class="min-w-0">
-                      <p class="text-sm font-semibold truncate">
-                        ${escapeHtml(item.name || 'Unknown')}
-                      </p>
-                      <p class="text-[0.7rem] text-slate-400 truncate">
-                        ${cities ? escapeHtml(cities) : 'City: —'}
-                      </p>
-                      <div class="mt-1 flex flex-wrap gap-2 text-[0.7rem] text-slate-300">
-                        <span class="px-2 py-0.5 rounded-full border border-pink-500/60 bg-pink-500/5">
-                          Uploads: ${uploadsCount}
-                        </span>
-                        <span class="px-2 py-0.5 rounded-full border border-purple-500/60 bg-purple-500/5">
-                          Mixtapes: ${mixCount}
-                        </span>
-                        <span class="px-2 py-0.5 rounded-full border border-emerald-500/60 bg-emerald-500/5">
-                          Fan Mentions: ${fanMentions}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="text-right text-[0.75rem]">
-                    <div class="px-3 py-1 rounded-full border border-emerald-400/70 bg-emerald-400/10 text-emerald-100">
-                      Score: ${Math.round(score)}
-                    </div>
-                    <p class="mt-1 text-[0.65rem] text-slate-400">
-                      Uploads: ${Math.round(item.fromUploads || 0)} • Mixtapes: ${Math.round(item.fromMixtapes || 0)} • Fans: ${Math.round(item.fromFans || 0)}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            `;
-          }
-        }).join('');
+        const parts = [];
+        Object.keys(stats).forEach(k => {
+          parts.push(k + ': ' + stats[k]);
+        });
+        statsExtra.textContent = parts.join(' • ');
       }
 
-      // Top cities sidebar
-      const allCities = cities.slice().sort((a,b) => (b.score || 0) - (a.score || 0)).slice(0, 8);
-      if (!allCities.length) {
-        topCitiesWrap.innerHTML = '';
-        topCitiesEmpty.classList.remove('hidden');
-      } else {
-        topCitiesEmpty.classList.add('hidden');
-        topCitiesWrap.innerHTML = allCities.map(c => `
-          <div class="flex items-center justify-between gap-2">
-            <span class="truncate">${escapeHtml(c.city)}</span>
-            <span class="text-[0.75rem] text-emerald-200">${Math.round(c.score || 0)}</span>
-          </div>
-        `).join('');
+      // Input mix unique counts
+      const uniqueArtists = countUnique(uploads, u => u.artistName || u.artist);
+      const uniqueClients = countUnique(orders, o => o.clientName || o.client || o.artistName);
+      const activeFans    = fans.filter(f => {
+        if (!f || typeof f !== 'object') return false;
+        return Boolean(f.points || f.fanPoints || f.likes || (f.history && f.history.length));
+      }).length;
+
+      document.getElementById('mm-input-artists').textContent     = uniqueArtists;
+      document.getElementById('mm-input-clients').textContent     = uniqueClients;
+      document.getElementById('mm-input-active-fans').textContent = activeFans;
+    }
+
+    function renderUploadsFeed() {
+      const uploads = mmArr('tkfm_artist_uploads').slice().reverse();
+      const empty = document.getElementById('mm-uploads-empty');
+      const list  = document.getElementById('mm-uploads-list');
+
+      if (!uploads.length) {
+        empty.classList.remove('hidden');
+        list.classList.add('hidden');
+        list.innerHTML = '';
+        return;
       }
+
+      empty.classList.add('hidden');
+      list.classList.remove('hidden');
+
+      list.innerHTML = uploads.slice(0, 10).map(u => {
+        const artist = u.artistName || u.artist || 'Unknown Artist';
+        const track  = u.trackTitle || u.title || 'Untitled Record';
+        const city   = u.city || '';
+        const status = u.status || '';
+        const created = mmPrettyDate(u.createdAt || u.timestamp);
+
+        return (
+          '<div class="flex items-start gap-2">' +
+            '<span class="text-[0.7rem] text-slate-500 mt-[3px]">•</span>' +
+            '<div class="min-w-0 flex-1">' +
+              '<p class="text-[0.8rem] font-semibold truncate">' + mmEscape(track) + '</p>' +
+              '<p class="text-[0.75rem] text-slate-300 truncate">' + mmEscape(artist) +
+                (city ? ' • ' + mmEscape(city) : '') +
+              '</p>' +
+              '<p class="text-[0.7rem] text-slate-400 truncate">' +
+                (status ? 'Status: ' + mmEscape(status) : 'Status: n/a') +
+                (created ? ' • ' + mmEscape(created) : '') +
+              '</p>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function renderOrdersFeed() {
+      const orders = mmArr('mixtapeOrders').slice().reverse();
+      const empty = document.getElementById('mm-orders-empty');
+      const list  = document.getElementById('mm-orders-list');
+
+      if (!orders.length) {
+        empty.classList.remove('hidden');
+        list.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      list.classList.remove('hidden');
+
+      list.innerHTML = orders.slice(0, 10).map(o => {
+        const client  = o.clientName || o.client || 'Mixtape Client';
+        const project = o.projectTitle || 'Mixtape Project';
+        const tier    = o.tier || 'Starter';
+        const city    = o.city || '';
+        const created = mmPrettyDate(o.createdAt || o.timestamp);
+
+        return (
+          '<div class="flex items-start gap-2">' +
+            '<span class="text-[0.7rem] text-slate-500 mt-[3px]">•</span>' +
+            '<div class="min-w-0 flex-1">' +
+              '<p class="text-[0.8rem] font-semibold truncate">' + mmEscape(project) + '</p>' +
+              '<p class="text-[0.75rem] text-slate-300 truncate">' + mmEscape(client) +
+                ' • ' + mmEscape(tier) +
+                (city ? ' • ' + mmEscape(city) : '') +
+              '</p>' +
+              (created
+                ? '<p class="text-[0.7rem] text-slate-400 truncate">' + mmEscape(created) + '</p>'
+                : ''
+              ) +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function renderPlaysFeed() {
+      const history = mmArr('tkfm_radio_history').slice(0, 8);
+      const empty = document.getElementById('mm-plays-empty');
+      const list  = document.getElementById('mm-plays-list');
+
+      if (!history.length) {
+        empty.classList.remove('hidden');
+        list.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      list.classList.remove('hidden');
+
+      list.innerHTML = history.map(h => {
+        const t = h.track || {};
+        const title = t.trackTitle || 'Untitled Record';
+        const artist = t.artistName || 'Unknown Artist';
+        const city = t.city || '';
+        const ts = mmPrettyDate(h.playedAt);
+
+        return (
+          '<div class="flex items-start gap-2">' +
+            '<span class="text-[0.7rem] text-slate-500 mt-[3px]">•</span>' +
+            '<div class="min-w-0 flex-1">' +
+              '<p class="text-[0.8rem] font-semibold truncate">' + mmEscape(title) + '</p>' +
+              '<p class="text-[0.75rem] text-slate-300 truncate">' + mmEscape(artist) +
+                (city ? ' • ' + mmEscape(city) : '') +
+              '</p>' +
+              (ts
+                ? '<p class="text-[0.7rem] text-slate-400 truncate">' + mmEscape(ts) + '</p>'
+                : ''
+              ) +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function renderLikesFeed() {
+      const likes = mmArr('tkfm_radio_likes').slice().reverse().slice(0, 8);
+      const empty = document.getElementById('mm-likes-empty');
+      const list  = document.getElementById('mm-likes-list');
+
+      if (!likes.length) {
+        empty.classList.remove('hidden');
+        list.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      list.classList.remove('hidden');
+
+      list.innerHTML = likes.map(l => {
+        const title  = l.trackTitle || 'Untitled Record';
+        const artist = l.artistName || 'Unknown Artist';
+        const city   = l.city || '';
+        const mode   = l.mode || '';
+        const liked  = mmPrettyDate(l.likedAt);
+
+        return (
+          '<div class="flex items-start gap-2">' +
+            '<span class="text-[0.7rem] text-rose-400 mt-[3px]">♥</span>' +
+            '<div class="min-w-0 flex-1">' +
+              '<p class="text-[0.8rem] font-semibold truncate">' + mmEscape(title) + '</p>' +
+              '<p class="text-[0.75rem] text-slate-300 truncate">' + mmEscape(artist) +
+                (city ? ' • ' + mmEscape(city) : '') +
+              '</p>' +
+              '<p class="text-[0.7rem] text-slate-400 truncate">' +
+                (mode ? 'Mode: ' + mmEscape(mode) + ' • ' : '') +
+                (liked ? mmEscape(liked) : '') +
+              '</p>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      const viewSel = document.getElementById('me-view');
-      const sourceSel = document.getElementById('me-source');
-      const limitSel = document.getElementById('me-limit');
-      const searchInput = document.getElementById('me-search');
-      const btnRefresh = document.getElementById('me-refresh');
-      const btnClear = document.getElementById('me-clear-all');
+      const btnRefresh = document.getElementById('mm-refresh');
 
-      function triggerRender() {
-        renderMomentum();
+      function rerender() {
+        renderSnapshot();
+        renderUploadsFeed();
+        renderOrdersFeed();
+        renderPlaysFeed();
+        renderLikesFeed();
       }
 
-      viewSel?.addEventListener('change', triggerRender);
-      sourceSel?.addEventListener('change', triggerRender);
-      limitSel?.addEventListener('change', triggerRender);
+      btnRefresh?.addEventListener('click', rerender);
 
-      if (searchInput) {
-        searchInput.addEventListener('input', function () {
-          clearTimeout(searchInput._tkfmTimer);
-          searchInput._tkfmTimer = setTimeout(triggerRender, 150);
-        });
-      }
-
-      btnRefresh?.addEventListener('click', triggerRender);
-
-      btnClear?.addEventListener('click', function () {
-        if (!confirm('Clear tkfm_artist_uploads, mixtapeOrders and tkfm_fan_profiles on THIS DEVICE?')) return;
-        localStorage.removeItem('tkfm_artist_uploads');
-        localStorage.removeItem('mixtapeOrders');
-        localStorage.removeItem('tkfm_fan_profiles');
-        triggerRender();
-      });
-
-      renderMomentum();
+      // initial
+      rerender();
     });
   </script>
 </body>
