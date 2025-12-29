@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM — Label Revenue Console</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 10% 0,rgba(250,204,21,0.18),transparent 55%),
+        radial-gradient(circle at 90% 0,rgba(236,72,153,0.18),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.22),transparent 55%);
+    }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen flex flex-col">
+
+  <!-- NAV / GOLD LABEL VIBE -->
+  <header class="w-full border-b border-yellow-500/40 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="label-home.html" class="flex items-center gap-3">
+        <img src="/tkfm-records-logo.png" alt="TKFM Records" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-yellow-400/80">
+            TKFM Records • Owner View
+          </div>
+          <div class="text-sm font-semibold">
+            Label <span class="text-yellow-300">Revenue Console</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="dj-mixtape-hosting.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🔥 Mixtape Hosting</a>
+        <a href="dj-mixtape-orders.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">📂 Mixtape Orders</a>
+        <a href="label-sponsor-engine.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏷 Sponsor Engine</a>
+        <a href="sponsor-rotator.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-300">♻ Sponsor Rotator</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-cyan-300/80 bg-cyan-300/10 text-cyan-200">👁 GOD VIEW</a>
+        <a href="tkfm-dev-console.html" class="px-3 py-1 rounded-full border border-slate-500/80 bg-slate-900/80 text-slate-200">🛠 Dev Console</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
+      <!-- HERO -->
+      <div class="flex flex-col md:flex-row md:items-end gap-4">
+        <div class="flex-1 space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-yellow-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Label • Revenue Console
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold leading-snug">
+            See the <span class="text-yellow-300 drop-shadow-[0_0_22px_rgba(250,204,21,0.85)]">money side</span> of TKFM:
+            hosted tapes, tiers and motion.
+          </h1>
+          <p class="text-sm text-slate-200 max-w-2xl">
+            Reads the same <span class="font-mono text-cyan-300 text-[0.8rem]">mixtapeOrders</span> key used by
+            DJ Mixtape Hosting, Orders Console and GOD VIEW.
+            This is your quick-look on who’s paying and where the gold is.
+          </p>
+        </div>
+
+        <div class="text-xs text-slate-400 space-y-1 border border-yellow-400/30 rounded-xl px-3 py-2 bg-slate-950/80">
+          <p><span class="font-semibold text-slate-100">Local dev brain:</span> data is per-browser.</p>
+          <p>Production v3: plug into Stripe (lookup keys + Netlify functions) and remote DB. Here we keep it fast and visual.</p>
+        </div>
+      </div>
+
+      <!-- SNAPSHOT ROW -->
+      <div class="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <!-- SUMMARY CARDS -->
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-3 text-sm">
+            <p class="text-[0.7rem] uppercase tracking-[0.28em] text-slate-400 mb-1">
+              Total Orders
+            </p>
+            <p id="lr-total-orders" class="text-2xl font-extrabold text-slate-50">0</p>
+            <p class="text-[0.75rem] text-slate-400 mt-1">
+              Sum of all tiers in <span class="font-mono text-cyan-300 text-[0.7rem]">mixtapeOrders</span>.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-emerald-400/70 bg-emerald-400/10 p-3 text-sm">
+            <p class="text-[0.7rem] uppercase tracking-[0.28em] text-emerald-200 mb-1">
+              Est. Gross (Base)
+            </p>
+            <p id="lr-gross" class="text-2xl font-extrabold text-emerald-100">$0</p>
+            <p class="text-[0.75rem] text-emerald-100/90 mt-1">
+              Starter $500 • Pro $1,000 • Elite $2,500 baseline per order.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-purple-500/70 bg-purple-500/10 p-3 text-sm">
+            <p class="text-[0.7rem] uppercase tracking-[0.28em] text-purple-200 mb-1">
+              Tier Split
+            </p>
+            <p id="lr-tier-summary" class="text-sm font-semibold text-purple-50">
+              Starter 0 • Pro 0 • Elite 0
+            </p>
+            <p class="text-[0.75rem] text-purple-100/90 mt-1">
+              Who’s testing the waters vs. going all-in.
+            </p>
+          </div>
+        </div>
+
+        <!-- TIER / STATUS BREAKDOWN -->
+        <aside class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_150deg,_#facc15,_#ec4899,_#a855f7,_#22d3ee,_#facc15)]"></div>
+          <div class="relative space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-300">
+                Status Breakdown
+              </p>
+              <button id="lr-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-[0.8rem]">
+              <div class="space-y-1">
+                <p id="lr-status-new" class="text-slate-200">New: 0</p>
+                <p id="lr-status-in-progress" class="text-amber-200">In Progress: 0</p>
+                <p id="lr-status-complete" class="text-emerald-200">Complete: 0</p>
+                <p id="lr-status-cancelled" class="text-slate-400">Cancelled: 0</p>
+              </div>
+              <div class="space-y-1">
+                <p class="text-[0.7rem] uppercase tracking-[0.24em] text-slate-400">
+                  Labels / Tags
+                </p>
+                <p id="lr-tag-watch" class="text-amber-200">WATCH: 0</p>
+                <p id="lr-tag-offer" class="text-emerald-200">OFFER: 0</p>
+                <p id="lr-tag-sponsor" class="text-yellow-200">SPONSOR: 0</p>
+              </div>
+            </div>
+
+            <p class="text-[0.72rem] text-slate-300">
+              Each hosted tape order can carry a label tag.
+              That’s where you decide who graduates into
+              <span class="text-yellow-300">TKFM Records</span> talks or sponsor conversations.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- STRIPE / NETLIFY STRATEGY CARD -->
+      <section class="grid gap-4 md:grid-cols-2">
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Stripe + Netlify wiring (tech notes)
+          </h2>
+          <p class="text-[0.8rem] text-slate-200">
+            Your hosting + promo is meant to run through Stripe checkout sessions using Netlify functions:
+          </p>
+          <ul class="list-disc list-inside text-[0.8rem] text-slate-200 space-y-1">
+            <li><span class="font-mono text-cyan-300">create-mixtape-session.js</span> — starter/pro/elite hosted tapes</li>
+            <li><span class="font-mono text-cyan-300">create-social-session.js</span> — social promo packages</li>
+            <li><span class="font-mono text-cyan-300">label-sponsor-session.js</span> — sponsor / brand inventory</li>
+          </ul>
+          <p class="text-[0.75rem] text-slate-400">
+            In v2, this console just reads <span class="font-mono text-cyan-300">mixtapeOrders</span>.
+            When you’re ready, Dev Console can expose test buttons that hit these functions for full Stripe flow.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Quick links
+          </h2>
+          <div class="flex flex-wrap gap-2 text-[0.75rem]">
+            <a href="dj-mixtape-hosting.html" class="px-3 py-1.5 rounded-full border border-purple-400/80 bg-purple-500/10 text-purple-100">
+              🔥 Hosting Sales Page
+            </a>
+            <a href="dj-mixtape-orders.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100">
+              📂 Orders Console
+            </a>
+            <a href="label-sponsor-engine.html" class="px-3 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-100">
+              🏷 Sponsor Engine
+            </a>
+            <a href="sponsor-rotator.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
+              ♻ Rotator
+            </a>
+            <a href="god-view.html" class="px-3 py-1.5 rounded-full border border-cyan-300/80 bg-cyan-300/10 text-cyan-100">
+              👁 GOD VIEW
+            </a>
+          </div>
+          <p class="text-[0.75rem] text-slate-400">
+            Use this console as the label’s money radar, then jump into the deeper pages when you see real motion.
+          </p>
+        </div>
+      </section>
+
+      <!-- DETAILED ORDER LIST -->
+      <section class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Hosted Mixtape Orders (this browser)
+          </h2>
+          <div class="flex flex-wrap gap-2 items-center text-[0.75rem]">
+            <input id="lr-search" placeholder="Search client / project / city / tier" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 w-52" />
+            <button id="lr-clear" class="px-3 py-1 rounded-full border border-red-500/70 bg-red-500/10 text-red-300 uppercase tracking-[0.22em]">
+              Clear Orders (This Device)
+            </button>
+          </div>
+        </div>
+
+        <div id="lr-empty" class="border border-dashed border-slate-700 rounded-2xl p-6 text-center text-sm text-slate-300">
+          No mixtape orders found yet on this browser.
+          When someone completes the <a href="dj-mixtape-hosting.html" class="text-pink-300 underline">DJ Mixtape Hosting</a> form, they will appear here.
+        </div>
+
+        <div id="lr-orders" class="space-y-2 max-h-[420px] overflow-y-auto text-sm"></div>
+      </section>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-yellow-500/40 bg-black/50">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-300 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM Records — Label Revenue Console.</span>
+      <span class="opacity-80">
+        Feeds from mixtapeOrders → GOD VIEW • Dev Console • owner decisions.
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    const PRICE_TABLE = {
+      Starter: 500,
+      Pro: 1000,
+      Elite: 2500
+    };
+
+    function safeGetOrders() {
+      try {
+        const raw = localStorage.getItem('mixtapeOrders');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.warn('Label Revenue: failed to parse mixtapeOrders', e);
+        return [];
+      }
+    }
+
+    function saveOrders(list) {
+      try {
+        localStorage.setItem('mixtapeOrders', JSON.stringify(list));
+      } catch (e) {
+        console.error('Label Revenue: failed to save mixtapeOrders', e);
+      }
+    }
+
+    function formatMoney(num) {
+      const n = Number(num) || 0;
+      return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+
+    function prettyDate(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleString();
+      } catch {
+        return '';
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function computeStats(orders) {
+      const stats = {
+        total: orders.length,
+        gross: 0,
+        tiers: { Starter: 0, Pro: 0, Elite: 0, Other: 0 },
+        status: { new: 0, in_progress: 0, complete: 0, cancelled: 0 },
+        tags: { WATCH: 0, OFFER: 0, SPONSOR: 0 }
+      };
+
+      for (const o of orders) {
+        const tier = o.tier || 'Other';
+        if (tier === 'Starter' || tier === 'Pro' || tier === 'Elite') {
+          stats.tiers[tier]++;
+          const price = PRICE_TABLE[tier] || 0;
+          stats.gross += price;
+        } else {
+          stats.tiers.Other++;
+        }
+
+        const st = o.status || 'new';
+        if (stats.status[st] !== undefined) {
+          stats.status[st]++;
+        } else {
+          stats.status[st] = (stats.status[st] || 0) + 1;
+        }
+
+        const tag = o.labelTag || '';
+        if (tag && stats.tags[tag] !== undefined) {
+          stats.tags[tag]++;
+        }
+      }
+
+      return stats;
+    }
+
+    function renderConsole() {
+      const searchInput = document.getElementById('lr-search');
+      const query = (searchInput?.value || '').toLowerCase().trim();
+
+      const orders = safeGetOrders();
+      const stats = computeStats(orders);
+
+      // Snapshot numbers
+      document.getElementById('lr-total-orders').textContent = stats.total;
+      document.getElementById('lr-gross').textContent = formatMoney(stats.gross);
+      document.getElementById('lr-tier-summary').textContent =
+        \`Starter \${stats.tiers.Starter} • Pro \${stats.tiers.Pro} • Elite \${stats.tiers.Elite}\`;
+
+      document.getElementById('lr-status-new').textContent = 'New: ' + stats.status.new;
+      document.getElementById('lr-status-in-progress').textContent = 'In Progress: ' + stats.status.in_progress;
+      document.getElementById('lr-status-complete').textContent = 'Complete: ' + stats.status.complete;
+      document.getElementById('lr-status-cancelled').textContent = 'Cancelled: ' + stats.status.cancelled;
+
+      document.getElementById('lr-tag-watch').textContent = 'WATCH: ' + stats.tags.WATCH;
+      document.getElementById('lr-tag-offer').textContent = 'OFFER: ' + stats.tags.OFFER;
+      document.getElementById('lr-tag-sponsor').textContent = 'SPONSOR: ' + stats.tags.SPONSOR;
+
+      const listEl = document.getElementById('lr-orders');
+      const emptyEl = document.getElementById('lr-empty');
+
+      if (!orders.length) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+
+      let rows = orders.map((o, idx) => ({ ...o, _index: idx }));
+
+      if (query) {
+        rows = rows.filter(o => {
+          const hay = [
+            o.clientName,
+            o.projectTitle,
+            o.city,
+            o.email,
+            o.social,
+            o.tier,
+            o.status,
+            o.labelTag
+          ].join(' ').toLowerCase();
+          return hay.includes(query);
+        });
+      }
+
+      rows.sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+      listEl.innerHTML = rows.map(row => {
+        const tier = row.tier || '—';
+        const price = PRICE_TABLE[tier] || 0;
+        const status = row.status || 'new';
+        const tag = row.labelTag || '';
+
+        const statusClass =
+          status === 'new' ? 'border-purple-500/70 bg-purple-500/10' :
+          status === 'in_progress' ? 'border-amber-400/70 bg-amber-400/10' :
+          status === 'complete' ? 'border-emerald-400/70 bg-emerald-400/10' :
+          status === 'cancelled' ? 'border-slate-600/70 bg-slate-900/80' :
+          'border-slate-700/70 bg-slate-900/80';
+
+        const tagClass =
+          tag === 'WATCH' ? 'border-amber-400/70 text-amber-200 bg-amber-400/10' :
+          tag === 'OFFER' ? 'border-emerald-400/80 text-emerald-200 bg-emerald-400/10' :
+          tag === 'SPONSOR' ? 'border-yellow-400/80 text-yellow-200 bg-yellow-400/10' :
+          'border-slate-700 text-slate-300 bg-slate-900/80';
+
+        return \`
+          <article class="rounded-2xl border \${statusClass} px-3 py-3">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <div class="text-sm font-semibold truncate">
+                    \${escapeHtml(row.clientName || 'Unknown Client')}
+                  </div>
+                  <div class="text-[0.75rem] text-slate-400 truncate">
+                    — \${escapeHtml(row.projectTitle || '')}
+                  </div>
+                </div>
+                <div class="mt-1 flex flex-wrap gap-2 text-[0.7rem] text-slate-300">
+                  <span class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90">
+                    Tier: \${escapeHtml(tier)}\${price ? ' • ' + formatMoney(price) : ''}
+                  </span>
+                  \${row.city ? \`<span>\${escapeHtml(row.city)}</span>\` : ''}
+                  \${row.email ? \`<span>• \${escapeHtml(row.email)}</span>\` : ''}
+                  \${row.social ? \`<span>• \${escapeHtml(row.social)}</span>\` : ''}
+                </div>
+                \${row.goals ? \`
+                  <p class="mt-1 text-[0.7rem] text-slate-300 line-clamp-2">
+                    \${escapeHtml(row.goals)}
+                  </p>\` : ''
+                }
+                \${row.links ? \`
+                  <p class="mt-1 text-[0.7rem] text-slate-400 line-clamp-1">
+                    Links: \${escapeHtml(row.links)}
+                  </p>\` : ''
+                }
+                <p class="mt-1 text-[0.65rem] text-slate-500">
+                  \${row.createdAt ? 'Created: ' + escapeHtml(prettyDate(row.createdAt)) : ''}
+                </p>
+              </div>
+
+              <div class="flex flex-col items-end gap-2 text-[0.7rem] min-w-[11rem]">
+                <div class="flex flex-wrap gap-1 justify-end">
+                  <select
+                    data-role="status"
+                    data-index="\${row._index}"
+                    class="bg-slate-950/90 border border-slate-700/80 rounded-full px-2.5 py-1 text-[0.68rem] text-slate-100">
+                    <option value="new" \${status==='new'?'selected':''}>New</option>
+                    <option value="in_progress" \${status==='in_progress'?'selected':''}>In Progress</option>
+                    <option value="complete" \${status==='complete'?'selected':''}>Complete</option>
+                    <option value="cancelled" \${status==='cancelled'?'selected':''}>Cancelled</option>
+                  </select>
+
+                  <select
+                    data-role="labelTag"
+                    data-index="\${row._index}"
+                    class="bg-slate-950/90 border border-slate-700/80 rounded-full px-2.5 py-1 text-[0.68rem] text-slate-100">
+                    <option value="" \${tag===''?'selected':''}>No Tag</option>
+                    <option value="WATCH" \${tag==='WATCH'?'selected':''}>WATCH</option>
+                    <option value="OFFER" \${tag==='OFFER'?'selected':''}>OFFER</option>
+                    <option value="SPONSOR" \${tag==='SPONSOR'?'selected':''}>SPONSOR</option>
+                  </select>
+                </div>
+
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full border \${tagClass} text-[0.65rem] uppercase tracking-[0.2em]">
+                  \${tag || '—'}
+                </span>
+              </div>
+            </div>
+          </article>
+        \`;
+      }).join('');
+
+      // Rewire change events after render
+      const listEl = document.getElementById('lr-orders');
+      listEl.querySelectorAll('select[data-role="status"]').forEach(sel => {
+        sel.addEventListener('change', function () {
+          const idx = parseInt(sel.getAttribute('data-index'), 10);
+          const orders = safeGetOrders();
+          if (!orders[idx]) return;
+          orders[idx].status = sel.value;
+          saveOrders(orders);
+          renderConsole();
+        });
+      });
+      listEl.querySelectorAll('select[data-role="labelTag"]').forEach(sel => {
+        sel.addEventListener('change', function () {
+          const idx = parseInt(sel.getAttribute('data-index'), 10);
+          const orders = safeGetOrders();
+          if (!orders[idx]) return;
+          orders[idx].labelTag = sel.value || null;
+          saveOrders(orders);
+          renderConsole();
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const btnRefresh = document.getElementById('lr-refresh');
+      const btnClear = document.getElementById('lr-clear');
+      const searchInput = document.getElementById('lr-search');
+
+      btnRefresh?.addEventListener('click', renderConsole);
+
+      btnClear?.addEventListener('click', function () {
+        if (!confirm('Clear all mixtapeOrders data on THIS DEVICE?')) return;
+        localStorage.removeItem('mixtapeOrders');
+        renderConsole();
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          clearTimeout(searchInput._tkfmTimer);
+          searchInput._tkfmTimer = setTimeout(renderConsole, 150);
+        });
+      }
+
+      renderConsole();
+    });
+  </script>
+</body>
+</html>
