@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM Owner Login — They Krave For Me Radio</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Owner-only access gateway for TKFM control rooms and label labs." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.24),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(250,204,21,0.25),transparent 55%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-slate-50">
+  <main class="w-full max-w-md px-4">
+    <section class="rounded-3xl border border-slate-800 bg-black/70 backdrop-blur-xl p-6 space-y-5 shadow-[0_0_60px_rgba(15,23,42,0.9)]">
+      <header class="space-y-2 text-center">
+        <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">TKFM • Owner Access</p>
+        <h1 class="text-2xl font-extrabold">Owner Login</h1>
+        <p class="text-[0.8rem] text-slate-300">
+          This gate locks down **GOD VIEW, dev consoles, label labs & revenue dashboards**.
+        </p>
+      </header>
+
+      <form id="owner-login-form" class="space-y-4">
+        <div class="space-y-1">
+          <label for="owner-pass" class="block text-xs font-semibold tracking-[0.18em] uppercase text-slate-300">
+            Owner Passcode
+          </label>
+          <input
+            id="owner-pass"
+            type="password"
+            autocomplete="current-password"
+            class="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+            placeholder="Enter owner pass"
+            required
+          />
+          <p class="text-[0.7rem] text-slate-500">
+            Set or change this pass directly in <span class="font-mono text-cyan-300 text-[0.7rem]">owner-login.html</span>.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full rounded-xl border border-cyan-400/80 bg-cyan-400/15 px-3 py-2 text-sm font-semibold text-cyan-100 tracking-[0.18em] uppercase hover:bg-cyan-400/25 transition flex items-center justify-center gap-2"
+        >
+          <span>Unlock TKFM Control Rooms</span>
+        </button>
+
+        <p id="owner-error" class="text-[0.75rem] text-rose-400 h-4"></p>
+      </form>
+
+      <div class="text-[0.7rem] text-slate-400 space-y-1 border-t border-slate-800 pt-3">
+        <p>
+          Once unlocked, we set <span class="font-mono text-cyan-300 text-[0.7rem]">tkfm_owner_verified = "true"</span>
+          in this browser. Owner-only pages will stay open until you clear storage.
+        </p>
+        <button
+          id="owner-clear"
+          type="button"
+          class="mt-1 inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-1 text-[0.7rem] text-slate-300 hover:bg-slate-900/80"
+        >
+          <span>🧼</span><span>Clear owner flag on this browser</span>
+        </button>
+      </div>
+
+      <div class="text-center text-[0.7rem] text-slate-500">
+        <a href="index.html" class="hover:text-cyan-300">
+          ← Back to TKFM Radio
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // CHANGE THIS PASSCODE IF YOU WANT:
+    const TKFM_OWNER_PASS = 'TKFM-OWNER-LOCK-2025'; // <— edit this string to your secret
+
+    function getNextUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const next = params.get('next');
+        if (next && next.startsWith('/')) return next;
+        if (next && !next.startsWith('http')) return next;
+      } catch (e) {}
+      return 'god-view.html';
+    }
+
+    document.getElementById('owner-login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const input = document.getElementById('owner-pass');
+      const error = document.getElementById('owner-error');
+      const value = (input.value || '').trim();
+
+      if (!value) {
+        error.textContent = 'Enter your owner pass.';
+        return;
+      }
+
+      if (value !== TKFM_OWNER_PASS) {
+        error.textContent = 'Incorrect passcode.';
+        input.value = '';
+        input.focus();
+        return;
+      }
+
+      try {
+        localStorage.setItem('tkfm_owner_verified', 'true');
+      } catch (err) {}
+
+      error.textContent = '';
+      const next = getNextUrl();
+      window.location.href = next;
+    });
+
+    document.getElementById('owner-clear').addEventListener('click', function () {
+      try {
+        localStorage.removeItem('tkfm_owner_verified');
+      } catch (e) {}
+      document.getElementById('owner-error').textContent = 'Owner flag cleared for this browser.';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TKFM v2 — Mixtape Label Console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-purple-100 min-h-screen font-mono">
+  <header class="border-b border-purple-700 px-6 py-4 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold tracking-wide">
+        🧾 TKFM Mixtape Label Console
+      </h1>
+      <p class="text-sm text-purple-400 mt-1">
+        Joined view of <span class="font-semibold">mixtapeOrders</span> + <span class="font-semibold">mixtapeBriefs</span>, wired into the Contract Lab and Catalog.
+      </p>
+    </div>
+    <div class="text-right text-xs md:text-sm text-purple-400">
+      <div>Feed: <code>get-mixtape-label-view</code></div>
+      <div>Status:
+        <select id="statusFilter" class="bg-black border border-purple-600 rounded px-2 py-1 text-xs">
+          <option value="pending-intake">pending-intake</option>
+          <option value="approved">approved</option>
+          <option value="in-contract">in-contract</option>
+          <option value="completed">completed</option>
+          <option value="rejected">rejected</option>
+          <option value="all">all</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="p-4 md:p-6 max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+      <div class="flex items-center gap-2 text-xs text-purple-300">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        <span>Label-side: orders + briefs + status control + contracts + catalog.</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="refreshBtn"
+                class="text-xs md:text-sm border border-purple-600 px-3 py-1 rounded hover:bg-purple-700">
+          🔄 Refresh
+        </button>
+        <span id="lastUpdated" class="text-[10px] md:text-xs text-purple-500">
+          Last updated: —
+        </span>
+      </div>
+    </div>
+
+    <div class="bg-black/60 border border-purple-700 rounded-xl overflow-hidden shadow-lg">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-xs md:text-sm">
+          <thead class="bg-purple-900/60 text-purple-100 uppercase text-[10px] md:text-xs">
+            <tr>
+              <th class="px-3 py-2 text-left">Tier</th>
+              <th class="px-3 py-2 text-left">Artist</th>
+              <th class="px-3 py-2 text-left hidden md:table-cell">Email</th>
+              <th class="px-3 py-2 text-left hidden md:table-cell">Project</th>
+              <th class="px-3 py-2 text-left hidden md:table-cell">Created</th>
+              <th class="px-3 py-2 text-left">Brief</th>
+              <th class="px-3 py-2 text-left">Status</th>
+              <th class="px-3 py-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody" class="divide-y divide-purple-800/40">
+            <tr id="emptyRow">
+              <td colspan="8" class="px-3 py-6 text-center text-purple-500">
+                No mixtape orders for this status.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal for brief details -->
+    <div id="briefModal"
+         class="fixed inset-0 bg-black/70 flex items-center justify-center z-40 opacity-0 pointer-events-none transition-opacity">
+      <div class="bg-black border border-purple-700 rounded-2xl max-w-xl w-[95%] max-h-[80vh] overflow-y-auto p-5 shadow-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold">Mixtape Brief</h2>
+          <button id="closeModalBtn"
+                  class="text-xs border border-purple-600 px-2 py-1 rounded hover:bg-purple-700">
+            ✕ Close
+          </button>
+        </div>
+        <div id="briefContent" class="text-xs space-y-3 text-purple-100">
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"
+         class="fixed bottom-4 right-4 bg-purple-900/95 border border-purple-500 text-xs md:text-sm px-3 py-2 rounded-lg shadow-xl opacity-0 pointer-events-none transition-opacity z-50">
+      <span id="toastText"></span>
+    </div>
+  </main>
+
+  <script>
+    const ordersBody = document.getElementById('ordersBody');
+    const statusFilter = document.getElementById('statusFilter');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const lastUpdated = document.getElementById('lastUpdated');
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+    const briefModal = document.getElementById('briefModal');
+    const briefContent = document.getElementById('briefContent');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    function showToast(message) {
+      toastText.textContent = message;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2600);
+    }
+
+    function formatAmount(amount, currency) {
+      if (!amount) return '-';
+      const value = (amount / 100).toFixed(2);
+      return value + ' ' + (currency || 'usd').toUpperCase();
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '-';
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString();
+      } catch {
+        return iso;
+      }
+    }
+
+    function preview(text, max = 60) {
+      if (!text) return '-';
+      if (text.length <= max) return text;
+      return text.slice(0, max) + '…';
+    }
+
+    function statusBadgeClass(status) {
+      switch (status) {
+        case 'approved': return 'bg-green-700/70 text-green-100'
+        case 'rejected': return 'bg-red-800/70 text-red-100'
+        case 'in-contract': return 'bg-blue-700/70 text-blue-100'
+        case 'completed': return 'bg-emerald-700/70 text-emerald-100'
+        default: return 'bg-purple-800/70 text-purple-100'
+      }
+    }
+
+    function openBriefModal(order) {
+      const brief = order.brief || {}
+      briefContent.innerHTML = `
+        <div>
+          <div class="text-[11px] text-purple-400 mb-1">Artist</div>
+          <div class="text-sm font-semibold">${brief.artistName || order.name || 'Unknown Artist'}</div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <div class="text-[11px] text-purple-400 mb-1">Email</div>
+            <div class="text-xs">${brief.email || order.email || '-'}</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-purple-400 mb-1">Project Title</div>
+            <div class="text-xs">${brief.projectTitle || order.projectTitle || '-'}</div>
+          </div>
+        </div>
+        <div>
+          <div class="text-[11px] text-purple-400 mb-1">Tier</div>
+          <div class="text-xs">${brief.tier || order.tier || '-'}</div>
+        </div>
+        <div>
+          <div class="text-[11px] text-purple-400 mb-1">Download / Asset Links</div>
+          <div class="text-xs whitespace-pre-wrap break-words">${brief.links || '-'}</div>
+        </div>
+        <div>
+          <div class="text-[11px] text-purple-400 mb-1">Notes for DJ KRAVE</div>
+          <div class="text-xs whitespace-pre-wrap break-words">${brief.notes || '-'}</div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <div class="text-[11px] text-purple-400 mb-1">Order Created</div>
+            <div class="text-xs">${formatDate(order.createdAt)}</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-purple-400 mb-1">Order Amount</div>
+            <div class="text-xs">${formatAmount(order.amount_total, order.currency)}</div>
+          </div>
+        </div>
+        <div>
+          <div class="text-[11px] text-purple-400 mb-1">Internal IDs</div>
+          <div class="text-[11px] text-purple-500">Order ID: ${order.id || '-'}</div>
+          <div class="text-[11px] text-purple-500">Session ID (brief): ${brief.sessionId || '-'}</div>
+        </div>
+      `;
+      briefModal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeBriefModal() {
+      briefModal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        const res = await fetch('/.netlify/functions/update-mixtape-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status })
+      });
+        if (!res.ok) {
+          const text = await res.text();
+          showToast('Update failed: ' + text);
+          return;
+        }
+        showToast('Status updated → ' + status);
+        fetchOrders();
+      } catch (err) {
+        console.error(err);
+        showToast('Error updating status');
+      }
+    }
+
+    function openContractLab(order) {
+      const brief = order.brief || {};
+      const params = new URLSearchParams({
+        orderId: order.id || '',
+        artist: brief.artistName || order.name || '',
+        email: brief.email || order.email || '',
+        projectTitle: brief.projectTitle || '',
+        tier: brief.tier || order.tier || '',
+        dealSource: order.source || 'mixtape-hosting',
+        amount: order.amount_total ? (order.amount_total / 100).toFixed(2) : '',
+        currency: order.currency || 'usd'
+      });
+
+      const url = 'label-contract-lab.html?' + params.toString();
+      window.open(url, '_blank');
+    }
+
+    async function promoteToCatalog(orderId) {
+      if (!orderId) {
+        showToast('Missing orderId for catalog');
+        return;
+      }
+      try {
+        const res = await fetch('/.netlify/functions/promote-mixtape-to-catalog', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId })
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          showToast('Catalog failed: ' + text);
+          return;
+        }
+        showToast('Pushed to Mixtape Catalog 🚀');
+      } catch (err) {
+        console.error(err);
+        showToast('Error pushing to catalog');
+      }
+    }
+
+    async function fetchOrders() {
+      const status = statusFilter.value;
+      const qs = status === 'all' ? '?status=all' : '?status=' + encodeURIComponent(status);
+
+      try {
+        const res = await fetch('/.netlify/functions/get-mixtape-label-view' + qs);
+        const data = await res.json();
+
+        ordersBody.innerHTML = '';
+        if (!data || !data.length) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = '<td colspan="8" class="px-3 py-6 text-center text-purple-500">No mixtape orders for this status.</td>';
+          ordersBody.appendChild(tr);
+        } else {
+          data.forEach(order => {
+            const brief = order.brief || {};
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-purple-900/30 transition-colors align-top';
+
+            const badgeClass = statusBadgeClass(order.status || 'pending-intake');
+            const hasBrief = !!order.brief;
+
+            tr.innerHTML = `
+              <td class="px-3 py-2">
+                <div class="font-semibold text-purple-100">${order.tier || brief.tier || '-'}</div>
+                <div class="text-[10px] text-purple-500">${order.product || ''}</div>
+              </td>
+              <td class="px-3 py-2">
+                <div class="font-semibold">${brief.artistName || order.name || 'Unknown Artist'}</div>
+                <div class="text-[10px] text-purple-500 md:hidden">${brief.email || order.email || ''}</div>
+              </td>
+              <td class="px-3 py-2 hidden md:table-cell">
+                <div class="text-[11px]">${brief.email || order.email || '-'}</div>
+              </td>
+              <td class="px-3 py-2 hidden md:table-cell">
+                <div class="text-[11px] font-semibold">${brief.projectTitle || '-'}</div>
+                <div class="text-[10px] text-purple-500">${preview(brief.links, 40)}</div>
+              </td>
+              <td class="px-3 py-2 hidden md:table-cell">
+                <div class="text-[11px]">${formatDate(order.createdAt)}</div>
+                <div class="text-[10px] text-purple-500">${formatAmount(order.amount_total, order.currency)}</div>
+              </td>
+              <td class="px-3 py-2">
+                <div class="flex flex-col gap-1">
+                  <span class="inline-block px-2 py-1 rounded-full text-[10px] ${hasBrief ? 'bg-emerald-700/70 text-emerald-100' : 'bg-purple-800/70 text-purple-100'}">
+                    ${hasBrief ? 'Brief on file' : 'No brief yet'}
+                  </span>
+                  <button class="view-brief-btn text-[10px] border border-purple-600 px-2 py-1 rounded hover:bg-purple-700/70"
+                          data-order='${JSON.stringify(order).replace(/'/g, "&apos;")}'>
+                    📄 View Brief
+                  </button>
+                </div>
+              </td>
+              <td class="px-3 py-2">
+                <span class="inline-block px-2 py-1 rounded-full text-[10px] ${badgeClass}">
+                  ${order.status || 'pending-intake'}
+                </span>
+                <div class="text-[9px] text-purple-500 mt-1">
+                  ${order.source || 'mixtape-hosting'}
+                </div>
+              </td>
+              <td class="px-3 py-2">
+                <div class="flex flex-wrap gap-1">
+                  <button data-id="${order.id}" data-status="approved"
+                          class="status-btn px-2 py-1 rounded text-[10px] border border-green-600 hover:bg-green-700/60">
+                    ✅ Approve
+                  </button>
+                  <button data-id="${order.id}" data-status="rejected"
+                          class="status-btn px-2 py-1 rounded text-[10px] border border-red-700 hover:bg-red-800/60">
+                    🚫 Reject
+                  </button>
+                  <button data-id="${order.id}" data-status="in-contract"
+                          class="status-btn px-2 py-1 rounded text-[10px] border border-blue-600 hover:bg-blue-700/60">
+                    📄 In-Contract
+                  </button>
+                  <button data-id="${order.id}" data-status="completed"
+                          class="status-btn px-2 py-1 rounded text-[10px] border border-emerald-600 hover:bg-emerald-700/60">
+                    ✅ Completed
+                  </button>
+                  <button class="contract-btn px-2 py-1 rounded text-[10px] border border-amber-600 hover:bg-amber-700/60"
+                          data-order='${JSON.stringify(order).replace(/'/g, "&apos;")}'>
+                    ✍️ Contract
+                  </button>
+                  <button class="catalog-btn px-2 py-1 rounded text-[10px] border border-pink-600 hover:bg-pink-700/60"
+                          data-id="${order.id}">
+                    🚀 Catalog
+                  </button>
+                </div>
+              </td>
+            `;
+            ordersBody.appendChild(tr);
+          });
+        }
+
+        lastUpdated.textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+
+        // Wire status buttons
+        document.querySelectorAll('.status-btn').forEach(btn => {
+          btn.onclick = () => {
+            const id = btn.getAttribute('data-id');
+            const status = btn.getAttribute('data-status');
+            updateStatus(id, status);
+          };
+        });
+
+        // Wire brief view buttons
+        document.querySelectorAll('.view-brief-btn').forEach(btn => {
+          btn.onclick = () => {
+            const raw = btn.getAttribute('data-order').replace(/&apos;/g, "'");
+            const order = JSON.parse(raw);
+            openBriefModal(order);
+          };
+        });
+
+        // Wire contract buttons (jump into Contract Lab)
+        document.querySelectorAll('.contract-btn').forEach(btn => {
+          btn.onclick = () => {
+            const raw = btn.getAttribute('data-order').replace(/&apos;/g, "'");
+            const order = JSON.parse(raw);
+            openContractLab(order);
+          };
+        });
+
+        // Wire catalog buttons
+        document.querySelectorAll('.catalog-btn').forEach(btn => {
+          btn.onclick = () => {
+            const id = btn.getAttribute('data-id');
+            promoteToCatalog(id);
+          };
+        });
+
+      } catch (err) {
+        console.error(err);
+        showToast('Error loading label console feed');
+      }
+    }
+
+    refreshBtn.onclick = fetchOrders;
+    statusFilter.onchange = fetchOrders;
+    closeModalBtn.onclick = closeBriefModal;
+    briefModal.onclick = (e) => {
+      if (e.target === briefModal) closeBriefModal();
+    };
+
+    // Initial load
+    fetchOrders();
+  </script>
+  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
+</body>
+</html>

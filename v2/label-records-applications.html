@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TKFM Records — Applications Console</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(6,8,20,0.98);
+      --bg-soft: rgba(15,23,42,0.96);
+      --gold: #facc15;
+      --gold-deep: #eab308;
+      --amber: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f9fafb;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border-subtle: rgba(148,163,184,0.35);
+
+      --accent: var(--accent-pink);
+      --accent-2: var(--accent-purple);
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top,#111827 0,transparent 52%),
+        radial-gradient(circle at top right,rgba(234,179,8,0.55) 0,transparent 60%),
+        radial-gradient(circle at top left,rgba(248,113,113,0.45) 0,transparent 60%),
+        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
+      color:var(--text-main);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:1.6rem .9rem 2.3rem;
+      overflow-x:hidden;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    .shell {
+      max-width:1120px;
+      margin:0 auto;
+    }
+
+    /* NAV */
+    .nav {
+      position:sticky;
+      top:0;
+      z-index:20;
+      margin:-1.6rem -.9rem 1rem;
+      padding:.7rem .9rem;
+      background:linear-gradient(to right,rgba(6,8,20,0.98),rgba(15,23,42,0.96));
+      border-bottom:1px solid var(--border-subtle);
+      backdrop-filter:blur(16px);
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+    }
+    .nav-left {
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+    }
+    .logo-orb {
+      width:2.1rem;
+      height:2.1rem;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 15% 0,#f97316,#ec4899 46%,#a855f7 90%);
+      box-shadow:
+        0 0 18px rgba(248,113,113,.8),
+        0 0 22px rgba(168,85,247,.8);
+      border:1px solid rgba(248,113,113,.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.78rem;
+      font-weight:700;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      color:#020617;
+    }
+    .brand-text {
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .brand-kicker {
+      font-size:.63rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--text-soft);
+    }
+    .brand-main {
+      font-size:.8rem;
+      font-weight:600;
+    }
+    .nav-right {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+    }
+    .nav-pill {
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      padding:.35rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      color:var(--text-muted);
+      background:var(--bg-soft);
+      display:flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    .nav-pill.primary {
+      border-color:var(--accent-pink);
+      color:#020617;
+      background:linear-gradient(135deg,var(--accent-pink),var(--accent-purple));
+      box-shadow:0 0 18px rgba(236,72,153,.85);
+    }
+    @media(max-width:640px){
+      .nav-right{display:none;}
+    }
+
+    /* HEADER */
+    .head-kicker {
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.22em;
+      color:var(--text-soft);
+      margin-bottom:.4rem;
+      margin-top:.3rem;
+    }
+    .head-title {
+      font-size:1.25rem;
+      font-weight:650;
+      margin-bottom:.4rem;
+    }
+    .head-sub {
+      font-size:.82rem;
+      color:var(--text-muted);
+      margin-bottom:.85rem;
+      max-width:40rem;
+    }
+
+    /* SUMMARY */
+    .summary-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      margin-bottom:.7rem;
+      font-size:.7rem;
+    }
+    .summary-pill {
+      padding:.4rem .7rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--text-soft);
+      display:flex;
+      gap:.35rem;
+      align-items:center;
+    }
+    .summary-pill span.count {
+      font-weight:600;
+      color:var(--accent-pink);
+    }
+    .summary-pill.good span.count { color:#22c55e; }
+    .summary-pill.bad span.count { color:#fb7185; }
+    .summary-pill.gold span.count { color:var(--gold); }
+
+    /* FILTERS */
+    .filters {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      margin-bottom:.7rem;
+      font-size:.64rem;
+    }
+    .filter-pill {
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      padding:.3rem .6rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      background:var(--bg-soft);
+      color:var(--text-soft);
+      cursor:pointer;
+    }
+    .filter-pill.active {
+      border-color:var(--accent-pink);
+      color:#020617;
+      background:linear-gradient(135deg,var(--accent-pink),var(--accent-purple));
+      box-shadow:0 0 14px rgba(236,72,153,.8);
+    }
+
+    /* GRID */
+    .grid {
+      margin-top:.4rem;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.7rem;
+    }
+    @media(max-width:880px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card {
+      border-radius:1rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-card);
+      padding:.65rem .7rem .75rem;
+      box-shadow:0 0 22px rgba(15,23,42,1);
+      font-size:.72rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      opacity:0;
+      background:conic-gradient(from 140deg,var(--gold),var(--amber),var(--accent-pink),var(--accent-purple),var(--gold));
+      filter:blur(22px);
+      z-index:-1;
+      transition:opacity .18s ease-out;
+    }
+    .card:hover::before {
+      opacity:.32;
+    }
+
+    .card-header {
+      display:flex;
+      justify-content:space-between;
+      gap:.5rem;
+      margin-bottom:.25rem;
+    }
+    .role-pill-small {
+      padding:.3rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      font-size:.62rem;
+      color:var(--text-soft);
+    }
+    .role-pill-small.artist { border-color:#4ade80; color:#bbf7d0; }
+    .role-pill-small.producer { border-color:#fb923c; color:#fed7aa; }
+    .role-pill-small.dj { border-color:#22d3ee; color:#a5f3fc; }
+
+    .status-pill {
+      padding:.25rem .55rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--text-soft);
+      background:var(--bg-soft);
+    }
+    .status-pill.new { border-color:var(--accent-pink); color:var(--accent-pink); }
+    .status-pill.under_review { border-color:#38bdf8; color:#bae6fd; }
+    .status-pill.approved { border-color:#22c55e; color:#22c55e; }
+    .status-pill.contracted { border-color:var(--gold); color:var(--gold); }
+    .status-pill.closed { border-color:#fb7185; color:#fb7185; }
+
+    .code-pill {
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      padding:.23rem .55rem;
+      border-radius:999px;
+      border:1px dashed var(--border-subtle);
+      color:var(--text-soft);
+      display:inline-block;
+      margin-bottom:.3rem;
+    }
+
+    .name-row {
+      font-size:.82rem;
+      font-weight:600;
+      margin-bottom:.15rem;
+    }
+    .meta-row {
+      font-size:.72rem;
+      color:var(--text-soft);
+      margin-bottom:.25rem;
+    }
+    .links-row {
+      font-size:.7rem;
+      margin-bottom:.3rem;
+    }
+    .links-row a { color:var(--accent-pink); }
+
+    .goals {
+      font-size:.7rem;
+      color:var(--text-muted);
+      margin-bottom:.4rem;
+      max-height:3.4rem;
+      overflow:auto;
+    }
+
+    .actions {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      font-size:.64rem;
+      margin-top:.1rem;
+    }
+    .btn {
+      padding:.32rem .65rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      color:var(--text-main);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      cursor:pointer;
+    }
+    .btn.main {
+      border-color:var(--accent-pink);
+      background:linear-gradient(135deg,var(--accent-pink),var(--accent-purple));
+      color:#020617;
+      font-weight:600;
+      box-shadow:0 0 14px rgba(236,72,153,.8);
+    }
+    .btn.danger {
+      border-color:#fb7185;
+      color:#fb7185;
+    }
+
+    .empty {
+      font-size:.72rem;
+      color:var(--text-soft);
+      margin-top:.5rem;
+    }
+
+    .footer-note {
+      font-size:.7rem;
+      color:var(--text-soft);
+      margin-top:.6rem;
+    }
+    .footer-note code { color:var(--accent-purple); }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- NAV -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-orb">TR</div>
+        <div class="brand-text">
+          <div class="brand-kicker">TKFM Records</div>
+          <div class="brand-main">Applications & Contract Pipeline</div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="label-hub.html" class="nav-pill">🏛 Label Hub</a>
+        <a href="label-contract-lab.html" class="nav-pill">📄 Contract Lab</a>
+        <a href="god-view.html" class="nav-pill primary">GOD VIEW</a>
+      </div>
+    </header>
+
+    <div class="head-kicker">Label Side</div>
+    <div class="head-title">Applications into TKFM Records</div>
+    <p class="head-sub">
+      This console reads <code>tkfm_records_applications</code> from the public TKFM Records form.
+      Use it to track status and fire AI-generated contract drafts into the Contracts Lab when someone is ready.
+    </p>
+
+    <div class="summary-row" id="summaryRow"></div>
+
+    <div class="filters" id="filters">
+      <button class="filter-pill active" data-filter="all">All</button>
+      <button class="filter-pill" data-filter="new">New</button>
+      <button class="filter-pill" data-filter="under_review">Under Review</button>
+      <button class="filter-pill" data-filter="approved">Approved</button>
+      <button class="filter-pill" data-filter="contracted">Contracted</button>
+      <button class="filter-pill" data-filter="closed">Closed</button>
+    </div>
+
+    <div id="appsGrid" class="grid"></div>
+
+    <div id="emptyState" class="empty" style="display:none;">
+      No applications yet. Once someone submits via <code>records-application.html</code>,
+      they’ll show up here in this browser session.
+    </div>
+
+    <p class="footer-note">
+      Contract drafts are written into <code>tkfm_contract_latest</code> and opened inside
+      <code>label-contract-output.html</code> where you can print, copy, or move them into your signing flow.
+    </p>
+  </div>
+
+  <script>
+    const KEY_APPS = 'tkfm_records_applications';
+    const KEY_CONTRACT = 'tkfm_contract_latest';
+
+    const grid = document.getElementById('appsGrid');
+    const summaryRow = document.getElementById('summaryRow');
+    const filters = document.getElementById('filters');
+    const emptyState = document.getElementById('emptyState');
+
+    function loadApps(){
+      try{
+        const raw = localStorage.getItem(KEY_APPS);
+        if(!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr)?arr:[];
+      }catch(e){
+        console.error(e);
+        return [];
+      }
+    }
+    function saveApps(list){
+      try{
+        localStorage.setItem(KEY_APPS, JSON.stringify(list));
+      }catch(e){
+        console.error(e);
+      }
+    }
+
+    function summarize(apps){
+      const summary = { total: apps.length, new:0, under_review:0, approved:0, contracted:0, closed:0 };
+      for(const a of apps){
+        const s = a.status || 'new';
+        if(summary[s] != null) summary[s]++;
+      }
+      return summary;
+    }
+
+    function renderSummary(apps){
+      const s = summarize(apps);
+      summaryRow.innerHTML = '';
+
+      const pills = [
+        { label:'Total', key:'total', cls:'' },
+        { label:'New', key:'new', cls:'gold' },
+        { label:'Under Review', key:'under_review', cls:'' },
+        { label:'Approved', key:'approved', cls:'good' },
+        { label:'Contracted', key:'contracted', cls:'gold' },
+        { label:'Closed', key:'closed', cls:'bad' }
+      ];
+
+      for(const p of pills){
+        const div = document.createElement('div');
+        div.className = 'summary-pill ' + (p.cls||'');
+        div.innerHTML = '<span class="count">'+s[p.key]+'</span> '+p.label;
+        summaryRow.appendChild(div);
+      }
+    }
+
+    function formatStatus(status){
+      return (status||'new').replace('_',' ');
+    }
+    function statusClass(status){
+      return status || 'new';
+    }
+
+    function roleClass(role){
+      if(role === 'artist') return 'artist';
+      if(role === 'producer') return 'producer';
+      if(role === 'dj') return 'dj';
+      return '';
+    }
+
+    function roleLabel(role){
+      if(role === 'artist') return 'Artist';
+      if(role === 'producer') return 'Producer';
+      if(role === 'dj') return 'DJ';
+      return 'Creator';
+    }
+
+    function buildContractText(app){
+      const role = app.role || 'artist';
+      const stage = app.stageName || 'Artist';
+      const legal = app.legalName || stage;
+      const city = app.city || '';
+      const project = app.projectType || 'project';
+
+      if(role === 'artist'){
+        return `
+TKFM RECORDS • ARTIST SHOWCASE & ROTATION AGREEMENT (DRAFT)
+
+Artist: ${stage} (${legal})
+City / Region: ${city}
+Project: ${project}
+
+1. OVERVIEW
+TKFM Records and They Krave For Me Radio ("TKFM") agree to consider the Artist's recordings for inclusion in TKFM-branded programming, playlists, mixtapes, and related promotional content.
+
+2. RIGHTS GRANTED
+Artist grants TKFM a non-exclusive, worldwide, revocable license to:
+• Stream and broadcast approved recordings on TKFM platforms.
+• Use Artist name, likeness, and approved materials to promote the recordings and TKFM programming.
+
+3. TERM
+The initial term begins upon TKFM's written or electronic acceptance of this Agreement and continues for a period to be defined in a follow-up deal memo or addendum.
+
+4. COMPENSATION & ACCOUNTING
+Specific splits, royalty terms, and accounting schedules will be set out in a tailored deal memo once the scope of collaboration is confirmed.
+
+5. CREATIVE & PROMO COLLABORATION
+Artist agrees to reasonably participate in promotional activity (IDs, drops, interviews, social posts) supporting the campaign. TKFM agrees to coordinate official messaging.
+
+6. WARRANTIES & REPRESENTATIONS
+Artist warrants that the submitted material is properly cleared, original, and does not infringe any third-party rights.
+
+7. STATUS OF THIS DRAFT
+This is a non-binding template generated from TKFM Records intake data. Final enforceable terms will be contained in a fully executed contract or digital signing package issued by TKFM Records.
+
+Artist: ${stage} (${legal})
+TKFM Records / They Krave For Me Radio
+        `.trim();
+      }
+
+      if(role === 'dj'){
+        return `
+TKFM • DJ MIXTAPE HOSTING & SERVICES AGREEMENT (DRAFT)
+
+DJ: ${stage} (${legal})
+City / Region: ${city}
+
+1. SCOPE
+TKFM and DJ agree to collaborate on DJ-hosted content (mixtapes, blended sets, playlists) presented under TKFM and/or TKFM Records branding.
+
+2. SERVICES
+DJ provides curation, mixing, hosting, and related creative services for agreed projects. TKFM provides platform exposure, branding, and promotional support as set forth in specific project addenda.
+
+3. COMPENSATION
+Fees, revenue shares, and any advances will be detailed in project-specific addenda or order forms tied to this umbrella agreement.
+
+4. DELIVERABLES & APPROVAL
+Delivery formats, timelines, and review processes will be mutually agreed in writing per project, with final approval resting with TKFM for brand and compliance purposes.
+
+5. RIGHTS & BRAND
+Each party retains its respective brand. TKFM may use DJ's name and likeness in reasonable connection with the promotion of TKFM programming and hosted tapes.
+
+This draft is generated from TKFM Records intake and is not binding until an updated, signed version is issued and executed.
+        `.trim();
+      }
+
+      // producer / default
+      return `
+TKFM • PRODUCER / BEAT COLLABORATION AGREEMENT (DRAFT)
+
+Producer: ${stage} (${legal})
+City / Region: ${city}
+Focus: ${project}
+
+1. PURPOSE
+This draft outlines a potential collaboration between Producer and TKFM / TKFM Records for the use of beats, instrumentals, and production services.
+
+2. RIGHTS & LICENSE
+The precise license type (exclusive, non-exclusive, work for hire, etc.), along with master and publishing participation, will be determined in a final deal memo per project.
+
+3. CREDIT
+Producer will be credited on applicable releases and promotional materials, as mutually agreed in writing once a project is defined.
+
+4. COMPENSATION
+Fees, advances, and royalty or participation structures will be specified in addenda attached to this agreement for individual placements or projects.
+
+This text is an automatically generated template based on TKFM intake data. Binding obligations only arise under a signed, updated contract package issued by TKFM Records.
+      `.trim();
+    }
+
+    function writeContractAndOpen(app){
+      const now = Date.now();
+      const payload = {
+        fromApplication: true,
+        applicationId: app.id,
+        applicationCode: app.code || null,
+        role: app.role,
+        stageName: app.stageName,
+        legalName: app.legalName,
+        email: app.email,
+        city: app.city,
+        projectType: app.projectType,
+        generatedAt: now,
+        contractText: buildContractText(app)
+      };
+
+      try{
+        localStorage.setItem(KEY_CONTRACT, JSON.stringify(payload));
+      }catch(e){
+        console.error('Error writing contract payload', e);
+      }
+
+      window.location.href = 'label-contract-output.html';
+    }
+
+    function updateStatus(apps, id, newStatus){
+      const now = Date.now();
+      const list = apps.slice();
+      const idx = list.findIndex(a => a.id === id);
+      if(idx === -1) return list;
+      const app = list[idx];
+      app.status = newStatus;
+      app.statusHistory = app.statusHistory || [];
+      app.statusHistory.push({ at: now, status: newStatus, note:'Updated in label-records-applications console.' });
+      list[idx] = app;
+      saveApps(list);
+      return list;
+    }
+
+    function render(apps, filter){
+      grid.innerHTML = '';
+      renderSummary(apps);
+
+      let filtered = apps;
+      if(filter && filter !== 'all'){
+        filtered = apps.filter(a => (a.status || 'new') === filter);
+      }
+
+      if(!filtered.length){
+        emptyState.style.display = 'block';
+        return;
+      } else {
+        emptyState.style.display = 'none';
+      }
+
+      filtered
+        .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0))
+        .forEach(app => {
+          const card = document.createElement('article');
+          card.className = 'card';
+
+          const header = document.createElement('div');
+          header.className = 'card-header';
+
+          const roleDiv = document.createElement('div');
+          roleDiv.className = 'role-pill-small ' + roleClass(app.role);
+          roleDiv.textContent = roleLabel(app.role);
+
+          const statusDiv = document.createElement('div');
+          statusDiv.className = 'status-pill ' + statusClass(app.status);
+          statusDiv.textContent = formatStatus(app.status);
+
+          header.appendChild(roleDiv);
+          header.appendChild(statusDiv);
+
+          const code = document.createElement('div');
+          code.className = 'code-pill';
+          code.textContent = app.code ? app.code : 'No code';
+
+          const nameRow = document.createElement('div');
+          nameRow.className = 'name-row';
+          nameRow.textContent = app.stageName || '(no stage name)';
+
+          const metaRow = document.createElement('div');
+          metaRow.className = 'meta-row';
+          const city = app.city || 'Unknown city';
+          const proj = app.projectType || 'Project';
+          metaRow.textContent = city + ' • ' + proj;
+
+          const linksRow = document.createElement('div');
+          linksRow.className = 'links-row';
+          if(app.linksMain){
+            const a1 = document.createElement('a');
+            a1.href = app.linksMain;
+            a1.target = '_blank';
+            a1.rel = 'noopener';
+            a1.textContent = 'Main link';
+            linksRow.appendChild(a1);
+          }
+          if(app.linksSocial){
+            if(app.linksMain){
+              linksRow.appendChild(document.createTextNode(' • '));
+            }
+            const a2 = document.createElement('a');
+            a2.href = app.linksSocial;
+            a2.target = '_blank';
+            a2.rel = 'noopener';
+            a2.textContent = 'Social';
+            linksRow.appendChild(a2);
+          }
+          if(!app.linksMain && !app.linksSocial){
+            linksRow.textContent = 'No links provided.';
+          }
+
+          const goals = document.createElement('div');
+          goals.className = 'goals';
+          goals.textContent = app.goals || '(no goals text)';
+
+          const actions = document.createElement('div');
+          actions.className = 'actions';
+
+          const btnReview = document.createElement('button');
+          btnReview.className = 'btn';
+          btnReview.textContent = 'Under Review';
+          btnReview.addEventListener('click', () => {
+            const list = updateStatus(loadApps(), app.id, 'under_review');
+            render(list, currentFilter);
+          });
+
+          const btnApprove = document.createElement('button');
+          btnApprove.className = 'btn';
+          btnApprove.textContent = 'Approve';
+          btnApprove.addEventListener('click', () => {
+            const list = updateStatus(loadApps(), app.id, 'approved');
+            render(list, currentFilter);
+          });
+
+          const btnContract = document.createElement('button');
+          btnContract.className = 'btn main';
+          btnContract.textContent = 'Contract Draft';
+          btnContract.addEventListener('click', () => {
+            const list = updateStatus(loadApps(), app.id, 'contracted');
+            render(list, currentFilter);
+            writeContractAndOpen(app);
+          });
+
+          const btnClose = document.createElement('button');
+          btnClose.className = 'btn danger';
+          btnClose.textContent = 'Close / Reject';
+          btnClose.addEventListener('click', () => {
+            const list = updateStatus(loadApps(), app.id, 'closed');
+            render(list, currentFilter);
+          });
+
+          actions.appendChild(btnReview);
+          actions.appendChild(btnApprove);
+          actions.appendChild(btnContract);
+          actions.appendChild(btnClose);
+
+          card.appendChild(header);
+          card.appendChild(code);
+          card.appendChild(nameRow);
+          card.appendChild(metaRow);
+          card.appendChild(linksRow);
+          card.appendChild(goals);
+          card.appendChild(actions);
+
+          grid.appendChild(card);
+        });
+    }
+
+    let currentFilter = 'all';
+
+    if(filters){
+      filters.addEventListener('click', (e) => {
+        const btn = e.target.closest('.filter-pill');
+        if(!btn) return;
+        const filter = btn.getAttribute('data-filter') || 'all';
+        currentFilter = filter;
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render(loadApps(), currentFilter);
+      });
+    }
+
+    render(loadApps(), currentFilter);
+  </script>
+  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
+</body>
+</html>

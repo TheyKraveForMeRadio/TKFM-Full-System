@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TKFM Records — Label Sponsor Engine</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(6,8,20,0.98);
+      --bg-soft: rgba(15,23,42,0.96);
+      --gold: #facc15;
+      --gold-deep: #eab308;
+      --amber: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f9fafb;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border-subtle: rgba(148,163,184,0.35);
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top,#111827 0,transparent 52%),
+        radial-gradient(circle at top right,rgba(234,179,8,0.55) 0,transparent 60%),
+        radial-gradient(circle at top left,rgba(248,113,113,0.45) 0,transparent 60%),
+        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
+      color:var(--text-main);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:1.6rem .9rem 2.3rem;
+      overflow-x:hidden;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    .shell { max-width:1120px; margin:0 auto; }
+
+    /* NAV */
+    .nav {
+      position:sticky;
+      top:0;
+      z-index:20;
+      margin:-1.6rem -.9rem 1.1rem;
+      padding:.75rem .9rem;
+      background:linear-gradient(to right,rgba(6,8,20,0.98),rgba(15,23,42,0.98));
+      border-bottom:1px solid var(--border-subtle);
+      backdrop-filter:blur(18px);
+      display:flex;
+      align-items:center;
+      gap:.8rem;
+    }
+    .nav-left {
+      display:flex;
+      align-items:center;
+      gap:.7rem;
+    }
+    .crest {
+      width:2.4rem;
+      height:2.4rem;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 10% 0,var(--gold),var(--amber) 40%,rgba(15,23,42,1) 85%);
+      box-shadow:
+        0 0 18px rgba(234,179,8,.95),
+        0 0 24px rgba(248,113,113,.75);
+      border:1px solid rgba(250,204,21,0.95);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.8rem;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:#020617;
+    }
+    .brand-text {
+      display:flex;
+      flex-direction:column;
+      line-height:1.08;
+    }
+    .brand-kicker {
+      font-size:.62rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:var(--text-soft);
+    }
+    .brand-main {
+      font-size:.92rem;
+      font-weight:650;
+    }
+
+    .nav-right {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+    }
+    .nav-pill {
+      font-size:.64rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      padding:.36rem .7rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      color:var(--text-muted);
+      display:flex;
+      align-items:center;
+      gap:.3rem;
+    }
+    .nav-pill.primary {
+      border-color:var(--gold);
+      color:#020617;
+      background:linear-gradient(135deg,var(--gold),var(--amber));
+      box-shadow:0 0 18px rgba(250,204,21,0.9);
+      font-weight:650;
+    }
+    .nav-pill.owner {
+      border-color:var(--accent-purple);
+      color:var(--accent-purple);
+      box-shadow:0 0 16px rgba(168,85,247,0.75);
+    }
+
+    @media(max-width:980px){
+      .nav-right{display:none;}
+    }
+
+    /* HEADER */
+    .head-kicker {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.26em;
+      color:var(--text-soft);
+      margin-bottom:.4rem;
+    }
+    .head-title {
+      font-size:clamp(2rem,3.4vw,2.4rem);
+      font-weight:800;
+      line-height:1.03;
+      margin-bottom:.45rem;
+    }
+    .head-title span {
+      background:linear-gradient(135deg,var(--gold),var(--amber),var(--accent-pink));
+      background-clip: text;
+     -webkit-background-clip: text;
+      color:transparent;
+    }
+    .head-sub {
+      font-size:.86rem;
+      color:var(--text-muted);
+      max-width:40rem;
+      margin-bottom:.8rem;
+    }
+
+    .tag-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      margin-bottom:.9rem;
+      font-size:.7rem;
+    }
+    .tag-chip {
+      padding:.36rem .7rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      display:flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    .tag-dot {
+      width:.45rem;
+      height:.45rem;
+      border-radius:999px;
+      background:var(--gold);
+      box-shadow:0 0 12px rgba(250,204,21,0.9);
+    }
+
+    /* LAYOUT */
+    .layout {
+      display:grid;
+      grid-template-columns:1.5fr 1.1fr;
+      gap:.95rem;
+      margin-top:.4rem;
+    }
+    @media(max-width:1000px){
+      .layout{grid-template-columns:1fr;}
+    }
+
+    .card {
+      border-radius:1rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-card);
+      padding:.8rem .85rem .9rem;
+      box-shadow:0 0 24px rgba(0,0,0,0.9);
+      font-size:.76rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-45%;
+      opacity:0;
+      background:conic-gradient(from 140deg,var(--gold),var(--amber),var(--accent-pink),var(--accent-purple),var(--gold));
+      filter:blur(24px);
+      z-index:-1;
+      transition:opacity .2s ease-out;
+    }
+    .card:hover::before { opacity:.26; }
+
+    .card-header {
+      display:flex;
+      justify-content:space-between;
+      gap:.4rem;
+      align-items:flex-start;
+      margin-bottom:.4rem;
+    }
+    .card-title {
+      font-size:.9rem;
+      font-weight:650;
+    }
+    .card-kicker {
+      font-size:.64rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      margin-bottom:.2rem;
+    }
+
+    .badge {
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      padding:.24rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      color:var(--text-soft);
+    }
+    .badge.gold {
+      border-color:var(--gold);
+      color:var(--gold);
+    }
+    .badge.amber {
+      border-color:var(--amber);
+      color:var(--amber);
+    }
+
+    .card-body {
+      font-size:.76rem;
+      color:var(--text-muted);
+      margin-bottom:.5rem;
+    }
+
+    /* SPONSOR TIERS */
+    .tiers {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:.7rem;
+    }
+    @media(max-width:980px){
+      .tiers{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media(max-width:640px){
+      .tiers{grid-template-columns:1fr;}
+    }
+
+    .tier {
+      border-radius:.9rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      padding:.75rem .75rem .85rem;
+      font-size:.74rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .tier::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      opacity:0;
+      background:conic-gradient(from 130deg,var(--gold),var(--amber),var(--accent-pink),var(--accent-purple),var(--gold));
+      filter:blur(20px);
+      z-index:-1;
+      transition:opacity .18s ease-out;
+    }
+    .tier:hover::before { opacity:.25; }
+
+    .tier-label {
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      margin-bottom:.16rem;
+    }
+    .tier-label.hot { color:var(--gold); }
+    .tier-name {
+      font-size:.88rem;
+      font-weight:650;
+      margin-bottom:.05rem;
+    }
+    .tier-price {
+      font-size:.84rem;
+      font-weight:600;
+      color:var(--gold);
+      margin-bottom:.35rem;
+    }
+    .tier-price span {
+      font-size:.68rem;
+      font-weight:400;
+      color:var(--text-soft);
+      margin-left:.2rem;
+    }
+
+    .tier-list {
+      font-size:.7rem;
+      color:var(--text-muted);
+      padding-left:1rem;
+      margin-bottom:.55rem;
+    }
+    .tier-list li { margin-bottom:.16rem; }
+
+    .tier-footer {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.4rem;
+    }
+    .tier-btn {
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      padding:.42rem .8rem;
+      border-radius:999px;
+      border:1px solid var(--gold);
+      background:linear-gradient(135deg,var(--gold),var(--amber));
+      color:#020617;
+      cursor:pointer;
+      font-weight:600;
+      flex-shrink:0;
+    }
+    .tier-meta {
+      font-size:.64rem;
+      color:var(--text-soft);
+    }
+
+    /* RIGHT: METRICS + LINKS */
+    .metric-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.45rem;
+      margin-top:.25rem;
+    }
+    .metric-card {
+      border-radius:.7rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      padding:.45rem .55rem .5rem;
+      font-size:.7rem;
+    }
+    .metric-label {
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      margin-bottom:.14rem;
+    }
+    .metric-main {
+      font-size:.84rem;
+      font-weight:650;
+    }
+    .metric-main.gold { color:var(--gold); }
+    .metric-main.amber { color:var(--amber); }
+    .metric-main.pink { color:var(--accent-pink); }
+    .metric-sub {
+      font-size:.68rem;
+      color:var(--text-soft);
+    }
+
+    .routes {
+      margin-top:.7rem;
+      border-radius:.8rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      padding:.55rem .6rem .6rem;
+      font-size:.7rem;
+    }
+    .routes-title {
+      font-size:.72rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      margin-bottom:.2rem;
+    }
+    .routes-links {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+    }
+    .route-pill {
+      font-size:.66rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      padding:.32rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:#020617;
+      color:var(--text-soft);
+    }
+
+    .mini-note {
+      margin-top:.5rem;
+      font-size:.68rem;
+      color:var(--text-soft);
+    }
+
+    .footer-note {
+      margin-top:1rem;
+      font-size:.7rem;
+      color:var(--text-soft);
+    }
+    .footer-note code { color:var(--gold); }
+
+    .mono {
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- NAV -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="crest">SE</div>
+        <div class="brand-text">
+          <div class="brand-kicker">TKFM Records</div>
+          <div class="brand-main">Label Sponsor Engine — Gold-Side Inventory</div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="label-home.html" class="nav-pill">🏛 Label Home</a>
+        <a href="sponsors.html" class="nav-pill">📺 Public Sponsor Deck</a>
+        <a href="media-kit.html" class="nav-pill">📰 Media Kit</a>
+        <a href="social-engine.html" class="nav-pill">🎧 Creator Social Engine</a>
+        <a href="label-social-engine.html" class="nav-pill">📊 Social Campaigns</a>
+        <a href="god-view.html" class="nav-pill owner">GOD VIEW</a>
+      </div>
+    </header>
+
+    <!-- HEADER -->
+    <section>
+      <div class="head-kicker">Label Monetization</div>
+      <h1 class="head-title">
+        Turn TKFM <span>heat</span> into sponsor-backed campaigns.
+      </h1>
+      <p class="head-sub">
+        When a record is moving — spins, social motion, mixtapes — this is where you bolt on sponsor
+        money. Three locked sponsor packages with clean prices and a Stripe lane behind the scenes.
+      </p>
+
+      <div class="tag-row">
+        <div class="tag-chip">
+          <span class="tag-dot"></span>
+          Radio Sponsors
+        </div>
+        <div class="tag-chip">
+          <span class="tag-dot"></span>
+          Label Campaigns
+        </div>
+        <div class="tag-chip">
+          <span class="tag-dot"></span>
+          Mixtapes + Social Packs
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN LAYOUT -->
+    <section class="layout">
+      <!-- LEFT: TIERS -->
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-kicker">Sponsor Packages</div>
+            <div class="card-title">Three levels of label-side inventory.</div>
+          </div>
+          <div class="badge gold">Stripe Ready</div>
+        </div>
+        <div class="card-body">
+          These buttons are wired to a Netlify function called
+          <span class="mono">create-sponsor-session</span>. Even if Stripe isn’t set up yet,
+          every click is saved to <span class="mono">tkfm_label_sponsor_orders</span> so you can
+          see how many sponsor packages you’ve moved.
+        </div>
+
+        <div class="tiers">
+          <!-- Tier 1 -->
+          <article class="tier">
+            <div class="tier-label">Entry Tier</div>
+            <div class="tier-name">Starter Sponsor</div>
+            <div class="tier-price">$1,000 <span>per campaign</span></div>
+            <ul class="tier-list">
+              <li>Homepage logo placement for 7 days.</li>
+              <li>Light on-air mentions (low frequency).</li>
+              <li>1 social shoutout in TKFM ecosystem.</li>
+              <li>Tag sponsor into 1 Motion Pack rollout.</li>
+            </ul>
+            <div class="tier-footer">
+              <button
+                type="button"
+                class="tier-btn"
+                data-tier="starter_sponsor"
+                data-price="1000"
+              >Book Starter Sponsor</button>
+              <div class="tier-meta">Good for testers & local brands.</div>
+            </div>
+          </article>
+
+          <!-- Tier 2 -->
+          <article class="tier">
+            <div class="tier-label hot">Most Popular</div>
+            <div class="tier-name">City Lock Sponsor</div>
+            <div class="tier-price">$3,000 <span>per campaign</span></div>
+            <ul class="tier-list">
+              <li>Homepage + key show placement for 30 days.</li>
+              <li>Medium on-air frequency in rotation blocks.</li>
+              <li>3 social shoutouts across TKFM channels.</li>
+              <li>Bundled with 1 Takeover Rollout + mixtape slot.</li>
+            </ul>
+            <div class="tier-footer">
+              <button
+                type="button"
+                class="tier-btn"
+                data-tier="city_lock"
+                data-price="3000"
+              >Book City Lock</button>
+              <div class="tier-meta">Ideal for serious regional campaigns.</div>
+            </div>
+          </article>
+
+          <!-- Tier 3 -->
+          <article class="tier">
+            <div class="tier-label">Heavy Motion</div>
+            <div class="tier-name">Takeover Sponsor</div>
+            <div class="tier-price">$7,000 <span>per campaign</span></div>
+            <ul class="tier-list">
+              <li>“Presented by” positioning across a full run.</li>
+              <li>Heavy on-air mentions tied to a key record.</li>
+              <li>Integrated into mixtape + social engines.</li>
+              <li>Custom creative & copy through TKFM Records.</li>
+            </ul>
+            <div class="tier-footer">
+              <button
+                type="button"
+                class="tier-btn"
+                data-tier="takeover_sponsor"
+                data-price="7000"
+              >Book Takeover Sponsor</button>
+              <div class="tier-meta">For brands that want real presence.</div>
+            </div>
+          </article>
+        </div>
+      </article>
+
+      <!-- RIGHT: METRICS + ROUTES -->
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-kicker">Label Metrics</div>
+            <div class="card-title">Track sponsor motion and route next plays.</div>
+          </div>
+          <div class="badge amber">Live in Browser</div>
+        </div>
+        <div class="card-body">
+          This panel reads from <span class="mono">tkfm_label_sponsor_orders</span>
+          so you can see how many packages you’ve run and which tier brands love the most.
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Total Sponsor Campaigns</div>
+            <div class="metric-main gold" id="metTotal">0</div>
+            <div class="metric-sub">Across Starter / City Lock / Takeover.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Tier Breakdown</div>
+            <div class="metric-main" id="metBreakdown">0 / 0 / 0</div>
+            <div class="metric-sub">Starter / City Lock / Takeover.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Sponsor Revenue (Est)</div>
+            <div class="metric-main amber" id="metRevenue">$0</div>
+            <div class="metric-sub">Based on the label-side prices above.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Top Tier</div>
+            <div class="metric-main pink" id="metTopTier">—</div>
+            <div class="metric-sub">Which package gets picked the most.</div>
+          </div>
+        </div>
+
+        <div class="routes">
+          <div class="routes-title">Where these sponsor plays connect:</div>
+          <div class="routes-links">
+            <a href="radio-hub.html" class="route-pill">Radio Hub (rotation + features)</a>
+            <a href="mixtape-label-console.html" class="route-pill">Mixtape Label Console</a>
+            <a href="label-social-engine.html" class="route-pill">Label Social Engine</a>
+            <a href="feature-engine.html" class="route-pill">Feature Engine</a>
+            <a href="sponsors.html" class="route-pill">Public Sponsor Deck</a>
+          </div>
+        </div>
+
+        <p class="mini-note">
+          Once Stripe is fully wired, brands will go straight from this screen into checkout.
+          Until then, you still capture interest and see the numbers update when you click.
+        </p>
+      </article>
+    </section>
+
+    <p class="footer-note">
+      Buttons here call <code>/.netlify/functions/create-sponsor-session</code> with
+      <code>{ tier, price }</code> and log into
+      <code>localStorage["tkfm_label_sponsor_orders"]</code>. That keeps label-side
+      data flowing even while you’re still finishing Stripe wiring.
+    </p>
+  </div>
+
+  <script>
+    (function(){
+      const KEY_SPONSORS = 'tkfm_label_sponsor_orders';
+
+      function safeParse(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return fallback;
+          const v = JSON.parse(raw);
+          return v == null ? fallback : v;
+        } catch (e) {
+          console.warn('parse error for', key, e);
+          return fallback;
+        }
+      }
+
+      function saveSponsorOrder(order) {
+        const list = safeParse(KEY_SPONSORS, []);
+        if (!Array.isArray(list)) return;
+        list.push(order);
+        localStorage.setItem(KEY_SPONSORS, JSON.stringify(list));
+        updateMetrics();
+      }
+
+      function updateMetrics() {
+        const list = safeParse(KEY_SPONSORS, []);
+        const totalEl = document.getElementById('metTotal');
+        const breakdownEl = document.getElementById('metBreakdown');
+        const revenueEl = document.getElementById('metRevenue');
+        const topTierEl = document.getElementById('metTopTier');
+
+        if (!Array.isArray(list) || !list.length) {
+          if (totalEl) totalEl.textContent = 0;
+          if (breakdownEl) breakdownEl.textContent = '0 / 0 / 0';
+          if (revenueEl) revenueEl.textContent = '$0';
+          if (topTierEl) topTierEl.textContent = '—';
+          return;
+        }
+
+        let total = list.length;
+        let starter = 0, city = 0, takeover = 0;
+        let revenue = 0;
+
+        list.forEach(o => {
+          const tier = o.tier || '';
+          const price = Number(o.price || 0);
+          revenue += price;
+          if (tier === 'starter_sponsor') starter++;
+          else if (tier === 'city_lock') city++;
+          else if (tier === 'takeover_sponsor') takeover++;
+        });
+
+        let top = 'Starter Sponsor';
+        let max = starter;
+        if (city > max) { max = city; top = 'City Lock Sponsor'; }
+        if (takeover > max) { max = takeover; top = 'Takeover Sponsor'; }
+
+        if (totalEl) totalEl.textContent = total;
+        if (breakdownEl) breakdownEl.textContent = starter + ' / ' + city + ' / ' + takeover;
+        if (revenueEl) revenueEl.textContent = '$' + revenue;
+        if (topTierEl) topTierEl.textContent = top;
+      }
+
+      async function startSponsorCheckout(tier, price) {
+        const order = {
+          id: 'sp_' + Date.now(),
+          tier,
+          price,
+          createdAt: Date.now()
+        };
+
+        // Always log locally so label metrics work.
+        saveSponsorOrder(order);
+
+        // Try Stripe via Netlify; if not wired, fall back to alert.
+        try {
+          const res = await fetch('/.netlify/functions/create-sponsor-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tier, price })
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.url) {
+              window.location = data.url;
+              return;
+            }
+          }
+
+          alert(
+            "Sponsor order saved. create-sponsor-session did not return a checkout URL yet.\n\n" +
+            "Once Stripe is wired, this button will jump straight to checkout."
+          );
+        } catch (err) {
+          console.warn('create-sponsor-session failed', err);
+          alert(
+            "Sponsor order saved locally.\n\n" +
+            "Hook /.netlify/functions/create-sponsor-session to Stripe when you're ready."
+          );
+        }
+      }
+
+      function initSponsorEngine() {
+        updateMetrics();
+
+        const buttons = document.querySelectorAll('.tier-btn');
+        buttons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const tier = btn.getAttribute('data-tier') || 'starter_sponsor';
+            const price = Number(btn.getAttribute('data-price') || 0);
+            startSponsorCheckout(tier, price);
+          });
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', initSponsorEngine);
+    })();
+  </script>
+  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
+</body>
+</html>

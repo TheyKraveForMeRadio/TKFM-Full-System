@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Label Accounts — They Krave For Me Records</title>
+
+  <!-- LABEL THEME -->
+  <link rel="stylesheet" href="/v2/label-theme.css">
+</head>
+<body class="label-body">
+  <main style="max-width:1180px;margin:0 auto;padding:1.4rem .9rem 2.4rem;">
+    <header class="label-header">
+      <div class="label-logo-row">
+        <img src="/v2/tkfm-records-logo.png" alt="They Krave For Me Records" class="label-logo">
+        <div class="label-title-block">
+          <div class="label-kicker">They Krave For Me · Label Division</div>
+          <div class="label-title">Label Accounts Console</div>
+          <p class="label-subtitle">
+            Manual control panel for label-side accounts — artists, DJs and sponsors tied into
+            the They Krave For Me Records ecosystem.
+          </p>
+        </div>
+      </div>
+      <div class="label-badges">
+        <div class="label-pill">
+          👑 Owner / label ops only
+        </div>
+        <div class="label-pill">
+          🔑 Future: connected to Supabase auth
+        </div>
+      </div>
+    </header>
+
+    <nav class="label-nav">
+      <a href="/v2/label-home.html"><span>🏛️</span>Label Home</a>
+      <a href="/v2/label-hub.html"><span>🧬</span>Label Hub</a>
+      <a href="/v2/label-artist-roster-hub.html"><span>📜</span>Artist Roster</a>
+      <a href="/v2/artist-accounts.html"><span>🎤</span>Artist Accounts</a>
+      <a href="/v2/dj-accounts.html"><span>🎧</span>DJ Accounts</a>
+      <a href="/v2/label-sponsor-engine.html"><span>🤝</span>Sponsor Engine</a>
+      <a href="/v2/app-hub.html"><span>🎛️</span>App Hub</a>
+    </nav>
+
+    <section class="label-grid label-grid-2">
+      <!-- LEFT: QUICK STATS -->
+      <div class="label-card">
+        <h2>Account snapshot</h2>
+        <p class="label-help">
+          These counts are calculated from the tables below and stored in localStorage
+          until a real database is wired in.
+        </p>
+
+        <div style="display:grid;gap:.7rem;margin-top:.7rem;font-size:.85rem;">
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Artists</strong>
+              <div class="label-help">Signed / label-facing.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="accArtistCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">accounts</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>TKFM / Label DJs</strong>
+              <div class="label-help">Mixtape & show residents.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="accDjCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">accounts</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Sponsor / brand logins</strong>
+              <div class="label-help">For portals / reporting later.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="accSponsorCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">accounts</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="label-help" style="margin-top:.8rem;">
+          When Supabase auth is fully wired, this console becomes a live **God View**
+          of all accounts tied into TKFM + label.
+        </p>
+      </div>
+
+      <!-- RIGHT: ADD ACCOUNT -->
+      <div class="label-card">
+        <h2>Create / track an account</h2>
+        <p class="label-help">
+          This doesn’t actually provision logins yet — it tracks who **should** have
+          access so the dev side can mirror it in auth.
+        </p>
+
+        <form id="accountForm" style="margin-top:.6rem;font-size:.8rem;">
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+            <div>
+              <label for="accName">Name</label>
+              <input id="accName" placeholder="Artist, DJ or sponsor name">
+            </div>
+            <div>
+              <label for="accType">Type</label>
+              <select id="accType" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+                <option value="artist">Artist</option>
+                <option value="dj">DJ</option>
+                <option value="sponsor">Sponsor</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:.5rem;">
+            <div>
+              <label for="accEmail">Email (optional)</label>
+              <input id="accEmail" type="email" placeholder="for login or contact">
+            </div>
+            <div>
+              <label for="accRole">Role / lane</label>
+              <input id="accRole" placeholder="e.g. flagship, guest DJ, headline sponsor">
+            </div>
+          </div>
+
+          <div style="margin-top:.5rem;">
+            <label for="accNotes">Notes</label>
+            <textarea id="accNotes" placeholder="Example: should see artist portal + AI contract viewer; or DJ should see schedule + AI DJ tools."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <button type="submit" class="label-btn">
+              ➕ Save account
+            </button>
+            <button type="button" id="clearAccountsBtn" class="label-btn secondary" style="margin-left:.45rem;">
+              🧹 Clear all
+            </button>
+          </div>
+
+          <p class="label-help" style="margin-top:.7rem;">
+            Data saves to <code>localStorage["tkfm_label_accounts"]</code>. Later this same
+            structure can be mirrored into your Supabase auth + role system.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <section style="margin-top:1.2rem;">
+      <div class="label-card">
+        <h2>Accounts table</h2>
+        <p class="label-help">
+          Click any row to load it back into the form for edits. Filter by type using the buttons.
+        </p>
+
+        <div style="margin:.6rem 0;">
+          <button class="label-btn secondary" onclick="setFilter('all')">All</button>
+          <button class="label-btn secondary" onclick="setFilter('artist')" style="margin-left:.3rem;">Artists</button>
+          <button class="label-btn secondary" onclick="setFilter('dj')" style="margin-left:.3rem;">DJs</button>
+          <button class="label-btn secondary" onclick="setFilter('sponsor')" style="margin-left:.3rem;">Sponsors</button>
+        </div>
+
+        <div style="margin-top:.4rem;max-height:400px;overflow:auto;">
+          <table class="label-table" id="accTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Email</th>
+                <th>Role / lane</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="accTableBody">
+              <!-- rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="label-toast" id="labelToast">Saved.</div>
+
+  <script>
+    const ACC_KEY = "tkfm_label_accounts";
+    let ACC_FILTER = "all";
+
+    function showToast(msg){
+      const el = document.getElementById("labelToast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(()=>{ el.style.display = "none"; }, 1800);
+    }
+
+    function loadAccounts(){
+      try{
+        const raw = localStorage.getItem(ACC_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){
+        console.warn("accounts load error", e);
+        return [];
+      }
+    }
+
+    function saveAccounts(list){
+      try{
+        localStorage.setItem(ACC_KEY, JSON.stringify(list));
+      }catch(e){
+        console.warn("accounts save error", e);
+      }
+    }
+
+    function renderAccounts(){
+      const list = loadAccounts();
+      const body = document.getElementById("accTableBody");
+      body.innerHTML = "";
+
+      let artistCount=0, djCount=0, sponsorCount=0;
+
+      list.forEach((acc, idx)=>{
+        if(acc.type === "artist") artistCount++;
+        if(acc.type === "dj") djCount++;
+        if(acc.type === "sponsor") sponsorCount++;
+
+        if(ACC_FILTER !== "all" && acc.type !== ACC_FILTER) return;
+
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+
+        const cells = [
+          acc.name || "",
+          acc.type || "",
+          acc.email || "",
+          acc.role || "",
+          acc.notes || ""
+        ];
+
+        cells.forEach(val=>{
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        tr.addEventListener("click", ()=>{
+          loadAccountIntoForm(idx);
+        });
+
+        body.appendChild(tr);
+      });
+
+      document.getElementById("accArtistCount").textContent = artistCount.toString();
+      document.getElementById("accDjCount").textContent = djCount.toString();
+      document.getElementById("accSponsorCount").textContent = sponsorCount.toString();
+    }
+
+    function loadAccountIntoForm(index){
+      const list = loadAccounts();
+      const acc = list[index];
+      if(!acc) return;
+
+      document.getElementById("accName").value = acc.name || "";
+      document.getElementById("accType").value = acc.type || "artist";
+      document.getElementById("accEmail").value = acc.email || "";
+      document.getElementById("accRole").value = acc.role || "";
+      document.getElementById("accNotes").value = acc.notes || "";
+
+      document.getElementById("accountForm").dataset.editIndex = String(index);
+      showToast("Loaded account into form. Saving will update that row.");
+    }
+
+    function setFilter(type){
+      ACC_FILTER = type;
+      renderAccounts();
+      showToast("Filter set: " + type);
+    }
+
+    document.getElementById("accountForm").addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const name = document.getElementById("accName").value.trim();
+      const type = document.getElementById("accType").value;
+      const email = document.getElementById("accEmail").value.trim();
+      const role = document.getElementById("accRole").value.trim();
+      const notes = document.getElementById("accNotes").value.trim();
+
+      if(!name){
+        showToast("Name is required.");
+        return;
+      }
+
+      const list = loadAccounts();
+      const editIndex = document.getElementById("accountForm").dataset.editIndex;
+      const payload = { name, type, email, role, notes };
+
+      if(editIndex !== undefined && editIndex !== "" && list[Number(editIndex)]){
+        list[Number(editIndex)] = payload;
+      } else {
+        list.push(payload);
+      }
+
+      document.getElementById("accountForm").dataset.editIndex = "";
+      saveAccounts(list);
+      renderAccounts();
+      showToast("Account saved.");
+    });
+
+    document.getElementById("clearAccountsBtn").addEventListener("click", ()=>{
+      if(!confirm("Clear all accounts from this browser?")) return;
+      saveAccounts([]);
+      renderAccounts();
+      showToast("All accounts cleared.");
+    });
+
+    renderAccounts();
+  </script>
+  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
+</body>
+</html>

@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TKFM Records — Label Social Engine</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(6,8,20,0.98);
+      --bg-soft: rgba(15,23,42,0.96);
+      --gold: #facc15;
+      --gold-deep: #eab308;
+      --amber: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f9fafb;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border-subtle: rgba(148,163,184,0.35);
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top,#111827 0,transparent 52%),
+        radial-gradient(circle at top right,rgba(234,179,8,0.55) 0,transparent 60%),
+        radial-gradient(circle at top left,rgba(248,113,113,0.45) 0,transparent 60%),
+        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
+      color:var(--text-main);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:1.6rem .9rem 2.3rem;
+      overflow-x:hidden;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    .shell { max-width:1120px; margin:0 auto; }
+
+    /* NAV */
+    .nav {
+      position:sticky;
+      top:0;
+      z-index:20;
+      margin:-1.6rem -.9rem 1.1rem;
+      padding:.75rem .9rem;
+      background:linear-gradient(to right,rgba(6,8,20,0.98),rgba(15,23,42,0.98));
+      border-bottom:1px solid var(--border-subtle);
+      backdrop-filter:blur(18px);
+      display:flex;
+      align-items:center;
+      gap:.8rem;
+    }
+    .nav-left {
+      display:flex;
+      align-items:center;
+      gap:.7rem;
+    }
+    .crest {
+      width:2.4rem;
+      height:2.4rem;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 10% 0,var(--gold),var(--amber) 40%,rgba(15,23,42,1) 85%);
+      box-shadow:
+        0 0 18px rgba(234,179,8,.95),
+        0 0 24px rgba(248,113,113,.75);
+      border:1px solid rgba(250,204,21,0.95);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.8rem;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:#020617;
+    }
+    .brand-text {
+      display:flex;
+      flex-direction:column;
+      line-height:1.08;
+    }
+    .brand-kicker {
+      font-size:.62rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:var(--text-soft);
+    }
+    .brand-main {
+      font-size:.92rem;
+      font-weight:650;
+    }
+
+    .nav-right {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+    }
+    .nav-pill {
+      font-size:.64rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      padding:.36rem .7rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      color:var(--text-muted);
+      display:flex;
+      align-items:center;
+      gap:.3rem;
+    }
+    .nav-pill.primary {
+      border-color:var(--gold);
+      color:#020617;
+      background:linear-gradient(135deg,var(--gold),var(--amber));
+      box-shadow:0 0 18px rgba(250,204,21,0.9);
+      font-weight:650;
+    }
+
+    @media(max-width:980px){
+      .nav-right{display:none;}
+    }
+
+    /* HEADER */
+    .head-kicker {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.26em;
+      color:var(--text-soft);
+      margin-bottom:.4rem;
+    }
+    .head-title {
+      font-size:clamp(2rem,3.4vw,2.4rem);
+      font-weight:800;
+      line-height:1.03;
+      margin-bottom:.45rem;
+    }
+    .head-title span {
+      background:linear-gradient(135deg,var(--gold),var(--amber),var(--accent-pink));
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+    .head-sub {
+      font-size:.86rem;
+      color:var(--text-muted);
+      max-width:40rem;
+      margin-bottom:.8rem;
+    }
+
+    .summary-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem;
+      margin-bottom:.8rem;
+      font-size:.7rem;
+    }
+    .summary-pill {
+      padding:.38rem .7rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      display:flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    .summary-pill span.count {
+      font-weight:650;
+      color:var(--gold);
+    }
+
+    /* GRID */
+    .layout {
+      margin-top:.5rem;
+      display:grid;
+      grid-template-columns:1.4fr 1.1fr;
+      gap:.9rem;
+    }
+    @media(max-width:1000px){
+      .layout{grid-template-columns:1fr;}
+    }
+
+    .card {
+      border-radius:1rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-card);
+      padding:.8rem .85rem .9rem;
+      box-shadow:0 0 24px rgba(0,0,0,0.9);
+      font-size:.76rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-45%;
+      opacity:0;
+      background:conic-gradient(from 140deg,var(--gold),var(--amber),var(--accent-pink),var(--accent-purple),var(--gold));
+      filter:blur(24px);
+      z-index:-1;
+      transition:opacity .2s ease-out;
+    }
+    .card:hover::before { opacity:.28; }
+
+    .card-header {
+      display:flex;
+      justify-content:space-between;
+      gap:.4rem;
+      align-items:flex-start;
+      margin-bottom:.4rem;
+    }
+    .card-title {
+      font-size:.9rem;
+      font-weight:650;
+    }
+    .card-kicker {
+      font-size:.64rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      margin-bottom:.2rem;
+    }
+
+    .badge {
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      padding:.24rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      color:var(--text-soft);
+    }
+    .badge.gold {
+      border-color:var(--gold);
+      color:var(--gold);
+    }
+
+    .card-body {
+      font-size:.76rem;
+      color:var(--text-muted);
+      margin-bottom:.4rem;
+    }
+
+    .mono {
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    /* TABLE OF CAMPAIGNS */
+    .table-wrap {
+      margin-top:.4rem;
+      border-radius:.8rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      max-height:420px;
+      overflow:auto;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      font-size:.72rem;
+    }
+    thead {
+      position:sticky;
+      top:0;
+      background:rgba(15,23,42,0.96);
+      backdrop-filter:blur(12px);
+      z-index:5;
+    }
+    th, td {
+      padding:.45rem .55rem;
+      text-align:left;
+    }
+    th {
+      font-size:.64rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      border-bottom:1px solid var(--border-subtle);
+    }
+    tbody tr:nth-child(even){
+      background:rgba(15,23,42,0.95);
+    }
+    tbody tr:nth-child(odd){
+      background:rgba(6,8,20,0.98);
+    }
+
+    .tag {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:.15rem .4rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.6);
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--text-soft);
+    }
+    .tag.artist { border-color:var(--accent-pink); color:var(--accent-pink); }
+    .tag.dj { border-color:var(--accent-purple); color:var(--accent-purple); }
+    .tag.producer { border-color:var(--gold); color:var(--gold); }
+
+    .tag-tier {
+      border-color:var(--gold);
+      color:var(--gold);
+    }
+
+    .status-buttons {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.25rem;
+    }
+    .status-btn {
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      padding:.22rem .45rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.6);
+      background:transparent;
+      color:var(--text-soft);
+      cursor:pointer;
+    }
+    .status-btn.active-watch { border-color:var(--accent-purple); color:var(--accent-purple); }
+    .status-btn.active-offer { border-color:var(--gold); color:var(--gold); }
+    .status-btn.active-sponsor { border-color:var(--amber); color:var(--amber); }
+
+    /* RIGHT: METRICS / ROUTES */
+    .metric-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.45rem;
+      margin-top:.3rem;
+    }
+    .metric-card {
+      border-radius:.7rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      padding:.45rem .55rem .5rem;
+      font-size:.7rem;
+    }
+    .metric-label {
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      margin-bottom:.14rem;
+    }
+    .metric-main {
+      font-size:.85rem;
+      font-weight:650;
+    }
+    .metric-main.gold { color:var(--gold); }
+    .metric-main.pink { color:var(--accent-pink); }
+    .metric-main.cyan { color:var(--accent-purple); }
+    .metric-sub {
+      font-size:.68rem;
+      color:var(--text-soft);
+    }
+
+    .routes {
+      margin-top:.7rem;
+      border-radius:.8rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-soft);
+      padding:.55rem .6rem .6rem;
+      font-size:.7rem;
+    }
+    .routes-title {
+      font-size:.72rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-soft);
+      margin-bottom:.2rem;
+    }
+    .routes-links {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+    }
+    .route-pill {
+      font-size:.66rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      padding:.32rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:#020617;
+      color:var(--text-soft);
+    }
+
+    .footer-note {
+      margin-top:1rem;
+      font-size:.7rem;
+      color:var(--text-soft);
+    }
+    .footer-note code { color:var(--gold); }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- NAV -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="crest">LS</div>
+        <div class="brand-text">
+          <div class="brand-kicker">TKFM Records</div>
+          <div class="brand-main">Label Social Engine — Campaigns Coming From TKFM</div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="label-home.html" class="nav-pill">🏛 Label Home</a>
+        <a href="records-application.html" class="nav-pill">📥 Records Application</a>
+        <a href="social-engine.html" class="nav-pill">🎧 Creator Social Engine</a>
+        <a href="label-sponsor-engine.html" class="nav-pill primary">💰 Label Sponsor Engine</a>
+        <a href="god-view.html" class="nav-pill">GOD VIEW</a>
+      </div>
+    </header>
+
+    <section>
+      <div class="head-kicker">Label View Only</div>
+      <h1 class="head-title">
+        See every <span>AI social campaign</span> creators are running through TKFM.
+      </h1>
+      <p class="head-sub">
+        Whenever an artist, DJ or producer buys a Social Blast, Motion Pack or Takeover Rollout,
+        a record lands in <span class="mono">tkfm_social_campaigns</span>. This page auto-tags
+        high-spend creators and shows who might be ready for TKFM Records or sponsor-backed plays.
+      </p>
+
+      <div class="summary-row">
+        <div class="summary-pill">
+          <span class="count" id="sumTotal">0</span>
+          Total campaigns
+        </div>
+        <div class="summary-pill">
+          <span class="count" id="sumStarter">0</span>
+          Starter Blasts
+        </div>
+        <div class="summary-pill">
+          <span class="count" id="sumMotion">0</span>
+          Motion Packs
+        </div>
+        <div class="summary-pill">
+          <span class="count" id="sumTakeover">0</span>
+          Takeover Rollouts
+        </div>
+        <div class="summary-pill">
+          <span class="count" id="sumHighSpend">0</span>
+          High-Spend Creators (Auto Boost)
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <!-- LEFT: TABLE -->
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-kicker">Campaigns</div>
+            <div class="card-title">AI Social Blasts coming through TKFM.</div>
+          </div>
+          <div class="badge gold">Auto Tag + Manual Override</div>
+        </div>
+        <div class="card-body">
+          Sorted newest first. Status flags (watch, offer, sponsor) auto-fill based on
+          lifetime spend per creator, then live in this browser as
+          <span class="mono">tkfm_social_label_tags</span> so you can override by clicking.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Creator</th>
+                <th>Role</th>
+                <th>Tier</th>
+                <th>Spend</th>
+                <th>Created</th>
+                <th>Label Tags</th>
+              </tr>
+            </thead>
+            <tbody id="campaignRows">
+              <!-- JS -->
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- RIGHT: METRICS / ROUTES -->
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-kicker">Label Signals</div>
+            <div class="card-title">Who to watch, offer or sponsor (Auto Boost Mode).</div>
+          </div>
+          <div class="badge">A&R + Marketing</div>
+        </div>
+        <div class="card-body">
+          Creators are auto-tagged roughly like this:
+          <br><br>
+          <span class="mono">≥ $500</span> → WATCH •
+          <span class="mono">≥ $1000</span> → OFFER •
+          <span class="mono">≥ $3000</span> → SPONSOR.
+          <br><br>
+          You can still click to turn tags on/off, but the system gives you a head start.
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Watch List (Auto+Manual)</div>
+            <div class="metric-main pink" id="metWatch">0</div>
+            <div class="metric-sub">Creators to keep an eye on.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Offer Candidates</div>
+            <div class="metric-main gold" id="metOffer">0</div>
+            <div class="metric-sub">Potential TKFM Records / feature offers.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Sponsor Plays</div>
+            <div class="metric-main cyan" id="metSponsor">0</div>
+            <div class="metric-sub">Worth exploring sponsor inventory.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Auto-Boosted Creators</div>
+            <div class="metric-main" id="metHighSpend">0</div>
+            <div class="metric-sub">Lifetime spend ≥ $500 across campaigns.</div>
+          </div>
+        </div>
+
+        <div class="routes">
+          <div class="routes-title">Next plays once you see motion:</div>
+          <div class="routes-links">
+            <a href="label-records-applications.html" class="route-pill">Records Applications</a>
+            <a href="mixtape-label-console.html" class="route-pill">Mixtape Label Console</a>
+            <a href="label-contract-lab.html" class="route-pill">Contract Lab</a>
+            <a href="label-sponsor-engine.html" class="route-pill">Label Sponsor Engine</a>
+            <a href="radio-hub.html" class="route-pill">Radio Hub</a>
+          </div>
+        </div>
+
+        <p class="footer-note">
+          Creator side writes into <code>tkfm_social_campaigns</code>. Auto tags + your manual overrides live
+          in <code>tkfm_social_label_tags</code> in this browser. Later, Autopilot can read these to boost
+          rotation for the right creators.
+        </p>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      const KEY_SOCIAL = 'tkfm_social_campaigns';
+      const KEY_LABEL_TAGS = 'tkfm_social_label_tags';
+
+      function safeParse(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return fallback;
+          const v = JSON.parse(raw);
+          return v == null ? fallback : v;
+        } catch (e) {
+          console.warn('parse error for', key, e);
+          return fallback;
+        }
+      }
+
+      function saveTags(tags) {
+        localStorage.setItem(KEY_LABEL_TAGS, JSON.stringify(tags));
+      }
+
+      function formatDate(ts) {
+        if (!ts) return '—';
+        const d = new Date(ts);
+        if (isNaN(d.getTime())) return '—';
+        return d.toLocaleString();
+      }
+
+      function prettyRole(role) {
+        const r = (role || '').toLowerCase();
+        if (r === 'dj') return 'DJ';
+        if (r === 'producer') return 'Producer';
+        return 'Artist';
+      }
+
+      function prettyTier(tier) {
+        if (tier === 'motion') return 'Motion Pack';
+        if (tier === 'takeover') return 'Takeover';
+        return 'Starter Blast';
+      }
+
+      function toggleTag(id, field) {
+        const tags = safeParse(KEY_LABEL_TAGS, {});
+        if (!tags[id]) tags[id] = { watch:false, offer:false, sponsor:false };
+        tags[id][field] = !tags[id][field];
+        saveTags(tags);
+        render();
+      }
+
+      function render() {
+        const campaigns = safeParse(KEY_SOCIAL, []);
+        const tags = safeParse(KEY_LABEL_TAGS, {});
+        const tbody = document.getElementById('campaignRows');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        const sumTotalEl = document.getElementById('sumTotal');
+        const sumStarterEl = document.getElementById('sumStarter');
+        const sumMotionEl = document.getElementById('sumMotion');
+        const sumTakeoverEl = document.getElementById('sumTakeover');
+        const sumHighSpendEl = document.getElementById('sumHighSpend');
+
+        const metWatchEl = document.getElementById('metWatch');
+        const metOfferEl = document.getElementById('metOffer');
+        const metSponsorEl = document.getElementById('metSponsor');
+        const metHighSpendEl = document.getElementById('metHighSpend');
+
+        if (!Array.isArray(campaigns) || !campaigns.length) {
+          const tr = document.createElement('tr');
+          const td = document.createElement('td');
+          td.colSpan = 6;
+          td.textContent = 'No social campaigns yet. Once creators buy Social Blasts, they will show up here.';
+          td.style.color = '#9ca3af';
+          tr.appendChild(td);
+          tbody.appendChild(tr);
+
+          if (sumTotalEl) sumTotalEl.textContent = 0;
+          if (sumStarterEl) sumStarterEl.textContent = 0;
+          if (sumMotionEl) sumMotionEl.textContent = 0;
+          if (sumTakeoverEl) sumTakeoverEl.textContent = 0;
+          if (sumHighSpendEl) sumHighSpendEl.textContent = 0;
+          if (metWatchEl) metWatchEl.textContent = 0;
+          if (metOfferEl) metOfferEl.textContent = 0;
+          if (metSponsorEl) metSponsorEl.textContent = 0;
+          if (metHighSpendEl) metHighSpendEl.textContent = 0;
+          return;
+        }
+
+        // ---- AUTO-TAG ENGINE: lifetime spend per creator ----
+        const spendByCreator = {};
+        campaigns.forEach(c => {
+          const id = c.id || String(c.createdAt || Math.random());
+          const creatorKey = (c.creatorName || (prettyRole(c.role) + ' ' + id)).toLowerCase();
+          const price = Number(c.price || 0);
+          spendByCreator[creatorKey] = (spendByCreator[creatorKey] || 0) + price;
+        });
+
+        // Count high-spend creators (>= 500 total)
+        let highSpendCreators = 0;
+        Object.keys(spendByCreator).forEach(key => {
+          if (spendByCreator[key] >= 500) highSpendCreators++;
+        });
+
+        const sorted = campaigns.slice().sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        let sumTotal = sorted.length;
+        let sumStarter = 0, sumMotion = 0, sumTakeover = 0;
+        let watch = 0, offer = 0, sponsor = 0;
+
+        sorted.forEach(c => {
+          const id = c.id || String(c.createdAt || Math.random());
+          const rolePretty = prettyRole(c.role);
+          const tierLabel = prettyTier(c.tier);
+          const price = Number(c.price || 0);
+
+          if (c.tier === 'motion') sumMotion++;
+          else if (c.tier === 'takeover') sumTakeover++;
+          else sumStarter++;
+
+          // Auto-tag if we don't have manual tags for this record yet
+          let rowTags = tags[id] || { watch:false, offer:false, sponsor:false };
+          const hasManual = !!tags[id];
+          const creatorKey = (c.creatorName || (rolePretty + ' ' + id)).toLowerCase();
+          const totalForCreator = spendByCreator[creatorKey] || 0;
+
+          if (!hasManual && totalForCreator > 0) {
+            if (totalForCreator >= 500) rowTags.watch = true;
+            if (totalForCreator >= 1000) rowTags.offer = true;
+            if (totalForCreator >= 3000) rowTags.sponsor = true;
+            tags[id] = rowTags; // persist auto tags
+          }
+
+          if (rowTags.watch) watch++;
+          if (rowTags.offer) offer++;
+          if (rowTags.sponsor) sponsor++;
+
+          const tr = document.createElement('tr');
+
+          // Creator
+          const creatorTd = document.createElement('td');
+          const tail = String(id).slice(-5);
+          creatorTd.textContent = c.creatorName || (rolePretty + ' ' + tail);
+          tr.appendChild(creatorTd);
+
+          // Role
+          const roleTd = document.createElement('td');
+          const roleTag = document.createElement('span');
+          roleTag.className = 'tag ' + rolePretty.toLowerCase();
+          roleTag.textContent = rolePretty;
+          roleTd.appendChild(roleTag);
+          tr.appendChild(roleTd);
+
+          // Tier
+          const tierTd = document.createElement('td');
+          const tierTag = document.createElement('span');
+          tierTag.className = 'tag tag-tier';
+          tierTag.textContent = tierLabel;
+          tierTd.appendChild(tierTag);
+          tr.appendChild(tierTd);
+
+          // Spend
+          const priceTd = document.createElement('td');
+          priceTd.textContent = price ? ('$' + price) : '$0';
+          tr.appendChild(priceTd);
+
+          // Created
+          const dateTd = document.createElement('td');
+          dateTd.textContent = formatDate(c.createdAt);
+          tr.appendChild(dateTd);
+
+          // Label Tags (buttons)
+          const labelTd = document.createElement('td');
+          const wrap = document.createElement('div');
+          wrap.className = 'status-buttons';
+
+          const btnWatch = document.createElement('button');
+          btnWatch.type = 'button';
+          btnWatch.textContent = 'Watch';
+          btnWatch.className = 'status-btn ' + (rowTags.watch ? 'active-watch' : '');
+          btnWatch.addEventListener('click', () => toggleTag(id, 'watch'));
+
+          const btnOffer = document.createElement('button');
+          btnOffer.type = 'button';
+          btnOffer.textContent = 'Offer';
+          btnOffer.className = 'status-btn ' + (rowTags.offer ? 'active-offer' : '');
+          btnOffer.addEventListener('click', () => toggleTag(id, 'offer'));
+
+          const btnSponsor = document.createElement('button');
+          btnSponsor.type = 'button';
+          btnSponsor.textContent = 'Sponsor';
+          btnSponsor.className = 'status-btn ' + (rowTags.sponsor ? 'active-sponsor' : '');
+          btnSponsor.addEventListener('click', () => toggleTag(id, 'sponsor'));
+
+          wrap.appendChild(btnWatch);
+          wrap.appendChild(btnOffer);
+          wrap.appendChild(btnSponsor);
+          labelTd.appendChild(wrap);
+          tr.appendChild(labelTd);
+
+          tbody.appendChild(tr);
+        });
+
+        // Save any auto-updated tags
+        saveTags(tags);
+
+        if (sumTotalEl) sumTotalEl.textContent = sumTotal;
+        if (sumStarterEl) sumStarterEl.textContent = sumStarter;
+        if (sumMotionEl) sumMotionEl.textContent = sumMotion;
+        if (sumTakeoverEl) sumTakeoverEl.textContent = sumTakeover;
+        if (sumHighSpendEl) sumHighSpendEl.textContent = highSpendCreators;
+
+        if (metWatchEl) metWatchEl.textContent = watch;
+        if (metOfferEl) metOfferEl.textContent = offer;
+        if (metSponsorEl) metSponsorEl.textContent = sponsor;
+        if (metHighSpendEl) metHighSpendEl.textContent = highSpendCreators;
+      }
+
+      function initLabelSocialEngine() {
+        render();
+      }
+
+      window.addEventListener('DOMContentLoaded', initLabelSocialEngine);
+    })();
+  </script>
+  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
+</body>
+</html>
