@@ -2,543 +2,279 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>TKFM — Artist Upload</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Artist Uploads — TKFM Power Station</title>
-  <meta name="description" content="Upload your singles and mixtapes to TKFM Radio as an independent artist." />
-
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
   <style>
-    body.tkfm-graphfx-root {
-      position: relative !important;
-      min-height: 100vh !important;
-      overflow-x: hidden !important;
-      background: radial-gradient(circle at top left, #020014, #020617 55%, #000000 100%) !important;
-      color: #f9fafb !important;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 15% 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 85% 0,rgba(236,72,153,0.18),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.22),transparent 55%);
     }
-
-    .tkfm-bg-main {
-      position: fixed;
-      inset: -25%;
-      pointer-events: none;
-      z-index: -2;
-      background:
-        radial-gradient(circle at 0 0, rgba(255, 0, 128, 0.4), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.4), transparent 60%);
-      filter: blur(10px);
-      animation: tkfmGlowUpload 26s linear infinite alternate;
-      opacity: 0.9;
-    }
-
-    .tkfm-bg-orbit {
-      position: fixed;
-      inset: -40%;
-      pointer-events: none;
-      z-index: -3;
-      background:
-        conic-gradient(
-          from 200deg,
-          rgba(255, 0, 128, 0.28),
-          rgba(56, 189, 248, 0.28),
-          rgba(250, 204, 21, 0.16),
-          rgba(255, 0, 128, 0.28)
-        );
-      mix-blend-mode: screen;
-      opacity: 0.35;
-      filter: blur(40px);
-      animation: tkfmOrbitUpload 40s linear infinite;
-    }
-
-    @keyframes tkfmGlowUpload {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(3%, -3%, 0) scale(1.02); }
-      100% { transform: translate3d(-3%, 3%, 0) scale(1.03); }
-    }
-
-    @keyframes tkfmOrbitUpload {
-      0% { transform: rotate(0deg) scale(1.06); }
-      100% { transform: rotate(360deg) scale(1.06); }
-    }
-
-    main.tkfm-main {
-      position: relative;
-      z-index: 1;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
-    }
-
-    .tkfm-page-header {
-      margin-bottom: 1.6rem;
-    }
-
-    .tkfm-kicker {
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: rgba(191, 219, 254, 0.98);
-      margin-bottom: 0.3rem;
-    }
-
-    .tkfm-title {
-      font-size: 1.7rem;
-      font-weight: 800;
-      margin: 0 0 0.3rem;
-      background: linear-gradient(90deg, #ff007f, #00f5ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow:
-        0 0 16px rgba(255, 0, 128, 0.6),
-        0 0 26px rgba(0, 245, 255, 0.55);
-    }
-
-    .tkfm-sub {
-      font-size: 0.86rem;
-      color: rgba(226, 232, 240, 0.93);
-      max-width: 40rem;
-    }
-
-    .tkfm-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-      gap: 1.4rem;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 900px) {
-      .tkfm-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .tkfm-card {
-      position: relative;
-      border-radius: 22px;
-      padding: 1.4rem 1.3rem 1.3rem;
-      border: 1px solid rgba(148, 163, 184, 0.32);
-      background: radial-gradient(circle at top left, rgba(30,64,175,0.78), rgba(15,23,42,0.98));
-      box-shadow:
-        0 18px 40px rgba(15, 23, 42, 0.95),
-        0 0 32px rgba(15, 23, 42, 0.9);
-      overflow: hidden;
-    }
-
-    .tkfm-card::before {
-      content: "";
-      position: absolute;
-      inset: -25%;
-      background: conic-gradient(
-        from 220deg,
-        rgba(255, 0, 128, 0.3),
-        rgba(56, 189, 248, 0.3),
-        rgba(250, 204, 21, 0.16),
-        rgba(255, 0, 128, 0.3)
-      );
-      opacity: 0.45;
-      filter: blur(30px);
-      z-index: -1;
-    }
-
-    .tkfm-card-header {
-      margin-bottom: 0.9rem;
-    }
-
-    .tkfm-card-header h2 {
-      font-size: 1rem;
-      margin: 0 0 0.25rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: rgba(191, 219, 254, 0.98);
-    }
-
-    .tkfm-card-header p {
-      margin: 0;
-      font-size: 0.8rem;
-      color: rgba(226, 232, 240, 0.94);
-    }
-
-    form#upload-form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      margin-top: 0.6rem;
-    }
-
-    .tkfm-field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      font-size: 0.8rem;
-    }
-
-    .tkfm-field label {
-      color: rgba(226, 232, 240, 0.9);
-    }
-
-    .tkfm-input,
-    .tkfm-select,
-    .tkfm-textarea {
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: rgba(15, 23, 42, 0.9);
-      padding: 0.5rem 0.8rem;
-      font-size: 0.82rem;
-      color: #e5e7eb;
-      outline: none;
-      transition:
-        border-color 0.15s ease-out,
-        box-shadow 0.15s ease-out,
-        background 0.15s ease-out;
-    }
-
-    .tkfm-input:focus,
-    .tkfm-select:focus,
-    .tkfm-textarea:focus {
-      border-color: rgba(56, 189, 248, 0.95);
-      box-shadow:
-        0 0 0 1px rgba(56, 189, 248, 0.7),
-        0 0 12px rgba(56, 189, 248, 0.7);
-      background: rgba(15, 23, 42, 0.96);
-    }
-
-    .tkfm-textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .tkfm-note {
-      font-size: 0.72rem;
-      color: rgba(148, 163, 184, 0.95);
-    }
-
-    .tkfm-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.8rem;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.75);
-      color: #e0f2fe;
-      background: radial-gradient(circle at top left, rgba(56,189,248,0.52), rgba(15,23,42,0.98));
-      text-decoration: none;
-      cursor: pointer;
-      overflow: hidden;
-      transition:
-        transform 0.16s ease-out,
-        box-shadow 0.16s ease-out,
-        border-color 0.16s ease-out,
-        background 0.16s ease-out;
-      width: 100%;
-    }
-
-    .tkfm-btn-primary {
-      border-color: rgba(219, 39, 119, 0.9);
-      background: radial-gradient(circle at top left, rgba(219,39,119,0.8), rgba(15,23,42,0.98));
-      color: #fdf2f8;
-    }
-
-    .tkfm-btn::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.4), transparent 60%);
-      opacity: 0;
-      transform: translate3d(-40%, -40%, 0);
-      transition:
-        opacity 0.18s ease-out,
-        transform 0.24s ease-out;
-      pointer-events: none;
-    }
-
-    .tkfm-btn:hover {
-      transform: translateY(-1px) scale(1.02);
-      box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.9),
-        0 0 18px rgba(56, 189, 248, 0.65);
-      border-color: rgba(56, 189, 248, 0.98);
-    }
-
-    .tkfm-btn-primary:hover {
-      box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.9),
-        0 0 20px rgba(244, 63, 94, 0.85);
-      border-color: rgba(244, 63, 94, 0.98);
-    }
-
-    .tkfm-btn:hover::after {
-      opacity: 0.7;
-      transform: translate3d(0,0,0);
-    }
-
-    .tkfm-status {
-      font-size: 0.78rem;
-      margin-top: 0.7rem;
-      min-height: 1em;
-      color: rgba(248, 250, 252, 0.95);
-    }
-
-    .tkfm-status.error {
-      color: #fecaca;
-    }
-
-    .tkfm-status.ok {
-      color: #bbf7d0;
-    }
-
-    /* Right: recent uploads summary */
-    .tkfm-recent-header {
-      margin-bottom: 0.7rem;
-    }
-
-    .tkfm-recent-header h3 {
-      font-size: 0.9rem;
-      margin: 0 0 0.2rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: rgba(191, 219, 254, 0.96);
-    }
-
-    .tkfm-recent-header p {
-      margin: 0;
-      font-size: 0.78rem;
-      color: rgba(226, 232, 240, 0.9);
-    }
-
-    .tkfm-recent-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
-      max-height: 260px;
-      overflow-y: auto;
-      padding-right: 0.2rem;
-    }
-
-    .tkfm-recent-item {
-      border-radius: 14px;
-      padding: 0.5rem 0.6rem;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid rgba(51, 65, 85, 0.82);
-      font-size: 0.78rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .tkfm-recent-title {
-      font-weight: 600;
-    }
-
-    .tkfm-recent-meta {
-      font-size: 0.72rem;
-      color: rgba(148, 163, 184, 0.95);
-    }
+    input,select,textarea{background:#020617;}
   </style>
 </head>
-<body class="tkfm-graphfx-root">
-  <div class="tkfm-bg-main"></div>
-  <div class="tkfm-bg-orbit"></div>
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-  <div id="tkfm-header"></div>
-
-  <main class="tkfm-main">
-    <header class="tkfm-page-header">
-      <div class="tkfm-kicker">Artist Lane</div>
-      <h1 class="tkfm-title">Upload Your Heat</h1>
-      <p class="tkfm-sub">
-        Singles, mixtapes, campaign records — send them into TKFM’s system so they can be reviewed, queued and moved.
-        This is your official artist intake portal for the station.
-      </p>
-    </header>
-
-    <section class="tkfm-layout">
-      <!-- LEFT: FORM -->
-      <div class="tkfm-card">
-        <div class="tkfm-card-header">
-          <h2>New Upload</h2>
-          <p>Drop your next move into the system. Links only for now (streaming / download / private link).</p>
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.65rem] uppercase tracking-[0.25em] text-slate-400">
+            They Krave For Me
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-pink-300">Artist Upload</span>
+          </div>
         </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">📻 Radio Hub</a>
+        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🎫 Creator Pass</a>
+        <a href="artist-submissions-console.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">📂 Submissions Console</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+      </nav>
+    </div>
+  </header>
 
-        <form id="upload-form">
-          <div class="tkfm-field">
-            <label for="title">Title *</label>
-            <input id="title" class="tkfm-input" required placeholder="Track or mixtape title" />
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-5xl mx-auto px-4 pt-8 pb-10 space-y-8">
+      <!-- HERO -->
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-pink-500/70 bg-pink-500/10 text-[0.7rem] uppercase tracking-[0.3em] text-pink-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+          Upload • Artist / DJ / Producer
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+          Drop your <span class="text-pink-400 drop-shadow-[0_0_22px_rgba(236,72,153,0.9)]">heat</span> into the TKFM pipeline.
+        </h1>
+        <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+          This form feeds the TKFM brain:
+          <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>.
+          From there it hits the Artist Submissions Console, label review and Autopilot rotation.
+        </p>
+      </div>
+
+      <!-- FORM + SIDEBAR -->
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <!-- FORM -->
+        <form id="upload-form" class="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Artist Name *
+              </label>
+              <input required name="artistName" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-pink-500/80" placeholder="Artist / Group / DJ" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Role
+              </label>
+              <select name="role" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-pink-500/80">
+                <option value="artist">Artist</option>
+                <option value="dj">DJ</option>
+                <option value="producer">Producer</option>
+                <option value="collective">Collective</option>
+              </select>
+            </div>
           </div>
 
-          <div class="tkfm-field">
-            <label for="type">Type *</label>
-            <select id="type" class="tkfm-select" required>
-              <option value="single">Single</option>
-              <option value="mixtape">Mixtape</option>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Track / Project Title *
+              </label>
+              <input required name="trackTitle" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="Single / EP / Mixtape title" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Primary City
+              </label>
+              <input name="city" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="City / Region" />
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                IG / Social Handle
+              </label>
+              <input name="social" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="@handle" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Email (for contact)
+              </label>
+              <input type="email" name="email" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="you@example.com" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+              Streaming / Audio Link *
+            </label>
+            <input required name="audioUrl" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="Spotify / Apple / SoundCloud / MP3 link" />
+            <p class="mt-1 text-[0.7rem] text-slate-400">
+              Drop the best link for TKFM to review. If it's a mixtape, use your main project link.
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+              What are you looking for?
+            </label>
+            <select name="intent" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2">
+              <option value="radio">Radio Spins / Break</option>
+              <option value="mixtape">Mixtape Placement / Hosting</option>
+              <option value="label">Label Attention</option>
+              <option value="sponsor">Brand / Sponsor Fit</option>
+              <option value="all">All of the Above</option>
             </select>
           </div>
 
-          <div class="tkfm-field">
-            <label for="audio_url">Audio / Streaming Link</label>
-            <input id="audio_url" class="tkfm-input" placeholder="Spotify, Apple, SoundCloud, private link, etc." />
-            <div class="tkfm-note">Use your best clean link. If this changes, you can resubmit.</div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+              Tell TKFM why this record is special
+            </label>
+            <textarea name="notes" rows="4" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2 resize-y" placeholder="Story, energy, who it’s for, placements you already have, cosigns, etc."></textarea>
           </div>
 
-          <div class="tkfm-field">
-            <label for="cover_url">Cover / Artwork Link</label>
-            <input id="cover_url" class="tkfm-input" placeholder="Image URL (cover art, flyer, etc.)" />
-          </div>
-
-          <div class="tkfm-field">
-            <label for="notes">Notes to TKFM Team</label>
-            <textarea id="notes" class="tkfm-textarea" placeholder="Tell us about the record, campaign, budget, goals, etc."></textarea>
-          </div>
-
-          <div class="tkfm-note">
-            By submitting, you agree that this upload is your original work or you are authorized to submit it.
-          </div>
-
-          <div style="margin-top:0.9rem;">
-            <button type="submit" class="tkfm-btn tkfm-btn-primary">
-              Submit Upload
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+            <div class="space-y-1 text-[0.7rem] text-slate-400">
+              <p>
+                This writes a new object into
+                <span class="font-mono text-cyan-300">tkfm_artist_uploads</span>.
+              </p>
+              <p>
+                Label & owner view it inside
+                <span class="text-cyan-300">Artist Submissions Console</span>
+                + GOD VIEW.
+              </p>
+            </div>
+            <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-pink-600 hover:bg-pink-500 text-sm font-semibold shadow-[0_0_20px_rgba(236,72,153,0.7)] transition">
+              <span>Submit to TKFM</span>
+              <span class="text-xs">↗</span>
             </button>
           </div>
 
-          <div id="upload-status" class="tkfm-status"></div>
+          <p id="upload-message" class="text-[0.75rem] text-emerald-300 mt-2 hidden">
+            Saved. TKFM has your record in the queue.
+          </p>
         </form>
-      </div>
 
-      <!-- RIGHT: RECENT -->
-      <div class="tkfm-card">
-        <div class="tkfm-recent-header">
-          <h3>Your Recent Uploads</h3>
-          <p>Quick view of what you’ve already sent in. This is only visible to you.</p>
-        </div>
+        <!-- SIDEBAR INFO -->
+        <aside class="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
+          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400 mb-1">
+            What happens after you submit
+          </h2>
+          <ol class="space-y-2 text-[0.8rem] text-slate-200">
+            <li><span class="text-pink-300 font-semibold">1.</span> Your record is stored locally in <span class="font-mono text-cyan-300">tkfm_artist_uploads</span>.</li>
+            <li><span class="text-pink-300 font-semibold">2.</span> It appears in the <a href="artist-submissions-console.html" class="text-cyan-300 underline">Artist Submissions Console</a>.</li>
+            <li><span class="text-pink-300 font-semibold">3.</span> From there, label / owner can flip tags + spotlight.</li>
+            <li><span class="text-pink-300 font-semibold">4.</span> Approved records feed the Autopilot Engine & AI DJ rotation.</li>
+          </ol>
 
-        <div id="recent-uploads" class="tkfm-recent-list">
-          <div class="tkfm-note">
-            No uploads yet. Your first submission will show here.
+          <div class="border border-slate-800 rounded-xl p-3">
+            <p class="text-[0.72rem] uppercase tracking-[0.26em] text-slate-400 mb-1">
+              Check your motion
+            </p>
+            <p class="text-[0.78rem] text-slate-200 mb-2">
+              Once uploads + mixtape orders start stacking, you’ll see the effect on the
+              <span class="text-emerald-300">Momentum Engine</span>.
+            </p>
+            <a href="momentum-engine.html" class="inline-flex items-center gap-2 text-[0.75rem] text-emerald-300">
+              <span>📈 Open TKFM Momentum Engine</span>
+              <span class="text-xs">↗</span>
+            </a>
           </div>
-        </div>
+        </aside>
       </div>
     </section>
   </main>
 
-  <div id="tkfm-footer"></div>
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/40">
+    <div class="max-w-5xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — Artist Upload.</span>
+      <span class="opacity-70">
+        Feeds tkfm_artist_uploads → submissions console → label → Autopilot → AI DJ.
+      </span>
+    </div>
+  </footer>
 
-  <script type="module">
-    import { mountShell } from "/src/_page.js";
-    import { supabase } from "/src/supabaseClient.js";
-
-    mountShell("");
-
-    const form = document.getElementById("upload-form");
-    const statusEl = document.getElementById("upload-status");
-    const recentList = document.getElementById("recent-uploads");
-
-    const titleInput = document.getElementById("title");
-    const typeInput = document.getElementById("type");
-    const audioInput = document.getElementById("audio_url");
-    const coverInput = document.getElementById("cover_url");
-    const notesInput = document.getElementById("notes");
-
-    function setStatus(msg, type = "") {
-      statusEl.textContent = msg || "";
-      statusEl.className = "tkfm-status" + (type ? " " + type : "");
-    }
-
-    async function requireUser() {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data.user) {
-        window.location.href = "/login.html";
-        return null;
-      }
-      return data.user;
-    }
-
-    async function loadRecent() {
-      const user = await requireUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from("artist_uploads")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      if (error) {
-        console.error(error);
-        recentList.innerHTML = '<div class="tkfm-note">Could not load uploads.</div>';
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        recentList.innerHTML = '<div class="tkfm-note">No uploads yet. Your first submission will show here.</div>';
-        return;
-      }
-
-      recentList.innerHTML = "";
-      data.forEach(row => {
-        const div = document.createElement("div");
-        div.className = "tkfm-recent-item";
-        const created = new Date(row.created_at).toLocaleString();
-        div.innerHTML = `
-          <div class="tkfm-recent-title">${row.title} <span style="font-size:0.7rem;opacity:.8;">(${row.type})</span></div>
-          <div class="tkfm-recent-meta">${created}</div>
-          ${
-            row.audio_url
-              ? `<div class="tkfm-recent-meta">Audio: <span style="opacity:.85;">${row.audio_url}</span></div>`
-              : ""
-          }
-        `;
-        recentList.appendChild(div);
-      });
-    }
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      setStatus("Submitting your upload...", "");
-
-      const user = await requireUser();
-      if (!user) return;
-
-      const payload = {
-        user_id: user.id,
-        title: titleInput.value.trim(),
-        type: typeInput.value,
-        audio_url: audioInput.value.trim() || null,
-        cover_url: coverInput.value.trim() || null,
-        notes: notesInput.value.trim() || null
-      };
-
-      if (!payload.title) {
-        setStatus("Title is required.", "error");
-        return;
-      }
-
+  <script>
+    function safeGetUploads() {
       try {
-        const { data, error } = await supabase
-          .from("artist_uploads")
-          .insert(payload)
-          .select()
-          .single();
+        const raw = localStorage.getItem('tkfm_artist_uploads');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.warn('Artist Upload: failed to parse tkfm_artist_uploads', e);
+        return [];
+      }
+    }
 
-        if (error) {
-          console.error(error);
-          setStatus(error.message || "Upload failed.", "error");
+    function saveUploads(list) {
+      try {
+        localStorage.setItem('tkfm_artist_uploads', JSON.stringify(list));
+      } catch (e) {
+        console.error('Artist Upload: failed to save tkfm_artist_uploads', e);
+      }
+    }
+
+    function generateId() {
+      return 'au_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('upload-form');
+      const msg = document.getElementById('upload-message');
+
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const fd = new FormData(form);
+        const entry = {
+          id: generateId(),
+          createdAt: new Date().toISOString(),
+          artistName: (fd.get('artistName') || '').toString().trim(),
+          role: (fd.get('role') || '').toString().trim(),
+          trackTitle: (fd.get('trackTitle') || '').toString().trim(),
+          city: (fd.get('city') || '').toString().trim(),
+          social: (fd.get('social') || '').toString().trim(),
+          email: (fd.get('email') || '').toString().trim(),
+          audioUrl: (fd.get('audioUrl') || '').toString().trim(),
+          intent: (fd.get('intent') || '').toString().trim(),
+          notes: (fd.get('notes') || '').toString().trim(),
+          status: 'new',              // for console / label
+          labelTag: null,             // WATCH / OFFER / SPONSOR etc
+          spotlight: false
+        };
+
+        if (!entry.artistName || !entry.trackTitle || !entry.audioUrl) {
+          alert('Please fill in Artist Name, Track Title and Audio Link.');
           return;
         }
 
-        setStatus("Upload received. TKFM can now review and move it.", "ok");
-        form.reset();
-        typeInput.value = "single";
-        await loadRecent();
-      } catch (err) {
-        console.error(err);
-        setStatus("Unexpected error while saving your upload.", "error");
-      }
-    });
+        const uploads = safeGetUploads();
+        uploads.unshift(entry);
+        saveUploads(uploads);
 
-    // Kick off
-    loadRecent();
+        form.reset();
+        msg.classList.remove('hidden');
+        msg.textContent = 'Saved. TKFM has your record in the queue on this device.';
+        setTimeout(() => msg.classList.add('hidden'), 4500);
+      });
+    });
   </script>
 </body>
 </html>

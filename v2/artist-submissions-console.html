@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM — Artist Submissions Console</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 10% 0,rgba(56,189,248,0.16),transparent 55%),
+        radial-gradient(circle at 90% 0,rgba(236,72,153,0.16),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.2),transparent 55%);
+    }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen flex flex-col">
+
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            Internal • A&R / Owner View
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-cyan-300">Artist Submissions Console</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="artist-upload.html" class="px-3 py-1 rounded-full border border-pink-500/80 bg-pink-500/10 text-pink-200">🎧 Upload Form</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-5">
+      <!-- HERO -->
+      <div class="flex flex-col md:flex-row md:items-end gap-4">
+        <div class="flex-1 space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-cyan-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Artist Submissions • Local Brain
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold leading-snug">
+            Read and tag <span class="text-purple-300">every record</span> that hits TKFM from this browser.
+          </h1>
+          <p class="text-sm text-slate-300 max-w-2xl">
+            This console reads <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>.
+            Use statuses + label tags to decide who gets pushed into the label lane, Autopilot and AI DJ Engine.
+          </p>
+        </div>
+
+        <div class="text-xs text-slate-400 space-y-1 border border-slate-800 rounded-xl px-3 py-2 bg-slate-950/80">
+          <p><span class="font-semibold text-slate-200">Note:</span> Data is per-browser. For live production you’d back this with a DB.</p>
+          <p>Here we just read/write localStorage to keep your dev brain fast.</p>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="flex flex-wrap gap-3 items-center justify-between border border-slate-800 rounded-2xl bg-slate-950/80 px-3 py-3 text-xs">
+        <div class="flex flex-wrap gap-2 items-center">
+          <span class="uppercase tracking-[0.24em] text-slate-400">Filters</span>
+          <select id="filter-status" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
+            <option value="all">Status: All</option>
+            <option value="new">Status: New</option>
+            <option value="reviewed">Status: Reviewed</option>
+            <option value="watch">Status: Watch</option>
+            <option value="pass">Status: Pass</option>
+          </select>
+          <select id="filter-labelTag" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
+            <option value="all">Label Tag: All</option>
+            <option value="WATCH">WATCH</option>
+            <option value="OFFER">OFFER</option>
+            <option value="SPONSOR">SPONSOR</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <input id="search-text" placeholder="Search artist / track / city" class="text-[0.72rem] bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 w-48 md:w-60" />
+          <button id="btn-refresh" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200 uppercase tracking-[0.22em]">
+            Refresh
+          </button>
+          <button id="btn-clear-all" class="px-3 py-1 rounded-full border border-red-500/70 bg-red-500/10 text-red-300 uppercase tracking-[0.22em]">
+            Clear All (This Device)
+          </button>
+        </div>
+      </div>
+
+      <!-- TABLE / LIST -->
+      <div id="empty-state" class="hidden mt-4 border border-dashed border-slate-700 rounded-2xl p-6 text-center text-sm text-slate-300">
+        No uploads found on this browser yet. Have an artist use
+        <a href="artist-upload.html" class="text-pink-300 underline">Artist Upload</a>
+        to feed this console.
+      </div>
+
+      <div id="submissions-list" class="mt-4 space-y-2 text-sm"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/40">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — Artist Submissions Console.</span>
+      <span class="opacity-70">
+        Local dev brain for tkfm_artist_uploads → label review → Autopilot / AI DJ.
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    function safeGetUploads() {
+      try {
+        const raw = localStorage.getItem('tkfm_artist_uploads');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.warn('Submissions Console: failed to parse tkfm_artist_uploads', e);
+        return [];
+      }
+    }
+
+    function saveUploads(list) {
+      try {
+        localStorage.setItem('tkfm_artist_uploads', JSON.stringify(list));
+      } catch (e) {
+        console.error('Submissions Console: failed to save tkfm_artist_uploads', e);
+      }
+    }
+
+    function prettyDate(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleString();
+      } catch {
+        return '';
+      }
+    }
+
+    function render() {
+      const listEl = document.getElementById('submissions-list');
+      const emptyEl = document.getElementById('empty-state');
+      const statusFilter = document.getElementById('filter-status').value;
+      const tagFilter = document.getElementById('filter-labelTag').value;
+      const search = document.getElementById('search-text').value.toLowerCase().trim();
+
+      const data = safeGetUploads();
+
+      let rows = data.map((item, index) => Object.assign({ _index: index }, item));
+
+      if (statusFilter !== 'all') {
+        rows = rows.filter(r => (r.status || 'new') === statusFilter);
+      }
+      if (tagFilter !== 'all') {
+        rows = rows.filter(r => (r.labelTag || '') === tagFilter);
+      }
+      if (search) {
+        rows = rows.filter(r => {
+          const hay = [
+            r.artistName,
+            r.trackTitle,
+            r.city,
+            r.social,
+            r.email,
+            r.intent
+          ].join(' ').toLowerCase();
+          return hay.includes(search);
+        });
+      }
+
+      if (!rows.length) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+
+      rows.sort((a,b) => {
+        const ad = a.createdAt || '';
+        const bd = b.createdAt || '';
+        return bd.localeCompare(ad);
+      });
+
+      listEl.innerHTML = rows.map(row => {
+        const status = row.status || 'new';
+        const tag = row.labelTag || '';
+        const classesForStatus =
+          status === 'new' ? 'border-pink-500/60 bg-pink-500/5' :
+          status === 'reviewed' ? 'border-slate-500/60 bg-slate-500/10' :
+          status === 'watch' ? 'border-amber-400/70 bg-amber-400/10' :
+          status === 'pass' ? 'border-slate-600/60 bg-slate-900/80' :
+          'border-slate-700/60 bg-slate-900/80';
+
+        const tagLabel = tag ? tag : '—';
+        const tagClass =
+          tag === 'WATCH' ? 'border-amber-400/70 text-amber-200 bg-amber-400/10' :
+          tag === 'OFFER' ? 'border-emerald-400/80 text-emerald-200 bg-emerald-400/10' :
+          tag === 'SPONSOR' ? 'border-yellow-400/80 text-yellow-200 bg-yellow-400/10' :
+          'border-slate-700 text-slate-300 bg-slate-900/80';
+
+        return `
+          <article class="rounded-2xl border ${classesForStatus} px-3 py-3 bg-slate-950/80">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <div class="text-sm font-semibold truncate">
+                    ${escapeHtml(row.artistName || 'Unknown Artist')}
+                  </div>
+                  <div class="text-[0.75rem] text-slate-400 truncate">
+                    — ${escapeHtml(row.trackTitle || '')}
+                  </div>
+                </div>
+                <div class="mt-1 flex flex-wrap gap-2 text-[0.7rem] text-slate-400">
+                  ${row.city ? `<span>${escapeHtml(row.city)}</span>` : ''}
+                  ${row.role ? `<span>• ${escapeHtml(row.role)}</span>` : ''}
+                  ${row.intent ? `<span>• ${escapeHtml(row.intent)}</span>` : ''}
+                  ${row.social ? `<span>• ${escapeHtml(row.social)}</span>` : ''}
+                </div>
+                ${row.notes ? `
+                  <p class="mt-1 text-[0.7rem] text-slate-300 line-clamp-2">
+                    ${escapeHtml(row.notes)}
+                  </p>` : ''
+                }
+                <div class="mt-1 text-[0.68rem] text-slate-500">
+                  ${row.createdAt ? `Submitted: ${escapeHtml(prettyDate(row.createdAt))}` : ''}
+                </div>
+              </div>
+
+              <div class="flex flex-col items-end gap-2 text-[0.7rem] min-w-[9rem]">
+                <a href="${row.audioUrl ? escapeAttr(row.audioUrl) : '#'}"
+                   target="_blank"
+                   class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200 ${row.audioUrl ? '' : 'pointer-events-none opacity-40'}">
+                  <span>Open Audio</span><span class="text-xs">↗</span>
+                </a>
+
+                <div class="flex flex-wrap gap-1 justify-end">
+                  <select
+                    data-role="status"
+                    data-index="${row._index}"
+                    class="bg-slate-950/90 border border-slate-700/80 rounded-full px-2.5 py-1 text-[0.68rem] text-slate-100">
+                    <option value="new" ${status==='new'?'selected':''}>New</option>
+                    <option value="reviewed" ${status==='reviewed'?'selected':''}>Reviewed</option>
+                    <option value="watch" ${status==='watch'?'selected':''}>Watch</option>
+                    <option value="pass" ${status==='pass'?'selected':''}>Pass</option>
+                  </select>
+
+                  <select
+                    data-role="labelTag"
+                    data-index="${row._index}"
+                    class="bg-slate-950/90 border border-slate-700/80 rounded-full px-2.5 py-1 text-[0.68rem] text-slate-100">
+                    <option value="" ${tag===''?'selected':''}>No Tag</option>
+                    <option value="WATCH" ${tag==='WATCH'?'selected':''}>WATCH</option>
+                    <option value="OFFER" ${tag==='OFFER'?'selected':''}>OFFER</option>
+                    <option value="SPONSOR" ${tag==='SPONSOR'?'selected':''}>SPONSOR</option>
+                  </select>
+                </div>
+
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full border ${tagClass} text-[0.65rem] uppercase tracking-[0.2em]">
+                  ${tagLabel}
+                </span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function escapeAttr(str) {
+      return String(str || '')
+        .replace(/"/g,'&quot;');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const filterStatus = document.getElementById('filter-status');
+      const filterLabelTag = document.getElementById('filter-labelTag');
+      const searchText = document.getElementById('search-text');
+      const btnRefresh = document.getElementById('btn-refresh');
+      const btnClearAll = document.getElementById('btn-clear-all');
+      const listEl = document.getElementById('submissions-list');
+
+      function rewireEvents() {
+        listEl.querySelectorAll('select[data-role="status"]').forEach(sel => {
+          sel.addEventListener('change', function () {
+            const index = parseInt(sel.getAttribute('data-index'), 10);
+            const uploads = safeGetUploads();
+            if (!uploads[index]) return;
+            uploads[index].status = sel.value;
+            saveUploads(uploads);
+            render();
+          });
+        });
+        listEl.querySelectorAll('select[data-role="labelTag"]').forEach(sel => {
+          sel.addEventListener('change', function () {
+            const index = parseInt(sel.getAttribute('data-index'), 10);
+            const uploads = safeGetUploads();
+            if (!uploads[index]) return;
+            uploads[index].labelTag = sel.value || null;
+            saveUploads(uploads);
+            render();
+          });
+        });
+      }
+
+      function fullRender() {
+        render();
+        // rebind selects after every render
+        setTimeout(rewireEvents, 0);
+      }
+
+      filterStatus.addEventListener('change', fullRender);
+      filterLabelTag.addEventListener('change', fullRender);
+      searchText.addEventListener('input', function () {
+        // light debounce
+        clearTimeout(searchText._tkfmTimer);
+        searchText._tkfmTimer = setTimeout(fullRender, 150);
+      });
+      btnRefresh.addEventListener('click', fullRender);
+
+      btnClearAll.addEventListener('click', function () {
+        if (!confirm('Clear all tkfm_artist_uploads on THIS DEVICE?')) return;
+        localStorage.removeItem('tkfm_artist_uploads');
+        fullRender();
+      });
+
+      fullRender();
+    });
+  </script>
+</body>
+</html>
