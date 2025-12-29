@@ -4,18 +4,23 @@
   <meta charset="utf-8" />
   <title>TKFM DJs — They Krave For Me Radio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="They Krave For Me Radio — live DJ directory & schedule powered by TKFM v2 local brain keys." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/logo-check.js" defer></script>
   <style>
     body{
       background:#020617;
       background-image:
-        radial-gradient(circle at 15% 0,rgba(56,189,248,0.22),transparent 55%),
-        radial-gradient(circle at 85% 0,rgba(236,72,153,0.22),transparent 55%),
-        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.26),transparent 55%);
+        radial-gradient(circle at 8% 0,rgba(56,189,248,0.20),transparent 55%),
+        radial-gradient(circle at 92% 0,rgba(236,72,153,0.20),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.24),transparent 55%);
     }
     ::-webkit-scrollbar{height:6px;width:6px;}
     ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+    .glass{
+      background-color:rgba(15,23,42,0.95);
+      backdrop-filter:blur(18px);
+    }
   </style>
 </head>
 <body class="text-slate-50 min-h-screen flex flex-col">
@@ -30,15 +35,15 @@
             They Krave For Me Radio
           </div>
           <div class="text-sm font-semibold">
-            TKFM <span class="text-cyan-300">DJs</span>
+            TKFM <span class="text-cyan-300">DJ Lineup</span>
           </div>
         </div>
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
-        <a href="dj-schedule.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📅 DJ Schedule</a>
-        <a href="dj-mixtape-hosting.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🔥 Mixtape Hosting</a>
-        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📈 Momentum</a>
+        <a href="dj-schedule.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">🗓 DJ Schedule</a>
+        <a href="news.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📰 News</a>
+        <a href="autopilot-engine.html" class="px-3 py-1 rounded-full border border-pink-500/80 bg-pink-500/10 text-pink-200">⚙ Autopilot</a>
         <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-300/80 bg-emerald-300/10 text-emerald-200">👁 GOD VIEW</a>
       </nav>
     </div>
@@ -47,30 +52,32 @@
   <!-- MAIN -->
   <main class="flex-1">
     <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
-      <!-- HERO -->
+
+      <!-- HERO + SNAPSHOT -->
       <div class="flex flex-col lg:flex-row gap-6 items-start">
         <div class="flex-1 space-y-3">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-cyan-200">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            TKFM • DJ Lineup
+            TKFM • DJ Layer
           </div>
           <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
-            The DJs powering <span class="text-pink-400 drop-shadow-[0_0_22px_rgba(236,72,153,0.9)]">The Independent Artist Power Station</span>.
+            The DJs powering the <span class="text-pink-400 drop-shadow-[0_0_24px_rgba(236,72,153,0.9)]">Independent Artist Power Station</span>.
           </h1>
           <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
-            This page auto-builds from a DJ config and (when present) your
-            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_dj_schedule</span> key.
-            You can override the roster in localStorage later if you want to experiment.
+            This page pulls from your TKFM v2 local brain: **DJ roster + schedule**.  
+            When you update <span class="font-mono text-cyan-300 text-[0.75rem]">dj-schedule.html</span> or the Dev Console, this lineup updates automatically in this browser.
           </p>
           <p class="text-[0.75rem] text-slate-400 max-w-xl">
-            In production, this same format can be driven from a database or CMS.
-            For now, it’s a clean dev roster synced with the rest of your TKFM brain.
+            Keys used:
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_dj_roster</span> (array of DJs) and
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_dj_schedule</span> or
+            <span class="font-mono text-cyan-300 text-[0.75rem]">djSchedule</span> (grid of slots).
           </p>
         </div>
 
         <!-- SNAPSHOT -->
-        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
-          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_140deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 glass p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-35 blur-2xl bg-[conic-gradient(from_140deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
           <div class="relative space-y-3 text-sm">
             <div class="flex items-center justify-between gap-3">
               <div>
@@ -78,7 +85,7 @@
                   DJ Snapshot (This Device)
                 </p>
                 <p class="text-xs text-slate-300">
-                  Pulled from default TKFM config + local schedule.
+                  Read-only view of whatever this browser has saved.
                 </p>
               </div>
               <button id="dj-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
@@ -86,43 +93,103 @@
               </button>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="grid grid-cols-3 gap-3 text-xs">
               <div>
-                <div class="text-slate-400 mb-0.5">DJs Listed</div>
+                <div class="text-slate-400 mb-0.5">Total DJs</div>
                 <div id="dj-count" class="text-lg font-bold">0</div>
               </div>
               <div>
-                <div class="text-slate-400 mb-0.5">Schedule Slots</div>
-                <div id="dj-slots" class="text-lg font-bold">0</div>
+                <div class="text-slate-400 mb-0.5">Featured</div>
+                <div id="dj-featured" class="text-lg font-bold text-pink-200">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Active Slots</div>
+                <div id="dj-slots" class="text-lg font-bold text-emerald-200">0</div>
               </div>
             </div>
 
-            <p class="text-[0.7rem] text-slate-300">
-              Schedule info is read from <span class="font-mono text-cyan-300">tkfm_dj_schedule</span> if
-              your <span class="text-emerald-300">dj-schedule.html</span> page has saved it.
+            <p class="text-[0.72rem] text-slate-300">
+              Use <span class="font-mono text-emerald-300 text-[0.7rem]">dj-schedule.html</span> or a Dev Console helper
+              to push data into these keys. This page never writes — it just **reflects** the current brain.
             </p>
           </div>
         </aside>
       </div>
 
+      <!-- FILTER BAR -->
+      <section class="rounded-3xl border border-slate-800 glass px-4 md:px-6 py-3 text-xs flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-2 items-center">
+          <span class="uppercase tracking-[0.24em] text-slate-400">Filter DJs</span>
+          <select id="dj-role-filter" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
+            <option value="all">All roles</option>
+            <option value="featured">Featured</option>
+            <option value="resident">Residents</option>
+            <option value="guest">Guests</option>
+          </select>
+          <select id="dj-day-filter" class="bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 text-[0.72rem] text-slate-100">
+            <option value="all">Any day</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <input id="dj-search" placeholder="Search DJ / show / city" class="text-[0.72rem] bg-slate-950/90 border border-slate-700/80 rounded-full px-3 py-1 w-52 md:w-64" />
+        </div>
+      </section>
+
       <!-- DJ GRID -->
-      <section class="space-y-3">
-        <div class="flex items-center justify-between gap-3">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            TKFM DJ Lineup
-          </h2>
-          <div class="flex flex-wrap gap-2 text-[0.75rem]">
-            <span class="px-2.5 py-1 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-300">
-              Data source: static config (overridable via tkfm_djs)
-            </span>
+      <section class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-4">
+        <header class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+              DJ Roster
+            </p>
+            <h2 class="text-sm font-semibold text-slate-50">
+              DJs linked to Autopilot packs, momentum & the TKFM story.
+            </h2>
           </div>
+          <span class="text-xl">🎧</span>
+        </header>
+
+        <div id="dj-roster-empty" class="text-[0.8rem] text-slate-400">
+          No DJs found in <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_dj_roster</span> yet.  
+          Use <span class="text-emerald-300">dj-schedule.html</span> or a Dev Console helper to seed the roster.
         </div>
 
-        <div id="dj-empty" class="border border-dashed border-slate-700 rounded-2xl p-6 text-center text-sm text-slate-300">
-          No DJs configured. This should never happen with the default config — check your script.
+        <div id="dj-roster-list" class="hidden grid gap-3 md:grid-cols-2 lg:grid-cols-3 text-[0.8rem]">
+          <!-- Filled by JS -->
+        </div>
+      </section>
+
+      <!-- SCHEDULE -->
+      <section class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-4">
+        <header class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+              DJ Schedule
+            </p>
+            <h2 class="text-sm font-semibold text-slate-50">
+              Week-at-a-glance for TKFM shows (from local schedule key).
+            </h2>
+          </div>
+          <span class="text-xl">🗓</span>
+        </header>
+
+        <div id="dj-schedule-empty" class="text-[0.8rem] text-slate-400">
+          No schedule data found in
+          <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_dj_schedule</span> or
+          <span class="font-mono text-cyan-300 text-[0.75rem]">djSchedule</span>.  
+          When you save a schedule in <span class="text-emerald-300">dj-schedule.html</span>, it will show up here.
         </div>
 
-        <div id="dj-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+        <div id="dj-schedule-wrap" class="hidden grid gap-3 md:grid-cols-2 lg:grid-cols-3 text-[0.78rem]">
+          <!-- Day columns filled by JS -->
+        </div>
       </section>
     </section>
   </main>
@@ -130,47 +197,15 @@
   <!-- FOOTER -->
   <footer class="border-t border-slate-800/80 bg-black/50">
     <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
-      <span>© 2025 TKFM — DJ Lineup.</span>
+      <span>© 2025 TKFM — DJ Lineup & Schedule.</span>
       <span class="opacity-80">
-        Reads tkfm_dj_schedule for slots when available.
+        Read-only reflection of TKFM v2 local brain keys. In production, swap localStorage for a shared DB.
       </span>
     </div>
   </footer>
 
   <script>
-    const DEFAULT_DJS = [
-      {
-        id: 'dj-krave',
-        name: 'DJ KRAVE',
-        alias: 'They Krave For Me',
-        role: 'Founder • Mixtape Architect • Program Director',
-        city: 'Detroit / Midwest',
-        bio: 'Breaks independent artists, curates heavy rotation tapes, and runs the TKFM empire.',
-        styleTags: ['club energy', 'street heat', 'exclusive drops'],
-        links: {
-          ig: '@TheyKraveForMeRadio',
-          x: '@TheyKraveForMe',
-          site: null
-        },
-        avatarEmoji: '🔥'
-      },
-      {
-        id: 'johnny-steelo',
-        name: 'Johnny Steelo',
-        alias: 'The Smooth Operator',
-        role: 'On-Air DJ • Night Shift',
-        city: 'Late Night Frequency',
-        bio: 'Smooth blends, story-driven sets, and after-hours waves.',
-        styleTags: ['r&b', 'smooth trap', 'midnight rides'],
-        links: {
-          ig: '@JohnnySteelo',
-          x: null,
-          site: null
-        },
-        avatarEmoji: '🌙'
-      }
-    ];
-
+    // ---------- helpers ----------
     function djSafeParse(key, fallback) {
       try {
         const raw = localStorage.getItem(key);
@@ -178,26 +213,18 @@
         const parsed = JSON.parse(raw);
         return parsed ?? fallback;
       } catch (e) {
-        console.warn('DJ page: failed to parse', key, e);
+        console.warn('DJ page: parse fail', key, e);
         return fallback;
       }
     }
-
-    function getDjConfig() {
-      const override = djSafeParse('tkfm_djs', null);
-      if (Array.isArray(override) && override.length) return override;
-      return DEFAULT_DJS;
+    function djArr(key) {
+      const v = djSafeParse(key, []);
+      return Array.isArray(v) ? v : [];
     }
-
-    function getDjSchedule() {
-      const sched = djSafeParse('tkfm_dj_schedule', null);
-      if (!sched) return [];
-      if (Array.isArray(sched)) return sched;
-      if (Array.isArray(sched.slots)) return sched.slots;
-      return [];
+    function djPretty(str) {
+      return (str || '').toString().trim();
     }
-
-    function escapeHtml(str) {
+    function djEscape(str) {
       return String(str || '')
         .replace(/&/g,'&amp;')
         .replace(/</g,'&lt;')
@@ -206,106 +233,306 @@
         .replace(/'/g,'&#039;');
     }
 
-    function renderDjs() {
-      const grid = document.getElementById('dj-grid');
-      const empty = document.getElementById('dj-empty');
+    function getRoster() {
+      const roster = djArr('tkfm_dj_roster');
+      // Allow simple format too: { name, role, city, showName, time }
+      return roster.map((d, idx) => {
+        if (!d || typeof d !== 'object') return null;
+        return {
+          id: d.id || ('dj_' + idx),
+          name: djPretty(d.name || d.djName || d.handle || 'Unknown DJ'),
+          role: djPretty((d.role || d.tier || 'resident')).toLowerCase(),
+          city: djPretty(d.city || ''),
+          showName: djPretty(d.showName || d.show || ''),
+          slotHint: djPretty(d.slot || d.time || d.dayTime || ''),
+          bio: djPretty(d.bio || d.desc || ''),
+          tags: Array.isArray(d.tags) ? d.tags : [],
+          avatarEmoji: djPretty(d.avatarEmoji || d.emoji || '')
+        };
+      }).filter(Boolean);
+    }
+
+    function getScheduleRaw() {
+      let sched = djArr('tkfm_dj_schedule');
+      if (!sched.length) {
+        sched = djArr('djSchedule');
+      }
+      return sched;
+    }
+
+    function normalizeSchedule() {
+      const raw = getScheduleRaw();
+      const out = [];
+
+      raw.forEach((s, idx) => {
+        if (!s || typeof s !== 'object') return;
+        const day = djPretty(s.day || s.dayOfWeek || '');
+        const dj = djPretty(s.djName || s.dj || s.host || '');
+        const show = djPretty(s.showName || s.show || '');
+        const time = djPretty(s.time || s.slot || '');
+        const city = djPretty(s.city || '');
+        const tags = Array.isArray(s.tags) ? s.tags : [];
+        const active = s.active === false ? false : true;
+
+        if (!day && !dj && !show && !time) return;
+
+        out.push({
+          id: s.id || ('slot_' + idx),
+          day,
+          dj,
+          show,
+          time,
+          city,
+          tags,
+          active
+        });
+      });
+
+      return out;
+    }
+
+    function groupScheduleByDay(slots) {
+      const byDay = {};
+      slots.forEach(slot => {
+        const key = slot.day || 'Unscheduled';
+        if (!byDay[key]) byDay[key] = [];
+        byDay[key].push(slot);
+      });
+
+      const order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Unscheduled'];
+      return order
+        .filter(d => byDay[d] && byDay[d].length)
+        .map(day => ({ day, slots: byDay[day] }));
+    }
+
+    function renderSnapshot(roster, slots) {
       const countEl = document.getElementById('dj-count');
+      const featEl  = document.getElementById('dj-featured');
       const slotsEl = document.getElementById('dj-slots');
 
-      const djs = getDjConfig();
-      const schedule = getDjSchedule();
+      const total = roster.length;
+      const featured = roster.filter(d => (d.role || '').includes('featured')).length;
+      const activeSlots = slots.filter(s => s.active !== false).length;
 
-      const totalSlots = Array.isArray(schedule) ? schedule.length : 0;
-      countEl.textContent = djs.length;
-      slotsEl.textContent = totalSlots;
+      countEl.textContent = total;
+      featEl.textContent = featured;
+      slotsEl.textContent = activeSlots;
+    }
 
-      if (!djs.length) {
-        grid.innerHTML = '';
+    function renderRoster(roster, state) {
+      const empty = document.getElementById('dj-roster-empty');
+      const grid  = document.getElementById('dj-roster-list');
+
+      let list = roster.slice();
+
+      if (state.role && state.role !== 'all') {
+        list = list.filter(d => (d.role || '').includes(state.role));
+      }
+
+      if (state.day && state.day !== 'all') {
+        const slots = normalizeSchedule();
+        const byDj = new Set(
+          slots.filter(s => (s.day || '') === state.day).map(s => s.dj.toLowerCase())
+        );
+        list = list.filter(d => byDj.has((d.name || '').toLowerCase()));
+      }
+
+      if (state.search) {
+        const q = state.search.toLowerCase();
+        list = list.filter(d => {
+          const hay = [
+            d.name,
+            d.showName,
+            d.city,
+            (d.tags || []).join(' ')
+          ].join(' ').toLowerCase();
+          return hay.includes(q);
+        });
+      }
+
+      if (!list.length) {
         empty.classList.remove('hidden');
+        grid.classList.add('hidden');
+        grid.innerHTML = '';
         return;
       }
 
       empty.classList.add('hidden');
+      grid.classList.remove('hidden');
 
-      // attempt to associate simple slots
-      function slotsForDj(djNameOrId) {
-        const nameLower = (djNameOrId || '').toLowerCase();
-        if (!schedule || !schedule.length) return [];
-        return schedule.filter(s => {
-          const n = (s.djName || s.dj || '').toLowerCase();
-          const id = (s.djId || '').toLowerCase();
-          return n.includes(nameLower) || id === nameLower;
-        });
+      grid.innerHTML = list.map(dj => {
+        const badgeLabel =
+          dj.role.includes('featured') ? 'Featured' :
+          dj.role.includes('guest')    ? 'Guest' :
+          'Resident';
+
+        const badgeClass =
+          dj.role.includes('featured')
+            ? 'border-pink-500/80 bg-pink-500/10 text-pink-100'
+          : dj.role.includes('guest')
+            ? 'border-slate-500/80 bg-slate-900/80 text-slate-100'
+            : 'border-cyan-400/80 bg-cyan-400/10 text-cyan-100';
+
+        const emoji = dj.avatarEmoji || '🎧';
+
+        return (
+          '<article class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-3 flex flex-col gap-2">' +
+            '<div class="flex items-start justify-between gap-2">' +
+              '<div class="flex items-center gap-2 min-w-0">' +
+                '<div class="h-9 w-9 rounded-full border border-slate-700 bg-slate-900 flex items-center justify-center text-lg">' +
+                  djEscape(emoji) +
+                '</div>' +
+                '<div class="min-w-0">' +
+                  '<p class="text-[0.9rem] font-semibold truncate">' + djEscape(dj.name) + '</p>' +
+                  (dj.city
+                    ? '<p class="text-[0.75rem] text-slate-300 truncate">📍 ' + djEscape(dj.city) + '</p>'
+                    : ''
+                  ) +
+                '</div>' +
+              '</div>' +
+              '<span class="text-[0.7rem] px-2 py-0.5 rounded-full border ' + badgeClass + '">' +
+                djEscape(badgeLabel) +
+              '</span>' +
+            '</div>' +
+            (dj.showName || dj.slotHint
+              ? '<div class="text-[0.78rem] text-slate-200">' +
+                  (dj.showName
+                    ? '<p class="font-medium">' + djEscape(dj.showName) + '</p>'
+                    : ''
+                  ) +
+                  (dj.slotHint
+                    ? '<p class="text-slate-300">' + djEscape(dj.slotHint) + '</p>'
+                    : ''
+                  ) +
+                '</div>'
+              : ''
+            ) +
+            (dj.bio
+              ? '<p class="text-[0.75rem] text-slate-300 line-clamp-3">' + djEscape(dj.bio) + '</p>'
+              : ''
+            ) +
+            ((dj.tags || []).length
+              ? '<div class="flex flex-wrap gap-1 mt-1 text-[0.7rem] text-slate-300">' +
+                  dj.tags.map(t =>
+                    '<span class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/80">#' + djEscape(t) + '</span>'
+                  ).join('') +
+                '</div>'
+              : ''
+            ) +
+          '</article>'
+        );
+      }).join('');
+    }
+
+    function renderSchedule(slots) {
+      const empty = document.getElementById('dj-schedule-empty');
+      const wrap  = document.getElementById('dj-schedule-wrap');
+
+      if (!slots.length) {
+        empty.classList.remove('hidden');
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
       }
 
-      grid.innerHTML = djs.map(dj => {
-        const slots = slotsForDj(dj.name || dj.id);
-        const tagList = dj.styleTags || [];
-        const avatar = dj.avatarEmoji || '🎧';
+      empty.classList.add('hidden');
+      wrap.classList.remove('hidden');
 
-        const slotHtml = slots.slice(0,3).map(s => {
-          const day = s.day || s.dayOfWeek || '';
-          const time = s.time || s.slot || '';
-          return `<div class="text-[0.7rem] text-slate-300">${escapeHtml(day)} ${time ? '• ' + escapeHtml(time) : ''}</div>`;
-        }).join('');
+      const grouped = groupScheduleByDay(slots);
 
-        const linkBits = [];
-        if (dj.links?.ig) linkBits.push(`IG: ${escapeHtml(dj.links.ig)}`);
-        if (dj.links?.x) linkBits.push(`X: ${escapeHtml(dj.links.x)}`);
-        if (dj.links?.site) linkBits.push(escapeHtml(dj.links.site));
+      wrap.innerHTML = grouped.map(group => {
+        const day = group.day;
+        const list = group.slots
+          .slice()
+          .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
-        return `
-          <article class="rounded-2xl border border-slate-800 bg-slate-950/85 px-4 py-3 flex flex-col gap-2">
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-2xl border border-cyan-400/70 bg-cyan-400/10 flex items-center justify-center text-xl">
-                ${escapeHtml(avatar)}
-              </div>
-              <div class="min-w-0">
-                <p class="text-sm font-semibold truncate">
-                  ${escapeHtml(dj.name || 'Unknown DJ')}
-                </p>
-                <p class="text-[0.8rem] text-slate-300 truncate">
-                  ${escapeHtml(dj.role || '')}
-                </p>
-                <p class="text-[0.7rem] text-slate-400">
-                  ${dj.alias ? escapeHtml(dj.alias) + ' • ' : ''}${dj.city ? escapeHtml(dj.city) : ''}
-                </p>
-              </div>
-            </div>
-            <p class="text-[0.78rem] text-slate-200">
-              ${escapeHtml(dj.bio || '')}
-            </p>
-            <div class="flex flex-wrap gap-1 text-[0.7rem] text-slate-200">
-              ${tagList.map(t => `
-                <span class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90">
-                  ${escapeHtml(t)}
-                </span>
-              `).join('')}
-            </div>
-            <div class="mt-1 space-y-1">
-              ${slots.length ? `
-                <p class="text-[0.7rem] uppercase tracking-[0.24em] text-slate-400">Schedule (local)</p>
-                ${slotHtml}
-              ` : `
-                <p class="text-[0.7rem] text-slate-500">
-                  No schedule saved yet for this DJ on this browser.
-                </p>
-              `}
-            </div>
-            ${linkBits.length ? `
-              <p class="text-[0.7rem] text-slate-400 mt-1">
-                ${escapeHtml(linkBits.join(' • '))}
-              </p>
-            ` : ''}
-          </article>
-        `;
+        return (
+          '<div class="rounded-2xl border border-slate-800 bg-slate-950/90 p-3 flex flex-col gap-2">' +
+            '<div class="flex items-center justify-between gap-2 mb-1">' +
+              '<p class="text-[0.8rem] uppercase tracking-[0.22em] text-slate-400">' + djEscape(day) + '</p>' +
+              '<span class="text-[0.7rem] text-slate-400">' + list.length + ' slot' + (list.length !== 1 ? 's' : '') + '</span>' +
+            '</div>' +
+            '<div class="space-y-1.5 text-[0.78rem]">' +
+              list.map(slot => {
+                const activeDot = slot.active === false
+                  ? '<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>'
+                  : '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>';
+
+                return (
+                  '<div class="flex items-start gap-2">' +
+                    '<div class="mt-1 flex items-center">' + activeDot + '</div>' +
+                    '<div class="min-w-0 flex-1">' +
+                      '<p class="font-medium truncate">' + djEscape(slot.show || slot.dj || '') + '</p>' +
+                      '<p class="text-[0.75rem] text-slate-300 truncate">' +
+                        (slot.time ? djEscape(slot.time) : 'Time TBA') +
+                        (slot.dj ? ' • ' + djEscape(slot.dj) : '') +
+                      '</p>' +
+                      ((slot.city || (slot.tags && slot.tags.length))
+                        ? '<div class="flex flex-wrap gap-1 mt-0.5 text-[0.7rem] text-slate-300">' +
+                            (slot.city
+                              ? '<span class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/80">📍 ' + djEscape(slot.city) + '</span>'
+                              : ''
+                            ) +
+                            (slot.tags || []).map(t =>
+                              '<span class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/80">#' + djEscape(t) + '</span>'
+                            ).join('') +
+                          '</div>'
+                        : ''
+                      ) +
+                    '</div>' +
+                  '</div>'
+                );
+              }).join('') +
+            '</div>' +
+          '</div>'
+        );
       }).join('');
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+      const roleSel = document.getElementById('dj-role-filter');
+      const daySel  = document.getElementById('dj-day-filter');
+      const search  = document.getElementById('dj-search');
       const btnRefresh = document.getElementById('dj-refresh');
-      btnRefresh?.addEventListener('click', renderDjs);
-      renderDjs();
+
+      const state = {
+        role: 'all',
+        day: 'all',
+        search: ''
+      };
+
+      function rerender() {
+        const roster = getRoster();
+        const slots  = normalizeSchedule();
+        renderSnapshot(roster, slots);
+        renderRoster(roster, state);
+        renderSchedule(slots);
+      }
+
+      roleSel?.addEventListener('change', () => {
+        state.role = roleSel.value || 'all';
+        rerender();
+      });
+
+      daySel?.addEventListener('change', () => {
+        state.day = daySel.value || 'all';
+        rerender();
+      });
+
+      if (search) {
+        search.addEventListener('input', function () {
+          clearTimeout(search._tkfmTimer);
+          search._tkfmTimer = setTimeout(() => {
+            state.search = search.value.trim();
+            rerender();
+          }, 150);
+        });
+      }
+
+      btnRefresh?.addEventListener('click', rerender);
+
+      // Initial render
+      rerender();
     });
   </script>
 </body>
