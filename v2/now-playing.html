@@ -2,75 +2,269 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>TKFM — Now Playing</title>
+  <title>Now Playing — They Krave For Me Radio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Live Now Playing view for They Krave For Me Radio — linked to TKFM Autopilot Engine, rotation packs and local radio brain keys." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/logo-check.js" defer></script>
   <style>
     body{
       background:#020617;
       background-image:
-        radial-gradient(circle at 0 0,rgba(56,189,248,0.25),transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(236,72,153,0.25),transparent 60%);
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.22),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(37,99,235,0.22),transparent 55%);
+    }
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+    .glass{
+      background-color:rgba(15,23,42,0.96);
+      backdrop-filter:blur(22px);
     }
   </style>
 </head>
-<body class="text-slate-50 min-h-screen flex items-center justify-center">
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-  <main class="w-full max-w-md px-4">
-    <section class="rounded-2xl border border-slate-800 bg-slate-950/90 p-4 text-sm space-y-3 shadow-[0_0_35px_rgba(15,23,42,0.9)]">
-      <header class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_0_4px_rgba(52,211,153,0.45)]"></span>
-          <div>
-            <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400">
-              They Krave For Me Radio
-            </p>
-            <p class="text-xs text-slate-300">
-              Now Playing (Local Dev)
-            </p>
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/70 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            They Krave For Me Radio
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-cyan-300">Now Playing</span>
           </div>
         </div>
-        <a href="radio-hub.html" class="text-[0.7rem] text-cyan-300 hover:text-cyan-100">
-          Hub ↗
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
+          <span>📻</span><span>Radio Hub</span>
         </a>
-      </header>
+        <a href="djs.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
+          <span>🎧</span><span>DJs</span>
+        </a>
+        <a href="news.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200 flex items-center gap-1">
+          <span>📰</span><span>News</span>
+        </a>
+        <a href="autopilot-engine.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200 flex items-center gap-1">
+          <span>⚙</span><span>Autopilot</span>
+        </a>
+        <a href="ai-dj-engine.html" class="px-3 py-1 rounded-full border border-pink-500/80 bg-pink-500/10 text-pink-200 flex items-center gap-1">
+          <span>🤖</span><span>AI DJ</span>
+        </a>
+        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200 flex items-center gap-1">
+          <span>⭐</span><span>Fan Pass</span>
+        </a>
+      </nav>
+    </div>
+  </header>
 
-      <div id="np-empty" class="text-[0.85rem] text-slate-300">
-        No active rotation yet. Open <span class="text-cyan-300">Radio Hub</span> and load an Autopilot pack.
-      </div>
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-12 space-y-7">
 
-      <div id="np-main" class="hidden space-y-2">
-        <div>
-          <p id="np-title" class="text-lg font-semibold truncate">
-            —
-          </p>
-          <p id="np-artist" class="text-sm text-slate-200 truncate">
-            —
-          </p>
-          <p id="np-meta" class="text-xs text-slate-400 truncate">
-            —
-          </p>
-        </div>
-
-        <div class="flex flex-wrap items-center justify-between gap-2 text-[0.75rem] text-slate-300">
-          <div class="flex flex-wrap gap-2">
-            <span id="np-mode" class="px-2.5 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-100">
-              Mode: —
-            </span>
-            <span id="np-index" class="px-2.5 py-1 rounded-full border border-slate-700/80 bg-slate-900/90">
-              —
-            </span>
+      <!-- HERO + SNAPSHOT -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-cyan-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            TKFM • Live Rotation View
           </div>
-          <span id="np-updated" class="text-[0.7rem] text-slate-400">
-            —
-          </span>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            See what the <span class="text-pink-400 drop-shadow-[0_0_26px_rgba(236,72,153,0.9)]">Independent Artist Power Station</span> is spinning right now.
+          </h1>
+          <p class="text-sm md:text-base text-slate-100/90 max-w-2xl">
+            This page reads directly from your TKFM radio brain:
+            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_autopilot_last_pack</span>,
+            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_radio_state</span> and
+            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_radio_now_playing</span>.
+          </p>
+          <p class="text-[0.78rem] text-slate-300 max-w-xl">
+            In dev mode this is **localStorage only**. In production, the same structure can live on a
+            shared backend so everyone sees the same Now Playing in real time.
+          </p>
         </div>
+
+        <!-- SNAPSHOT -->
+        <aside class="w-full max-w-sm rounded-3xl border border-slate-800 glass relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-20 opacity-40 blur-3xl bg-[conic-gradient(from_120deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+          <div class="relative p-4 space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  Pack Snapshot (This Device)
+                </p>
+                <p class="text-xs text-slate-100">
+                  Pulls from the last Autopilot pack this browser saw.
+                </p>
+              </div>
+              <button id="np-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="text-slate-300 mb-0.5">Tracks</p>
+                <p id="np-count" class="text-lg font-bold text-cyan-200">0</p>
+              </div>
+              <div>
+                <p class="text-slate-300 mb-0.5">Index</p>
+                <p id="np-index" class="text-lg font-bold text-pink-200">0</p>
+              </div>
+              <div>
+                <p class="text-slate-300 mb-0.5">Likes</p>
+                <p id="np-likes" class="text-lg font-bold text-emerald-200">0</p>
+              </div>
+            </div>
+
+            <p class="text-[0.72rem] text-slate-300">
+              History key:
+              <span class="font-mono text-cyan-300 text-[0.7rem]">tkfm_radio_history</span>  
+              Likes key:
+              <span class="font-mono text-cyan-300 text-[0.7rem]">tkfm_radio_likes</span>
+            </p>
+          </div>
+        </aside>
       </div>
+
+      <!-- NOW PLAYING + QUEUE -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
+        <!-- NOW PLAYING CARD -->
+        <article class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-4">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Now Playing
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Current record according to TKFM radio brain.
+              </h2>
+            </div>
+            <span class="text-xl">🎚</span>
+          </header>
+
+          <div id="np-empty" class="text-[0.8rem] text-slate-400">
+            No Autopilot pack detected yet.  
+            Generate one in <a href="autopilot-engine.html" class="text-cyan-300 underline">Autopilot Engine</a> to see a live Now Playing stack.
+          </div>
+
+          <div id="np-card" class="hidden relative overflow-hidden rounded-3xl border border-slate-700 bg-slate-950/90">
+            <div class="pointer-events-none absolute -inset-28 opacity-40 blur-3xl bg-[conic-gradient(from_200deg,_#22d3ee,_#3b82f6,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+            <div class="relative p-4 md:p-5 flex flex-col gap-3">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="text-[0.75rem] text-slate-400 mb-1">
+                    <span id="np-mode-label" class="font-semibold text-cyan-300"></span>
+                    <span id="np-profile-label" class="text-slate-400"></span>
+                  </p>
+                  <p id="np-title" class="text-lg md:text-xl font-bold text-slate-50 truncate">
+                    <!-- Track title -->
+                  </p>
+                  <p id="np-artist" class="text-sm text-slate-200 truncate">
+                    <!-- Artist -->
+                  </p>
+                  <p id="np-meta" class="text-[0.8rem] text-slate-400 truncate">
+                    <!-- City, tags -->
+                  </p>
+                </div>
+                <div class="flex flex-col items-end gap-2 text-[0.75rem]">
+                  <button id="np-like" class="flex items-center gap-1 px-3 py-1.5 rounded-full border border-pink-500/80 bg-pink-500/10 text-pink-100">
+                    <span id="np-like-icon">♡</span>
+                    <span id="np-like-label">Like</span>
+                  </button>
+                  <span id="np-pack-pos" class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200">
+                    <!-- # / total -->
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 text-[0.75rem] mt-1">
+                <span id="np-source-pill" class="px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200"></span>
+                <span id="np-city-pill" class="hidden px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200"></span>
+                <span id="np-tier-pill" class="hidden px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200"></span>
+              </div>
+
+              <div class="flex flex-wrap gap-2 justify-between items-center mt-3 text-[0.8rem]">
+                <div class="flex gap-2">
+                  <button id="np-prev" class="px-3 py-1.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-100 flex items-center gap-1">
+                    <span>⏮</span><span>Back</span>
+                  </button>
+                  <button id="np-next" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-1">
+                    <span>Next</span><span>⏭</span>
+                  </button>
+                </div>
+                <p id="np-status" class="text-[0.72rem] text-slate-300"></p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- QUEUE -->
+        <aside class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Up Next
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Next few records from the current Autopilot pack.
+              </h2>
+            </div>
+            <span class="text-xl">⏭</span>
+          </header>
+
+          <div id="np-queue-empty" class="text-[0.8rem] text-slate-400">
+            Queue will appear once a pack exists and there are tracks after the current index.
+          </div>
+
+          <div id="np-queue-list" class="hidden space-y-2 text-[0.78rem] max-h-64 overflow-y-auto">
+            <!-- Injected by JS -->
+          </div>
+        </aside>
+      </section>
+
+      <!-- HISTORY PREVIEW -->
+      <section class="rounded-3xl border border-slate-800 glass p-4 md:p-6 text-sm space-y-3">
+        <header class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+              Recent Plays (This Device)
+            </p>
+            <h2 class="text-sm font-semibold text-slate-50">
+              Local history from <span class="font-mono text-cyan-300 text-[0.78rem]">tkfm_radio_history</span>.
+            </h2>
+          </div>
+          <span class="text-xl">📼</span>
+        </header>
+
+        <div id="np-history-empty" class="text-[0.8rem] text-slate-400">
+          No plays logged yet.  
+          As you click **Next / Back**, this browser will start logging into a local history stack.
+        </div>
+
+        <div id="np-history-list" class="hidden grid gap-2 md:grid-cols-2 lg:grid-cols-3 text-[0.78rem] max-h-64 overflow-y-auto">
+          <!-- Filled by JS -->
+        </div>
+      </section>
     </section>
   </main>
 
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/70">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — Now Playing.</span>
+      <span class="opacity-80">
+        Mirrors the same pack & state keys used by Autopilot, Radio Hub and AI DJ Engine.
+      </span>
+    </div>
+  </footer>
+
   <script>
+    // ---------- helpers ----------
     function npSafeParse(key, fallback) {
       try {
         const raw = localStorage.getItem(key);
@@ -78,22 +272,14 @@
         const parsed = JSON.parse(raw);
         return parsed ?? fallback;
       } catch (e) {
-        console.warn('Now Playing: failed to parse', key, e);
+        console.warn('NowPlaying parse fail', key, e);
         return fallback;
       }
     }
-
-    function npPrettyDate(iso) {
-      if (!iso) return '';
-      try {
-        const d = new Date(iso);
-        if (Number.isNaN(d.getTime())) return '';
-        return d.toLocaleTimeString();
-      } catch {
-        return '';
-      }
+    function npArr(key) {
+      const v = npSafeParse(key, []);
+      return Array.isArray(v) ? v : [];
     }
-
     function npEscape(str) {
       return String(str || '')
         .replace(/&/g,'&amp;')
@@ -102,70 +288,321 @@
         .replace(/"/g,'&quot;')
         .replace(/'/g,'&#039;');
     }
+    function npPrettyDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return '';
+      return d.toLocaleString();
+    }
 
-    function npRender() {
-      const emptyEl = document.getElementById('np-empty');
-      const mainEl = document.getElementById('np-main');
-      const titleEl = document.getElementById('np-title');
-      const artistEl = document.getElementById('np-artist');
-      const metaEl = document.getElementById('np-meta');
-      const modeEl = document.getElementById('np-mode');
-      const indexEl = document.getElementById('np-index');
-      const updatedEl = document.getElementById('np-updated');
-
+    function npGetPack() {
       const pack = npSafeParse('tkfm_autopilot_last_pack', null);
-      const now = npSafeParse('tkfm_radio_now_playing', null);
+      if (!pack || !Array.isArray(pack.tracks)) return { pack: null, tracks: [] };
+      return { pack, tracks: pack.tracks };
+    }
 
-      const tracks = pack && Array.isArray(pack.tracks)
-        ? pack.tracks
-        : pack && Array.isArray(pack.items)
-          ? pack.items
-          : [];
+    function npGetState(tracksLen) {
+      const state = npSafeParse('tkfm_radio_state', null) || {};
+      let idx = typeof state.index === 'number' ? state.index : 0;
+      if (idx < 0) idx = 0;
+      if (tracksLen && idx >= tracksLen) idx = tracksLen - 1;
+      return { index: idx, updatedAt: state.updatedAt || null };
+    }
 
-      if (!pack || !now || !tracks.length) {
-        mainEl.classList.add('hidden');
-        emptyEl.classList.remove('hidden');
+    function npSetState(index, tracks, packMode, packProfile) {
+      const now = new Date().toISOString();
+      const state = { index, updatedAt: now };
+      localStorage.setItem('tkfm_radio_state', JSON.stringify(state));
+
+      const track = tracks[index] || null;
+      const nowObj = {
+        index,
+        track,
+        mode: packMode || '',
+        profile: packProfile || '',
+        updatedAt: now
+      };
+      localStorage.setItem('tkfm_radio_now_playing', JSON.stringify(nowObj));
+      npPushHistory(nowObj);
+    }
+
+    function npPushHistory(entry) {
+      if (!entry || !entry.track) return;
+      const history = npArr('tkfm_radio_history');
+      const item = {
+        track: entry.track,
+        mode: entry.mode || '',
+        profile: entry.profile || '',
+        index: entry.index || 0,
+        playedAt: entry.updatedAt || new Date().toISOString()
+      };
+      history.unshift(item);
+      while (history.length > 50) history.pop();
+      localStorage.setItem('tkfm_radio_history', JSON.stringify(history));
+    }
+
+    function npGetLikes() {
+      const likes = npArr('tkfm_radio_likes');
+      return likes;
+    }
+
+    function npIsLiked(likes, track) {
+      if (!track) return false;
+      const id = track.id || (track.artistName + '::' + track.trackTitle);
+      return likes.some(l => (l.key || l.id) === id);
+    }
+
+    function npToggleLike(track, packMode) {
+      if (!track) return { likes: [], liked: false };
+      const likes = npGetLikes();
+      const id = track.id || (track.artistName + '::' + track.trackTitle);
+      const existingIndex = likes.findIndex(l => (l.key || l.id) === id);
+
+      if (existingIndex >= 0) {
+        likes.splice(existingIndex, 1);
+        localStorage.setItem('tkfm_radio_likes', JSON.stringify(likes));
+        return { likes, liked: false };
+      }
+
+      likes.push({
+        key: id,
+        id,
+        artistName: track.artistName,
+        trackTitle: track.trackTitle,
+        city: track.city || '',
+        mode: packMode || '',
+        likedAt: new Date().toISOString()
+      });
+      localStorage.setItem('tkfm_radio_likes', JSON.stringify(likes));
+      return { likes, liked: true };
+    }
+
+    function npRenderSnapshot(tracksLen) {
+      const likes = npGetLikes();
+      document.getElementById('np-count').textContent = tracksLen || 0;
+
+      const state = npSafeParse('tkfm_radio_state', null) || {};
+      const idx = typeof state.index === 'number' ? state.index : 0;
+      document.getElementById('np-index').textContent = tracksLen ? (idx + 1) : 0;
+
+      document.getElementById('np-likes').textContent = likes.length;
+    }
+
+    function npRenderCurrent(pack, tracks, state) {
+      const empty = document.getElementById('np-empty');
+      const card  = document.getElementById('np-card');
+
+      if (!tracks.length) {
+        empty.classList.remove('hidden');
+        card.classList.add('hidden');
         return;
       }
 
-      const idx = Number.isInteger(now.index) ? now.index : 0;
-      const track = tracks[idx] || now.track || null;
+      empty.classList.add('hidden');
+      card.classList.remove('hidden');
 
-      if (!track) {
-        mainEl.classList.add('hidden');
-        emptyEl.classList.remove('hidden');
-        return;
-      }
+      const idx = state.index;
+      const track = tracks[idx] || tracks[0];
 
-      const title = track.trackTitle || track.title || 'Untitled Record';
-      const artist = track.artistName || track.artist || 'Unknown Artist';
+      const title = track.trackTitle || 'Untitled Record';
+      const artist = track.artistName || 'Unknown Artist';
       const city = track.city || '';
-      const tag = track.tag || track.tier || '';
-      const source = track.source || track.sourceKey || '';
+      const tier = track.tier || '';
+      const tag = track.tag || '';
+      const srcKey = track.source || track.sourceKey || '';
+      const srcType = track.sourceType || '';
 
-      titleEl.textContent = title;
-      artistEl.textContent = artist;
-      metaEl.textContent = [
-        city ? 'City: ' + city : '',
-        tag ? 'Tag: ' + tag : '',
-        source ? 'Source: ' + source : ''
-      ].filter(Boolean).join(' • ') || 'Rotation record';
+      const mode = pack.mode || pack.profile || 'Rotation';
+      const profile = pack.profile || '';
 
-      const mode = pack.mode || pack.profile || now.mode || 'default';
-      modeEl.textContent = 'Mode: ' + mode;
-      indexEl.textContent = (idx + 1) + ' / ' + tracks.length;
+      document.getElementById('np-title').textContent = title;
+      document.getElementById('np-artist').textContent = artist;
 
-      const updated = now.updatedAt || pack.createdAt || pack.timestamp || '';
-      updatedEl.textContent = updated ? ('Updated ' + npPrettyDate(updated)) : '';
+      const metaParts = [];
+      if (city) metaParts.push(city);
+      if (tag) metaParts.push(tag);
+      document.getElementById('np-meta').textContent = metaParts.join(' • ');
 
-      emptyEl.classList.add('hidden');
-      mainEl.classList.remove('hidden');
+      document.getElementById('np-mode-label').textContent = mode.toUpperCase();
+      document.getElementById('np-profile-label').textContent = profile ? ' • ' + profile : '';
+
+      const total = tracks.length;
+      document.getElementById('np-pack-pos').textContent = '#' + (idx + 1) + ' / ' + total;
+
+      // Source pill
+      const srcLabel =
+        srcType === 'mixtape' ? 'Mixtape Project' :
+        srcKey === 'tkfm_artist_uploads' ? 'Artist Upload' :
+        srcKey === 'mixtapeOrders' ? 'Mixtape Order' :
+        'TKFM Rotation';
+      const srcPill = document.getElementById('np-source-pill');
+      srcPill.textContent = srcLabel;
+
+      const cityPill = document.getElementById('np-city-pill');
+      if (city) {
+        cityPill.textContent = '📍 ' + city;
+        cityPill.classList.remove('hidden');
+      } else {
+        cityPill.classList.add('hidden');
+      }
+
+      const tierPill = document.getElementById('np-tier-pill');
+      if (tier) {
+        tierPill.textContent = 'Tier: ' + tier;
+        tierPill.classList.remove('hidden');
+      } else {
+        tierPill.classList.add('hidden');
+      }
+
+      // Likes
+      const likes = npGetLikes();
+      const liked = npIsLiked(likes, track);
+      const likeIcon = document.getElementById('np-like-icon');
+      const likeLabel = document.getElementById('np-like-label');
+      likeIcon.textContent = liked ? '♥' : '♡';
+      likeLabel.textContent = liked ? 'Liked' : 'Like';
+
+      const status = document.getElementById('np-status');
+      const nowObj = npSafeParse('tkfm_radio_now_playing', null);
+      if (nowObj && nowObj.updatedAt) {
+        status.textContent = 'Last updated ' + npPrettyDate(nowObj.updatedAt);
+      } else {
+        status.textContent = '';
+      }
+    }
+
+    function npRenderQueue(tracks, state) {
+      const empty = document.getElementById('np-queue-empty');
+      const wrap  = document.getElementById('np-queue-list');
+
+      const idx = state.index;
+      const remain = tracks.slice(idx + 1, idx + 8);
+
+      if (!remain.length) {
+        empty.classList.remove('hidden');
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      wrap.classList.remove('hidden');
+
+      wrap.innerHTML = remain.map((t, i) => {
+        const n = idx + 1 + i;
+        const city = t.city || '';
+        const labelPieces = [];
+        if (t.tier) labelPieces.push('Tier: ' + t.tier);
+        if (t.tag) labelPieces.push(t.tag);
+        const label = labelPieces.join(' • ');
+
+        return (
+          '<div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-2 flex flex-col gap-1">' +
+            '<div class="flex items-center justify-between gap-2">' +
+              '<span class="text-[0.7rem] text-slate-500">#' + (n + 1) + '</span>' +
+              '<span class="text-[0.65rem] px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200">Up next</span>' +
+            '</div>' +
+            '<p class="text-[0.8rem] font-semibold truncate">' + npEscape(t.trackTitle || 'Untitled Record') + '</p>' +
+            '<p class="text-[0.75rem] text-slate-300 truncate">' + npEscape(t.artistName || 'Unknown Artist') + (city ? ' • ' + npEscape(city) : '') + '</p>' +
+            (label
+              ? '<p class="text-[0.7rem] text-slate-400 truncate">' + npEscape(label) + '</p>'
+              : ''
+            ) +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function npRenderHistory() {
+      const history = npArr('tkfm_radio_history');
+      const empty = document.getElementById('np-history-empty');
+      const grid  = document.getElementById('np-history-list');
+
+      if (!history.length) {
+        empty.classList.remove('hidden');
+        grid.classList.add('hidden');
+        grid.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      grid.classList.remove('hidden');
+
+      grid.innerHTML = history.slice(0, 12).map(item => {
+        const t = item.track || {};
+        const city = t.city || '';
+        const ts = npPrettyDate(item.playedAt);
+        return (
+          '<div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-2 flex flex-col gap-1">' +
+            '<p class="text-[0.8rem] font-semibold truncate">' + npEscape(t.trackTitle || 'Untitled Record') + '</p>' +
+            '<p class="text-[0.75rem] text-slate-300 truncate">' + npEscape(t.artistName || 'Unknown Artist') + (city ? ' • ' + npEscape(city) : '') + '</p>' +
+            (ts
+              ? '<p class="text-[0.7rem] text-slate-400 truncate">' + npEscape(ts) + '</p>'
+              : ''
+            ) +
+          '</div>'
+        );
+      }).join('');
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      npRender();
-      // Optional small auto-refresh so the widget stays synced if Radio Hub moves tracks
-      setInterval(npRender, 4000);
+      const btnRefresh = document.getElementById('np-refresh');
+      const btnPrev    = document.getElementById('np-prev');
+      const btnNext    = document.getElementById('np-next');
+      const btnLike    = document.getElementById('np-like');
+
+      function fullRender() {
+        const { pack, tracks } = npGetPack();
+        const state = npGetState(tracks.length);
+        npRenderSnapshot(tracks.length);
+
+        if (!pack || !tracks.length) {
+          npRenderCurrent({ mode: '', profile: '' }, [], { index: 0 });
+          npRenderQueue([], { index: 0 });
+          npRenderHistory();
+          return;
+        }
+
+        // if no now-playing object yet, create one at current index
+        const npObj = npSafeParse('tkfm_radio_now_playing', null);
+        if (!npObj || typeof npObj.index !== 'number') {
+          npSetState(state.index, tracks, pack.mode, pack.profile);
+        }
+
+        npRenderCurrent(pack, tracks, state);
+        npRenderQueue(tracks, state);
+        npRenderHistory();
+      }
+
+      function move(delta) {
+        const { pack, tracks } = npGetPack();
+        if (!pack || !tracks.length) return;
+        const state = npGetState(tracks.length);
+        let idx = state.index + delta;
+        if (idx < 0) idx = 0;
+        if (idx >= tracks.length) idx = tracks.length - 1;
+        npSetState(idx, tracks, pack.mode, pack.profile);
+        fullRender();
+      }
+
+      function toggleLike() {
+        const { pack, tracks } = npGetPack();
+        if (!pack || !tracks.length) return;
+        const state = npGetState(tracks.length);
+        const track = tracks[state.index] || tracks[0];
+        const res = npToggleLike(track, pack.mode);
+        // refresh likes count + button label
+        npRenderSnapshot(tracks.length);
+        fullRender();
+      }
+
+      btnRefresh?.addEventListener('click', fullRender);
+      btnPrev?.addEventListener('click', () => move(-1));
+      btnNext?.addEventListener('click', () => move(1));
+      btnLike?.addEventListener('click', toggleLike);
+
+      // Initial render
+      fullRender();
     });
   </script>
 </body>
