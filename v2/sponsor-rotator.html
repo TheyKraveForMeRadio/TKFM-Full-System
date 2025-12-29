@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TKFM • Sponsor Rotator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body {background:#020617;color:#e5e7eb;font-family:system-ui;padding:20px;}
+    h1{font-size:1.4rem;margin-bottom:10px;}
+    .card{background:#0f172a;border:1px solid rgba(236,72,153,.5);border-radius:12px;padding:14px;margin:12px 0;}
+    button{background:#ec4899;padding:6px 12px;border-radius:6px;color:black;font-weight:bold;border:none;cursor:pointer;}
+    .smallBtn{background:#22d3ee;}
+    input,select{padding:6px 8px;margin:4px 0;background:#111827;border:1px solid #475569;border-radius:6px;color:white;}
+  </style>
+</head>
+
+<body>
+<h1>💸 Sponsor Bumper Sync</h1>
+<p>Inject sponsor bumpers into Autopilot packs. Build **radio ad inventory** without breaking rotation.</p>
+
+<hr><br>
+
+<h2>📌 Add Sponsor</h2>
+<input id="sName" placeholder="Sponsor Name (e.g. Red Bull)">
+<input id="sAudio" placeholder="MP3 URL or asset path (e.g. /audio/redbull.mp3)">
+<button id="addBtn">ADD</button>
+
+<br><br><hr><br>
+
+<h2>📊 Current Sponsors</h2>
+<div id="sponsorList"></div>
+
+<br><br><hr><br>
+
+<h2>⚙️ Rotation Rules</h2>
+<label>Insert after every:</label>
+<select id="intervalSelect">
+  <option value="4">4 tracks</option>
+  <option value="5">5 tracks</option>
+  <option value="6" selected>6 tracks</option>
+  <option value="8">8 tracks</option>
+</select>
+
+<br><br>
+<button id="applyBtn" class="smallBtn">APPLY TO NEXT AUTOPILOT PACK</button>
+
+<br><br><small>⚠️ This does NOT modify old packs — only new ones generated in autopilot-engine.html</small>
+
+<script type="module">
+  import {
+    getRotationForAIDJ,
+    setRotationForAIDJ,
+    getStore, setStore
+  } from "./js/tkfm-core.js";
+
+  // LOCAL KEYS
+  const KEY = "tkfm_sponsors";
+  const INTERVAL_KEY = "tkfm_sponsor_interval";
+
+  // DOM
+  const list = document.getElementById("sponsorList");
+  const addBtn = document.getElementById("addBtn");
+  const applyBtn = document.getElementById("applyBtn");
+  const sName = document.getElementById("sName");
+  const sAudio = document.getElementById("sAudio");
+  const intervalSelect = document.getElementById("intervalSelect");
+
+  // LOAD sponsored settings
+  function loadSponsors(){
+    const data = JSON.parse(localStorage.getItem(KEY) || "[]");
+    list.innerHTML = "";
+    if(!data.length){
+      list.innerHTML = "<p>No sponsors yet.</p>";
+      return;
+    }
+    data.forEach((s,i)=>{
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = \`
+        <strong>\${s.name}</strong><br>
+        <small>\${s.audioUrl}</small><br>
+        💡 Impressions: \${s.impressions||0}<br><br>
+        <button data-i="\${i}" class="removeBtn">REMOVE</button>
+      \`;
+      list.appendChild(div);
+    });
+
+    document.querySelectorAll(".removeBtn").forEach(btn=>{
+      btn.onclick = ()=>{
+        const idx = Number(btn.dataset.i);
+        const all = JSON.parse(localStorage.getItem(KEY) || "[]");
+        all.splice(idx,1);
+        localStorage.setItem(KEY,JSON.stringify(all));
+        loadSponsors();
+      };
+    });
+  }
+
+  // ADD sponsor
+  addBtn.onclick = ()=>{
+    const n = sName.value.trim();
+    const u = sAudio.value.trim();
+    if(!n || !u) return alert("Missing fields");
+    const all = JSON.parse(localStorage.getItem(KEY) || "[]");
+    all.push({id:crypto.randomUUID(),name:n,audioUrl:u,impressions:0});
+    localStorage.setItem(KEY,JSON.stringify(all));
+    sName.value = "";
+    sAudio.value = "";
+    loadSponsors();
+  };
+
+  // APPLY interval
+  applyBtn.onclick = ()=>{
+    const val = Number(intervalSelect.value);
+    if(!val) return;
+    localStorage.setItem(INTERVAL_KEY,val);
+    alert("Interval saved. Next Autopilot pack will include bumpers.");
+  };
+
+  // 🔥 INJECTION HOOK — AUTOPILOT WILL USE THIS
+  window.injectSponsorBumpers = function(pack){
+    const sponsors = JSON.parse(localStorage.getItem(KEY) || "[]");
+    if(!sponsors.length) return pack;
+
+    const interval = Number(localStorage.getItem(INTERVAL_KEY) || 6);
+    const newPack = [];
+
+    let count = 0;
+    for(const track of pack){
+      newPack.push(track);
+      count++;
+      if(count % interval === 0){
+        // rotate sponsor list
+        const s = sponsors.shift();
+        sponsors.push(s);
+        s.impressions = (s.impressions||0) + 1;
+
+        newPack.push({
+          title: "**SPONSOR_BREAK**",
+          sponsorName: s.name,
+          audioUrl: s.audioUrl,
+          isBumper: true
+        });
+      }
+    }
+
+    localStorage.setItem(KEY,JSON.stringify(sponsors));
+    return newPack;
+  };
+
+  loadSponsors();
+</script>
+</body>
+</html>

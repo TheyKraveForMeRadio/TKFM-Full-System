@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TKFM — Radio Stream Gateway</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    :root{
+      --bg:#020617;
+      --bg2:#050014;
+      --card:rgba(15,23,42,.98);
+      --border:rgba(148,163,184,.7);
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --gold:#facc15;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
+      --danger:#fb7185;
+      --lime:#22c55e;
+    }
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
+    }
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,.26),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(34,211,238,.26),transparent 60%),
+        linear-gradient(to bottom,var(--bg2),var(--bg));
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:1.2rem;
+    }
+    .shell{
+      width:100%;
+      max-width:620px;
+    }
+    .panel{
+      border-radius:1.3rem;
+      border:1px solid rgba(250,204,21,.75);
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,.24),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(56,189,248,.2),transparent 55%),
+        var(--card);
+      box-shadow:
+        0 0 40px rgba(0,0,0,1),
+        0 0 32px rgba(250,204,21,.4);
+      padding:1.1rem 1.2rem 1.2rem;
+    }
+
+    .header{
+      display:flex;
+      align-items:center;
+      gap:.7rem;
+      margin-bottom:1rem;
+    }
+    .logo{
+      width:32px;height:32px;border-radius:999px;
+      border:1px solid rgba(250,204,21,.8);
+      background:
+        radial-gradient(circle at 20% 0,#facc15,#fb923c 55%,#ec4899 90%,#020617 100%);
+      box-shadow:
+        0 0 22px rgba(250,204,21,.9),
+        0 0 22px rgba(236,72,153,.8);
+    }
+    .head-text{
+      display:flex;
+      flex-direction:column;
+      gap:.06rem;
+    }
+    .kicker{
+      font-size:.7rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .title{
+      font-size:.98rem;
+      font-weight:650;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .live-pill{
+      margin-left:auto;
+      font-size:.66rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      padding:.22rem .7rem;
+      border-radius:999px;
+      border:1px solid rgba(34,197,94,.9);
+      color:#bbf7d0;
+      background:radial-gradient(circle at 0 0,rgba(34,197,94,.28),transparent 65%);
+      display:flex;
+      align-items:center;
+      gap:.25rem;
+      white-space:nowrap;
+    }
+    .live-dot{
+      width:8px;height:8px;border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 14px rgba(34,197,94,.95);
+      animation:pulse 1.5s infinite;
+    }
+    @keyframes pulse{
+      0%{transform:scale(1);opacity:1;}
+      50%{transform:scale(1.5);opacity:.5;}
+      100%{transform:scale(1);opacity:1;}
+    }
+
+    .sub{
+      font-size:.8rem;
+      color:var(--muted);
+      margin-bottom:.8rem;
+    }
+
+    .block{
+      border-radius:1rem;
+      border:1px solid var(--border);
+      padding:.75rem .8rem .8rem;
+      background:rgba(15,23,42,.96);
+      margin-bottom:.7rem;
+    }
+    .block-title{
+      font-size:.75rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+      margin-bottom:.25rem;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:.18rem;
+      font-size:.78rem;
+      margin-top:.25rem;
+    }
+    .label{
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+    }
+    input[type="text"]{
+      width:100%;
+      padding:.32rem .55rem;
+      border-radius:.55rem;
+      border:1px solid rgba(148,163,184,.8);
+      background:#020617;
+      color:var(--text);
+      font-size:.8rem;
+    }
+    .hint{
+      font-size:.7rem;
+      color:var(--muted);
+    }
+
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem;
+      align-items:center;
+      margin-top:.45rem;
+    }
+
+    .btn{
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      padding:.34rem .8rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.8);
+      background:#020617;
+      color:var(--text);
+      cursor:pointer;
+    }
+    .btn.primary{
+      border-color:var(--gold);
+      color:#0f172a;
+      background:radial-gradient(circle at 0 0,#facc15,#fb923c 55%,#f97316 100%);
+      box-shadow:
+        0 0 26px rgba(250,204,21,.9),
+        0 0 20px rgba(249,115,22,.8);
+    }
+    .btn.ghost{
+      border-style:dashed;
+      color:var(--muted);
+    }
+    .btn.danger{
+      border-color:var(--danger);
+      color:var(--danger);
+    }
+    .btn:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    .status{
+      font-size:.72rem;
+      color:var(--muted);
+      margin-top:.35rem;
+    }
+    .status span.good{color:var(--lime);}
+    .status span.bad{color:var(--danger);}
+    .status span.key{color:var(--cyan);}
+
+    .player-wrap{
+      margin-top:.4rem;
+      border-radius:.75rem;
+      border:1px solid rgba(51,65,85,.95);
+      padding:.45rem .5rem;
+      background:#020617;
+    }
+    audio{
+      width:100%;
+    }
+
+    .footer{
+      margin-top:.6rem;
+      font-size:.7rem;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+      gap:.4rem;
+      flex-wrap:wrap;
+    }
+    .footer a{
+      color:var(--cyan);
+      text-decoration:none;
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <div class="panel">
+    <div class="header">
+      <div class="logo"></div>
+      <div class="head-text">
+        <div class="kicker">TKFM RADIO</div>
+        <div class="title">Radio Stream Gateway</div>
+      </div>
+      <div class="live-pill">
+        <div class="live-dot"></div>
+        Stream Link
+      </div>
+    </div>
+
+    <div class="sub">
+      This page is the bridge between your <strong>Autopilot / AI DJ world</strong> and a real audio stream
+      (Icecast / Shoutcast / external encoder). The player below always hits:
+      <code>/.netlify/functions/radio-stream-proxy</code> unless you override it for testing.
+    </div>
+
+    <div class="block">
+      <div class="block-title">Stream Endpoint</div>
+
+      <div class="field">
+        <div class="label">Override URL (optional)</div>
+        <input id="overrideInput" type="text" placeholder="Leave empty to use /.netlify/functions/radio-stream-proxy">
+        <div class="hint">
+          Example: <code>https://your-icecast-domain.com/mount</code><br>
+          If empty, this widget uses the Netlify proxy function
+          (<span class="key">RADIO_STREAM_URL</span> env var).
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="saveOverride" class="btn">Save Override</button>
+        <button id="clearOverride" class="btn ghost">Clear Override</button>
+      </div>
+
+      <div class="status" id="endpointStatus">
+        Current endpoint: <span class="key" id="endpointText">/.netlify/functions/radio-stream-proxy</span>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Live Player</div>
+      <div class="player-wrap">
+        <audio id="player" controls></audio>
+      </div>
+
+      <div class="row" style="margin-top:.5rem;">
+        <button id="btnPlay" class="btn primary">Go Live</button>
+        <button id="btnStop" class="btn danger">Stop</button>
+      </div>
+
+      <div class="status" id="playbackStatus">
+        Ready. Hit <span class="good">Go Live</span> to test the current stream.
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>
+        • Configure upstream stream URL as <code>RADIO_STREAM_URL</code> in Netlify env.<br>
+        • Optional per-browser override is saved in <code>tkfm_stream_override_url</code>.
+      </div>
+      <div>
+        Hook rotation logic in <a href="autopilot-engine.html">Autopilot Engine</a> + AI DJ,
+        then point your encoder at the same source.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  const DEFAULT_ENDPOINT = '/.netlify/functions/radio-stream-proxy';
+  const KEY_OVERRIDE = 'tkfm_stream_override_url';
+
+  const overrideInput   = document.getElementById('overrideInput');
+  const saveOverrideBtn = document.getElementById('saveOverride');
+  const clearOverrideBtn= document.getElementById('clearOverride');
+  const endpointStatus  = document.getElementById('endpointStatus');
+  const endpointText    = document.getElementById('endpointText');
+
+  const player          = document.getElementById('player');
+  const btnPlay         = document.getElementById('btnPlay');
+  const btnStop         = document.getElementById('btnStop');
+  const playbackStatus  = document.getElementById('playbackStatus');
+
+  function getEndpoint(){
+    try{
+      const s = localStorage.getItem(KEY_OVERRIDE);
+      if(s && s.trim()) return s.trim();
+    }catch(e){}
+    return DEFAULT_ENDPOINT;
+  }
+
+  function refreshEndpointUI(){
+    const ep = getEndpoint();
+    endpointText.textContent = ep;
+    endpointStatus.innerHTML =
+      'Current endpoint: <span class="key">'+ep+'</span>' +
+      (ep === DEFAULT_ENDPOINT
+        ? ' (using Netlify <span class="key">RADIO_STREAM_URL</span> env var)'
+        : ' (browser override active)');
+    overrideInput.value = (ep === DEFAULT_ENDPOINT) ? '' : ep;
+    player.src = ep;
+  }
+
+  saveOverrideBtn.addEventListener('click', ()=>{
+    const v = overrideInput.value.trim();
+    if(!v){
+      localStorage.removeItem(KEY_OVERRIDE);
+    }else{
+      try{
+        localStorage.setItem(KEY_OVERRIDE, v);
+      }catch(e){}
+    }
+    refreshEndpointUI();
+    playbackStatus.innerHTML = 'Override updated. Hit <span class="good">Go Live</span> to test.';
+  });
+
+  clearOverrideBtn.addEventListener('click', ()=>{
+    localStorage.removeItem(KEY_OVERRIDE);
+    overrideInput.value = '';
+    refreshEndpointUI();
+    playbackStatus.innerHTML = 'Override cleared. Using Netlify proxy endpoint.';
+  });
+
+  btnPlay.addEventListener('click', async ()=>{
+    try{
+      await player.play();
+      playbackStatus.innerHTML = 'Streaming from <span class="key">'+getEndpoint()+'</span>.';
+    }catch(e){
+      playbackStatus.innerHTML =
+        '<span class="bad">Playback error.</span> Check stream is live and CORS on the upstream.';
+    }
+  });
+
+  btnStop.addEventListener('click', ()=>{
+    player.pause();
+    playbackStatus.innerHTML = 'Stopped. Ready when you are.';
+  });
+
+  refreshEndpointUI();
+</script>
+</body>
+</html>

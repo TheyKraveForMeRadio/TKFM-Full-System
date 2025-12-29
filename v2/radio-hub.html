@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TKFM — Radio Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#050014;--bg2:#020013;
+  --neon:#c084fc;--hot:#ff3bd4;--blue:#38bdf8;--lime:#4ade80;--amber:#fbbf24;
+  --text:#f9f5ff;--muted:#a1a1c5;
+  --card:rgba(15,23,42,.97);--border:rgba(148,163,184,.55);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;}
+body{
+  min-height:100vh;color:var(--text);
+  background:
+    radial-gradient(circle at 0% 0%,rgba(255,59,212,.26),transparent 60%),
+    radial-gradient(circle at 100% 100%,rgba(56,189,248,.25),transparent 60%),
+    linear-gradient(to bottom,var(--bg2),var(--bg));
+  display:flex;flex-direction:column;
+}
+a{text-decoration:none;color:inherit;}
+
+header{
+  position:sticky;top:0;z-index:20;
+  padding:.9rem 1.4rem;
+  display:flex;justify-content:space-between;align-items:center;gap:.8rem;
+  background:rgba(5,6,27,.96);
+  border-bottom:1px solid rgba(148,163,184,.6);
+  backdrop-filter:blur(18px);
+}
+.brand{display:flex;align-items:center;gap:.7rem;}
+.brand-logo{
+  width:34px;height:34px;border-radius:999px;
+  border:1px solid var(--neon);
+  background:
+    radial-gradient(circle at 25% 0%,#e879f9,#22d3ee 45%,#020617 100%);
+  box-shadow:0 0 28px rgba(192,132,252,.8),0 0 30px rgba(56,189,248,.7);
+}
+.brand-title{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.brand-subtitle{font-size:1rem;font-weight:650;}
+
+.header-right{display:flex;flex-wrap:wrap;gap:.45rem;}
+.chip{
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;
+  padding:.36rem .7rem;border-radius:999px;
+  border:1px solid rgba(148,163,184,.7);
+  background:radial-gradient(circle at top,rgba(148,163,184,.22),transparent 60%);
+  color:var(--muted);
+}
+
+main{
+  flex:1;
+  padding:1.3rem;
+  display:grid;
+  grid-template-columns:minmax(0,320px) minmax(0,1fr);
+  gap:1rem;
+}
+@media(max-width:880px){
+  main{grid-template-columns:1fr;padding:1rem;}
+  header{flex-direction:column;align-items:flex-start;}
+}
+
+.panel{
+  background:var(--card);
+  border-radius:1rem;
+  border:1px solid var(--border);
+  padding:.9rem .9rem;
+  box-shadow:0 0 35px rgba(15,23,42,.9);
+}
+.panel-title{
+  font-size:.78rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);
+  margin-bottom:.2rem;
+}
+.panel-sub{font-size:.78rem;color:var(--muted);margin-bottom:.6rem;}
+
+.summary-row{
+  display:flex;flex-wrap:wrap;gap:.7rem;
+}
+.summary-card{
+  flex:1 1 140px;
+  background:rgba(15,23,42,.98);
+  border-radius:.8rem;
+  border:1px solid rgba(55,65,81,.9);
+  padding:.6rem .7rem;
+}
+.sum-label{
+  font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);
+}
+.sum-value{font-size:1.2rem;font-weight:650;}
+.sum-sub{font-size:.7rem;color:var(--muted);}
+
+.btn-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem;}
+.btn{
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;
+  padding:.32rem .75rem;border-radius:999px;
+  border:1px solid rgba(148,163,184,.7);
+  background:rgba(15,23,42,.95);
+  color:var(--text);cursor:pointer;
+}
+.btn.primary{
+  border-color:var(--neon);
+  box-shadow:0 0 14px rgba(192,132,252,.7);
+}
+.btn.hot{border-color:var(--hot);color:var(--hot);}
+.btn.green{border-color:var(--lime);color:var(--lime);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+.notice{
+  margin-top:.5rem;font-size:.72rem;color:var(--muted);
+}
+.notice span.key{color:var(--blue);}
+.notice span.bad{color:#fb7185;}
+.notice span.good{color:var(--lime);}
+
+/* right side: timeline + spotlight */
+.section-title{
+  font-size:.82rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);
+  margin-bottom:.2rem;
+}
+.timeline-wrap{
+  margin-top:.5rem;
+  border-radius:.8rem;
+  border:1px solid rgba(55,65,81,.9);
+  background:rgba(15,23,42,.98);
+  max-height:55vh;
+  overflow:auto;
+}
+.row{
+  display:grid;
+  grid-template-columns:36px minmax(0,2fr) minmax(0,1.4fr);
+  gap:.4rem;
+  padding:.4rem .55rem;
+  border-bottom:1px solid rgba(31,41,55,.9);
+  font-size:.78rem;
+}
+.row:nth-child(even){background:rgba(15,23,42,.92);}
+.row-index{
+  font-size:.7rem;
+  color:var(--muted);
+}
+.row-main-title{font-weight:600;}
+.row-main-sub{font-size:.74rem;color:var(--muted);}
+.row-meta{font-size:.72rem;color:var(--muted);}
+.badge{
+  display:inline-block;
+  font-size:.65rem;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  padding:.14rem .36rem;
+  border-radius:.7rem;
+  border:1px solid rgba(148,163,184,.7);
+}
+.badge.featured{border-color:var(--amber);color:var(--amber);}
+.badge.elite{border-color:var(--lime);color:var(--lime);}
+.badge.tier{border-color:var(--blue);color:var(--blue);}
+
+/* mini section: last tag line */
+.last-tag{
+  margin-top:.6rem;
+  padding:.55rem .7rem;
+  border-radius:.8rem;
+  border:1px dashed rgba(148,163,184,.7);
+  background:rgba(15,23,42,.9);
+  font-size:.76rem;
+}
+.last-tag-label{
+  font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:.2rem;
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-logo"></div>
+    <div>
+      <div class="brand-title">TKFM RADIO</div>
+      <div class="brand-subtitle">Radio Hub · Control Room</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="chip">Catalog → Autopilot → AI DJ</div>
+    <div class="chip">Mixtape Hosting Feeds The Station</div>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT: STATUS + SHORTCUTS -->
+  <section class="panel">
+    <div class="panel-title">On-Air System</div>
+    <div class="panel-sub">Snapshot of everything the AI DJ can see: catalog size, last pack, and active mixtape orders feeding in.</div>
+
+    <div class="summary-row">
+      <div class="summary-card">
+        <div class="sum-label">Tracks in Catalog</div>
+        <div id="sumCatalog" class="sum-value">0</div>
+        <div class="sum-sub">tkfm_catalog entries.</div>
+      </div>
+      <div class="summary-card">
+        <div class="sum-label">Tracks in Last Pack</div>
+        <div id="sumPack" class="sum-value">0</div>
+        <div class="sum-sub">tkfm_autopilot_last_pack length.</div>
+      </div>
+      <div class="summary-card">
+        <div class="sum-label">Voice Tag Cells</div>
+        <div id="sumCells" class="sum-value">0</div>
+        <div class="sum-sub">Tracks + tag slots (approx).</div>
+      </div>
+      <div class="summary-card">
+        <div class="sum-label">Active Mixtapes</div>
+        <div id="sumMixtapes" class="sum-value">0</div>
+        <div class="sum-sub">pending / paid / mixing.</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a href="autopilot-engine.html" class="btn primary">Open Autopilot Engine</a>
+      <a href="ai-dj-engine.html" class="btn green">Open AI DJ Engine</a>
+      <a href="label-hub.html" class="btn">Go To Label Hub</a>
+      <a href="dj-mixtape-orders.html" class="btn hot">DJ Mixtape Orders</a>
+      <a href="artist-upload.html" class="btn">Artist Upload Portal</a>
+    </div>
+
+    <div class="notice">
+      Reads from <span class="key">tkfm_catalog</span>,
+      <span class="key">tkfm_autopilot_last_pack</span> and
+      <span class="key">mixtapeOrders</span>.
+      If you see <span class="bad">0 pack tracks</span>, re-run Autopilot Engine.
+    </div>
+  </section>
+
+  <!-- RIGHT: PACK VIEW -->
+  <section class="panel">
+    <div class="section-title">Current Rotation Pack Preview</div>
+    <div class="panel-sub">First 20 slots of <code>tkfm_autopilot_last_pack</code>, with featured / elite highlights.</div>
+
+    <div id="timeline" class="timeline-wrap"></div>
+
+    <div class="last-tag" id="lastTagBox" style="display:none;">
+      <div class="last-tag-label">Sample AI DJ Drop</div>
+      <div id="lastTagText"></div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import {
+    getCatalog,
+    getAutopilotPack,
+    getMixtapeOrders
+  } from './js/tkfm-core.js';
+
+  const sumCatalog   = document.getElementById('sumCatalog');
+  const sumPack      = document.getElementById('sumPack');
+  const sumCells     = document.getElementById('sumCells');
+  const sumMixtapes  = document.getElementById('sumMixtapes');
+  const timelineEl   = document.getElementById('timeline');
+  const lastTagBox   = document.getElementById('lastTagBox');
+  const lastTagText  = document.getElementById('lastTagText');
+
+  function normalizeTrack(t, idx){
+    return {
+      index: idx+1,
+      artist: t.artistName || t.artist || 'Unknown Artist',
+      title: t.trackTitle || t.title || 'Untitled',
+      tier: (t.tier || 'standard').toLowerCase(),
+      featured: !!t.featured,
+      elite: !!t.elite
+    };
+  }
+
+  function computeCellsCount(tracks){
+    if(!tracks.length) return 0;
+    // rough: tag every 3 tracks
+    const tags = Math.floor(tracks.length / 3);
+    return tracks.length + tags;
+  }
+
+  function getActiveMixtapesCount(orders){
+    return orders.filter(o=>{
+      const s = (o.status || '').toLowerCase();
+      return ['pending','paid','mixing'].includes(s);
+    }).length;
+  }
+
+  function sampleTagLine(track){
+    const a = track.artist;
+    const t = track.title;
+    const options = [
+      `You’re locked into They Krave For Me Radio — next up: "${t}" by ${a}.`,
+      `TKFM is breaking what they crave. "${t}" — ${a} on deck.`,
+      `If they’re not playing you here, they’re asleep. "${t}" by ${a} about to hit the mix.`
+    ];
+    return options[Math.floor(Math.random()*options.length)];
+  }
+
+  function render(){
+    const catalog  = getCatalog();
+    const pack     = getAutopilotPack();
+    const orders   = getMixtapeOrders();
+
+    sumCatalog.textContent  = catalog.length;
+    sumPack.textContent     = pack.length;
+    sumCells.textContent    = computeCellsCount(pack);
+    sumMixtapes.textContent = getActiveMixtapesCount(orders);
+
+    timelineEl.innerHTML = '';
+
+    if(!pack.length){
+      const empty = document.createElement('div');
+      empty.style.padding = '.55rem .6rem';
+      empty.style.fontSize = '.78rem';
+      empty.style.color = 'var(--muted)';
+      empty.textContent = 'No Autopilot pack found. Generate a pack from Autopilot Engine to see live rotation here.';
+      timelineEl.appendChild(empty);
+      lastTagBox.style.display = 'none';
+      return;
+    }
+
+    const subset = pack.slice(0,20).map(normalizeTrack);
+
+    subset.forEach(track=>{
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const colIndex = document.createElement('div');
+      colIndex.className = 'row-index';
+      colIndex.textContent = track.index.toString().padStart(2,'0');
+
+      const colMain = document.createElement('div');
+      const title = document.createElement('div');
+      title.className = 'row-main-title';
+      title.textContent = `"${track.title}"`;
+      const sub = document.createElement('div');
+      sub.className = 'row-main-sub';
+      sub.textContent = track.artist;
+      colMain.appendChild(title);
+      colMain.appendChild(sub);
+
+      const colMeta = document.createElement('div');
+      const badges = [];
+
+      const tierBadge = document.createElement('span');
+      tierBadge.className = 'badge tier';
+      tierBadge.textContent = track.tier.toUpperCase();
+      badges.push(tierBadge);
+
+      if(track.featured){
+        const b = document.createElement('span');
+        b.className = 'badge featured';
+        b.textContent = 'FEATURED';
+        badges.push(b);
+      }
+      if(track.elite){
+        const b = document.createElement('span');
+        b.className = 'badge elite';
+        b.textContent = 'ELITE';
+        badges.push(b);
+      }
+
+      badges.forEach(b=>{
+        b.style.marginRight = '.25rem';
+        colMeta.appendChild(b);
+      });
+
+      row.appendChild(colIndex);
+      row.appendChild(colMain);
+      row.appendChild(colMeta);
+      timelineEl.appendChild(row);
+    });
+
+    // show sample tag for the *next* track
+    const pick = subset[0];
+    if(pick){
+      lastTagBox.style.display = 'block';
+      lastTagText.textContent = sampleTagLine(pick);
+    }else{
+      lastTagBox.style.display = 'none';
+    }
+  }
+
+  render();
+</script>
+</body>
+</html>

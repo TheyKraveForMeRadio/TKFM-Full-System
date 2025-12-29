@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TKFM — Label Mixtape Spotlight Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+ --bg:#05070b;--bg-alt:#080c14;--label-gold:#facc6b;--label-amber:#fbbf24;
+ --label-emerald:#22c55e;--label-teal:#14b8a6;--label-ink:#020617;
+ --text-main:#fefce8;--text-muted:#a1a1aa;--border-subtle:rgba(248,250,252,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+body{
+ background:linear-gradient(to bottom,var(--bg-alt),var(--label-ink)),
+ radial-gradient(circle at 15% 0,rgba(250,204,21,.1),transparent 60%),
+ radial-gradient(circle at 85% 100%,rgba(34,197,94,.1),transparent 60%);
+ color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;
+}
+a{text-decoration:none;color:inherit}
+
+/* HEADER */
+.neon-header{
+ padding:1rem 1.2rem;background:rgba(5,7,12,.86);backdrop-filter:blur(14px);
+ border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;
+ align-items:center;gap:.8rem;position:sticky;top:0;z-index:20;
+}
+.brand{display:flex;align-items:center;gap:.6rem;}
+.brand-logo{
+ width:32px;height:32px;border-radius:50%;border:1px solid var(--label-gold);
+ background:radial-gradient(circle,#facc6b,#fbbf24 40%,#0f172a 100%);
+}
+.brand-title{font-size:.85rem;letter-spacing:.18em;color:var(--text-muted)}
+.brand-subtitle{font-weight:600}
+
+/* SUMMARY */
+main{padding:1.2rem;display:flex;flex-direction:column;gap:1rem}
+.summary{display:flex;flex-wrap:wrap;gap:.8rem}
+.sum{
+ background:rgba(10,12,24,.9);padding:.6rem .9rem;border-radius:.8rem;
+ border:1px solid var(--border-subtle);min-width:150px;
+}
+.sum-label{font-size:.65rem;opacity:.7;text-transform:uppercase;letter-spacing:.1em}
+.sum-value{font-size:1.3rem;font-weight:600}
+
+/* FILTER */
+.filter{
+ display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;
+ padding:.6rem .8rem;border-radius:.6rem;
+ background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08)
+}
+select,input{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);
+ color:var(--text-main);padding:.3rem .6rem;border-radius:.4rem}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.8rem;margin-top:1rem}
+.card{
+ padding:.8rem;border-radius:.8rem;border:1px solid rgba(255,255,255,.1);
+ background:rgba(0,0,0,.35);display:flex;flex-direction:column;gap:.4rem;
+}
+.card.highlight{border-color:var(--label-gold)}
+.title{font-weight:600}
+.artist{color:var(--text-muted);font-size:.85rem}
+.price{color:var(--label-emerald);font-size:.9rem;font-weight:600}
+
+.flag-row{display:flex;flex-direction:column;gap:.25rem;margin-top:.4rem}
+.flag{display:flex;justify-content:space-between;align-items:center;font-size:.78rem}
+.flag input{accent-color:var(--label-gold)}
+</style>
+</head>
+
+<body>
+<header class="neon-header">
+ <div class="brand">
+  <div class="brand-logo"></div>
+  <div><div class="brand-title">TKFM LABEL</div><div class="brand-subtitle">Mixtape Spotlight</div></div>
+ </div>
+</header>
+
+<main>
+ <!-- SUMMARY -->
+ <section class="summary">
+  <div class="sum"><div class="sum-label">Delivered</div><div id="s-del" class="sum-value">0</div></div>
+  <div class="sum"><div class="sum-label">Radio Ready</div><div id="s-radio" class="sum-value">0</div></div>
+  <div class="sum"><div class="sum-label">Label Consider</div><div id="s-label" class="sum-value">0</div></div>
+  <div class="sum"><div class="sum-label">Homepage</div><div id="s-home" class="sum-value">0</div></div>
+ </section>
+
+ <!-- FILTER -->
+ <section class="filter">
+  <select id="f-status">
+   <option value="delivered">Delivered</option>
+   <option value="all">All Status</option>
+  </select>
+  <select id="f-flag">
+   <option value="any">Any Flag</option>
+   <option value="radio">Radio</option>
+   <option value="label">Label</option>
+   <option value="home">Homepage</option>
+  </select>
+  <input id="f-search" placeholder="Search artist / title">
+  <div id="f-info" style="font-size:.75rem;opacity:.7;"></div>
+ </section>
+
+ <!-- CARDS -->
+ <section id="grid" class="grid"></section>
+ <div id="empty" style="opacity:.6;margin-top:.6rem;display:none;">No mixtapes match this view.</div>
+</main>
+
+<script>
+const STATUS = 'delivered';
+
+// SAFE PARSE
+const read = k => {try{const d=JSON.parse(localStorage.getItem(k));return Array.isArray(d)?d:[]}catch{ return [] }};
+
+// FETCH
+const orders = () => read('mixtapeOrders').map(x=>({
+ ...x,
+ artist: x.artistName||x.clientName||'Unknown Artist',
+ title: x.mixtapeTitle||x.projectTitle||'Untitled',
+ price: x.amount||x.price||0,
+ status: (x.status||'').toLowerCase(),
+ radio: !!x.radioSpotlight,
+ label: !!x.labelConsideration||!!x.contractOffer,
+ home: !!x.homepageFeature
+}));
+
+// SAVE
+const save = list => localStorage.setItem('mixtapeOrders',JSON.stringify(list));
+
+function update(id,patch){
+ const list = orders();
+ const i = list.findIndex(x=>String(x.id)===String(id));
+ if(i>-1){ list[i] = {...list[i],...patch}; save(list); render(); }
+}
+
+// FILTER CONTROLS
+const fs = document.getElementById('f-status');
+const ff = document.getElementById('f-flag');
+const fq = document.getElementById('f-search');
+[fs,ff,fq].forEach(el=>el.oninput=render);
+
+function render(){
+ const list = orders();
+ const f = list.filter(x=>{
+  if(fs.value==='delivered' && x.status!==STATUS) return false;
+  if(ff.value==='radio' && !x.radio) return false;
+  if(ff.value==='label' && !x.label) return false;
+  if(ff.value==='home' && !x.home) return false;
+  if(fq.value.trim().length){
+    const q=fq.value.toLowerCase();
+    if(!x.artist.toLowerCase().includes(q) && !x.title.toLowerCase().includes(q)) return false;
+  }
+  return true;
+ });
+
+ document.getElementById('f-info').textContent = `${f.length} shown`;
+ const g = document.getElementById('grid');
+ g.innerHTML = '';
+ document.getElementById('empty').style.display = f.length? 'none':'block';
+
+ // SUMMARY
+ const d = list.filter(x=>x.status===STATUS).length;
+ const r = list.filter(x=>x.status===STATUS && x.radio).length;
+ const l = list.filter(x=>x.status===STATUS && x.label).length;
+ const h = list.filter(x=>x.status===STATUS && x.home).length;
+ document.getElementById('s-del').textContent=d;
+ document.getElementById('s-radio').textContent=r;
+ document.getElementById('s-label').textContent=l;
+ document.getElementById('s-home').textContent=h;
+
+ // CARDS
+ f.forEach(x=>{
+  const card = document.createElement('div');
+  card.className = 'card'+(x.radio||x.label||x.home?' highlight':'');
+
+  card.innerHTML = `
+    <div class="title">${x.title}</div>
+    <div class="artist">${x.artist}</div>
+    <div class="price">$${x.price}</div>
+  `;
+
+  const flags = document.createElement('div');
+  flags.className='flag-row';
+
+  const mk=(lbl,key,val)=> {
+    const row=document.createElement('div');
+    row.className='flag';
+    row.innerHTML=`<span>${lbl}</span>`;
+    const cb=document.createElement('input');cb.type='checkbox';cb.checked=val;
+    cb.onchange=()=>update(x.id,{[key]:cb.checked});
+    row.appendChild(cb);
+    flags.appendChild(row);
+  };
+
+  mk('Radio Spotlight','radioSpotlight',x.radio);
+  mk('Label Consider','labelConsideration',x.label);
+  mk('Contract Offer','contractOffer',x.contractOffer);
+  mk('Homepage','homepageFeature',x.home);
+
+  card.appendChild(flags);
+  g.appendChild(card);
+ });
+}
+
+render();
+</script>
+</body>
+</html>

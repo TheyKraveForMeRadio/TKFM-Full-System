@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DJ KRAVE — Mixtape Hosting</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-mono">
+<header class="p-6 text-center border-b border-purple-700">
+  <h1 class="text-4xl font-bold neon">🔥 DJ KRAVE MIXTAPE HOSTING 🔥</h1>
+  <p class="text-purple-400 mt-2">Hosted • Mixed • Powered by TKFM Autopilot</p>
+</header>
+
+<section class="grid md:grid-cols-3 gap-6 p-8">
+
+  <!-- Tier 1 -->
+  <div class="border border-purple-700 p-6 rounded-xl shadow-xl bg-black/40">
+    <h2 class="text-2xl mb-2">Starter</h2>
+    <p class="text-purple-300 mb-4">$500 • 30 min tape</p>
+    <ul class="text-sm mb-6 space-y-1">
+      <li>✔️ Basic Blend / Transitions</li>
+      <li>✔️ Hosted on TKFM</li>
+      <li>✔️ Submission to Autopilot</li>
+    </ul>
+    <button data-tier="starter" class="buy bg-purple-600 w-full py-2 rounded">Book Now</button>
+  </div>
+
+  <!-- Tier 2 -->
+  <div class="border border-purple-700 p-6 rounded-xl shadow-xl bg-black/60">
+    <h2 class="text-2xl mb-2">Pro</h2>
+    <p class="text-purple-300 mb-4">$1,000 • 45-60 min tape</p>
+    <ul class="text-sm mb-6 space-y-1">
+      <li>✔️ Advanced Mixing + FX</li>
+      <li>✔️ TKFM Homepage Feature</li>
+      <li>✔️ 3 Autopilot promo blasts</li>
+    </ul>
+    <button data-tier="pro" class="buy bg-purple-600 w-full py-2 rounded">Book Now</button>
+  </div>
+
+  <!-- Tier 3 -->
+  <div class="border border-yellow-600 p-6 rounded-xl shadow-xl bg-black/80">
+    <h2 class="text-2xl mb-2">Elite</h2>
+    <p class="text-yellow-300 mb-4">$2,500 • Full Project</p>
+    <ul class="text-sm mb-6 space-y-1">
+      <li>🔥 Full Production / Mix / Master</li>
+      <li>🔥 DJ KRAVE Co-Host Intro</li>
+      <li>🔥 Label Consideration Pipeline</li>
+      <li>🔥 Guaranteed Radio Rotation</li>
+    </ul>
+    <button data-tier="elite" class="buy bg-yellow-600 w-full py-2 rounded">Book Now</button>
+  </div>
+</section>
+
+<script>
+document.querySelectorAll('.buy').forEach(btn=>{
+  btn.onclick = async () => {
+    const tier = btn.dataset.tier;
+    const res = await fetch('/.netlify/functions/create-mixtape-session',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ tier })
+    });
+    const { url } = await res.json();
+    window.location = url;
+  }
+});
+</script>
+</body>
+</html>

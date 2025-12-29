@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM — Label Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg:#05070b;--bg-alt:#080c14;--label-gold:#facc6b;--label-amber:#fbbf24;--label-emerald:#22c55e;
+      --label-teal:#14b8a6;--label-ink:#020617;--text-main:#fefce8;--text-muted:#a1a1aa;
+      --card-bg:rgba(10,12,24,.98);--border-subtle:rgba(248,250,252,.08);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+    body{
+      min-height:100vh;color:var(--text-main);
+      background:
+      radial-gradient(circle at top left,rgba(250,204,21,.13),transparent 55%),
+      radial-gradient(circle at bottom right,rgba(34,197,94,.15),transparent 60%),
+      linear-gradient(to bottom,var(--bg-alt),var(--label-ink));
+      display:flex;flex-direction:column;
+    }
+    a{text-decoration:none;color:inherit;}
+    .neon-header{
+      position:sticky;top:0;z-index:20;padding:.8rem 1.4rem;
+      backdrop-filter:blur(18px);
+      background:radial-gradient(circle at top left,rgba(250,204,21,.14),transparent 55%),rgba(5,7,12,.96);
+      border-bottom:1px solid rgba(255,255,255,.05);
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .brand{display:flex;align-items:center;gap:.7rem;}
+    .brand-logo{
+      width:32px;height:32px;border-radius:50%;
+      border:1px solid rgba(250,204,21,.7);
+      background:radial-gradient(circle at 25% 0%,#facc6b,#fbbf24 40%,#0f172a 100%);
+      box-shadow:0 0 26px rgba(234,179,8,.65),0 0 32px rgba(34,197,94,.35);
+    }
+    .brand-title{font-size:.9rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);}
+    .brand-subtitle{font-size:1rem;font-weight:600;}
+    .toolbar{display:flex;gap:.5rem;flex-wrap:wrap;}
+    .toolbar-chip{
+      font-size:.75rem;text-transform:uppercase;letter-spacing:.14em;border-radius:999px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(15,23,42,.6);padding:.4rem .7rem;
+    }
+    main{padding:1.4rem;display:flex;gap:1.2rem;flex-direction:column;}
+    .summary-row{display:flex;flex-wrap:wrap;gap:.9rem;}
+    .summary-card{
+      background:var(--card-bg);border-radius:1rem;padding:.7rem .9rem;
+      border:1px solid var(--border-subtle);min-width:180px;
+    }
+    .summary-label{font-size:.7rem;text-transform:uppercase;color:var(--text-muted);}
+    .summary-value{font-size:1.2rem;font-weight:600;}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:600px){.grid{grid-template-columns:1fr;} }
+
+    .hub-card{
+      background:var(--card-bg);border-radius:1.1rem;padding:.95rem;
+      border:1px solid rgba(255,255,255,.08);cursor:pointer;
+      transition:all .15s;
+    }
+    .hub-card:hover{
+      border-color:var(--label-gold);
+      box-shadow:0 0 25px rgba(250,204,21,.35),0 0 30px rgba(20,184,166,.2);
+    }
+    .hub-eyebrow{font-size:.7rem;text-transform:uppercase;color:var(--text-muted);}
+    .hub-title{font-size:1rem;font-weight:600;margin:.25rem 0;}
+    .hub-desc{font-size:.8rem;color:var(--text-muted);margin-bottom:.5rem;}
+    .hub-footer-row{display:flex;justify-content:space-between;}
+    .hub-btn{
+      padding:.32rem .85rem;border-radius:999px;
+      background:rgba(250,204,21,.2);border:1px solid var(--label-gold);
+      font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;
+    }
+  </style>
+</head>
+<body>
+  <header class="neon-header">
+    <div class="brand"><div class="brand-logo"></div><div><div class="brand-title">TKFM LABEL</div><div class="brand-subtitle">Label Hub</div></div></div>
+    <div class="toolbar">
+      <div class="toolbar-chip">🎚️ Artist → Label → Autopilot → AI DJ</div>
+      <div class="toolbar-chip">💿 Mixtape Hosting Pipeline</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary-row">
+      <div class="summary-card"><div class="summary-label">Pending</div><div id="summaryPending" class="summary-value">0</div></div>
+      <div class="summary-card"><div class="summary-label">Catalog</div><div id="summaryCatalog" class="summary-value">0</div></div>
+      <div class="summary-card"><div class="summary-label">Last Pack</div><div id="summaryPack" class="summary-value">0</div></div>
+      <div class="summary-card"><div class="summary-label">Mixtapes</div><div id="summaryMixtapes" class="summary-value">0</div></div>
+    </section>
+
+    <section class="grid">
+      <a href="label-submissions.html" class="hub-card"><div class="hub-eyebrow">Step 1</div><div class="hub-title">Submissions Console</div><div class="hub-desc">Review uploads → catalog.</div><div class="hub-footer-row"><div class="hub-btn">Open</div><span id="cardPending">0</span></div></a>
+      <a href="autopilot-engine.html" class="hub-card"><div class="hub-eyebrow">Step 2</div><div class="hub-title">Autopilot Engine</div><div class="hub-desc">Rotation packs → AI DJ.</div><div class="hub-footer-row"><div class="hub-btn">Open</div><span id="cardCatalog">0</span></div></a>
+      <a href="ai-dj-engine.html" class="hub-card"><div class="hub-eyebrow">Step 3</div><div class="hub-title">AI DJ Engine</div><div class="hub-desc">Consumes last pack.</div><div class="hub-footer-row"><div class="hub-btn">Open</div><span id="cardPack">0</span></div></a>
+      <a href="label-contract-lab.html" class="hub-card"><div class="hub-eyebrow">Deals</div><div class="hub-title">Contract Lab</div><div class="hub-desc">Generate / print.</div><div class="hub-footer-row"><div class="hub-btn">Open</div><span>—</span></div></a>
+      <a href="dj-mixtape-orders.html" class="hub-card"><div class="hub-eyebrow">DJ KRAVE</div><div class="hub-title">Mixtape Orders</div><div class="hub-desc">Stripe pipeline.</div><div class="hub-footer-row"><div class="hub-btn">Open</div><span id="cardMixtapes">0</span></div></a>
+      <a href="label-accounts.html" class="hub-card"><div class="hub-eyebrow">Admin</div><div class="hub-title">Label Accounts</div><div class="hub-desc">Control center.</div><div class="hub-footer-row"><div class="hub-btn">Open</div><span>—</span></div></a>
+    </section>
+  </main>
+
+  <script>
+    const get = k => { try{ return JSON.parse(localStorage.getItem(k)||"[]") }catch{return[] } };
+    const uploads = get("artistUploads");
+    const catalog = get("tkfm_catalog");
+    const mixtapes = get("mixtapeOrders");
+    let packCount = 0;
+    try{const p = JSON.parse(localStorage.getItem("tkfm_autopilot_last_pack")||"[]");packCount = Array.isArray(p)?p.length:0;}catch{}
+
+    document.getElementById("summaryPending").textContent = uploads.filter(u=>!["cataloged","rejected"].includes(u.status||"")).length;
+    document.getElementById("summaryCatalog").textContent = catalog.length;
+    document.getElementById("summaryPack").textContent = packCount;
+    document.getElementById("summaryMixtapes").textContent = mixtapes.length;
+
+    document.getElementById("cardPending").textContent = uploads.filter(u=>!["cataloged","rejected"].includes(u.status||"")).length;
+    document.getElementById("cardCatalog").textContent = catalog.length;
+    document.getElementById("cardPack").textContent = packCount;
+    document.getElementById("cardMixtapes").textContent = mixtapes.length;
+  </script>
+</body>
+</html>

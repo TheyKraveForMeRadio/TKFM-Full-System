@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TKFM — DJ Mixtape Orders Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#050014;--bg-alt:#090015;
+  --dj-pink:#ff3bd4;--dj-purple:#a855f7;--dj-gold:#facc6b;--dj-teal:#22c55e;
+  --ink:#020012;--text:#f9f5ff;--muted:#a1a1c5;
+  --card:rgba(10,10,30,.96);--border-subtle:rgba(148,163,184,.4);
+  --danger:#fb7185;--warn:#fbbf24;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;}
+body{
+  min-height:100vh;color:var(--text);
+  background:
+    radial-gradient(circle at 10% -10%,rgba(255,59,212,.23),transparent 60%),
+    radial-gradient(circle at 90% 110%,rgba(168,85,247,.22),transparent 60%),
+    linear-gradient(to bottom,var(--bg-alt),var(--ink));
+  display:flex;flex-direction:column;
+}
+a{text-decoration:none;color:inherit;}
+
+header{
+  position:sticky;top:0;z-index:20;
+  padding:1rem 1.4rem;
+  display:flex;justify-content:space-between;align-items:center;gap:.9rem;
+  background:rgba(5,5,20,.96);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(148,163,184,.5);
+}
+.brand{display:flex;align-items:center;gap:.7rem;}
+.brand-logo{
+  width:34px;height:34px;border-radius:999px;
+  border:1px solid var(--dj-pink);
+  background:
+    radial-gradient(circle at 25% 0%,#fb7185,#a855f7 40%,#020617 100%);
+  box-shadow:0 0 26px rgba(248,113,113,.8),0 0 28px rgba(168,85,247,.7);
+}
+.brand-title{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.brand-subtitle{font-size:1rem;font-weight:650;}
+
+.header-right{display:flex;flex-wrap:wrap;gap:.5rem;}
+.chip{
+  font-size:.73rem;text-transform:uppercase;letter-spacing:.14em;
+  padding:.4rem .7rem;border-radius:999px;
+  border:1px solid rgba(148,163,184,.6);
+  background:radial-gradient(circle at top,rgba(255,59,212,.26),transparent 60%);
+  color:var(--muted);
+}
+main{
+  padding:1.3rem;
+  display:flex;flex-direction:column;gap:1.1rem;
+}
+@media(max-width:800px){
+  header{flex-direction:column;align-items:flex-start;}
+  main{padding:1rem;}
+}
+
+/* summary */
+.summary-row{
+  display:flex;flex-wrap:wrap;gap:.8rem;
+}
+.summary-card{
+  background:var(--card);border-radius:.9rem;
+  padding:.6rem .9rem;border:1px solid var(--border-subtle);min-width:150px;
+}
+.sum-label{
+  font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);
+}
+.sum-value{font-size:1.2rem;font-weight:650;}
+.sum-sub{font-size:.7rem;color:var(--muted);}
+
+/* filter bar */
+.filter-bar{
+  background:var(--card);border-radius:.8rem;border:1px solid var(--border-subtle);
+  padding:.55rem .75rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;
+  font-size:.78rem;
+}
+.filter-left{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;}
+.filter-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);}
+select,input{
+  background:rgba(0,0,0,.6);border:1px solid rgba(148,163,184,.8);
+  color:var(--text);border-radius:.55rem;padding:.3rem .6rem;font-size:.78rem;
+}
+.filter-search{min-width:180px;border-radius:.5rem;}
+.filter-info{font-size:.75rem;color:var(--muted);}
+
+/* table */
+.table-wrap{
+  background:var(--card);border-radius:1rem;border:1px solid var(--border-subtle);
+  padding:.7rem .75rem;overflow:auto;
+}
+table{width:100%;border-collapse:collapse;font-size:.78rem;}
+thead{background:rgba(15,23,42,.96);}
+th,td{padding:.42rem .45rem;text-align:left;white-space:nowrap;}
+th{
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);
+  border-bottom:1px solid rgba(148,163,184,.6);
+}
+tbody tr:nth-child(even){background:rgba(15,23,42,.7);}
+tbody tr.status-pending{border-left:3px solid var(--warn);}
+tbody tr.status-paid{border-left:3px solid var(--dj-teal);}
+tbody tr.status-mixing{border-left:3px solid var(--dj-purple);}
+tbody tr.status-delivered{border-left:3px solid var(--dj-gold);}
+tbody tr.status-cancelled{border-left:3px solid var(--danger);opacity:.7;}
+
+.status-pill{
+  font-size:.67rem;text-transform:uppercase;letter-spacing:.1em;
+  padding:.15rem .42rem;border-radius:999px;border:1px solid rgba(148,163,184,.7);
+}
+.status-pill.pending{border-color:var(--warn);color:var(--warn);}
+.status-pill.paid{border-color:var(--dj-teal);color:var(--dj-teal);}
+.status-pill.mixing{border-color:var(--dj-purple);color:var(--dj-purple);}
+.status-pill.delivered{border-color:var(--dj-gold);color:var(--dj-gold);}
+.status-pill.cancelled{border-color:var(--danger);color:var(--danger);}
+
+.badge-tier{
+  font-size:.67rem;padding:.12rem .4rem;border-radius:.6rem;
+  border:1px solid rgba(148,163,184,.6);display:inline-block;
+}
+.badge-tier.elite{border-color:var(--dj-gold);color:var(--dj-gold);}
+.badge-tier.pro{border-color:var(--dj-purple);color:var(--dj-purple);}
+.badge-tier.starter{border-color:var(--dj-teal);color:var(--dj-teal);}
+
+/* actions */
+.btn-row{display:flex;flex-wrap:wrap;gap:.25rem;}
+.btn{
+  font-size:.68rem;border-radius:999px;padding:.18rem .55rem;border:1px solid rgba(148,163,184,.7);
+  background:rgba(15,23,42,.95);color:var(--text);cursor:pointer;
+}
+.btn-small{font-size:.64rem;padding:.16rem .5rem;}
+.btn-primary{border-color:var(--dj-teal);color:var(--dj-teal);}
+.btn-warn{border-color:var(--warn);color:var(--warn);}
+.btn-danger{border-color:var(--danger);color:var(--danger);}
+.btn-ghost{border-style:dashed;opacity:.9;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+.empty-state{
+  font-size:.78rem;color:var(--muted);padding:.4rem .1rem;
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-logo"></div>
+    <div>
+      <div class="brand-title">TKFM · DJ KRAVE</div>
+      <div class="brand-subtitle">Mixtape Hosting Orders Console</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="chip">Stripe → webhook → mixtapeOrders</div>
+    <div class="chip">Starter · Pro · Elite Tapes</div>
+  </div>
+</header>
+
+<main>
+  <section class="summary-row">
+    <div class="summary-card">
+      <div class="sum-label">Total Orders</div>
+      <div id="sumTotal" class="sum-value">0</div>
+      <div class="sum-sub">All time mixtape hosting orders.</div>
+    </div>
+    <div class="summary-card">
+      <div class="sum-label">Active</div>
+      <div id="sumActive" class="sum-value">0</div>
+      <div class="sum-sub">Pending / Paid / Mixing.</div>
+    </div>
+    <div class="summary-card">
+      <div class="sum-label">Delivered</div>
+      <div id="sumDelivered" class="sum-value">0</div>
+      <div class="sum-sub">Completed + sent to clients.</div>
+    </div>
+    <div class="summary-card">
+      <div class="sum-label">Cancelled</div>
+      <div id="sumCancelled" class="sum-value">0</div>
+      <div class="sum-sub">Refunded / dropped orders.</div>
+    </div>
+  </section>
+
+  <section class="filter-bar">
+    <div class="filter-left">
+      <span class="filter-label">View</span>
+      <select id="filterStatus">
+        <option value="all">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="paid">Paid</option>
+        <option value="mixing">Mixing</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <select id="filterTier">
+        <option value="any">Any tier</option>
+        <option value="starter">Starter</option>
+        <option value="pro">Pro</option>
+        <option value="elite">Elite</option>
+      </select>
+      <input id="filterSearch" class="filter-search" placeholder="Search client / artist / project">
+    </div>
+    <div id="filterInfo" class="filter-info">0 orders shown.</div>
+  </section>
+
+  <section class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Client / Artist</th>
+          <th>Tier</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th style="min-width:180px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="ordersBody"></tbody>
+    </table>
+    <div id="emptyState" class="empty-state" style="display:none;">
+      No mixtape orders yet. Once Stripe sessions complete and your webhook writes into
+      <strong>localStorage["mixtapeOrders"]</strong>, they’ll appear here for you to manage.
+    </div>
+  </section>
+</main>
+
+<script>
+/* -------- helpers -------- */
+function readOrders(){
+  try{
+    const raw = localStorage.getItem('mixtapeOrders');
+    if(!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  }catch(e){
+    console.error('mixtapeOrders parse error',e);
+    return [];
+  }
+}
+function writeOrders(list){
+  try{
+    localStorage.setItem('mixtapeOrders',JSON.stringify(list||[]));
+  }catch(e){
+    console.error('mixtapeOrders write error',e);
+  }
+}
+function normalizeStatus(raw){
+  const s = (raw||'').toString().toLowerCase();
+  if(!s) return 'pending';
+  if(s==='processing') return 'paid';
+  if(s==='complete') return 'delivered';
+  return s;
+}
+function detectTier(order){
+  const t = (order.tier||order.planName||order.productName||'').toLowerCase();
+  if(t.includes('elite')) return 'elite';
+  if(t.includes('pro')) return 'pro';
+  if(t.includes('starter')) return 'starter';
+  return 'starter';
+}
+function formatCurrency(v){
+  const n = Number(v||0);
+  if(!n) return '$0';
+  return '$' + n.toFixed(0);
+}
+function formatDate(val){
+  if(!val) return '—';
+  try{
+    const d = new Date(val);
+    if(isNaN(d.getTime())) return String(val);
+    return d.toLocaleDateString(undefined,{month:'short',day:'2-digit',year:'numeric'});
+  }catch{
+    return String(val);
+  }
+}
+function enrichedOrders(){
+  return readOrders().map(o=>({
+    ...o,
+    status: normalizeStatus(o.status),
+    tier: detectTier(o),
+    client: o.clientName||o.customerName||o.name||'Unknown Client',
+    artist: o.artistName||o.artist||o.clientName||'Unknown Artist',
+    project: o.projectTitle||o.mixtapeTitle||o.title||'Untitled',
+    created: o.createdAt||o.created||o.timestamp||o.date,
+    price: o.amount||o.price||0
+  }));
+}
+
+/* -------- DOM refs -------- */
+const sumTotal = document.getElementById('sumTotal');
+const sumActive = document.getElementById('sumActive');
+const sumDelivered = document.getElementById('sumDelivered');
+const sumCancelled = document.getElementById('sumCancelled');
+
+const filterStatus = document.getElementById('filterStatus');
+const filterTier   = document.getElementById('filterTier');
+const filterSearch = document.getElementById('filterSearch');
+const filterInfo   = document.getElementById('filterInfo');
+
+const bodyEl      = document.getElementById('ordersBody');
+const emptyState  = document.getElementById('emptyState');
+
+/* -------- render -------- */
+function computeSummaries(all){
+  const total = all.length;
+  const delivered = all.filter(o=>o.status==='delivered').length;
+  const cancelled = all.filter(o=>o.status==='cancelled').length;
+  const active = all.filter(o=>['pending','paid','mixing'].includes(o.status)).length;
+
+  sumTotal.textContent = total;
+  sumActive.textContent = active;
+  sumDelivered.textContent = delivered;
+  sumCancelled.textContent = cancelled;
+}
+
+function passesFilters(o){
+  const statusWanted = filterStatus.value;
+  const tierWanted   = filterTier.value;
+  const q = filterSearch.value.trim().toLowerCase();
+
+  if(statusWanted!=='all' && o.status!==statusWanted) return false;
+  if(tierWanted!=='any' && o.tier!==tierWanted) return false;
+
+  if(q){
+    const blob = (o.client+' '+o.artist+' '+o.project+' '+(o.email||'')).toLowerCase();
+    if(!blob.includes(q)) return false;
+  }
+  return true;
+}
+
+function render(){
+  const all = enrichedOrders();
+  computeSummaries(all);
+
+  const filtered = all.filter(passesFilters);
+  filterInfo.textContent = filtered.length+' order'+(filtered.length===1?'':'s')+' shown.';
+  bodyEl.innerHTML = '';
+  emptyState.style.display = filtered.length ? 'none' : 'block';
+
+  if(!filtered.length) return;
+
+  filtered.forEach(order=>{
+    const tr = document.createElement('tr');
+    tr.className = 'status-'+order.status;
+
+    /* client / artist */
+    const tdClient = document.createElement('td');
+    const main = document.createElement('div');
+    main.style.fontWeight='600';
+    main.textContent = order.client;
+    const sub = document.createElement('div');
+    sub.style.fontSize='.72rem';
+    sub.style.color='var(--muted)';
+    sub.textContent = order.artist+' • '+order.project;
+    tdClient.appendChild(main);
+    tdClient.appendChild(sub);
+
+    /* tier */
+    const tdTier = document.createElement('td');
+    const spanTier = document.createElement('span');
+    spanTier.className = 'badge-tier '+order.tier;
+    spanTier.textContent = order.tier.toUpperCase();
+    tdTier.appendChild(spanTier);
+
+    /* price */
+    const tdPrice = document.createElement('td');
+    tdPrice.textContent = formatCurrency(order.price);
+
+    /* status */
+    const tdStatus = document.createElement('td');
+    const pill = document.createElement('span');
+    pill.className = 'status-pill '+order.status;
+    pill.textContent = order.status.toUpperCase();
+    tdStatus.appendChild(pill);
+
+    /* created */
+    const tdCreated = document.createElement('td');
+    tdCreated.textContent = formatDate(order.created);
+
+    /* actions */
+    const tdActions = document.createElement('td');
+    const row = document.createElement('div');
+    row.className = 'btn-row';
+
+    const btnPaid = document.createElement('button');
+    btnPaid.className = 'btn btn-small btn-primary';
+    btnPaid.textContent = 'Mark Paid';
+    btnPaid.onclick = () => updateStatus(order.id,'paid');
+
+    const btnMix = document.createElement('button');
+    btnMix.className = 'btn btn-small btn-ghost';
+    btnMix.textContent = 'Mixing';
+    btnMix.onclick = () => updateStatus(order.id,'mixing');
+
+    const btnDelivered = document.createElement('button');
+    btnDelivered.className = 'btn btn-small btn-warn';
+    btnDelivered.textContent = 'Delivered';
+    btnDelivered.onclick = () => updateStatus(order.id,'delivered');
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-small btn-danger';
+    btnCancel.textContent = 'Cancel';
+    btnCancel.onclick = () => {
+      if(confirm('Mark this order as cancelled?')) updateStatus(order.id,'cancelled');
+    };
+
+    row.appendChild(btnPaid);
+    row.appendChild(btnMix);
+    row.appendChild(btnDelivered);
+    row.appendChild(btnCancel);
+
+    tdActions.appendChild(row);
+
+    tr.appendChild(tdClient);
+    tr.appendChild(tdTier);
+    tr.appendChild(tdPrice);
+    tr.appendChild(tdStatus);
+    tr.appendChild(tdCreated);
+    tr.appendChild(tdActions);
+
+    bodyEl.appendChild(tr);
+  });
+}
+
+/* -------- updates -------- */
+function updateStatus(id,newStatus){
+  const raw = readOrders();
+  const idx = raw.findIndex(o=>String(o.id)===String(id));
+  if(idx===-1) return;
+  raw[idx].status = newStatus;
+  writeOrders(raw);
+  render();
+}
+
+/* -------- events -------- */
+filterStatus.addEventListener('change',render);
+filterTier.addEventListener('change',render);
+filterSearch.addEventListener('input',render);
+
+/* init */
+render();
+</script>
+</body>
+</html>

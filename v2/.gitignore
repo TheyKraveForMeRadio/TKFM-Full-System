@@ -1,0 +1,16 @@
+# 💀 DO NOT TRACK THESE
+node_modules/
+dist/
+.vite/
+.vscode/
+.env
+.env.*
+*.local
+.DS_Store
+
+# TKFM TEMP
+local_engine/
+netlify/functions/v2/
+
+# IGNORE EVERYTHING GENERATED
+**/*.log

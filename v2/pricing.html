@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM Radio Pricing — The Independent Artist Power Station</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.96);
+      --bg-card-soft: rgba(15,23,42,0.9);
+      --accent-orange: #f97316;
+      --accent-pink: #ec4899;
+      --accent-blue: #38bdf8;
+      --accent-violet: #a855f7;
+      --accent-gold: #facc15;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.9);
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.16),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.18),transparent 60%),
+        radial-gradient(circle at 50% 120%,#020617,#020617 70%);
+      color:var(--text-main);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    main {
+      max-width:1180px;
+      margin:0 auto;
+      padding:1.6rem .9rem 3rem;
+      position:relative;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    /* HALO FX */
+    .halo-left,
+    .halo-right {
+      position:fixed;
+      width:280px;
+      height:280px;
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,0.7);
+      top:6%;
+      opacity:0.45;
+      pointer-events:none;
+      mix-blend-mode:screen;
+      animation:haloSpin 26s linear infinite;
+    }
+    .halo-left {
+      left:-8%;
+      box-shadow:0 0 50px rgba(236,72,153,0.45);
+    }
+    .halo-right {
+      right:-8%;
+      animation-duration:32s;
+      box-shadow:0 0 50px rgba(56,189,248,0.45);
+    }
+    .halo-left::before,
+    .halo-right::before {
+      content:"";
+      position:absolute;
+      inset:16%;
+      border-radius:999px;
+    }
+    .halo-left::before {
+      border:1px solid rgba(236,72,153,0.9);
+      box-shadow:
+        0 0 32px rgba(236,72,153,0.9),
+        0 0 40px rgba(248,113,113,0.7);
+    }
+    .halo-right::before {
+      border:1px solid rgba(56,189,248,0.9);
+      box-shadow:
+        0 0 32px rgba(56,189,248,0.9),
+        0 0 40px rgba(15,23,42,1);
+    }
+
+    @keyframes haloSpin {
+      to { transform:rotate(360deg); }
+    }
+
+    /* NAV */
+    .nav-shell {
+      position:sticky;
+      top:0;
+      z-index:40;
+      backdrop-filter:blur(18px);
+      background:linear-gradient(to bottom,rgba(15,23,42,0.96),rgba(15,23,42,0.35),transparent);
+      border-bottom:1px solid rgba(148,163,184,0.35);
+      margin:-1.6rem -0.9rem 1.4rem;
+      padding:.45rem .9rem .55rem;
+    }
+    .nav {
+      max-width:1180px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      gap:.8rem;
+    }
+    .nav-logo {
+      font-size:.95rem;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      background:linear-gradient(120deg,#f97316,#ec4899,#38bdf8);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 16px rgba(248,113,113,0.9);
+      white-space:nowrap;
+    }
+    .nav-tag {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--text-muted);
+      white-space:nowrap;
+    }
+    .nav-links {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      font-size:.78rem;
+    }
+    .nav-link {
+      padding:.26rem .7rem;
+      border-radius:999px;
+      border:1px solid transparent;
+      cursor:pointer;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#cbd5f5;
+      background:transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        color .16s,
+        transform .16s;
+    }
+    .nav-link:hover {
+      background:rgba(15,23,42,0.9);
+      border-color:rgba(148,163,184,0.9);
+      transform:translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color:rgba(248,113,113,0.9);
+      background:radial-gradient(circle at 0 0,rgba(248,113,113,0.35),transparent 60%);
+      color:#fef9c3;
+      box-shadow:0 0 18px rgba(248,113,113,0.7);
+    }
+    .nav-link-label {
+      border-color:rgba(250,204,21,0.85);
+      background:radial-gradient(circle at 100% 0,rgba(250,204,21,0.25),transparent 60%);
+      color:#fef3c7;
+    }
+
+    @media (max-width:840px){ .nav-tag{display:none;} }
+    @media (max-width:720px){ .nav-links{justify-content:flex-end;} }
+
+    /* HEADER / HERO */
+    .hero {
+      position:relative;
+      border-radius:30px;
+      padding:1.7rem 1.4rem 2rem;
+      border:1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.22),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.22),transparent 60%),
+        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(15,23,42,1) 70%);
+      box-shadow:
+        0 0 40px rgba(0,0,0,0.9),
+        0 0 70px rgba(56,189,248,0.35);
+      overflow:hidden;
+      margin-bottom:1.8rem;
+    }
+    .hero-fx {
+      position:absolute;
+      inset:-32%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(236,72,153,0.3),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.25),transparent 60%),
+        radial-gradient(circle at 50% 0,rgba(168,85,247,0.4),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .hero-inner { position:relative; z-index:1; }
+
+    .hero-kicker {
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:#e5e7eb;
+      opacity:.85;
+      margin-bottom:.25rem;
+    }
+    h1 {
+      margin:0;
+      font-size:2.2rem;
+      font-weight:900;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      background:linear-gradient(120deg,#f97316,#ec4899,#38bdf8);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:
+        0 0 28px rgba(236,72,153,0.9),
+        0 0 45px rgba(15,23,42,1);
+    }
+    .hero-sub {
+      margin-top:.4rem;
+      font-size:.95rem;
+      max-width:640px;
+      color:#e5e7eb;
+    }
+    .hero-sub strong { color:#fef9c3; }
+
+    .hero-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.7rem;
+      margin-top:.8rem;
+      align-items:center;
+    }
+
+    .hero-pill {
+      font-size:.76rem;
+      border-radius:999px;
+      padding:.28rem .8rem;
+      border:1px solid rgba(248,250,252,0.3);
+      background:rgba(15,23,42,0.96);
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+    }
+    .hero-pill span {
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent-blue);
+      box-shadow:0 0 12px rgba(56,189,248,0.9);
+    }
+
+    .hero-note {
+      font-size:.8rem;
+      color:var(--text-muted);
+      max-width:260px;
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom:1.7rem;
+      border-radius:24px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card);
+      padding:1.1rem 1rem 1.25rem;
+      box-shadow:0 0 30px rgba(0,0,0,0.85);
+      position:relative;
+      overflow:hidden;
+    }
+    .section::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.18),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .section-inner { position:relative; z-index:1; }
+
+    .section-title {
+      font-size:.9rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      margin:0 0 .2rem;
+    }
+    .section-sub {
+      font-size:.8rem;
+      color:var(--text-muted);
+      max-width:680px;
+      margin:0 0 .85rem;
+    }
+
+    /* GRID */
+    .pricing-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:.9rem;
+    }
+
+    .card {
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,0.9);
+      background:var(--bg-card-soft);
+      padding:.9rem .85rem 1.1rem;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 26px rgba(0,0,0,0.85);
+      font-size:.8rem;
+      transition:
+        transform .16s,
+        border-color .16s,
+        box-shadow .16s,
+        background .16s;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.16),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.14),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .card-inner { position:relative; z-index:1; }
+
+    .card-highlight {
+      border-image:linear-gradient(120deg,#f97316,#ec4899,#38bdf8) 1;
+      border-width:1px;
+      border-style:solid;
+      box-shadow:
+        0 0 24px rgba(236,72,153,0.7),
+        0 0 32px rgba(15,23,42,0.95);
+    }
+    .card-gold {
+      border-image:linear-gradient(120deg,#facc15,#f97316) 1;
+      border-width:1px;
+      border-style:solid;
+      box-shadow:
+        0 0 24px rgba(250,204,21,0.75),
+        0 0 32px rgba(15,23,42,0.95);
+    }
+
+    .card:hover {
+      transform:translateY(-3px) scale(1.01);
+      background:rgba(15,23,42,1);
+    }
+
+    .card-kicker {
+      font-size:.75rem;
+      text-transform:uppercase;
+      letter-spacing:.13em;
+      color:#cbd5f5;
+      margin-bottom:.18rem;
+    }
+    .card-title {
+      font-size:.98rem;
+      font-weight:600;
+      margin-bottom:.16rem;
+    }
+
+    .price-row {
+      display:flex;
+      align-items:baseline;
+      gap:.25rem;
+      margin-bottom:.4rem;
+    }
+    .price-main {
+      font-size:1.45rem;
+      font-weight:800;
+      letter-spacing:.06em;
+    }
+    .price-main span {
+      font-size:.9rem;
+      opacity:.9;
+      margin-right:.08rem;
+    }
+    .price-sub {
+      font-size:.76rem;
+      color:var(--text-muted);
+    }
+
+    .card-body {
+      font-size:.8rem;
+      color:#e5e7eb;
+      margin-bottom:.5rem;
+    }
+
+    .feature-list {
+      list-style:none;
+      padding:0;
+      margin:0 0 .6rem;
+      font-size:.78rem;
+    }
+    .feature-list li {
+      display:flex;
+      gap:.35rem;
+      align-items:flex-start;
+      margin-bottom:.25rem;
+    }
+    .feature-dot {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      margin-top:.2rem;
+      background:var(--accent-blue);
+      box-shadow:0 0 10px rgba(56,189,248,0.9);
+    }
+    .feature-dot-gold {
+      background:var(--accent-gold);
+      box-shadow:0 0 10px var(--accent-gold);
+    }
+
+    .plan-meta {
+      font-size:.72rem;
+      color:var(--text-muted);
+      margin-bottom:.45rem;
+    }
+
+    .btn-plan {
+      border-radius:999px;
+      padding:.4rem .9rem;
+      border:none;
+      cursor:pointer;
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.13em;
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      background:linear-gradient(135deg,#f97316,#ec4899,#38bdf8);
+      color:#020617;
+      box-shadow:0 0 20px rgba(236,72,153,0.9);
+    }
+    .btn-plan-secondary {
+      border-radius:999px;
+      padding:.36rem .9rem;
+      border:1px solid rgba(148,163,184,0.9);
+      background:rgba(15,23,42,0.98);
+      color:var(--text-main);
+      font-size:.76rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      cursor:pointer;
+    }
+    .btn-plan-secondary:hover {
+      border-color:#38bdf8;
+      box-shadow:0 0 14px rgba(56,189,248,0.7);
+    }
+
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+      font-size:.72rem;
+      border-radius:999px;
+      padding:.18rem .7rem;
+      border:1px solid rgba(248,250,252,0.3);
+      background:rgba(15,23,42,0.98);
+      margin-bottom:.35rem;
+    }
+    .badge-dot {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 10px #22c55e;
+    }
+
+    .stripe-note {
+      margin-top:.6rem;
+      font-size:.76rem;
+      color:var(--text-muted);
+    }
+
+    .footer-note {
+      margin-top:.5rem;
+      font-size:.75rem;
+      color:var(--text-muted);
+      text-align:center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .halo-left,.halo-right{animation:none;}
+      .card{transition:none;}
+    }
+  </style>
+</head>
+<body>
+<div class="halo-left"></div>
+<div class="halo-right"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">They Krave For Me Radio</div>
+    <div class="nav-tag">The Independent Artist Power Station</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link nav-link-primary">Pricing</a>
+      <a href="submit.html" class="nav-link">Submit Music</a>
+      <a href="dj-mixtape-hosting.html" class="nav-link">DJ Hosting</a>
+      <a href="app-hub.html" class="nav-link">App Hub</a>
+      <a href="label-home.html" class="nav-link nav-link-label">Label Side</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <div class="hero-kicker">TKFM RADIO • NEON PRICING ROOM</div>
+      <h1>Pick your level of motion</h1>
+      <p class="hero-sub">
+        These are <strong>station-side</strong> plays only — features, rotation, interviews &amp; DJ
+        hosting on They Krave For Me Radio. The **black &amp; gold label side** (They Krave For Me
+        Records) is invite-only and lives on a separate pricing path.
+      </p>
+
+      <div class="hero-row">
+        <div class="hero-pill"><span></span> All prices are for TKFM Radio (neon) — not label deals</div>
+        <div class="hero-pill"><span></span> Label contracts &amp; rosters live in They Krave For Me Records</div>
+        <p class="hero-note">
+          You can always raise these later in the **Autopilot Engine** without changing this page’s
+          design.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTIST FEATURE PLANS -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">Artist Feature Plans</h2>
+      <p class="section-sub">
+        Designed to feel like **real promotion**, not cheap spins. These map cleanly into Stripe
+        products so you can plug them into your <strong>create-checkout</strong> function later.
+      </p>
+
+      <div class="pricing-grid">
+        <!-- STARTER -->
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Entry feature</div>
+            <h3 class="card-title">Starter Spotlight</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>97</div>
+              <div class="price-sub">one-time per track</div>
+            </div>
+            <p class="card-body">
+              For artists who want to **test a record** on TKFM and tap into the neon ecosystem
+              without committing to a full roll-out.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> 1x home page spotlight block (48 hours)</li>
+              <li><span class="feature-dot"></span> Starter rotation in mix blocks</li>
+              <li><span class="feature-dot"></span> One social mention (feed or story)</li>
+              <li><span class="feature-dot"></span> Included in “New Heat” ticker line</li>
+            </ul>
+            <p class="plan-meta">
+              Stripe product idea: <strong>artist_feature_starter</strong>
+              (lookup_key style) — map to your lowest radio feature SKU.
+            </p>
+            <button class="btn-plan">
+              Lock Starter Slot
+            </button>
+          </div>
+        </article>
+
+        <!-- CORE PLAN -->
+        <article class="card card-highlight">
+          <div class="card-inner">
+            <div class="badge">
+              <span class="badge-dot"></span> Most popular
+            </div>
+            <div class="card-kicker">Core rollout</div>
+            <h3 class="card-title">Artist Feature Pro</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>197</div>
+              <div class="price-sub">one-time per single</div>
+            </div>
+            <p class="card-body">
+              The sweet spot for serious artists: **louder rotation**, stronger branding, and more
+              time in front of TKFM’s audience.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Home page feature for 7 days</li>
+              <li><span class="feature-dot"></span> Priority rotation in mix shows</li>
+              <li><span class="feature-dot"></span> One station drop + shoutout slot</li>
+              <li><span class="feature-dot"></span> Placement on TKFM “They Krave List” playlist</li>
+              <li><span class="feature-dot"></span> Basic media kit placement (cover, links)</li>
+            </ul>
+            <p class="plan-meta">
+              Stripe product idea: <strong>artist_feature_pro</strong> — your main “lock me in”
+              radio feature SKU.
+            </p>
+            <button class="btn-plan">
+              Go Pro Feature
+            </button>
+          </div>
+        </article>
+
+        <!-- ELITE PLAN -->
+        <article class="card card-gold">
+          <div class="card-inner">
+            <div class="card-kicker">High intent</div>
+            <h3 class="card-title">Elite Campaign</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>397</div>
+              <div class="price-sub">per campaign</div>
+            </div>
+            <p class="card-body">
+              For moments that matter: album, EP or major single. This is where TKFM moves like a
+              **street label** before the actual label kicks in.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot-gold"></span> 14-day homepage + feature rotation</li>
+              <li><span class="feature-dot-gold"></span> Heavy spins across key dayparts</li>
+              <li><span class="feature-dot-gold"></span> Interview or spotlight segment (pre-recorded)</li>
+              <li><span class="feature-dot-gold"></span> Extended media kit push + link routing</li>
+              <li><span class="feature-dot-gold"></span> Flag for A&amp;R radar on label side</li>
+            </ul>
+            <p class="plan-meta">
+              Stripe product idea: <strong>artist_feature_elite</strong> — this should feel like a
+              **serious** investment, not a cheap spin.
+            </p>
+            <div style="display:flex;flex-wrap:wrap;gap:.4rem;">
+              <button class="btn-plan">Run Elite Campaign</button>
+              <button class="btn-plan-secondary">Talk to Station First</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <p class="stripe-note">
+        When you’re ready to wire Stripe, you’ll point buttons like these at your Netlify function
+        (for example <code>create-checkout</code>) using your Stripe <strong>lookup_keys</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- DJ & MIXTAPE HOSTING -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">DJ Mixtape Hosting &amp; Krave Packs</h2>
+      <p class="section-sub">
+        This block is for **DJs only** — neon TKFM side. Label-level packs and producer deals live
+        on the black &amp; gold label pages.
+      </p>
+
+      <div class="pricing-grid">
+        <!-- MIX HOST -->
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Mixtape hosting</div>
+            <h3 class="card-title">Hosted Mixtape Slot</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>147</div>
+              <div class="price-sub">per tape</div>
+            </div>
+            <p class="card-body">
+              Host your tape on TKFM with a custom landing section, stream integration and
+              scheduled mix replays.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> One hosted mixtape slot on TKFM</li>
+              <li><span class="feature-dot"></span> Dedicated tape landing section</li>
+              <li><span class="feature-dot"></span> 2x replay slots on schedule board</li>
+              <li><span class="feature-dot"></span> Mention in mixtape ticker</li>
+            </ul>
+            <p class="plan-meta">Stripe idea: <strong>dj_mixtape_hosting</strong></p>
+            <button class="btn-plan">Host My Tape</button>
+          </div>
+        </article>
+
+        <!-- RESIDENCY -->
+        <article class="card card-highlight">
+          <div class="card-inner">
+            <div class="badge">
+              <span class="badge-dot"></span> For active DJs
+            </div>
+            <div class="card-kicker">Monthly residency</div>
+            <h3 class="card-title">Krave Residency</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>97</div>
+              <div class="price-sub">per month</div>
+            </div>
+            <p class="card-body">
+              Recurring show slot on TKFM with mix rotations, priority schedule placement and a
+              mini promo lane.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Monthly residency slot on schedule board</li>
+              <li><span class="feature-dot"></span> Show mention in marketing blocks</li>
+              <li><span class="feature-dot"></span> Light mixtape hosting perks</li>
+              <li><span class="feature-dot"></span> Eligible for sponsor overlays later</li>
+            </ul>
+            <p class="plan-meta">Stripe idea: <strong>dj_residency_monthly</strong> (recurring)</p>
+            <button class="btn-plan">Claim Residency</button>
+          </div>
+        </article>
+
+        <!-- PREMIUM DJ PACK -->
+        <article class="card card-gold">
+          <div class="card-inner">
+            <div class="card-kicker">Premium pack</div>
+            <h3 class="card-title">Krave Mixtape + Show Pack</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>247</div>
+              <div class="price-sub">bundle</div>
+            </div>
+            <p class="card-body">
+              Bundle a hosted tape, show slot and promotion. Designed for DJs ready to sit at the
+              **center** of the TKFM ecosystem.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot-gold"></span> Hosted mixtape + landing section</li>
+              <li><span class="feature-dot-gold"></span> Monthly show slot for 2 months</li>
+              <li><span class="feature-dot-gold"></span> Playlist + ticker placement</li>
+              <li><span class="feature-dot-gold"></span> Early access to AI DJ console tests</li>
+            </ul>
+            <p class="plan-meta">
+              Stripe idea: <strong>dj_krave_pack</strong> — bundle SKU you can upsell from the
+              residency or hosting tiers.
+            </p>
+            <button class="btn-plan">Run Krave Pack</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRIDGE TO LABEL SIDE -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">They Krave For Me Records (Label)</h2>
+      <p class="section-sub">
+        Real **label contracts, splits and rosters** do <strong>not</strong> live on this page.
+        They’re managed in the **They Krave For Me Records** black &amp; gold environment with its
+        own pricing logic and AI contract lab.
+      </p>
+
+      <div class="pricing-grid">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Label path</div>
+            <h3 class="card-title">When do we talk label?</h3>
+            <p class="card-body">
+              After you’ve moved through TKFM features and DJ hosting, high-performing artists can
+              be flagged for **label onboarding** and **AI contract presets**.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot-gold"></span> Invite-only entry to They Krave For Me Records</li>
+              <li><span class="feature-dot-gold"></span> Lives on <code>label-home.html</code> &amp; friends</li>
+              <li><span class="feature-dot-gold"></span> Managed through GOD VIEW &amp; contract lab</li>
+            </ul>
+            <p class="plan-meta">
+              There will be separate **label packages / retainers** on the black &amp; gold side so
+              the brand feels bigger than a radio price list.
+            </p>
+            <a href="label-home.html"><button class="btn-plan-secondary">Visit Label Side Overview</button></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Owner controls</div>
+            <h3 class="card-title">AI Autopilot &amp; God View</h3>
+            <p class="card-body">
+              As your catalog grows, you’ll manage **actual numbers** in the <strong>Autopilot
+              Engine</strong> and **GOD VIEW**, not by editing this page. This keeps the front-end
+              clean while your back-end thinks.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Autopilot Engine for smart pricing changes</li>
+              <li><span class="feature-dot"></span> GOD VIEW for station + label metrics</li>
+              <li><span class="feature-dot"></span> Owner login required (no public access)</li>
+            </ul>
+            <p class="plan-meta">
+              When you’re ready: we’ll wire Stripe + Supabase behind the scenes, while this neon
+              pricing room stays the same on the surface.
+            </p>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+              <a href="app-hub.html"><button class="btn-plan-secondary">Open App Hub</button></a>
+              <a href="owner-login.html"><button class="btn-plan-secondary">Owner Login</button></a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    Front-end only — safe on Netlify free.  
+    Later, each button can call Netlify Functions (&amp; Stripe checkout) using your
+    <strong>lookup_keys</strong> without changing this layout.
+  </p>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM — Label Artist Submissions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg:#05070b;--bg-alt:#080c14;--label-gold:#facc6b;--label-amber:#fbbf24;--label-emerald:#22c55e;
+      --label-teal:#14b8a6;--label-ink:#020617;--text-main:#fefce8;--text-muted:#a1a1aa;
+      --card-bg:rgba(10,12,24,.98);--border-subtle:rgba(248,250,252,.08);--danger:#f97373;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;}
+    body{
+      min-height:100vh;color:var(--text-main);
+      background:
+        radial-gradient(circle at top left,rgba(250,204,21,.13),transparent 55%),
+        radial-gradient(circle at bottom right,rgba(34,197,94,.15),transparent 60%),
+        linear-gradient(to bottom,var(--bg-alt),var(--label-ink));
+      display:flex;flex-direction:column;
+    }
+    a{text-decoration:none;color:inherit;}
+
+    .neon-header{
+      position:sticky;top:0;z-index:20;padding:.8rem 1.4rem;
+      backdrop-filter:blur(18px);
+      background:radial-gradient(circle at top left,rgba(250,204,21,.14),transparent 55%),rgba(5,7,12,.96);
+      border-bottom:1px solid rgba(255,255,255,.05);
+      display:flex;justify-content:space-between;align-items:center;gap:.8rem;
+    }
+    .brand{display:flex;align-items:center;gap:.7rem;}
+    .brand-logo{
+      width:32px;height:32px;border-radius:50%;
+      border:1px solid rgba(250,204,21,.7);
+      background:radial-gradient(circle at 25% 0%,#facc6b,#fbbf24 40%,#0f172a 100%);
+      box-shadow:0 0 26px rgba(234,179,8,.65),0 0 32px rgba(34,197,94,.35);
+    }
+    .brand-title{font-size:.9rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);}
+    .brand-subtitle{font-size:1rem;font-weight:600;}
+    .toolbar{display:flex;gap:.5rem;flex-wrap:wrap;}
+    .toolbar-chip{
+      font-size:.75rem;text-transform:uppercase;letter-spacing:.14em;border-radius:999px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(15,23,42,.7);padding:.4rem .7rem;
+    }
+    main{padding:1.4rem;display:flex;flex-direction:column;gap:1.2rem;}
+    @media(max-width:900px){
+      .neon-header{flex-direction:column;align-items:flex-start;}
+      main{padding:1rem;}
+    }
+
+    .summary-row{display:flex;flex-wrap:wrap;gap:.9rem;}
+    .summary-card{
+      background:var(--card-bg);border-radius:1rem;padding:.7rem .9rem;
+      border:1px solid var(--border-subtle);min-width:180px;
+    }
+    .summary-label{font-size:.7rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:.15rem;}
+    .summary-value{font-size:1.2rem;font-weight:600;}
+    .summary-sub{font-size:.7rem;color:var(--text-muted);}
+
+    .filter-bar{
+      background:var(--card-bg);border-radius:.9rem;border:1px solid var(--border-subtle);
+      padding:.6rem .8rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;
+      font-size:.78rem;
+    }
+    .filter-left{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;}
+    .filter-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-muted);}
+    .filter-select,.filter-search{
+      background:rgba(2,6,23,.8);border-radius:999px;border:1px solid rgba(248,250,252,.16);
+      color:var(--text-main);padding:.2rem .6rem;font-size:.76rem;
+    }
+    .filter-search{border-radius:.6rem;min-width:160px;}
+
+    .table-wrap{
+      background:var(--card-bg);border-radius:1rem;border:1px solid var(--border-subtle);
+      padding:.8rem;overflow:auto;
+    }
+    table{width:100%;border-collapse:collapse;font-size:.78rem;}
+    thead{background:rgba(15,23,42,.9);}
+    th,td{padding:.45rem .5rem;text-align:left;white-space:nowrap;}
+    th{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.08);}
+    tbody tr:nth-child(even){background:rgba(15,23,42,.6);}
+    tbody tr.pending{border-left:3px solid var(--label-amber);}
+    tbody tr.cataloged{border-left:3px solid var(--label-emerald);}
+    tbody tr.rejected{border-left:3px solid var(--danger);opacity:.7;}
+
+    .status-pill{
+      font-size:.65rem;padding:.16rem .4rem;border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);display:inline-block;text-transform:uppercase;letter-spacing:.08em;
+    }
+    .status-pill.pending{border-color:var(--label-amber);color:var(--label-amber);}
+    .status-pill.cataloged{border-color:var(--label-emerald);color:var(--label-emerald);}
+    .status-pill.rejected{border-color:var(--danger);color:var(--danger);}
+
+    .tier-select{
+      background:rgba(2,6,23,.9);border-radius:999px;border:1px solid rgba(248,250,252,.16);
+      color:var(--text-main);padding:.16rem .35rem;font-size:.7rem;
+    }
+    .flag-toggle{display:flex;align-items:center;gap:.2rem;font-size:.7rem;}
+    .flag-toggle input{accent-color:var(--label-gold);}
+
+    .btn-row{display:flex;gap:.25rem;flex-wrap:wrap;}
+    .btn{
+      border-radius:999px;font-size:.7rem;padding:.22rem .6rem;
+      border:1px solid rgba(255,255,255,.2);background:rgba(15,23,42,.9);cursor:pointer;color:var(--text-main);
+    }
+    .btn-approve{border-color:var(--label-emerald);color:var(--label-emerald);}
+    .btn-reject{border-color:var(--danger);color:var(--danger);}
+    .btn-small{font-size:.65rem;padding:.16rem .5rem;}
+
+    .empty-state{font-size:.78rem;color:var(--text-muted);padding:.4rem .1rem;}
+  </style>
+</head>
+<body>
+  <header class="neon-header">
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-title">TKFM LABEL</div>
+        <div class="brand-subtitle">Artist Submissions Console</div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="toolbar-chip">📥 artistUploads → tkfm_catalog</div>
+      <div class="toolbar-chip">⭐ featured / 🏆 elite → Autopilot weights</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary-row">
+      <div class="summary-card">
+        <div class="summary-label">Pending</div>
+        <div id="summaryPending" class="summary-value">0</div>
+        <div class="summary-sub">Need a yes or no.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Cataloged</div>
+        <div id="summaryCatalog" class="summary-value">0</div>
+        <div class="summary-sub">Live in tkfm_catalog.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Rejected</div>
+        <div id="summaryRejected" class="summary-value">0</div>
+        <div class="summary-sub">Marked as pass.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Featured / Elite</div>
+        <div id="summaryFlags" class="summary-value">0 / 0</div>
+        <div class="summary-sub">Boosted in rotation.</div>
+      </div>
+    </section>
+
+    <section class="filter-bar">
+      <div class="filter-left">
+        <span class="filter-label">View</span>
+        <select id="filterStatus" class="filter-select">
+          <option value="all">All</option>
+          <option value="pending">Pending only</option>
+          <option value="cataloged">Cataloged only</option>
+          <option value="rejected">Rejected only</option>
+        </select>
+        <input id="filterSearch" class="filter-search" placeholder="Search artist / track" />
+      </div>
+      <div id="filterInfo">0 submissions shown.</div>
+    </section>
+
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Artist</th>
+            <th>Track / Project</th>
+            <th>Status</th>
+            <th>Tier</th>
+            <th>Flags</th>
+            <th style="min-width:160px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="submissionsBody"></tbody>
+      </table>
+      <div id="emptyState" class="empty-state" style="display:none;">
+        No submissions in this view yet. Once artists upload via the portal, they’ll land here.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STATUS_PENDING = 'pending';
+    const STATUS_CATALOGED = 'cataloged';
+    const STATUS_REJECTED = 'rejected';
+
+    function readArray(key){
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){ return []; }
+    }
+    function writeArray(key,value){
+      localStorage.setItem(key,JSON.stringify(Array.isArray(value)?value:[]));
+    }
+
+    function getUploads(){ return readArray('artistUploads'); }
+    function saveUploads(list){ writeArray('artistUploads',list); }
+    function getCatalog(){ return readArray('tkfm_catalog'); }
+    function saveCatalog(list){ writeArray('tkfm_catalog',list); }
+
+    const bodyEl = document.getElementById('submissionsBody');
+    const emptyStateEl = document.getElementById('emptyState');
+    const filterStatusEl = document.getElementById('filterStatus');
+    const filterSearchEl = document.getElementById('filterSearch');
+    const filterInfoEl = document.getElementById('filterInfo');
+
+    const summaryPendingEl = document.getElementById('summaryPending');
+    const summaryCatalogEl = document.getElementById('summaryCatalog');
+    const summaryRejectedEl = document.getElementById('summaryRejected');
+    const summaryFlagsEl = document.getElementById('summaryFlags');
+
+    function normalizeStatus(raw){
+      const s = (raw || '').toString().toLowerCase();
+      if(!s) return STATUS_PENDING;
+      if(s === 'approved' || s === 'catalog') return STATUS_CATALOGED;
+      if(s === 'reject') return STATUS_REJECTED;
+      if([STATUS_PENDING,STATUS_CATALOGED,STATUS_REJECTED].includes(s)) return s;
+      return STATUS_PENDING;
+    }
+
+    function withDefaultFields(u){
+      return {
+        id: u.id || u.uploadId || u.trackId || (u.artistName||'') + '::' + (u.trackTitle||u.title||''),
+        artistName: u.artistName || u.artist || u.name || 'Unknown Artist',
+        trackTitle: u.trackTitle || u.title || u.songTitle || 'Untitled',
+        status: normalizeStatus(u.status),
+        tier: u.tier || 'standard',
+        featured: !!u.featured,
+        elite: !!u.elite,
+        ...u
+      };
+    }
+
+    function computeSummaries(all){
+      let pending=0,cataloged=0,rejected=0,featured=0,elite=0;
+      all.forEach(u=>{
+        const s = normalizeStatus(u.status);
+        if(s===STATUS_PENDING) pending++;
+        if(s===STATUS_CATALOGED) cataloged++;
+        if(s===STATUS_REJECTED) rejected++;
+        if(u.featured) featured++;
+        if(u.elite) elite++;
+      });
+      summaryPendingEl.textContent = pending;
+      summaryCatalogEl.textContent = cataloged;
+      summaryRejectedEl.textContent = rejected;
+      summaryFlagsEl.textContent = featured + ' / ' + elite;
+    }
+
+    function passesStatusFilter(u){
+      const wanted = filterStatusEl.value;
+      const s = normalizeStatus(u.status);
+      if(wanted === 'all') return true;
+      return s === wanted;
+    }
+
+    function passesSearchFilter(u){
+      const q = filterSearchEl.value.trim().toLowerCase();
+      if(!q) return true;
+      return (
+        (u.artistName || '').toLowerCase().includes(q) ||
+        (u.trackTitle || '').toLowerCase().includes(q)
+      );
+    }
+
+    function render(){
+      const raw = getUploads().map(withDefaultFields);
+      computeSummaries(raw);
+
+      const filtered = raw.filter(u => passesStatusFilter(u) && passesSearchFilter(u));
+
+      filterInfoEl.textContent = filtered.length + ' submission' + (filtered.length===1?'':'s') + ' shown.';
+      bodyEl.innerHTML = '';
+      emptyStateEl.style.display = filtered.length ? 'none' : 'block';
+
+      if(!filtered.length) return;
+
+      filtered.forEach(u=>{
+        const tr = document.createElement('tr');
+        tr.classList.add(normalizeStatus(u.status));
+
+        const tdArtist = document.createElement('td');
+        tdArtist.textContent = u.artistName;
+
+        const tdTrack = document.createElement('td');
+        tdTrack.textContent = u.trackTitle;
+
+        const tdStatus = document.createElement('td');
+        const pill = document.createElement('span');
+        pill.className = 'status-pill ' + normalizeStatus(u.status);
+        pill.textContent = normalizeStatus(u.status);
+        tdStatus.appendChild(pill);
+
+        const tdTier = document.createElement('td');
+        const tierSel = document.createElement('select');
+        tierSel.className = 'tier-select';
+        ['standard','priority','elite'].forEach(t=>{
+          const opt=document.createElement('option');
+          opt.value=t;opt.textContent=t.toUpperCase();
+          if((u.tier||'standard')===t) opt.selected=true;
+          tierSel.appendChild(opt);
+        });
+        tierSel.addEventListener('change',()=>{
+          updateUpload(u.id,{tier:tierSel.value});
+        });
+        tdTier.appendChild(tierSel);
+
+        const tdFlags = document.createElement('td');
+        const flagWrap = document.createElement('div');
+        flagWrap.style.display='flex';
+        flagWrap.style.flexDirection='column';
+        flagWrap.style.gap='.15rem';
+
+        const feat = document.createElement('label');
+        feat.className='flag-toggle';
+        const featCb=document.createElement('input');
+        featCb.type='checkbox';featCb.checked=!!u.featured;
+        feat.appendChild(featCb);
+        feat.appendChild(document.createTextNode('Featured'));
+        featCb.addEventListener('change',()=>{
+          updateUpload(u.id,{featured:featCb.checked});
+        });
+
+        const el = document.createElement('label');
+        el.className='flag-toggle';
+        const elCb=document.createElement('input');
+        elCb.type='checkbox';elCb.checked=!!u.elite;
+        el.appendChild(elCb);
+        el.appendChild(document.createTextNode('Elite'));
+        elCb.addEventListener('change',()=>{
+          updateUpload(u.id,{elite:elCb.checked});
+        });
+
+        flagWrap.appendChild(feat);
+        flagWrap.appendChild(el);
+        tdFlags.appendChild(flagWrap);
+
+        const tdActions = document.createElement('td');
+        const btnRow = document.createElement('div');
+        btnRow.className='btn-row';
+
+        const approveBtn=document.createElement('button');
+        approveBtn.className='btn btn-approve btn-small';
+        approveBtn.textContent='Approve → Catalog';
+        approveBtn.addEventListener('click',()=>promoteToCatalog(u.id));
+
+        const rejectBtn=document.createElement('button');
+        rejectBtn.className='btn btn-reject btn-small';
+        rejectBtn.textContent='Reject';
+        rejectBtn.addEventListener('click',()=>setStatus(u.id,STATUS_REJECTED));
+
+        btnRow.appendChild(approveBtn);
+        btnRow.appendChild(rejectBtn);
+        tdActions.appendChild(btnRow);
+
+        tr.appendChild(tdArtist);
+        tr.appendChild(tdTrack);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdTier);
+        tr.appendChild(tdFlags);
+        tr.appendChild(tdActions);
+
+        bodyEl.appendChild(tr);
+      });
+    }
+
+    function updateUpload(id,patch){
+      const all = getUploads().map(withDefaultFields);
+      const idx = all.findIndex(u=>String(u.id)===String(id));
+      if(idx===-1) return;
+      all[idx] = {...all[idx],...patch};
+      saveUploads(all);
+      // keep catalog in sync for flags / tier if already cataloged
+      const u = all[idx];
+      if(normalizeStatus(u.status)===STATUS_CATALOGED){
+        syncCatalogEntry(u);
+      }
+      render();
+    }
+
+    function setStatus(id,status){
+      updateUpload(id,{status});
+    }
+
+    function syncCatalogEntry(u){
+      const catalog = getCatalog();
+      const idx = catalog.findIndex(c=>String(c.id||c.uploadId||c.trackId)===(u.id));
+      const payload = {
+        id: u.id,
+        artistName: u.artistName,
+        trackTitle: u.trackTitle,
+        tier: u.tier,
+        featured: !!u.featured,
+        elite: !!u.elite,
+        source: 'artistUploads',
+        ...u
+      };
+      if(idx===-1){
+        catalog.push(payload);
+      }else{
+        catalog[idx] = {...catalog[idx],...payload};
+      }
+      saveCatalog(catalog);
+    }
+
+    function promoteToCatalog(id){
+      const all = getUploads().map(withDefaultFields);
+      const idx = all.findIndex(u=>String(u.id)===String(id));
+      if(idx===-1) return;
+      all[idx].status = STATUS_CATALOGED;
+      saveUploads(all);
+      syncCatalogEntry(all[idx]);
+      render();
+    }
+
+    filterStatusEl.addEventListener('change',render);
+    filterSearchEl.addEventListener('input',()=>{render();});
+
+    render();
+  </script>
+</body>
+</html>
