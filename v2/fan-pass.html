@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM Fan Pass — Join the Motion</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 15% 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 85% 0,rgba(236,72,153,0.18),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.22),transparent 55%);
+    }
+    input,select,textarea{background:#020617;}
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen flex flex-col">
+
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.65rem] uppercase tracking-[0.25em] text-slate-400">
+            They Krave For Me
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-cyan-300">Fan Pass</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">📻 Radio Hub</a>
+        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-200">🎫 Creator Pass</a>
+        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">⭐ Fan Pass</a>
+        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-300">🏛 TKFM Records</a>
+        <a href="god-view.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">👁 GOD VIEW</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-8">
+      <!-- HERO -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/70 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-cyan-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Fan Pass • Listener / Supporter
+          </div>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            Turn from “listener” into part of the <span class="text-pink-400 drop-shadow-[0_0_22px_rgba(236,72,153,0.9)]">motion</span>.
+          </h1>
+          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
+            Fan Pass is how TKFM tracks who’s really locked in:
+            your name, city, favorite sounds and artists.
+            Profiles live in <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_fan_profiles</span> and feed
+            <span class="text-emerald-300">Momentum Engine</span> + <span class="text-cyan-300">GOD VIEW</span>.
+          </p>
+          <div class="flex flex-wrap gap-2 text-[0.7rem] text-slate-300">
+            <span class="px-2.5 py-1 rounded-full border border-slate-700 bg-slate-950/80 uppercase tracking-[0.22em]">
+              City-based motion
+            </span>
+            <span class="px-2.5 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 uppercase tracking-[0.22em] text-emerald-200">
+              Feeds fan momentum
+            </span>
+          </div>
+        </div>
+
+        <!-- SNAPSHOT -->
+        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-16 opacity-35 blur-2xl bg-[conic-gradient(from_160deg,_#22d3ee,_#ec4899,_#a855f7,_#22d3ee)]"></div>
+          <div class="relative space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  This browser’s Fan Pass stats
+                </p>
+                <p class="text-xs text-slate-300">
+                  Local only — dev brain for TKFM v2.
+                </p>
+              </div>
+              <button id="fp-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <div class="text-slate-400 mb-0.5">Profiles</div>
+                <div id="fp-count" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Cities</div>
+                <div id="fp-cities" class="text-lg font-bold">0</div>
+              </div>
+              <div>
+                <div class="text-slate-400 mb-0.5">Fav Tags</div>
+                <div id="fp-tags" class="text-lg font-bold">0</div>
+              </div>
+            </div>
+
+            <p class="text-[0.7rem] text-slate-300">
+              GOD VIEW and Momentum Engine only see <strong>counts + tags</strong>, not emails.
+              You can clear everything from this device any time.
+            </p>
+
+            <a href="momentum-engine.html" class="inline-flex items-center gap-2 text-[0.7rem] text-emerald-300">
+              <span>📈 Open Momentum Engine</span>
+              <span class="text-xs">↗</span>
+            </a>
+          </div>
+        </aside>
+      </div>
+
+      <!-- FORM + LIST -->
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <!-- FORM -->
+        <form id="fan-form" class="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Name / Alias *
+              </label>
+              <input required name="displayName" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="Name or nickname" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                @ Handle
+              </label>
+              <input name="handle" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="@handle (IG / X / TikTok)" />
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                City / Region *
+              </label>
+              <input required name="city" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="City or area" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+                Email (optional)
+              </label>
+              <input type="email" name="email" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="you@example.com" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+              How do you mainly tap in?
+            </label>
+            <select name="mode" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2">
+              <option value="radio">Radio / stream</option>
+              <option value="club">Clubs / parties</option>
+              <option value="car">In the car</option>
+              <option value="headphones">Headphones / solo</option>
+              <option value="all">A little bit of everything</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+              What kind of sound are you looking for? (tags)
+            </label>
+            <input name="soundTags" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2" placeholder="Example: detroit, r&b, drill, soulful, party" />
+            <p class="mt-1 text-[0.7rem] text-slate-400">
+              Comma-separated tags. These roll up into listener heat for TKFM.
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 mb-1">
+              Favorite TKFM artists / DJs (optional)
+            </label>
+            <textarea name="favorites" rows="3" class="w-full text-sm rounded-lg border border-slate-700/80 px-3 py-2 resize-y" placeholder="Drop names you rock with. Helps TKFM see who really has fan motion."></textarea>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="space-y-2 text-[0.8rem] text-slate-200">
+              <p class="text-[0.7rem] uppercase tracking-[0.24em] text-slate-400">
+                Fan commitment (optional boosts)
+              </p>
+              <label class="flex items-start gap-2">
+                <input type="checkbox" name="notifyReleases" class="mt-0.5">
+                <span>I want heads up when big TKFM tapes / shows drop.</span>
+              </label>
+              <label class="flex items-start gap-2">
+                <input type="checkbox" name="streetTeam" class="mt-0.5">
+                <span>I’m down to share / repost TKFM drops sometimes.</span>
+              </label>
+            </div>
+            <div class="space-y-1 text-[0.75rem] text-slate-400">
+              <p>
+                Under the hood this writes into
+                <span class="font-mono text-cyan-300">tkfm_fan_profiles</span>
+                on this device.
+              </p>
+              <p>
+                Momentum Engine treats favorites + tags like extra weight for artists / sounds.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+            <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500 hover:bg-cyan-400 text-sm font-semibold shadow-[0_0_18px_rgba(34,211,238,0.7)] transition">
+              <span>Activate My Fan Pass</span>
+              <span class="text-xs">↗</span>
+            </button>
+            <button type="button" id="fp-clear" class="px-3 py-2 rounded-full border border-red-500/70 bg-red-500/10 text-[0.75rem] text-red-300 uppercase tracking-[0.2em]">
+              Clear All Fan Data (This Device)
+            </button>
+          </div>
+
+          <p id="fan-message" class="text-[0.75rem] text-emerald-300 mt-2 hidden">
+            Saved. Your Fan Pass is now part of the TKFM brain on this device.
+          </p>
+        </form>
+
+        <!-- LIST -->
+        <aside class="space-y-3 rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
+              Fan profiles on this device
+            </h2>
+            <span id="fp-list-count" class="text-[0.7rem] text-slate-300"></span>
+          </div>
+
+          <div id="fan-list-empty" class="text-[0.8rem] text-slate-400">
+            No Fan Pass profiles saved yet. Fill the form to start a profile.
+          </div>
+
+          <div id="fan-list" class="space-y-2 max-h-[360px] overflow-y-auto text-[0.8rem]"></div>
+
+          <div class="border border-slate-800 rounded-xl p-3 text-[0.75rem] text-slate-300 space-y-1">
+            <p class="text-[0.7rem] uppercase tracking-[0.26em] text-slate-400">How TKFM uses this</p>
+            <p>• Momentum Engine sees which sounds + artists have real fan gravity.</p>
+            <p>• GOD VIEW only cares about counts, tags and motion — not your personal info.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/40">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — Fan Pass.</span>
+      <span class="opacity-70">
+        Feeds tkfm_fan_profiles → Momentum Engine + GOD VIEW.
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    function safeGetFans() {
+      try {
+        const raw = localStorage.getItem('tkfm_fan_profiles');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.warn('Fan Pass: failed to parse tkfm_fan_profiles', e);
+        return [];
+      }
+    }
+
+    function saveFans(list) {
+      try {
+        localStorage.setItem('tkfm_fan_profiles', JSON.stringify(list));
+      } catch (e) {
+        console.error('Fan Pass: failed to save tkfm_fan_profiles', e);
+      }
+    }
+
+    function generateId() {
+      return 'fan_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+    }
+
+    function splitTags(str) {
+      if (!str) return [];
+      return String(str)
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    function refreshStats() {
+      const fans = safeGetFans();
+      const count = fans.length;
+
+      const citySet = new Set();
+      const tagSet = new Set();
+
+      fans.forEach(f => {
+        if (f.city) citySet.add(f.city.toLowerCase());
+        (f.soundTags || []).forEach(t => tagSet.add(t.toLowerCase()));
+      });
+
+      document.getElementById('fp-count').textContent = count;
+      document.getElementById('fp-cities').textContent = citySet.size;
+      document.getElementById('fp-tags').textContent = tagSet.size;
+
+      const listWrap = document.getElementById('fan-list');
+      const empty = document.getElementById('fan-list-empty');
+      const labelCount = document.getElementById('fp-list-count');
+
+      if (!count) {
+        listWrap.innerHTML = '';
+        empty.classList.remove('hidden');
+        labelCount.textContent = '0 saved';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      labelCount.textContent = count + ' saved';
+
+      const items = fans
+        .slice()
+        .sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+      listWrap.innerHTML = items.map(f => {
+        const tags = (f.soundTags || []).join(', ');
+        const fav = (f.favorites || []).join(', ');
+        const created = f.createdAt ? new Date(f.createdAt).toLocaleString() : '';
+        return `
+          <article class="rounded-xl border border-slate-800 bg-slate-950/90 px-3 py-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-1">
+                  <span class="font-semibold text-slate-50 truncate">
+                    ${escapeHtml(f.displayName || 'Unknown Fan')}
+                  </span>
+                  ${f.handle ? `<span class="text-[0.7rem] text-slate-400 truncate">• ${escapeHtml(f.handle)}</span>` : ''}
+                </div>
+                <div class="mt-1 flex flex-wrap gap-2 text-[0.7rem] text-slate-400">
+                  ${f.city ? `<span>${escapeHtml(f.city)}</span>` : ''}
+                  ${f.mode ? `<span>• ${escapeHtml(f.mode)}</span>` : ''}
+                </div>
+                ${tags ? `
+                  <p class="mt-1 text-[0.7rem] text-slate-300">
+                    Tags: ${escapeHtml(tags)}
+                  </p>` : ''
+                }
+                ${fav ? `
+                  <p class="mt-1 text-[0.7rem] text-slate-300 line-clamp-2">
+                    Favs: ${escapeHtml(fav)}
+                  </p>` : ''
+                }
+                <p class="mt-1 text-[0.65rem] text-slate-500">
+                  ${created ? `Joined: ${escapeHtml(created)}` : ''}
+                </p>
+              </div>
+              <div class="text-right text-[0.7rem] text-slate-300">
+                <div class="px-2 py-0.5 rounded-full border border-emerald-400/70 bg-emerald-400/10 inline-block">
+                  Points: ${Number.isFinite(f.points) ? f.points : 0}
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('fan-form');
+      const msg = document.getElementById('fan-message');
+      const btnClear = document.getElementById('fp-clear');
+      const btnRefresh = document.getElementById('fp-refresh');
+
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const fd = new FormData(form);
+
+          const displayName = (fd.get('displayName') || '').toString().trim();
+          const city = (fd.get('city') || '').toString().trim();
+
+          if (!displayName || !city) {
+            alert('Name/Alias and City are required.');
+            return;
+          }
+
+          const soundTags = splitTags(fd.get('soundTags') || '');
+          const favRaw = splitTags(fd.get('favorites') || '');
+          const favorites = favRaw.length ? favRaw : [];
+
+          let points = 0;
+          if (fd.get('notifyReleases')) points += 5;
+          if (fd.get('streetTeam')) points += 10;
+          if (soundTags.length) points += soundTags.length;
+          if (favorites.length) points += favorites.length;
+
+          const profile = {
+            id: generateId(),
+            createdAt: new Date().toISOString(),
+            displayName,
+            handle: (fd.get('handle') || '').toString().trim(),
+            city,
+            email: (fd.get('email') || '').toString().trim(),
+            mode: (fd.get('mode') || '').toString().trim() || 'radio',
+            soundTags,
+            favorites,
+            notifyReleases: !!fd.get('notifyReleases'),
+            streetTeam: !!fd.get('streetTeam'),
+            points
+          };
+
+          const fans = safeGetFans();
+          fans.unshift(profile);
+          saveFans(fans);
+
+          form.reset();
+          msg.classList.remove('hidden');
+          msg.textContent = 'Saved. Your Fan Pass is in the TKFM brain on this device.';
+          refreshStats();
+          setTimeout(() => msg.classList.add('hidden'), 4500);
+        });
+      }
+
+      if (btnClear) {
+        btnClear.addEventListener('click', function () {
+          if (!confirm('Clear all tkfm_fan_profiles data on THIS DEVICE?')) return;
+          localStorage.removeItem('tkfm_fan_profiles');
+          refreshStats();
+        });
+      }
+
+      if (btnRefresh) {
+        btnRefresh.addEventListener('click', refreshStats);
+      }
+
+      refreshStats();
+    });
+  </script>
+</body>
+</html>
