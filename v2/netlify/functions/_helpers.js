@@ -1,33 +1,38 @@
-import fs from 'fs/promises'
-import path from 'path'
-import jwt from 'jsonwebtoken'
+import fs from 'fs';
+import path from 'path';
 
-const DATA_DIR = path.join(process.cwd(), 'netlify', 'data')
+const DATA_DIR = path.join(process.cwd(), '.netlify', 'state');
 
-async function ensureDir() { await fs.mkdir(DATA_DIR, { recursive: true }) }
-function safeKey(key) { return String(key || 'store').replace(/[^a-z0-9_-]/gi, '_').toLowerCase() }
-function filePathFor(key) { return path.join(DATA_DIR, ${safeKey(key)}.json) }
+function ensureDir() {
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (_) {}
+}
+
+function safeKey(key) {
+  return String(key || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9_\-]/g, '_')
+    .slice(0, 80) || 'store';
+}
+
+function filePathFor(key) {
+  // FIX: use string concat, not ${} outside template string
+  return path.join(DATA_DIR, safeKey(key) + '.json');
+}
 
 export async function getStore(key) {
-await ensureDir()
-try { return JSON.parse(await fs.readFile(filePathFor(key), 'utf-8')) } catch { return [] }
-}
-export async function setStore(key, value) {
-await ensureDir()
-await fs.writeFile(filePathFor(key), JSON.stringify(value ?? [], null, 2), 'utf-8')
-return true
+  ensureDir();
+  const fp = filePathFor(key);
+  try {
+    const raw = fs.readFileSync(fp, 'utf8');
+    return JSON.parse(raw);
+  } catch (_) {
+    return [];
+  }
 }
 
-export function signToken(payload, secret, options = {}) {
-if (!secret) throw new Error('Missing JWT secret')
-return jwt.sign(payload, secret, { expiresIn: '7d', ...options })
-}
-export function verifyToken(token, secret) {
-if (!secret) throw new Error('Missing JWT secret')
-return jwt.verify(token, secret)
-}
-export function getBearerToken(event) {
-const auth = event.headers?.authorization || event.headers?.Authorization || ''
-const m = auth.match(/^Bearer\s+(.+)$/i)
-return m ? m[1] : null
+export async function setStore(key, value) {
+  ensureDir();
+  const fp = filePathFor(key);
+  fs.writeFileSync(fp, JSON.stringify(value ?? [], null, 2), 'utf8');
+  return true;
 }
