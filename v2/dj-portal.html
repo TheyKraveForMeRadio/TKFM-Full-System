@@ -167,15 +167,18 @@
     }
     .lockH{font-weight:950}
     .hide{display:none!important}
-    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-    .box{
-      margin-top:12px;
-      border:1px solid rgba(148,163,184,.16);
-      background:rgba(2,6,23,.55);
-      border-radius:18px;
-      padding:12px;
-      overflow:auto;
+
+    .ann{
+      margin-top:14px;
+      border:1px solid rgba(34,211,238,.20);
+      background:rgba(34,211,238,.06);
+      border-radius:22px;
+      padding:14px;
+      display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;
     }
+    .annTitle{font-weight:950}
+    .annP{color:rgba(148,163,184,.95);font-size:13px;line-height:1.55;max-width:860px}
+    .annRight{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
   </style>
 </head>
 <body>
@@ -272,18 +275,24 @@
           <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">SUBMIT</span></div>
         </a>
 
-        <a class="glass tile" href="autopilot-engine.html">
-          <div class="tileK">Autopilot</div>
-          <div class="tileH">Automation</div>
-          <div class="tileP">Route DJ lane into automation engines.</div>
-          <div class="tags"><span class="tag warn">ENGINE</span><span class="tag lock">OWNER</span></div>
+        <a class="glass tile" href="dj-tools.html">
+          <div class="tileK">Toolkit</div>
+          <div class="tileH">Return to DJ Toolkit</div>
+          <div class="tileP">Your DJ tools hub and paid lanes.</div>
+          <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">HOME</span></div>
         </a>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="k">Access Debug</div>
-      <div class="box mono" id="dbg">Loading…</div>
+      <div class="ann">
+        <div>
+          <div class="annTitle">DJ Member Announcement Slot</div>
+          <div class="annP">Use this space for DJ updates: new slot drops, feature opportunities, takeover nights, and onboarding steps for new DJs.</div>
+        </div>
+        <div class="annRight">
+          <a class="btn" href="dj-schedule.html">See Schedule</a>
+          <a class="btn btnHot" href="feature-engine.html">Paid Feature Lanes</a>
+        </div>
+      </div>
     </section>
 
     <script>
@@ -298,7 +307,7 @@
           if(v === 'creator' || v.includes('creator')) return 'creator';
           if(v === 'fan' || v.includes('fan')) return 'fan';
           if(v === 'label' || v.includes('label')) return 'label';
-          if(v === 'elite') return 'creator'; // legacy map
+          if(v === 'elite') return 'creator';
           return 'free';
         }
 
@@ -310,24 +319,11 @@
         const txt = document.getElementById('tierText');
         const locked = document.getElementById('lockedBox');
         const grid = document.getElementById('djGrid');
-        const dbg = document.getElementById('dbg');
 
         function setChip(label, ok){
           if(txt) txt.textContent = label;
           if(dot) dot.className = ok ? 'dot ok' : 'dot';
         }
-
-        const debugObj = {
-          signedIn,
-          memberTier,
-          sessionEmail: session ? session.email : null,
-          keys: {
-            tkfm_memberTier: get('tkfm_memberTier'),
-            tkfm_creatorStatus: get('tkfm_creatorStatus'),
-            tkfm_memberTierRequested: get('tkfm_memberTierRequested')
-          }
-        };
-        if(dbg) dbg.textContent = JSON.stringify(debugObj, null, 2);
 
         if(!signedIn){
           setChip('STATUS: NOT SIGNED IN', false);
