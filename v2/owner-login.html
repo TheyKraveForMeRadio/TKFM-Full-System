@@ -3,234 +3,180 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TKFM Owner Login</title>
   <meta name="robots" content="noindex,nofollow"/>
+  <title>TKFM — Owner Access</title>
   <style>
-    :root{
-      --bg:#020617;
-      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
-      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
-      --stroke:rgba(148,163,184,.18);
-      --panel:rgba(2,6,23,.86);
-      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
-      --r:26px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;}
+    html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
     body{
-      margin:0;
-      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      color:var(--t);
-      background:var(--bg);
-      overflow-x:hidden;
-    }
-    a{color:inherit;text-decoration:none}
-    .bg{position:fixed;inset:0;z-index:-5}
-    .bg:before{
-      content:"";position:absolute;inset:-35%;
       background:
-        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
-        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
-        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
-        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
-      filter: blur(2px);
-      animation: drift 10.5s ease-in-out infinite;
-      opacity:.95;
+        radial-gradient(900px 420px at 15% 12%, rgba(168,85,247,.22), transparent 60%),
+        radial-gradient(820px 420px at 70% 20%, rgba(236,72,153,.18), transparent 60%),
+        radial-gradient(900px 480px at 55% 85%, rgba(34,211,238,.14), transparent 60%),
+        var(--bg);
+      color:#e5e7eb;
+      display:flex;align-items:center;justify-content:center;
+      padding:20px;
     }
-    .bg:after{
-      content:"";position:absolute;inset:-25%;
-      background:
-        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
-        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
-      transform: rotate(-6deg);
-      opacity:.18;
-      animation: grid 16s linear infinite;
+    .card{
+      width:min(880px,96vw);
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(2,6,23,.78);
+      backdrop-filter: blur(10px);
+      border-radius:18px;
+      padding:22px;
+      box-shadow: 0 0 0 1px rgba(168,85,247,.12), 0 12px 50px rgba(0,0,0,.55);
     }
-    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
-    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
-
-    .wrap{max-width:980px;margin:0 auto;padding:26px}
-    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
-    .card{padding:18px;border-radius:28px}
-    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
-    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
-    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:860px}
-    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
-
-    .brand{display:flex;align-items:center;gap:12px}
-    .logoWrap{
-      position:relative;width:62px;height:62px;border-radius:18px;
-      transform-style:preserve-3d;
-      animation:logoFloat 3s ease-in-out infinite;
+    .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+    h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.3px;}
+    p{margin:8px 0 0;opacity:.88;font-size:13px;line-height:1.55;}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px;}
+    @media(min-width:860px){.grid{grid-template-columns:1fr 1fr;}}
+    .panel{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.28);
+      border-radius:16px;
+      padding:14px;
     }
-    @keyframes logoFloat{0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg)}50%{transform:translate3d(0,-2px,0) rotateX(7deg) rotateY(-10deg)}}
-    .logoGlow{
-      position:absolute;inset:-12px;border-radius:22px;
-      background:
-        radial-gradient(closest-side at 50% 50%, rgba(168,85,247,.22), transparent 70%),
-        radial-gradient(closest-side at 35% 65%, rgba(236,72,153,.18), transparent 72%),
-        radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.14), transparent 72%);
-      filter:blur(10px);opacity:.95;animation:hue 7.2s linear infinite;pointer-events:none;
+    label{display:block;font-size:12px;font-weight:900;opacity:.9;margin:10px 0 6px;}
+    input{
+      width:100%;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      padding:10px 12px;
+      color:#fff;outline:none;
+      box-sizing:border-box;
     }
-    @keyframes hue{0%{filter:blur(10px) hue-rotate(0deg)}100%{filter:blur(10px) hue-rotate(360deg)}}
-    .brand img{
-      position:absolute;inset:0;margin:auto;height:46px;width:auto;object-fit:contain;
-      transform:translateZ(16px);
-      filter:drop-shadow(0 0 18px rgba(34,211,238,.16));
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+    button,a.btn{
+      border-radius:12px;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(90deg, rgba(168,85,247,.28), rgba(236,72,153,.22), rgba(34,211,238,.16));
+      color:#fff;cursor:pointer;font-weight:900;
+      text-decoration:none;display:inline-block;
     }
-
-    .form{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width:760px){.row2{grid-template-columns:1fr}}
-
-    .inp{
-      width:100%;padding:12px 12px;border-radius:14px;
-      border:1px solid rgba(148,163,184,.22);
-      background:rgba(15,23,42,.55);
-      color:rgba(226,232,240,.95);
-      outline:none;
-    }
-    .inp:focus{border-color:rgba(34,211,238,.55);box-shadow:0 0 0 3px rgba(34,211,238,.10)}
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-    .btn{
-      padding:11px 12px;border-radius:14px;
-      border:1px solid rgba(148,163,184,.34);
-      background:rgba(15,23,42,.72);
-      color:rgba(226,232,240,.96);
-      cursor:pointer;
-      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
-      transition:transform .16s ease,border-color .16s ease,background .16s ease;
-      white-space:nowrap;
-    }
-    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
-    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
-    .hint{font-size:12px;color:rgba(148,163,184,.95);line-height:1.5}
-    .err{display:none;margin-top:10px;padding:12px;border-radius:16px;border:1px solid rgba(236,72,153,.35);background:rgba(236,72,153,.08);color:rgba(226,232,240,.96)}
-    .ok{display:none;margin-top:10px;padding:12px;border-radius:16px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);color:rgba(226,232,240,.96)}
+    a.link{color:var(--c);text-decoration:none;font-weight:900;}
+    .status{margin-top:10px;font-size:12px;opacity:.9;}
+    .ok{color:#34d399;font-weight:900;}
+    .bad{color:#fb7185;font-weight:900;}
+    .mini{opacity:.85;font-size:12px;line-height:1.55;margin-top:8px;}
+    code{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);padding:2px 6px;border-radius:8px;}
   </style>
-<script src="/js/tkfm-fx.js"></script>
 </head>
-<body data-tkfm-theme="radio">
-<script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
-  <div class="bg"></div>
+<body>
+  <div class="card">
+    <div class="top">
+      <div>
+        <h1>Owner Access</h1>
+        <p>Sign in once to enable owner tools on this device. You’ll be returned to your requested page automatically.</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a class="link" href="/index.html">Home</a>
+        <a class="link" href="/radio-hub.html">Radio Hub</a>
+        <a class="link" href="/owner-dashboard.html">Owner Console</a>
+      </div>
+    </div>
 
-  <main class="wrap">
-    <section class="glass card">
-      <div class="brand">
-        <div class="logoWrap">
-          <div class="logoGlow"></div>
-          <img src="/tkfm-radio-logo.png" alt="TKFM Radio"/>
+    <div class="grid">
+      <div class="panel">
+        <div style="font-weight:900;margin-bottom:6px;">Login (recommended)</div>
+        <div class="mini">Uses <code>/.netlify/functions/owner-verify</code> and stores a session locally.</div>
+
+        <label>Email</label>
+        <input id="email" type="email" placeholder="owner email" autocomplete="username"/>
+
+        <label>Password</label>
+        <input id="pass" type="password" placeholder="owner password" autocomplete="current-password"/>
+
+        <div class="row">
+          <button id="loginBtn" type="button">Sign In</button>
+          <button id="logoutBtn" type="button">Sign Out</button>
         </div>
-        <div>
-          <div class="k">Owner Access</div>
-          <div class="h1"><span class="grad">TKFM</span> Owner Login</div>
-          <p class="p">Owner login is for platform control only. Member sign-in is separate.</p>
-        </div>
+
+        <div class="status" id="status"></div>
       </div>
 
-      <div class="divider"></div>
+      <div class="panel">
+        <div style="font-weight:900;margin-bottom:6px;">Manual Key (backup)</div>
+        <div class="mini">If you want: paste your <code>TKFM_OWNER_KEY</code> to unlock without calling the function.</div>
 
-      <form class="form" id="form">
-        <div class="row2">
-          <input class="inp" id="email" autocomplete="username" placeholder="Owner Email" />
-          <input class="inp" id="password" type="password" autocomplete="current-password" placeholder="Owner Password" />
-        </div>
-        <input class="inp" id="ownerKey" type="password" placeholder="TKFM Owner Key" />
-        <div class="hint">
-          Verifies against Netlify env: OWNER_EMAIL, OWNER_PASSWORD, TKFM_OWNER_KEY (and signs a 12-hour owner token).
-        </div>
-        <div class="btnRow">
-          <button class="btn btnHot" id="loginBtn" type="submit">Unlock Owner</button>
-          <button class="btn" id="logoutBtn" type="button">Clear Session</button>
-          <a class="btn" href="index.html">Back to Site</a>
-        </div>
-        <div class="ok" id="ok"></div>
-        <div class="err" id="err"></div>
-      </form>
-    </section>
-  </main>
+        <label>Owner Key</label>
+        <input id="key" type="password" placeholder="paste TKFM_OWNER_KEY here"/>
 
-  <script src="/js/tkfm-owner-guard.js"></script>
+        <div class="row">
+          <button id="keyBtn" type="button">Unlock with Key</button>
+        </div>
+
+        <div class="mini">This does not change your Netlify env. It only unlocks locally on this device.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/tkfm-owner-session.js"></script>
   <script>
-    (function(){
-      function $(id){ return document.getElementById(id); }
-      const form = $("form");
-      const email = $("email");
-      const password = $("password");
-      const ownerKey = $("ownerKey");
-      const ok = $("ok");
-      const err = $("err");
-      const logoutBtn = $("logoutBtn");
-      const loginBtn = $("loginBtn");
+    const statusEl = document.getElementById("status");
 
-      function show(el, msg){ el.textContent = msg; el.style.display = "block"; }
-      function hide(el){ el.style.display = "none"; el.textContent = ""; }
+    function setStatus(msg, ok){
+      statusEl.innerHTML = ok ? `<span class="ok">${msg}</span>` : `<span class="bad">${msg}</span>`;
+    }
 
-      function getNext(){
-        try{
-          const u = new URL(location.href);
-          return u.searchParams.get("next") || "god-view.html";
-        }catch(e){
-          return "god-view.html";
-        }
-      }
+    function goNext(){
+      const dest = window.TKFM_OWNER.nextUrl("/owner-dashboard.html");
+      location.href = dest;
+    }
 
-      async function doLogin(e){
-        e.preventDefault();
-        hide(ok); hide(err);
+    // If already owner, don't loop—just go next once
+    if (window.TKFM_OWNER.isOwner()) {
+      setStatus("Already signed in. Redirecting…", true);
+      setTimeout(goNext, 250);
+    }
 
-        const payload = {
-          email: (email.value || "").trim(),
-          password: (password.value || ""),
-          owner_key: (ownerKey.value || "")
-        };
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = (document.getElementById("email").value || "").trim();
+      const pass = (document.getElementById("pass").value || "").trim();
+      if (!email || !pass) return setStatus("Enter email + password.", false);
 
-        if(!payload.email || !payload.password || !payload.owner_key){
-          show(err, "Missing required fields.");
+      setStatus("Signing in…", true);
+
+      try{
+        const res = await fetch("/.netlify/functions/owner-verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: pass })
+        });
+
+        if (!res.ok){
+          setStatus("Login failed. Check credentials.", false);
           return;
         }
 
-        loginBtn.disabled = true;
-        loginBtn.textContent = "Unlocking…";
+        let data = {};
+        try { data = await res.json(); } catch(e){}
 
-        try{
-          const res = await fetch("/.netlify/functions/owner-verify", {
-            method: "POST",
-            headers: { "content-type":"application/json" },
-            body: JSON.stringify(payload)
-          });
+        const token = (data.token || data.jwt || data.session || data.key || "owner");
+        window.TKFM_OWNER.setOwner(String(token), email);
 
-          const data = await res.json().catch(()=>({}));
-          if(!res.ok || !data.ok || !data.token){
-            throw new Error((data && data.error) ? data.error : ("Login failed (" + res.status + ")"));
-          }
-
-          window.TKFM_OWNER_GUARD.setOwner(data.token, data.expires_in_seconds || (60*60*12));
-          show(ok, "Owner unlocked. Redirecting…");
-          setTimeout(function(){ location.href = getNext(); }, 350);
-        }catch(ex){
-          show(err, String(ex && ex.message ? ex.message : ex));
-        }finally{
-          loginBtn.disabled = false;
-          loginBtn.textContent = "Unlock Owner";
-        }
+        setStatus("Signed in. Redirecting…", true);
+        setTimeout(goNext, 300);
+      }catch(e){
+        setStatus("Login error. Check Netlify Dev running.", false);
       }
+    });
 
-      function doLogout(){
-        hide(ok); hide(err);
-        window.TKFM_OWNER_GUARD.clearOwner();
-        show(ok, "Owner session cleared.");
-      }
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      window.TKFM_OWNER.clearOwner();
+      setStatus("Signed out (local).", true);
+    });
 
-      if(form) form.addEventListener("submit", doLogin);
-      if(logoutBtn) logoutBtn.addEventListener("click", doLogout);
-
-      if(window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.hasLocalSession()){
-        show(ok, "Owner session detected. Redirecting…");
-        setTimeout(function(){ location.href = getNext(); }, 250);
-      }
-    })();
+    document.getElementById("keyBtn").addEventListener("click", () => {
+      const k = (document.getElementById("key").value || "").trim();
+      if (!k || k.length < 16) return setStatus("Invalid key.", false);
+      window.TKFM_OWNER.setOwner(k);
+      setStatus("Key accepted. Redirecting…", true);
+      setTimeout(goNext, 300);
+    });
   </script>
 </body>
 </html>
