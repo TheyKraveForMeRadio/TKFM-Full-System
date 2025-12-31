@@ -2,68 +2,47 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-async function supabaseUpsertUnlock({ session_id, customer_email, unlock_id, unlock }) {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return;
-
-  const url = `${SUPABASE_URL}/rest/v1/tkfm_unlocks`;
-  const payload = [{
-    session_id,
-    customer_email: customer_email || null,
-    unlock_id: unlock_id || null,
-    unlock: unlock || {}
-  }];
-
-  await fetch(url, {
-    method: 'POST',
+function json(statusCode, body) {
+  return {
+    statusCode,
     headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPABASE_SERVICE_ROLE_KEY,
-      'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-      'Prefer': 'resolution=merge-duplicates'
+      'content-type': 'application/json',
+      'access-control-allow-origin': '*',
+      'access-control-allow-headers': 'content-type',
+      'access-control-allow-methods': 'POST, OPTIONS',
     },
-    body: JSON.stringify(payload)
-  });
+    body: JSON.stringify(body),
+  };
 }
 
 export async function handler(event) {
-  try {
-    if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+  if (event.httpMethod === 'OPTIONS') return json(200, { ok: true });
+  if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
-    const body = JSON.parse(event.body || '{}');
-    const session_id = body.session_id || body.sessionId;
-    if (!session_id) return { statusCode: 400, body: JSON.stringify({ error: 'Missing session_id' }) };
+  try {
+    const body = event.body ? JSON.parse(event.body) : {};
+    const session_id = String(body.session_id || '').trim();
+    if (!session_id) return json(400, { error: 'Missing session_id' });
 
     const session = await stripe.checkout.sessions.retrieve(session_id);
 
-    const ok =
-      session?.status === 'complete' ||
-      session?.payment_status === 'paid';
+    const paid =
+      session?.payment_status === 'paid' ||
+      session?.status === 'complete';
 
-    if (!ok) {
-      return { statusCode: 402, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paid: false }) };
-    }
-
-    const unlock_id = session?.metadata?.unlock_id || null;
-
-    let unlock = {};
-    try { unlock = JSON.parse(session?.metadata?.unlock_json || '{}'); } catch { unlock = {}; }
-
-    const customer_email =
-      session?.customer_details?.email ||
-      session?.customer_email ||
+    const unlock_id =
+      session?.metadata?.tkfm_unlock_id ||
+      session?.metadata?.tkfm_unlock ||
       null;
 
-    await supabaseUpsertUnlock({ session_id, customer_email, unlock_id, unlock });
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ paid: true, unlock_id, unlock, customer_email })
-    };
-  } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err?.message || String(err) }) };
+    return json(200, {
+      paid,
+      unlock_id,
+      customer_email: session?.customer_details?.email || session?.customer_email || null,
+      customer_id: session?.customer || null,
+      mode: session?.mode || null,
+    });
+  } catch (e) {
+    return json(500, { error: 'Verify session error', detail: String(e?.message || e) });
   }
 }

@@ -71,6 +71,11 @@
           localStorage.setItem('tkfm_member_email', String(data.customer_email).toLowerCase());
         }
 
+        if (data.customer_id) {
+          localStorage.setItem("tkfm_stripe_customer_id", String(data.customer_id));
+        }
+
+
         msg.innerHTML = '<span class="ok">Access activated.</span> Sending you to your account…';
         setTimeout(()=>location.href='/account.html', 900);
 

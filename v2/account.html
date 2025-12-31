@@ -74,5 +74,49 @@
   </div>
 
   <script type="module" src="/js/tkfm-unlock-sync.js"></script>
+
+<section class="glass card" style="margin-top:14px;">
+  <div class="cardK">Manage Subscription</div>
+  <div style="margin-top:8px; color: rgba(148,163,184,.95); font-size: 13px; line-height:1.55;">
+    Update payment method, switch plans, or cancel anytime from the secure Stripe customer portal.
+  </div>
+  <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+    <button id="tkfmPortalBtn" class="btn primary" type="button">Open Customer Portal</button>
+    <span id="tkfmPortalMsg" style="opacity:.85; font-size:13px;"></span>
+  </div>
+</section>
+
+<script>
+(function(){
+  const btn = document.getElementById('tkfmPortalBtn');
+  const msg = document.getElementById('tkfmPortalMsg');
+  if (!btn) return;
+
+  btn.addEventListener('click', async () => {
+    const customer_id = localStorage.getItem('tkfm_stripe_customer_id') || '';
+    if (!customer_id) {
+      msg.textContent = 'No subscription customer found yet. Complete a subscription checkout first.';
+      return;
+    }
+    msg.textContent = 'Opening secure portal…';
+    try{
+      const res = await fetch('/.netlify/functions/create-portal-session', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ customer_id })
+      });
+      const data = await res.json().catch(()=> ({}));
+      if (!res.ok || !data.url){
+        msg.textContent = (data && data.error) ? data.error : 'Portal error.';
+        return;
+      }
+      window.location.href = data.url;
+    }catch(e){
+      msg.textContent = 'Network error.';
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
