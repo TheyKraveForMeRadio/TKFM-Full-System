@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TKFM — Dashboard</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <title>TKFM — Owner Dashboard</title>
   <style>
     :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--b:#3b82f6;}
     html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
@@ -18,7 +19,7 @@
       padding:20px;
     }
     .card{
-      width:min(980px,96vw);
+      width:min(1080px,96vw);
       border:1px solid rgba(255,255,255,.10);
       background:rgba(2,6,23,.78);
       backdrop-filter: blur(10px);
@@ -26,9 +27,20 @@
       padding:22px;
       box-shadow: 0 0 0 1px rgba(168,85,247,.12), 0 12px 50px rgba(0,0,0,.55);
     }
-    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
     .title{font-size:22px;font-weight:900;margin:0;letter-spacing:.3px;}
     .sub{opacity:.85;margin:8px 0 0;font-size:13px;line-height:1.5;}
+    .pill{
+      display:inline-block;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      opacity:.92;
+      margin-left:10px;
+      font-weight:900;
+    }
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 10px;}
     input{
       flex:1;min-width:240px;
@@ -45,16 +57,6 @@
       background: linear-gradient(90deg, rgba(168,85,247,.28), rgba(236,72,153,.22), rgba(34,211,238,.16));
       color:#fff;cursor:pointer;font-weight:900;
     }
-    .pill{
-      display:inline-block;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      border-radius:999px;
-      padding:6px 10px;
-      font-size:12px;
-      opacity:.9;
-      margin-left:10px;
-    }
     .grid{
       display:grid;
       grid-template-columns: repeat(12, 1fr);
@@ -68,10 +70,12 @@
       border-radius:16px;
       padding:14px;
     }
-    @media (min-width:900px){
-      .panel.half{grid-column: span 6;}
+    @media (min-width:980px){
       .panel.third{grid-column: span 4;}
+      .panel.half{grid-column: span 6;}
     }
+    .links{display:flex;flex-direction:column;gap:8px;}
+    a{color:var(--c);text-decoration:none;font-weight:900;}
     pre{
       margin:0;
       padding:12px;
@@ -79,22 +83,25 @@
       border:1px solid rgba(255,255,255,.10);
       border-radius:12px;
       overflow:auto;
-      max-height:38vh;
+      max-height:40vh;
       font-size:12px;
     }
-    a{color:var(--c);text-decoration:none;font-weight:900;}
+    .muted{opacity:.85;font-size:12px;line-height:1.5;margin:10px 0 0;}
   </style>
-<script src="/js/tkfm-fx.js"></script>
 </head>
-<body data-tkfm-theme="radio">
-<script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
+<body>
   <div class="card">
     <div class="top">
       <div>
         <p class="title">Owner Dashboard <span class="pill" id="state">LOCKED</span></p>
-        <p class="sub">Owner-only control panel. Enter your TKFM Owner Key to unlock on this device.</p>
+        <p class="sub">Private admin hub. Unlock with <b>TKFM_OWNER_KEY</b> (local only, on this device).</p>
+        <p class="muted">Tip: bookmark this page. Do NOT link it publicly.</p>
       </div>
-      <a href="/pricing.html">Pricing</a>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <a href="/radio-hub.html">Radio Hub</a>
+        <a href="/pricing.html">Pricing</a>
+        <a href="/account.html">Account Sync</a>
+      </div>
     </div>
 
     <div class="row">
@@ -105,12 +112,12 @@
 
     <div class="grid">
       <div class="panel third">
-        <p style="margin:0 0 8px;font-weight:900;">Quick Links</p>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <a href="/god-view.html">God View</a>
-          <a href="/tkfm-dev-console.html">Dev Console</a>
-          <a href="/owner-ops-dashboard.html">Owner Ops</a>
-          <a href="/ai-dj-engine.html">AI DJ Engine</a>
+        <p style="margin:0 0 8px;font-weight:900;">Owner Links</p>
+        <div class="links" id="ownerLinks">
+          <a data-owner href="/god-view.html">God View</a>
+          <a data-owner href="/tkfm-dev-console.html">Dev Console</a>
+          <a data-owner href="/owner-ops-dashboard.html">Owner Ops</a>
+          <a data-owner href="/ai-dj-engine.html">AI DJ Engine</a>
         </div>
       </div>
 
@@ -127,36 +134,34 @@
   </div>
 
   <script>
-    const OWNER_KEY = (localStorage.getItem('TKFM_OWNER_KEY') || '').trim();
     const stateEl = document.getElementById('state');
     const keyEl = document.getElementById('key');
     const featEl = document.getElementById('features');
     const memEl = document.getElementById('member');
+
+    function isUnlocked(){
+      const k = (localStorage.getItem('TKFM_OWNER_KEY') || '').trim();
+      return (k && k.length >= 16);
+    }
 
     function refresh() {
       const feats = JSON.parse(localStorage.getItem('tkfm_user_features') || '{}');
       const mem = {
         tier: localStorage.getItem('tkfm_memberTier') || 'free',
         email: localStorage.getItem('tkfm_member_email') || '',
-        session: localStorage.getItem('tkfm_member_session') || ''
+        return_url: localStorage.getItem('tkfm_return_url') || ''
       };
 
       featEl.textContent = JSON.stringify(feats, null, 2);
       memEl.textContent = JSON.stringify(mem, null, 2);
 
-      const k = (localStorage.getItem('TKFM_OWNER_KEY') || '').trim();
-      const ok = (k && k.length >= 16);
+      const ok = isUnlocked();
       stateEl.textContent = ok ? 'UNLOCKED' : 'LOCKED';
 
-      if (!ok) {
-        // block access to owner-only links
-        document.querySelectorAll('a[href$=".html"]').forEach(a => {
-          const href = a.getAttribute('href') || '';
-          if (href.includes('god-view') || href.includes('tkfm-dev-console') || href.includes('owner-ops-dashboard')) {
-            a.addEventListener('click', (e) => { e.preventDefault(); alert('Owner locked'); });
-          }
-        });
-      }
+      document.querySelectorAll('[data-owner]').forEach(a => {
+        a.onclick = null;
+        if (!ok) a.onclick = (e) => { e.preventDefault(); alert('Owner locked'); };
+      });
     }
 
     document.getElementById('unlock').addEventListener('click', () => {
