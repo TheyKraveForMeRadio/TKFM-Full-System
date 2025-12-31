@@ -1,909 +1,353 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="tkfm-theme" content="radio" />
-  <link rel="stylesheet" href="/css/tkfm-shell.css" />
-  <link rel="stylesheet" href="/css/tkfm-radio.css" />
-  <script src="/js/tkfm-shell.js" defer></script>
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TKFM DJ Portal — My Lane</title>
-  <meta name="description" content="TKFM DJ Portal — see your lane, schedule, and tools. AI DJ Engine stays under station owner control unless unlocked as a premium add-on." />
-
-  <script type="module">
-  import { TKFM_Gateway } from "./auth-gateway.js";
-  TKFM_Gateway();
-</script>
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — DJ Portal</title>
+  <meta name="description" content="DJ Portal — member-tier tools for DJs on They Krave For Me Radio."/>
   <style>
-    body.tkfm-dj-root {
-      min-height: 100vh;
-      margin: 0;
-      background: radial-gradient(circle at top left, #020014, #020617 55%, #000000 100%);
-      color: #f9fafb;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      overflow-x: hidden;
-      position: relative;
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
     }
-
-    .tkfm-bg-main {
-      position: fixed;
-      inset: -25%;
-      pointer-events: none;
-      z-index: -3;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
       background:
-        radial-gradient(circle at 0 0, rgba(255, 0, 128, 0.5), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.45), transparent 60%);
-      filter: blur(10px);
-      animation: tkfmGlowDJ 28s linear infinite alternate;
-      opacity: 0.9;
-    }
-
-    .tkfm-bg-orbit {
-      position: fixed;
-      inset: -40%;
-      pointer-events: none;
-      z-index: -4;
-      background:
-        conic-gradient(
-          from 200deg,
-          rgba(255, 0, 128, 0.28),
-          rgba(56, 189, 248, 0.28),
-          rgba(250, 204, 21, 0.16),
-          rgba(255, 0, 128, 0.28)
-        );
-      mix-blend-mode: screen;
-      opacity: 0.4;
-      filter: blur(45px);
-      animation: tkfmOrbitDJ 42s linear infinite;
-    }
-
-    @keyframes tkfmGlowDJ {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(2%, -3%, 0) scale(1.02); }
-      100% { transform: translate3d(-3%, 3%, 0) scale(1.03); }
-    }
-
-    @keyframes tkfmOrbitDJ {
-      0% { transform: rotate(0deg) scale(1.06); }
-      100% { transform: rotate(360deg) scale(1.06); }
-    }
-
-    #tkfm-particles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -2;
-    }
-
-    main.tkfm-main {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 1.75rem 1.25rem 3.5rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* HEADER */
-    .tkfm-header {
-      margin-bottom: 1.7rem;
-    }
-
-    .tkfm-kicker {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: rgba(191, 219, 254, 0.98);
-      margin-bottom: 0.35rem;
-    }
-
-    .tkfm-title-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 0.7rem;
-      align-items: flex-start;
-    }
-
-    .tkfm-title {
-      font-size: 2rem;
-      font-weight: 900;
-      margin: 0;
-      background: linear-gradient(110deg, #ff007f, #f97316, #22c55e, #06b6d4);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow:
-        0 0 20px rgba(244, 63, 94, 0.7),
-        0 0 34px rgba(34, 211, 238, 0.7);
-    }
-
-    .tkfm-sub {
-      font-size: 0.9rem;
-      color: rgba(226, 232, 240, 0.94);
-      max-width: 32rem;
-      margin-top: 0.35rem;
-    }
-
-    .tkfm-sub span {
-      color: #facc15;
-    }
-
-    .tkfm-header-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      align-items: flex-end;
-      min-width: 220px;
-    }
-
-    .tkfm-pill-role {
-      font-size: 0.78rem;
-      border-radius: 999px;
-      padding: 0.3rem 0.75rem;
-      border: 1px solid rgba(59, 130, 246, 0.95);
-      background: rgba(30, 64, 175, 0.5);
-      color: #bfdbfe;
-    }
-
-    .tkfm-pill-note {
-      font-size: 0.72rem;
-      color: rgba(148, 163, 184, 0.96);
-      text-align: right;
-    }
-
-    .tkfm-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      padding: 0.45rem 1.05rem;
-      font-size: 0.8rem;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.75);
-      color: #e0f2fe;
-      background: radial-gradient(circle at top left, rgba(56,189,248,0.52), rgba(15,23,42,0.98));
-      text-decoration: none;
-      cursor: pointer;
-      overflow: hidden;
-      transition:
-        transform 0.16s ease-out,
-        box-shadow 0.16s ease-out,
-        border-color 0.16s ease-out,
-        background 0.16s ease-out;
-    }
-
-    .tkfm-btn::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.5), transparent 60%);
-      opacity: 0;
-      transform: translate3d(-40%, -40%, 0);
-      transition:
-        opacity 0.18s ease-out,
-        transform 0.24s ease-out;
-      pointer-events: none;
-    }
-
-    .tkfm-btn:hover {
-      transform: translateY(-1px) scale(1.02);
-      box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.9),
-        0 0 20px rgba(56, 189, 248, 0.65);
-      border-color: rgba(56, 189, 248, 0.98);
-    }
-
-    .tkfm-btn:hover::after {
-      opacity: 0.7;
-      transform: translate3d(0,0,0);
-    }
-
-    .tkfm-btn-ghost {
-      background: rgba(15, 23, 42, 0.9);
-      border-style: dashed;
-    }
-
-    /* LAYOUT */
-    .tkfm-grid-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-      gap: 1rem;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 980px) {
-      .tkfm-grid-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .tkfm-header-actions {
-        align-items: flex-start;
-      }
-    }
-
-    /* CARDS */
-    .tkfm-card {
-      position: relative;
-      border-radius: 20px;
-      padding: 0.9rem 0.95rem;
-      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      box-shadow:
-        0 16px 34px rgba(15, 23, 42, 0.95),
-        0 0 26px rgba(15, 23, 42, 0.9);
-      overflow: hidden;
-      transform: translateY(0) translateZ(0);
-      transition:
-        transform 0.16s ease-out,
-        box-shadow 0.16s ease-out,
-        border-color 0.16s ease-out,
-        background 0.16s ease-out;
-    }
-
-    .tkfm-card::before {
-      content: "";
-      position: absolute;
-      inset: -25%;
-      background: conic-gradient(
-        from 220deg,
-        rgba(255, 0, 128, 0.25),
-        rgba(56, 189, 248, 0.25),
-        rgba(250, 204, 21, 0.18),
-        rgba(255, 0, 128, 0.25)
-      );
-      opacity: 0.26;
-      filter: blur(24px);
-      z-index: -1;
-    }
-
-    .tkfm-card:hover {
-      transform: translateY(-3px) scale(1.01);
-      border-color: rgba(56, 189, 248, 0.96);
-      box-shadow:
-        0 18px 38px rgba(15, 23, 42, 0.98),
-        0 0 26px rgba(56, 189, 248, 0.8);
-      background: radial-gradient(circle at top left, rgba(30,64,175,0.7), rgba(15,23,42,0.98));
-    }
-
-    .tkfm-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .tkfm-card-title {
-      font-size: 0.98rem;
-      font-weight: 600;
-    }
-
-    .tkfm-card-kicker {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: rgba(191, 219, 254, 0.96);
-    }
-
-    .tkfm-badge {
-      font-size: 0.72rem;
-      border-radius: 999px;
-      padding: 0.18rem 0.6rem;
-      border: 1px solid rgba(56, 189, 248, 0.96);
-      color: #e0f2fe;
-      background: rgba(8, 47, 73, 0.85);
-      white-space: nowrap;
-    }
-
-    .tkfm-badge-gold {
-      border-color: rgba(250, 204, 21, 0.96);
-      background: rgba(113, 63, 18, 0.85);
-      color: #fef9c3;
-    }
-
-    .tkfm-meta {
-      font-size: 0.78rem;
-      color: rgba(148, 163, 184, 0.96);
-      margin-bottom: 0.45rem;
-    }
-
-    .tkfm-meta strong {
-      color: rgba(248, 250, 252, 0.98);
-    }
-
-    /* LANE METER */
-    .tkfm-lane-meter {
-      margin-top: 0.45rem;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.98);
-      border: 1px solid rgba(51, 65, 85, 0.96);
-      padding: 0.3rem 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.76rem;
-    }
-
-    .tkfm-lane-bar-wrap {
-      flex: 1;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.96);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .tkfm-lane-bar {
-      position: absolute;
-      inset: 0;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #22c55e, #06b6d4);
-      transform-origin: left center;
-      transform: scaleX(0.4);
-      box-shadow: 0 0 14px rgba(34, 197, 94, 0.8);
-    }
-
-    .tkfm-lane-label {
-      font-size: 0.76rem;
-      color: rgba(191, 219, 254, 0.96);
-    }
-
-    /* STATS ROW */
-    .tkfm-stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    @media (max-width: 640px) {
-      .tkfm-stats-row {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .tkfm-stat-chip {
-      border-radius: 14px;
-      padding: 0.3rem 0.55rem;
-      background: rgba(15, 23, 42, 0.98);
-      border: 1px solid rgba(51, 65, 85, 0.96);
-      font-size: 0.76rem;
-      display: grid;
-      gap: 0.06rem;
-    }
-
-    .tkfm-stat-label {
-      color: rgba(148, 163, 184, 0.96);
-    }
-
-    .tkfm-stat-value {
-      font-variant-numeric: tabular-nums;
-      color: rgba(248, 250, 252, 0.98);
-      font-weight: 600;
-    }
-
-    /* SCHEDULE */
-    .tkfm-schedule-list {
-      display: grid;
-      gap: 0.35rem;
-      font-size: 0.78rem;
-      margin-top: 0.3rem;
-    }
-
-    .tkfm-slot {
-      border-radius: 14px;
-      padding: 0.32rem 0.5rem;
-      background: rgba(15, 23, 42, 0.98);
-      border: 1px solid rgba(51, 65, 85, 0.96);
-      display: grid;
-      grid-template-columns: 0.85fr minmax(0, 1.2fr) 0.75fr;
-      gap: 0.3rem;
-      align-items: center;
-    }
-
-    .tkfm-slot-time {
-      font-variant-numeric: tabular-nums;
-      color: rgba(191, 219, 254, 0.98);
-      font-size: 0.78rem;
-    }
-
-    .tkfm-slot-show {
-      font-size: 0.8rem;
-      color: rgba(248, 250, 252, 0.98);
-    }
-
-    .tkfm-slot-meta {
-      font-size: 0.74rem;
-      color: rgba(148, 163, 184, 0.98);
-    }
-
-    .tkfm-slot.live {
-      border-color: rgba(244, 63, 94, 0.96);
-      box-shadow:
-        0 0 12px rgba(248, 113, 113, 0.9),
-        0 0 24px rgba(248, 113, 113, 0.8);
-      background: radial-gradient(circle at 0 0, rgba(127,29,29,0.7), rgba(15,23,42,0.98));
-    }
-
-    .tkfm-slot.live .tkfm-slot-meta::before {
-      content: "LIVE · ";
-      color: rgba(252, 165, 165, 0.98);
-      font-weight: 600;
-    }
-
-    @media (max-width: 640px) {
-      .tkfm-slot {
-        grid-template-columns: 0.9fr minmax(0, 1.1fr);
-        grid-template-rows: auto auto;
-      }
-      .tkfm-slot span:last-child {
-        grid-column: 1 / -1;
-      }
-    }
-
-    /* PREMIUM TOOLS (LOCKED) */
-    .tkfm-premium-card {
-      position: relative;
-      border-radius: 20px;
-      padding: 0.9rem 0.95rem;
-      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
-      border: 1px solid rgba(248, 113, 113, 0.7);
-      box-shadow:
-        0 16px 34px rgba(15, 23, 42, 0.95),
-        0 0 28px rgba(127, 29, 29, 0.9);
-      overflow: hidden;
-    }
-
-    .tkfm-premium-inner {
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.20), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.16), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.12), transparent 70%);
       filter: blur(2px);
-      opacity: 0.65;
-      pointer-events: none;
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.98;
     }
-
-    .tkfm-premium-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 0.9rem;
-      background: radial-gradient(circle at top, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
-      backdrop-filter: blur(6px);
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.06) 0px, rgba(34,211,238,.06) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.05) 0px, rgba(168,85,247,.05) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
     }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
 
-    .tkfm-premium-label {
-      font-size: 0.78rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(251, 191, 36, 0.98);
-      margin-bottom: 0.25rem;
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
     }
-
-    .tkfm-premium-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
+    header .wrap{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{
+      width:46px;height:46px;border-radius:14px;position:relative;overflow:hidden;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(2,6,23,.62);
+      box-shadow:0 0 0 1px rgba(255,255,255,.03),0 18px 60px rgba(0,0,0,.45);
+      transform-style:preserve-3d;
+      animation: float3d 3.2s ease-in-out infinite;
     }
-
-    .tkfm-premium-text {
-      font-size: 0.78rem;
-      color: rgba(209, 213, 219, 0.98);
-      max-width: 18rem;
-      margin-bottom: 0.4rem;
+    @keyframes float3d{
+      0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg)}
+      50%{transform:translate3d(0,-2px,0) rotateX(7deg) rotateY(-10deg)}
     }
-
-    .tkfm-premium-note {
-      font-size: 0.74rem;
-      color: rgba(190, 242, 100, 0.98);
-      margin-bottom: 0.5rem;
+    .logo:before{
+      content:"";position:absolute;inset:-12px;border-radius:16px;
+      background:
+        radial-gradient(closest-side at 50% 50%, rgba(168,85,247,.20), transparent 70%),
+        radial-gradient(closest-side at 35% 65%, rgba(236,72,153,.16), transparent 72%),
+        radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.14), transparent 72%);
+      filter:blur(10px);opacity:.95;animation:hue 7.2s linear infinite;pointer-events:none;
     }
-
-    .tkfm-premium-cta {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      align-items: center;
-      font-size: 0.74rem;
-      color: rgba(148, 163, 184, 0.96);
+    @keyframes hue{0%{filter:blur(10px) hue-rotate(0deg)}100%{filter:blur(10px) hue-rotate(360deg)}}
+    .logo img{position:absolute;inset:0;margin:auto;height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 18px rgba(34,211,238,.14))}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .title{font-weight:950;letter-spacing:.06em}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
     }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
 
-    .tkfm-premium-cta strong {
-      color: rgba(248, 250, 252, 0.98);
+    main{max-width:1240px;margin:0 auto;padding:18px 22px 44px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:44px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+
+    .topRow{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .chip{
+      padding:10px 12px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.26);
+      background:rgba(15,23,42,.60);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      margin-left:auto;
+      display:flex;gap:10px;align-items:center;
+      white-space:nowrap;
     }
-
-    /* BOTTOM STRIP */
-    .tkfm-bottom {
-      margin-top: 1.4rem;
-      font-size: 0.76rem;
-      color: rgba(148, 163, 184, 0.96);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      align-items: center;
-      justify-content: space-between;
+    .dot{width:8px;height:8px;border-radius:999px;background:rgba(245,158,11,.9);box-shadow:0 0 0 4px rgba(245,158,11,.18)}
+    .dot.ok{background:rgba(34,211,238,.95);box-shadow:0 0 0 4px rgba(34,211,238,.18)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+      display:inline-flex;align-items:center;justify-content:center;
     }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
 
-    .tkfm-bottom strong {
-      color: rgba(248, 250, 252, 0.98);
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
     }
-
-    @media (max-width: 640px) {
-      .tkfm-title-row {
-        flex-direction: column;
-      }
-      .tkfm-header-actions {
-        align-items: flex-start;
-      }
-      .tkfm-bottom {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
     }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
+    .tag.warn{border-color:rgba(245,158,11,.28)}
 
-    /* Fade-in */
-    .tkfm-fade-in {
-      opacity: 0;
-      transform: translateY(16px);
-      transition:
-        opacity 0.3s ease-out,
-        transform 0.3s ease-out;
+    .lockBox{
+      margin-top:14px;
+      border:1px solid rgba(236,72,153,.26);
+      background:rgba(236,72,153,.06);
+      border-radius:22px;
+      padding:14px;
     }
-
-    .tkfm-fade-in.tkfm-visible {
-      opacity: 1;
-      transform: translateY(0);
+    .lockH{font-weight:950}
+    .hide{display:none!important}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .box{
+      margin-top:12px;
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(2,6,23,.55);
+      border-radius:18px;
+      padding:12px;
+      overflow:auto;
     }
   </style>
 </head>
-<body class="tkfm-dj-root">
-  <div class="tkfm-bg-main"></div>
-  <div class="tkfm-bg-orbit"></div>
-  <canvas id="tkfm-particles"></canvas>
+<body>
+  <div class="bg"></div>
 
-  <div id="tkfm-header"></div>
-
-  <main class="tkfm-main">
-    <!-- HEADER -->
-    <header class="tkfm-header tkfm-fade-in">
-      <div class="tkfm-kicker">DJ Portal</div>
-      <div class="tkfm-title-row">
+  <header>
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <div class="logo" aria-hidden="true"><img src="/tkfm-radio-logo.png" alt="TKFM"/></div>
         <div>
-          <h1 class="tkfm-title">Your lane on TKFM. Earn it. Grow it.</h1>
-          <p class="tkfm-sub">
-            <span>Upload heat, hold your show slots, build your lane</span> — the AI DJ Engine stays under station control unless
-            the owner unlocks it as a premium add-on.
-          </p>
+          <div class="k">They Krave For Me Radio</div>
+          <div class="title">DJ Portal</div>
         </div>
-        <div class="tkfm-header-actions">
-          <div class="tkfm-pill-role" id="tkfm-role-pill">Resident DJ · Active</div>
-          <div class="tkfm-pill-note" id="tkfm-plan-note">
-            Plan: <strong>Resident DJ</strong><br/>
-            To move up lanes, hit your numbers and talk with station owner.
+      </a>
+
+      <nav class="nav" aria-label="DJ Nav">
+        <a class="pill" href="dj-tools.html">DJ Toolkit</a>
+        <a class="pill" href="dj-schedule.html">DJ Schedule</a>
+        <a class="pill" href="pricing.html">Monthly Tiers</a>
+        <a class="pill" href="login.html">Member Sign In</a>
+        <a class="pill hot" href="radio-hub.html">Radio Hub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="glass card">
+      <div class="topRow">
+        <div>
+          <div class="k">DJ Lane</div>
+          <div class="h1"><span class="grad">DJ Portal</span></div>
+          <p class="p">This page is for active DJ tier members only. It is not owner-gated and will never redirect to owner-login.</p>
+          <div class="btnRow">
+            <a class="btn btnHot" href="pricing.html">Activate DJ Tier</a>
+            <a class="btn" href="dj-schedule.html">View Schedule</a>
+            <a class="btn" href="dj-mixtape-hosting.html">Mixtape Hosting</a>
           </div>
-          <a href="/pricing.html" class="tkfm-btn tkfm-btn-ghost">View Lanes</a>
+        </div>
+
+        <div class="chip" id="tierChip">
+          <span class="dot" id="tierDot"></span>
+          <span id="tierText">Checking access…</span>
         </div>
       </div>
-    </header>
 
-    <!-- MAIN GRID -->
-    <section class="tkfm-grid-layout">
-      <!-- LEFT: LANE + STATS + SCHEDULE -->
-      <div class="tkfm-fade-in">
-        <article class="tkfm-card">
-          <div class="tkfm-card-header">
-            <div>
-              <div class="tkfm-card-kicker">Your Lane</div>
-              <h2 class="tkfm-card-title" id="tkfm-lane-title">Resident DJ Lane</h2>
-            </div>
-            <div class="tkfm-badge tkfm-badge-gold" id="tkfm-lane-badge">Good Standing</div>
-          </div>
+      <div class="divider"></div>
 
-          <p class="tkfm-meta" id="tkfm-lane-meta">
-            You’re in a lane where TKFM expects <strong>consistency, clean mixes & station-ready energy</strong>. You’re not just sending
-            random uploads — you’re part of the programming grid.
-          </p>
-
-          <div class="tkfm-lane-meter">
-            <div class="tkfm-lane-label">Lane Progress</div>
-            <div class="tkfm-lane-bar-wrap">
-              <div class="tkfm-lane-bar" id="tkfm-lane-bar"></div>
-            </div>
-            <div class="tkfm-lane-label" id="tkfm-lane-level">Level 2 / 3</div>
-          </div>
-
-          <div class="tkfm-stats-row" id="tkfm-stats-row">
-            <!-- stat chips injected -->
-          </div>
-        </article>
-
-        <article class="tkfm-card" style="margin-top:0.9rem;">
-          <div class="tkfm-card-header">
-            <div>
-              <div class="tkfm-card-kicker">Schedule</div>
-              <h2 class="tkfm-card-title">Your TKFM Blocks</h2>
-            </div>
-            <div class="tkfm-badge">Program Grid</div>
-          </div>
-
-          <p class="tkfm-meta">
-            This is how the station expects to hear from you. If you can’t hold these times, talk to the station owner — don’t ghost your lane.
-          </p>
-
-          <div class="tkfm-schedule-list" id="tkfm-schedule">
-            <!-- schedule rows injected -->
-          </div>
-        </article>
+      <div class="lockBox hide" id="lockedBox">
+        <div class="lockH">DJ Portal is locked.</div>
+        <div class="p" style="max-width:none;margin-top:6px">
+          Sign in as a member and activate the DJ Toolkit tier to access DJ tools and the “DJ on the station” lane.
+        </div>
+        <div class="btnRow">
+          <a class="btn btnHot" href="login.html">Member Sign In</a>
+          <a class="btn" href="register.html">Create Account</a>
+          <a class="btn" href="pricing.html">View Monthly Tiers</a>
+          <a class="btn" href="dj-schedule.html">View Public Schedule</a>
+        </div>
       </div>
 
-      <!-- RIGHT: PREMIUM / AI + ACTIONS -->
-      <div class="tkfm-fade-in">
-        <article class="tkfm-premium-card">
-          <div class="tkfm-premium-inner">
-            <div class="tkfm-card-header">
-              <div>
-                <div class="tkfm-card-kicker">Premium Tools</div>
-                <h2 class="tkfm-card-title">AI DJ Engine & Autopilot</h2>
-              </div>
-              <div class="tkfm-badge">Owner Control</div>
-            </div>
+      <div class="grid hide" id="djGrid">
+        <a class="glass tile" href="dj-schedule.html">
+          <div class="tileK">Schedule</div>
+          <div class="tileH">Manage Show Slots</div>
+          <div class="tileP">DJ members can request/hold slots (public can view only).</div>
+          <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">SLOTS</span></div>
+        </a>
 
-            <p class="tkfm-meta">
-              Concepts for AI support that can help hold overnights, backup crates, transitions, and station IDs. These controls live with the owner.
-            </p>
+        <a class="glass tile" href="radio-stream-gateway.html">
+          <div class="tileK">Station</div>
+          <div class="tileH">DJ on the Station</div>
+          <div class="tileP">Route your show lane to the station workflow.</div>
+          <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">LANE</span></div>
+        </a>
 
-            <ul class="tkfm-schedule-list" style="margin-top:0.2rem;">
-              <li class="tkfm-slot">
-                <span class="tkfm-slot-time">Overnight Assist</span>
-                <span class="tkfm-slot-show">AI DJ engine holds 12:00a – 3:00a gaps.</span>
-                <span class="tkfm-slot-meta">Owner decides when it runs.</span>
-              </li>
-              <li class="tkfm-slot">
-                <span class="tkfm-slot-time">Fallback Safety</span>
-                <span class="tkfm-slot-show">Safe crates + clean records for dropouts.</span>
-                <span class="tkfm-slot-meta">Protects the station sound at all times.</span>
-              </li>
-              <li class="tkfm-slot">
-                <span class="tkfm-slot-time">AI IDs & Drops</span>
-                <span class="tkfm-slot-show">Generated station IDs, intros, outros.</span>
-                <span class="tkfm-slot-meta">Still needs human strategy + approval.</span>
-              </li>
-            </ul>
-          </div>
+        <a class="glass tile" href="dj-mixtape-orders.html">
+          <div class="tileK">Orders</div>
+          <div class="tileH">Paid Requests</div>
+          <div class="tileP">Track paid DJ requests and fulfillment.</div>
+          <div class="tags"><span class="tag ok">OPS</span><span class="tag warn">FULFILL</span></div>
+        </a>
 
-          <div class="tkfm-premium-overlay">
-            <div class="tkfm-premium-label">Locked Engine</div>
-            <div class="tkfm-premium-title">AI DJ Engine is not in your lane yet.</div>
-            <div class="tkfm-premium-text">
-              Only the station owner can touch AI DJ controls from the TKFM dashboard. DJs never get full engine access by default.
-              If TKFM offers an AI-assisted lane, it will be a <strong>premium tier</strong>.
-            </div>
-            <div class="tkfm-premium-note">
-              This protects the station sound, the brand, and the value of higher DJ lanes.
-            </div>
-            <div class="tkfm-premium-cta">
-              <a href="/pricing.html" class="tkfm-btn">See DJ Lanes</a>
-              <span>
-                If you’ve outgrown your current lane, <strong>talk directly with the station owner</strong> about moving up — not with the system.
-              </span>
-            </div>
-          </div>
-        </article>
+        <a class="glass tile" href="feature-engine.html">
+          <div class="tileK">Promo</div>
+          <div class="tileH">Paid Feature Lanes</div>
+          <div class="tileP">Boost campaigns connected to station motion.</div>
+          <div class="tags"><span class="tag ok">PAID</span><span class="tag warn">BOOST</span></div>
+        </a>
 
-        <article class="tkfm-card" style="margin-top:0.9rem;">
-          <div class="tkfm-card-header">
-            <div>
-              <div class="tkfm-card-kicker">Actions</div>
-              <h2 class="tkfm-card-title">Keep Your Lane Healthy</h2>
-            </div>
-            <div class="tkfm-badge">Station Standard</div>
-          </div>
+        <a class="glass tile" href="submit.html">
+          <div class="tileK">Music</div>
+          <div class="tileH">Submit Drops</div>
+          <div class="tileP">Send new drops to the station pipeline.</div>
+          <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">SUBMIT</span></div>
+        </a>
 
-          <p class="tkfm-meta">
-            This is what TKFM expects from any DJ in good standing. Hitting these consistently is how you stay on the grid and move up.
-          </p>
-
-          <div class="tkfm-stats-row">
-            <div class="tkfm-stat-chip">
-              <div class="tkfm-stat-label">Next Upload Window</div>
-              <div class="tkfm-stat-value">Weekly · Rolling</div>
-            </div>
-            <div class="tkfm-stat-chip">
-              <div class="tkfm-stat-label">Minimum Mix Length</div>
-              <div class="tkfm-stat-value">45–60 min</div>
-            </div>
-            <div class="tkfm-stat-chip">
-              <div class="tkfm-stat-label">Check-In Expectation</div>
-              <div class="tkfm-stat-value">Once per week</div>
-            </div>
-          </div>
-
-          <div style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;">
-            <a href="/artist-upload.html" class="tkfm-btn">Upload a Mix</a>
-            <a href="/contact.html" class="tkfm-btn tkfm-btn-ghost">Message Station</a>
-          </div>
-        </article>
+        <a class="glass tile" href="autopilot-engine.html">
+          <div class="tileK">Autopilot</div>
+          <div class="tileH">Automation</div>
+          <div class="tileP">Route DJ lane into automation engines.</div>
+          <div class="tags"><span class="tag warn">ENGINE</span><span class="tag lock">OWNER</span></div>
+        </a>
       </div>
+
+      <div class="divider"></div>
+
+      <div class="k">Access Debug</div>
+      <div class="box mono" id="dbg">Loading…</div>
     </section>
 
-    <!-- BOTTOM -->
-    <section class="tkfm-bottom tkfm-fade-in">
-      <span>
-        <strong>Owner rule:</strong> AI DJ Engine lives in the owner’s dashboard. DJ Portal is about lane, schedule, and consistency — not raw engine access.
-      </span>
-      <span>
-        Later, Supabase roles + Stripe plans can hard-lock who’s in which lane and what they’re allowed to touch.
-      </span>
-    </section>
+    <script>
+      (function(){
+        function get(k){ try{ return localStorage.getItem(k) || ''; } catch(e){ return ''; } }
+        function parseJSON(v){ try{ return JSON.parse(v); } catch(e){ return null; } }
+
+        function normalizeTier(raw){
+          const v = String(raw || '').trim().toLowerCase();
+          if(!v) return 'free';
+          if(v === 'dj' || v.includes('dj')) return 'dj';
+          if(v === 'creator' || v.includes('creator')) return 'creator';
+          if(v === 'fan' || v.includes('fan')) return 'fan';
+          if(v === 'label' || v.includes('label')) return 'label';
+          if(v === 'elite') return 'creator'; // legacy map
+          return 'free';
+        }
+
+        const memberTier = normalizeTier(get('tkfm_memberTier') || get('tkfm_creatorStatus') || get('tkfm_memberTierRequested'));
+        const session = parseJSON(get('tkfm_member_session'));
+        const signedIn = !!(session && session.id && session.email);
+
+        const dot = document.getElementById('tierDot');
+        const txt = document.getElementById('tierText');
+        const locked = document.getElementById('lockedBox');
+        const grid = document.getElementById('djGrid');
+        const dbg = document.getElementById('dbg');
+
+        function setChip(label, ok){
+          if(txt) txt.textContent = label;
+          if(dot) dot.className = ok ? 'dot ok' : 'dot';
+        }
+
+        const debugObj = {
+          signedIn,
+          memberTier,
+          sessionEmail: session ? session.email : null,
+          keys: {
+            tkfm_memberTier: get('tkfm_memberTier'),
+            tkfm_creatorStatus: get('tkfm_creatorStatus'),
+            tkfm_memberTierRequested: get('tkfm_memberTierRequested')
+          }
+        };
+        if(dbg) dbg.textContent = JSON.stringify(debugObj, null, 2);
+
+        if(!signedIn){
+          setChip('STATUS: NOT SIGNED IN', false);
+          if(locked) locked.classList.remove('hide');
+          if(grid) grid.classList.add('hide');
+          return;
+        }
+
+        if(memberTier !== 'dj'){
+          setChip('TIER: ' + memberTier.toUpperCase() + ' (DJ REQUIRED)', false);
+          if(locked) locked.classList.remove('hide');
+          if(grid) grid.classList.add('hide');
+          return;
+        }
+
+        setChip('TIER: DJ (ACTIVE)', true);
+        if(locked) locked.classList.add('hide');
+        if(grid) grid.classList.remove('hide');
+      })();
+    </script>
   </main>
-
-  <div id="tkfm-footer"></div>
-
-  <script type="module">
-    import { mountShell } from "/src/_page.js";
-
-    // Mount shell with "dj" tab active if you want it that way
-    mountShell("dj");
-
-    // Simulated DJ plan (later: use Supabase role / Stripe plan)
-    const djPlan = {
-      name: "Resident DJ",
-      level: 2,
-      maxLevel: 3,
-      progress: 0.65,
-      standing: "Good Standing",
-      meta: "You’re expected to hold a weekly presence, keep mixes clean, and match TKFM’s sound. This lane says \"I’m part of the sound,\" not just a random uploader.",
-      stats: [
-        { label: "Mixes this month", value: "3" },
-        { label: "Average show rating", value: "4.7 / 5" },
-        { label: "Feature assists", value: "2 artists" },
-      ],
-      schedule: [
-        { time: "Friday · 8:00p – 9:00p", show: "Resident Heat Block", meta: "Live or freshly updated mix", live: true },
-        { time: "Tuesday · 7:00p – 8:00p", show: "Warm-Up Cruise", meta: "Pre-mix rotation slot", live: false },
-        { time: "Floating Slot", show: "On-Call Guest Set", meta: "At station owner’s discretion", live: false },
-      ],
-    };
-
-    // Apply DJ plan to UI
-    const laneTitle = document.getElementById("tkfm-lane-title");
-    const laneBadge = document.getElementById("tkfm-lane-badge");
-    const laneMeta = document.getElementById("tkfm-lane-meta");
-    const laneBar = document.getElementById("tkfm-lane-bar");
-    const laneLevel = document.getElementById("tkfm-lane-level");
-    const statsRow = document.getElementById("tkfm-stats-row");
-    const scheduleEl = document.getElementById("tkfm-schedule");
-    const rolePill = document.getElementById("tkfm-role-pill");
-    const planNote = document.getElementById("tkfm-plan-note");
-
-    if (laneTitle) laneTitle.textContent = `${djPlan.name} Lane`;
-    if (laneBadge) laneBadge.textContent = djPlan.standing;
-    if (laneMeta) laneMeta.textContent = djPlan.meta;
-    if (laneBar) laneBar.style.transform = `scaleX(${djPlan.progress})`;
-    if (laneLevel) laneLevel.textContent = `Level ${djPlan.level} / ${djPlan.maxLevel}`;
-    if (rolePill) rolePill.textContent = `${djPlan.name} · Active`;
-    if (planNote) {
-      planNote.innerHTML =
-        `Plan: <strong>${djPlan.name}</strong><br/>` +
-        `To move up lanes, hit your numbers and talk with station owner.`;
-    }
-
-    if (statsRow) {
-      djPlan.stats.forEach((s) => {
-        const chip = document.createElement("div");
-        chip.className = "tkfm-stat-chip";
-        const label = document.createElement("div");
-        label.className = "tkfm-stat-label";
-        label.textContent = s.label;
-        const val = document.createElement("div");
-        val.className = "tkfm-stat-value";
-        val.textContent = s.value;
-        chip.appendChild(label);
-        chip.appendChild(val);
-        statsRow.appendChild(chip);
-      });
-    }
-
-    if (scheduleEl) {
-      djPlan.schedule.forEach((slot) => {
-        const el = document.createElement("div");
-        el.className = "tkfm-slot" + (slot.live ? " live" : "");
-        const t = document.createElement("span");
-        t.className = "tkfm-slot-time";
-        t.textContent = slot.time;
-        const s = document.createElement("span");
-        s.className = "tkfm-slot-show";
-        s.textContent = slot.show;
-        const m = document.createElement("span");
-        m.className = "tkfm-slot-meta";
-        m.textContent = slot.meta;
-        el.appendChild(t);
-        el.appendChild(s);
-        el.appendChild(m);
-        scheduleEl.appendChild(el);
-      });
-    }
-
-    // GraphFX particles
-    const canvas = document.getElementById("tkfm-particles");
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      let width = (canvas.width = window.innerWidth);
-      let height = (canvas.height = window.innerHeight);
-      const particles = [];
-
-      function spawnParticle(x, y) {
-        particles.push({
-          x,
-          y,
-          vx: (Math.random() - 0.5) * 0.9,
-          vy: (Math.random() - 0.5) * 0.9 - 0.2,
-          life: 1,
-        });
-      }
-
-      window.addEventListener("resize", () => {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-      });
-
-      window.addEventListener("mousemove", (e) => {
-        const amount = 3;
-        for (let i = 0; i < amount; i++) {
-          spawnParticle(e.clientX, e.clientY);
-        }
-      });
-
-      function renderParticles() {
-        ctx.clearRect(0, 0, width, height);
-
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const p = particles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.01;
-          p.life -= 0.02;
-
-          if (p.life <= 0) {
-            particles.splice(i, 1);
-            continue;
-          }
-
-          const alpha = p.life;
-          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 14);
-          grad.addColorStop(0, `rgba(255, 0, 128, ${alpha})`);
-          grad.addColorStop(0.5, `rgba(56, 189, 248, ${alpha * 0.8})`);
-          grad.addColorStop(1, `rgba(0, 0, 0, 0)`);
-
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        requestAnimationFrame(renderParticles);
-      }
-      requestAnimationFrame(renderParticles);
-    }
-
-    // Fade-in on scroll
-    const fadeEls = document.querySelectorAll(".tkfm-fade-in");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("tkfm-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-    fadeEls.forEach((el) => observer.observe(el));
-  </script>
-  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
 </body>
 </html>

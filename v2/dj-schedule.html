@@ -1,584 +1,370 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="tkfm-theme" content="radio" />
-  <link rel="stylesheet" href="/css/tkfm-shell.css" />
-  <link rel="stylesheet" href="/css/tkfm-radio.css" />
-  <script src="/js/tkfm-shell.js" defer></script>
-
-  <meta charset="utf-8">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>TKFM — DJ Schedule</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
+  <meta name="description" content="DJ Schedule — public schedule view, DJ tier to claim/manage slots."/>
   <style>
-    :root {
-      --bg-deep: #020617;
-      --bg-card: rgba(15,23,42,0.98);
-      --bg-soft: rgba(17,24,39,0.96);
-      --neon-pink: #ec4899;
-      --neon-purple: #a855f7;
-      --neon-cyan: #22d3ee;
-      --neon-blue: #3b82f6;
-      --neon-lime: #a3e635;
-      --text-main: #f9fafb;
-      --text-muted: #94a3b8;
-      --text-soft: #64748b;
-      --border-subtle: rgba(148,163,184,0.35);
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
     }
-
-    * { box-sizing:border-box; margin:0; padding:0; }
-
-    body {
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top,#020617 0,transparent 55%),
-        radial-gradient(circle at top right,rgba(59,130,246,0.4) 0,transparent 60%),
-        radial-gradient(circle at top left,rgba(236,72,153,0.5) 0,transparent 60%),
-        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
-      color:var(--text-main);
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
-      -webkit-font-smoothing:antialiased;
-      padding:1.6rem .9rem 2.3rem;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
       overflow-x:hidden;
     }
-
-    a { color:inherit; text-decoration:none; }
-
-    .shell { max-width:1120px; margin:0 auto; }
-
-    /* NAV */
-    .nav {
-      margin:-1.6rem -.9rem 1.1rem;
-      padding:.75rem .9rem;
-      background:linear-gradient(to right,rgba(15,23,42,0.98),rgba(17,24,39,0.98));
-      border-bottom:1px solid var(--border-subtle);
-      backdrop-filter:blur(18px);
-      display:flex;
-      align-items:center;
-      gap:.8rem;
-    }
-    .nav-left {
-      display:flex;
-      align-items:center;
-      gap:.7rem;
-    }
-    .logo-orb {
-      width:2.4rem;
-      height:2.4rem;
-      border-radius:999px;
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
       background:
-        radial-gradient(circle at 10% 0,var(--neon-cyan),var(--neon-pink) 40%,var(--neon-purple) 80%);
-      box-shadow:
-        0 0 22px rgba(236,72,153,.9),
-        0 0 24px rgba(59,130,246,.85);
-      border:1px solid rgba(236,72,153,.9);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:.8rem;
-      font-weight:800;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:#020617;
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.20), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.16), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.12), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.98;
     }
-    .brand-text {
-      display:flex;
-      flex-direction:column;
-      line-height:1.05;
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.06) 0px, rgba(34,211,238,.06) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.05) 0px, rgba(168,85,247,.05) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
     }
-    .brand-kicker {
-      font-size:.62rem;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      color:var(--text-soft);
-    }
-    .brand-main {
-      font-size:.95rem;
-      font-weight:700;
-    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
 
-    .nav-right {
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{
+      width:46px;height:46px;border-radius:14px;position:relative;overflow:hidden;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(2,6,23,.62);
+      box-shadow:0 0 0 1px rgba(255,255,255,.03),0 18px 60px rgba(0,0,0,.45);
+    }
+    .logo:before{
+      content:"";position:absolute;inset:-12px;border-radius:16px;
+      background:
+        radial-gradient(closest-side at 50% 50%, rgba(168,85,247,.20), transparent 70%),
+        radial-gradient(closest-side at 35% 65%, rgba(236,72,153,.16), transparent 72%),
+        radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.14), transparent 72%);
+      filter:blur(10px);opacity:.95;animation:hue 7.2s linear infinite;pointer-events:none;
+    }
+    @keyframes hue{0%{filter:blur(10px) hue-rotate(0deg)}100%{filter:blur(10px) hue-rotate(360deg)}}
+    .logo img{position:absolute;inset:0;margin:auto;height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 18px rgba(34,211,238,.14))}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .title{font-weight:950;letter-spacing:.06em}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+
+    main{max-width:1240px;margin:0 auto;padding:18px 22px 44px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:44px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+
+    .topRow{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .chip{
+      padding:10px 12px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.26);
+      background:rgba(15,23,42,.60);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
       margin-left:auto;
-      display:flex;
-      flex-wrap:wrap;
-      gap:.4rem;
-    }
-    .nav-pill {
-      font-size:.64rem;
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      padding:.34rem .72rem;
-      border-radius:999px;
-      border:1px solid var(--border-subtle);
-      background:var(--bg-soft);
-      color:var(--text-soft);
+      display:flex;gap:10px;align-items:center;
       white-space:nowrap;
     }
-    .nav-pill.primary {
-      border-color:var(--neon-pink);
-      color:#020617;
-      background:linear-gradient(135deg,var(--neon-pink),var(--neon-purple));
-      box-shadow:0 0 18px rgba(236,72,153,.85);
-      font-weight:650;
-    }
+    .dot{width:8px;height:8px;border-radius:999px;background:rgba(245,158,11,.9);box-shadow:0 0 0 4px rgba(245,158,11,.18)}
+    .dot.ok{background:rgba(34,211,238,.95);box-shadow:0 0 0 4px rgba(34,211,238,.18)}
 
-    @media(max-width:960px){
-      .nav-right{display:none;}
-    }
-
-    /* HEADER */
-    .hero {
-      margin-bottom:1.2rem;
-    }
-    .hero-kicker {
-      font-size:.7rem;
-      text-transform:uppercase;
-      letter-spacing:.26em;
-      color:var(--text-soft);
-      margin-bottom:.4rem;
-    }
-    .hero-title {
-      font-size:clamp(2.1rem,3.5vw,2.6rem);
-      font-weight:800;
-      line-height:1.04;
-      margin-bottom:.4rem;
-    }
-    .hero-title span {
-      background:linear-gradient(135deg,var(--neon-pink),var(--neon-purple),var(--neon-cyan));
-      background-clip:text;
-      -webkit-background-clip:text;
-      color:transparent;
-    }
-    .hero-sub {
-      font-size:.86rem;
-      color:var(--text-muted);
-      max-width:40rem;
-      margin-bottom:.6rem;
-    }
-
-    /* LAYOUT */
-    .grid {
-      display:grid;
-      grid-template-columns:minmax(0,1.1fr) minmax(0,1.1fr);
-      gap:.9rem;
-      align-items:flex-start;
-    }
-    @media(max-width:960px){
-      .grid{grid-template-columns:1fr;}
-    }
-
-    .card {
-      border-radius:1rem;
-      border:1px solid var(--border-subtle);
-      background:var(--bg-card);
-      padding:.85rem .9rem .95rem;
-      box-shadow:0 0 24px rgba(0,0,0,0.95);
-      font-size:.8rem;
-    }
-    .card-title {
-      font-size:.92rem;
-      font-weight:650;
-      margin-bottom:.25rem;
-    }
-    .card-sub {
-      font-size:.78rem;
-      color:var(--text-muted);
-      margin-bottom:.55rem;
-    }
-
-    .form-row {
-      display:flex;
-      flex-wrap:wrap;
-      gap:.6rem;
-      margin-bottom:.6rem;
-    }
-    .field {
-      flex:1;
-      min-width:160px;
-    }
-    .field-label {
-      font-size:.7rem;
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      color:var(--text-soft);
-      margin-bottom:.2rem;
-    }
-    .input, .select, .textarea {
-      width:100%;
-      border-radius:.65rem;
-      border:1px solid var(--border-subtle);
-      background:var(--bg-soft);
-      padding:.44rem .6rem;
-      font-size:.8rem;
-      color:var(--text-main);
-    }
-    .textarea {
-      min-height:70px;
-      resize:vertical;
-    }
-    .small {
-      font-size:.7rem;
-      color:var(--text-soft);
-      margin-top:.24rem;
-    }
-
-    .btn-main {
-      font-size:.74rem;
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      padding:.48rem 1.08rem;
-      border-radius:999px;
-      border:1px solid var(--neon-pink);
-      background:linear-gradient(135deg,var(--neon-pink),var(--neon-purple));
-      color:#020617;
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
       cursor:pointer;
-      font-weight:650;
-      box-shadow:0 0 18px rgba(236,72,153,.85);
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
       white-space:nowrap;
+      display:inline-flex;align-items:center;justify-content:center;
     }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
 
-    /* SCHEDULE GRID */
-    .week-grid {
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:.5rem;
-      font-size:.76rem;
-    }
-    @media(max-width:900px){
-      .week-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-    }
-    @media(max-width:640px){
-      .week-grid{grid-template-columns:1fr;}
-    }
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
 
-    .day-col {
-      border-radius:.9rem;
-      border:1px solid var(--border-subtle);
-      background:#020617;
-      padding:.55rem .6rem .6rem;
+    .panel{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .panel:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
     }
-    .day-title {
-      font-size:.76rem;
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      color:var(--text-soft);
-      margin-bottom:.35rem;
-    }
+    .panel>*{position:relative}
 
-    .slot {
-      border-radius:.7rem;
-      border:1px solid rgba(148,163,184,0.7);
-      background:rgba(15,23,42,0.96);
-      padding:.35rem .45rem .38rem;
-      margin-bottom:.35rem;
+    table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    th{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(148,163,184,.95);text-align:left;padding:0 10px}
+    td{
+      padding:12px 10px;
+      background:rgba(15,23,42,.55);
+      border:1px solid rgba(148,163,184,.18);
     }
-    .slot-head {
-      display:flex;
-      justify-content:space-between;
-      gap:.4rem;
-      margin-bottom:.1rem;
-    }
-    .slot-time {
-      font-size:.7rem;
-      color:var(--neon-cyan);
-      text-transform:uppercase;
-      letter-spacing:.16em;
-    }
-    .slot-dj {
-      font-size:.74rem;
-      font-weight:600;
-    }
-    .slot-show {
-      font-size:.74rem;
-      color:var(--text-muted);
-    }
-    .slot-desc {
-      font-size:.7rem;
-      color:var(--text-soft);
-      margin-top:.16rem;
-    }
-    .slot-footer {
-      margin-top:.16rem;
-      display:flex;
-      justify-content:space-between;
-      gap:.4rem;
-      align-items:center;
-      font-size:.68rem;
-      color:var(--text-soft);
-    }
-    .btn-delete {
-      border:none;
-      background:none;
-      color:#f97373;
-      font-size:.68rem;
-      cursor:pointer;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-    }
+    tr td:first-child{border-radius:14px 0 0 14px}
+    tr td:last-child{border-radius:0 14px 14px 0}
+    .muted{color:rgba(148,163,184,.95)}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
 
-    .note {
-      margin-top:.75rem;
-      font-size:.7rem;
-      color:var(--text-soft);
+    .lockBox{
+      margin-top:12px;
+      border:1px solid rgba(236,72,153,.26);
+      background:rgba(236,72,153,.06);
+      border-radius:22px;
+      padding:14px;
     }
-    .note code { color:var(--neon-cyan); }
+    .lockH{font-weight:950}
+    .hide{display:none!important}
+    .disabled{opacity:.45;pointer-events:none;filter:grayscale(1)}
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header class="nav">
-      <div class="nav-left">
-        <div class="logo-orb">DS</div>
-        <div class="brand-text">
-          <div class="brand-kicker">They Krave For Me Radio</div>
-          <div class="brand-main">DJ Schedule</div>
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <div class="logo" aria-hidden="true"><img src="/tkfm-radio-logo.png" alt="TKFM"/></div>
+        <div>
+          <div class="k">They Krave For Me Radio</div>
+          <div class="title">DJ Schedule</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Schedule Nav">
+        <a class="pill" href="radio-hub.html">Radio Hub</a>
+        <a class="pill" href="dj-tools.html">DJ Toolkit</a>
+        <a class="pill" href="dj-portal.html">DJ Portal</a>
+        <a class="pill" href="pricing.html">Monthly Tiers</a>
+        <a class="pill hot" href="index.html">Back to Station</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="glass card">
+      <div class="topRow">
+        <div>
+          <div class="k">Public View</div>
+          <div class="h1"><span class="grad">Station Schedule</span></div>
+          <p class="p">Everyone can view the schedule. Only active DJ tier members can request/manage slots.</p>
+          <div class="btnRow">
+            <a class="btn" href="login.html">Member Sign In</a>
+            <a class="btn btnHot" href="pricing.html">Activate DJ Tier</a>
+          </div>
+        </div>
+
+        <div class="chip" id="tierChip">
+          <span class="dot" id="tierDot"></span>
+          <span id="tierText">Checking access…</span>
         </div>
       </div>
-      <nav class="nav-right">
-        <a href="index.html" class="nav-pill">🏠 Front Page</a>
-        <a href="radio-hub.html" class="nav-pill primary">📻 Radio Hub</a>
-        <a href="djs.html" class="nav-pill">👤 DJ Lineup</a>
-        <a href="god-view.html" class="nav-pill">GOD VIEW</a>
-      </nav>
-    </header>
 
-    <section class="hero">
-      <div class="hero-kicker">Programming grid</div>
-      <h1 class="hero-title">
-        Lock in the <span>weekly schedule</span> for TKFM DJs and shows.
-      </h1>
-      <p class="hero-sub">
-        This page is your local programming board. Add shows by day and time, assign DJs, and keep a clean
-        grid that matches what the AI DJ and Autopilot are doing behind the scenes.
-      </p>
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="glass panel">
+          <div class="k">Weekly Lineup</div>
+          <p class="p" style="max-width:none;margin-top:8px">Edit these later — this is the clean public schedule view.</p>
+
+          <table aria-label="TKFM schedule">
+            <thead>
+              <tr>
+                <th style="width:18%">Day</th>
+                <th style="width:22%">Time</th>
+                <th>Show</th>
+                <th style="width:26%">DJ</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+
+          <div class="divider"></div>
+          <div class="k">Data Source</div>
+          <div class="p mono" style="max-width:none;margin-top:8px">localStorage key: <span class="muted">tkfm_schedule</span></div>
+        </div>
+
+        <div class="glass panel">
+          <div class="k">DJ Tools</div>
+          <p class="p" style="max-width:none;margin-top:8px">DJ members can request slots. Public can view only.</p>
+
+          <div class="lockBox hide" id="lockedBox">
+            <div class="lockH">Slot requests are locked.</div>
+            <div class="p" style="max-width:none;margin-top:6px">
+              Activate DJ Toolkit to request/hold schedule slots and manage your show lane.
+            </div>
+            <div class="btnRow">
+              <a class="btn btnHot" href="pricing.html">Get DJ Toolkit</a>
+              <a class="btn" href="dj-tools.html">DJ Toolkit</a>
+            </div>
+          </div>
+
+          <div id="djTools" class="disabled">
+            <div class="divider"></div>
+            <div class="k">Request a Slot (DJ Tier)</div>
+
+            <div class="btnRow" style="margin-top:12px">
+              <button class="btn btnHot" id="claimBtn" type="button">Request Selected Slot</button>
+              <button class="btn" id="seedBtn" type="button">Seed Demo Schedule</button>
+            </div>
+
+            <p class="p" style="max-width:none;margin-top:10px">
+              This is a placeholder UX. Next step is wiring schedule requests to your backend (Supabase/Netlify function).
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="grid">
-      <!-- CREATE SHOW -->
-      <article class="card">
-        <div class="card-title">Add / Edit Show Slot</div>
-        <div class="card-sub">
-          Slots save to <code>tkfm_dj_schedule</code> in localStorage. Later, you can mirror this into a
-          database and display to listeners in other components.
-        </div>
+    <script>
+      (function(){
+        function get(k){ try{ return localStorage.getItem(k) || ''; } catch(e){ return ''; } }
+        function set(k,v){ try{ localStorage.setItem(k, v); } catch(e){} }
+        function parseJSON(v){ try{ return JSON.parse(v); } catch(e){ return null; } }
 
-        <div class="form-row">
-          <div class="field">
-            <div class="field-label">DJ Name</div>
-            <input id="inputDjName" class="input" placeholder="DJ KRAVE, Guest DJ, etc.">
-          </div>
-          <div class="field">
-            <div class="field-label">Show Title</div>
-            <input id="inputShowTitle" class="input" placeholder="Show name or theme">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="field">
-            <div class="field-label">Day of Week</div>
-            <select id="inputDay" class="select">
-              <option value="monday">Monday</option>
-              <option value="tuesday">Tuesday</option>
-              <option value="wednesday">Wednesday</option>
-              <option value="thursday">Thursday</option>
-              <option value="friday">Friday</option>
-              <option value="saturday">Saturday</option>
-              <option value="sunday">Sunday</option>
-            </select>
-          </div>
-          <div class="field">
-            <div class="field-label">Time (local)</div>
-            <input id="inputTime" class="input" placeholder="9:00 PM, 21:00, etc.">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="field" style="flex:1 0 100%;">
-            <div class="field-label">Description</div>
-            <textarea id="inputDesc" class="textarea" placeholder="What happens during this show?"></textarea>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <button type="button" class="btn-main" id="btnAddSlot">Add Show Slot</button>
-        </div>
-
-        <div class="small">
-          Tip: keep the time text consistent (e.g. "8:00 PM") so listeners understand the grid at a glance.
-        </div>
-      </article>
-
-      <!-- WEEK VIEW -->
-      <article class="card">
-        <div class="card-title">Weekly View</div>
-        <div class="card-sub">
-          A simple weekly grid showing current slots for each day. Delete a slot if plans change and re-add
-          with a new time or description.
-        </div>
-
-        <div class="week-grid" id="weekGrid">
-          <!-- JS days with slots -->
-        </div>
-
-        <div class="note">
-          Structure: <code>tkfm_dj_schedule = [{ id, djName, showTitle, day, time, description, createdAt }]</code>.
-          You can read this in other pages (like the radio hub or DJ lineup) to surface programming times to
-          fans.
-        </div>
-      </article>
-    </section>
-  </div>
-
-  <script>
-    (function(){
-      const KEY_SCHEDULE = 'tkfm_dj_schedule';
-      const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
-
-      function safeParseSchedule() {
-        try {
-          const raw = localStorage.getItem(KEY_SCHEDULE);
-          if (!raw) return [];
-          const v = JSON.parse(raw);
-          if (!Array.isArray(v)) return [];
-          return v;
-        } catch(e) {
-          console.warn('schedule parse error', e);
-          return [];
+        function normalizeTier(raw){
+          const v = String(raw || '').trim().toLowerCase();
+          if(!v) return 'free';
+          if(v === 'dj' || v.includes('dj')) return 'dj';
+          if(v === 'creator' || v.includes('creator')) return 'creator';
+          if(v === 'fan' || v.includes('fan')) return 'fan';
+          if(v === 'label' || v.includes('label')) return 'label';
+          if(v === 'elite') return 'creator';
+          return 'free';
         }
-      }
 
-      function saveSchedule(list) {
-        localStorage.setItem(KEY_SCHEDULE, JSON.stringify(list));
-      }
+        const memberTier = normalizeTier(get('tkfm_memberTier') || get('tkfm_creatorStatus') || get('tkfm_memberTierRequested'));
+        const session = parseJSON(get('tkfm_member_session'));
+        const signedIn = !!(session && session.id && session.email);
 
-      function addSlot() {
-        const djName = document.getElementById('inputDjName').value.trim();
-        const showTitle = document.getElementById('inputShowTitle').value.trim();
-        const day = document.getElementById('inputDay').value;
-        const time = document.getElementById('inputTime').value.trim();
-        const description = document.getElementById('inputDesc').value.trim();
+        const dot = document.getElementById('tierDot');
+        const txt = document.getElementById('tierText');
+        const locked = document.getElementById('lockedBox');
+        const tools = document.getElementById('djTools');
 
-        if (!djName || !showTitle || !time) {
-          alert('DJ name, show title and time are required.');
+        function setChip(label, ok){
+          if(txt) txt.textContent = label;
+          if(dot) dot.className = ok ? 'dot ok' : 'dot';
+        }
+
+        function loadSchedule(){
+          const raw = get('tkfm_schedule');
+          const data = parseJSON(raw) || [];
+          return data;
+        }
+
+        function renderSchedule(){
+          const tbody = document.getElementById('rows');
+          if(!tbody) return;
+          const data = loadSchedule();
+          if(!data.length){
+            tbody.innerHTML = '<tr><td colspan="4" style="background:rgba(15,23,42,.35);border:1px dashed rgba(148,163,184,.22);border-radius:14px;padding:14px;color:rgba(148,163,184,.95)">No schedule set yet.</td></tr>';
+            return;
+          }
+          tbody.innerHTML = data.map(function(r){
+            return '<tr>' +
+              '<td>' + esc(r.day) + '</td>' +
+              '<td>' + esc(r.time) + '</td>' +
+              '<td>' + esc(r.show) + '</td>' +
+              '<td class="muted">' + esc(r.dj || 'TBA') + '</td>' +
+            '</tr>';
+          }).join('');
+        }
+
+        function esc(s){
+          return String(s||'').replace(/[&<>"]/g, function(c){
+            return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);
+          });
+        }
+
+        function seed(){
+          const demo = [
+            { day:'Mon', time:'7–9 PM', show:'Evening Drive', dj:'DJ KRAVE' },
+            { day:'Wed', time:'8–10 PM', show:'New Heat Night', dj:'TBA' },
+            { day:'Fri', time:'9–11 PM', show:'Weekend Kickoff', dj:'TBA' },
+            { day:'Sat', time:'6–8 PM', show:'Independent Artist Spotlight', dj:'TBA' },
+            { day:'Sun', time:'7–9 PM', show:'Late Night Waves', dj:'TBA' }
+          ];
+          set('tkfm_schedule', JSON.stringify(demo));
+          renderSchedule();
+        }
+
+        // Public schedule render always
+        renderSchedule();
+
+        // Gate DJ tools
+        if(!signedIn){
+          setChip('STATUS: PUBLIC VIEW', false);
+          if(locked) locked.classList.remove('hide');
+          if(tools) tools.classList.add('disabled');
           return;
         }
 
-        const list = safeParseSchedule();
-        list.push({
-          id: Date.now() + '-' + Math.random().toString(16).slice(2),
-          djName,
-          showTitle,
-          day,
-          time,
-          description,
-          createdAt: Date.now()
+        if(memberTier !== 'dj'){
+          setChip('TIER: ' + memberTier.toUpperCase() + ' (VIEW ONLY)', false);
+          if(locked) locked.classList.remove('hide');
+          if(tools) tools.classList.add('disabled');
+          return;
+        }
+
+        setChip('TIER: DJ (CAN REQUEST SLOTS)', true);
+        if(locked) locked.classList.add('hide');
+        if(tools) tools.classList.remove('disabled');
+
+        var seedBtn = document.getElementById('seedBtn');
+        if(seedBtn) seedBtn.addEventListener('click', seed);
+
+        var claimBtn = document.getElementById('claimBtn');
+        if(claimBtn) claimBtn.addEventListener('click', function(){
+          alert('Slot request captured (demo). Next power move: send this to Supabase/Netlify function.');
         });
-        saveSchedule(list);
-        renderWeek();
-        document.getElementById('inputShowTitle').value = '';
-        document.getElementById('inputTime').value = '';
-        document.getElementById('inputDesc').value = '';
-      }
-
-      function deleteSlot(id) {
-        const list = safeParseSchedule();
-        const next = list.filter(s => s.id !== id);
-        saveSchedule(next);
-        renderWeek();
-      }
-
-      function renderWeek() {
-        const container = document.getElementById('weekGrid');
-        if (!container) return;
-        container.innerHTML = '';
-
-        const list = safeParseSchedule();
-
-        DAYS.forEach(day => {
-          const col = document.createElement('div');
-          col.className = 'day-col';
-
-          const title = document.createElement('div');
-          title.className = 'day-title';
-          title.textContent = day.toUpperCase();
-          col.appendChild(title);
-
-          const daySlots = list
-            .filter(s => s.day === day)
-            .sort((a,b) => (a.time || '').localeCompare(b.time || ''));
-
-          if (!daySlots.length) {
-            const empty = document.createElement('div');
-            empty.className = 'slot';
-            empty.style.opacity = '0.7';
-            empty.textContent = 'No shows scheduled yet.';
-            col.appendChild(empty);
-          } else {
-            daySlots.forEach(slot => {
-              const el = document.createElement('div');
-              el.className = 'slot';
-
-              const head = document.createElement('div');
-              head.className = 'slot-head';
-
-              const time = document.createElement('div');
-              time.className = 'slot-time';
-              time.textContent = slot.time || '';
-
-              const dj = document.createElement('div');
-              dj.className = 'slot-dj';
-              dj.textContent = slot.djName || '';
-
-              head.appendChild(time);
-              head.appendChild(dj);
-
-              const show = document.createElement('div');
-              show.className = 'slot-show';
-              show.textContent = slot.showTitle || '';
-
-              const desc = document.createElement('div');
-              desc.className = 'slot-desc';
-              desc.textContent = slot.description || '';
-
-              const footer = document.createElement('div');
-              footer.className = 'slot-footer';
-
-              const created = document.createElement('div');
-              created.textContent = 'Added';
-
-              const btnDel = document.createElement('button');
-              btnDel.className = 'btn-delete';
-              btnDel.textContent = 'Remove';
-              btnDel.addEventListener('click', function(){
-                if (confirm('Remove this show from the schedule?')) {
-                  deleteSlot(slot.id);
-                }
-              });
-
-              footer.appendChild(created);
-              footer.appendChild(btnDel);
-
-              el.appendChild(head);
-              el.appendChild(show);
-              if (slot.description) el.appendChild(desc);
-              el.appendChild(footer);
-
-              col.appendChild(el);
-            });
-          }
-
-          container.appendChild(col);
-        });
-      }
-
-      function initSchedule() {
-        const btn = document.getElementById('btnAddSlot');
-        if (btn) btn.addEventListener('click', addSlot);
-        renderWeek();
-      }
-
-      window.addEventListener('DOMContentLoaded', initSchedule);
-    })();
-  </script>
+      })();
+    </script>
+  </main>
 </body>
 </html>
