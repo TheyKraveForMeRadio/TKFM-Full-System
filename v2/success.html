@@ -96,6 +96,7 @@
       }
 
       setUnlock(data.unlock_id, data.unlock || {});
+      if (data.customer_email) localStorage.setItem('tkfm_member_email', String(data.customer_email).toLowerCase());
       el.textContent = 'Unlocked. Redirecting…';
 
       const ret = localStorage.getItem('tkfm_return_url') || '/pricing.html';
