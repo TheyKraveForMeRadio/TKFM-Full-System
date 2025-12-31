@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="robots" content="noindex,nofollow"/>
-  <title>TKFM — Owner Dashboard</title>
+  <title>TKFM — Owner Console</title>
   <style>
     :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--b:#3b82f6;}
     html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
@@ -29,7 +29,7 @@
     }
     .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
     .title{font-size:22px;font-weight:900;margin:0;letter-spacing:.3px;}
-    .sub{opacity:.85;margin:8px 0 0;font-size:13px;line-height:1.5;}
+    .sub{opacity:.86;margin:8px 0 0;font-size:13px;line-height:1.55;}
     .pill{
       display:inline-block;
       border:1px solid rgba(255,255,255,.12);
@@ -40,6 +40,7 @@
       opacity:.92;
       margin-left:10px;
       font-weight:900;
+      letter-spacing:.2px;
     }
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 10px;}
     input{
@@ -86,16 +87,36 @@
       max-height:40vh;
       font-size:12px;
     }
-    .muted{opacity:.85;font-size:12px;line-height:1.5;margin:10px 0 0;}
+    .hint{
+      margin:10px 0 0;
+      opacity:.85;
+      font-size:12px;
+      line-height:1.55;
+    }
+    .badge{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.2px;
+      opacity:.95;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="top">
       <div>
-        <p class="title">Owner Dashboard <span class="pill" id="state">LOCKED</span></p>
-        <p class="sub">Private admin hub. Unlock with <b>TKFM_OWNER_KEY</b> (local only, on this device).</p>
-        <p class="muted">Tip: bookmark this page. Do NOT link it publicly.</p>
+        <p class="title">Owner Console <span class="pill" id="state">LOCKED</span></p>
+        <p class="sub">
+          Secure operations panel for TKFM. Unlock with your <span class="badge">TKFM_OWNER_KEY</span> to enable owner tools on this device.
+        </p>
+        <p class="hint">
+          Keep this page private (bookmark it). Do not place it in navigation menus or public links.
+        </p>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
         <a href="/radio-hub.html">Radio Hub</a>
@@ -112,7 +133,7 @@
 
     <div class="grid">
       <div class="panel third">
-        <p style="margin:0 0 8px;font-weight:900;">Owner Links</p>
+        <p style="margin:0 0 8px;font-weight:900;">Owner Tools</p>
         <div class="links" id="ownerLinks">
           <a data-owner href="/god-view.html">God View</a>
           <a data-owner href="/tkfm-dev-console.html">Dev Console</a>
@@ -122,7 +143,7 @@
       </div>
 
       <div class="panel half">
-        <p style="margin:0 0 8px;font-weight:900;">Local Feature State</p>
+        <p style="margin:0 0 8px;font-weight:900;">Feature State (local)</p>
         <pre id="features">{}</pre>
       </div>
 
@@ -146,9 +167,11 @@
 
     function refresh() {
       const feats = JSON.parse(localStorage.getItem('tkfm_user_features') || '{}');
+
       const mem = {
         tier: localStorage.getItem('tkfm_memberTier') || 'free',
         email: localStorage.getItem('tkfm_member_email') || '',
+        session: localStorage.getItem('tkfm_member_session') || '',
         return_url: localStorage.getItem('tkfm_return_url') || ''
       };
 
