@@ -73,9 +73,11 @@ select,input{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);
 .flag{display:flex;justify-content:space-between;align-items:center;font-size:.78rem}
 .flag input{accent-color:var(--label-gold)}
 </style>
+<script src="/js/tkfm-fx.js"></script>
 </head>
 
-<body>
+<body data-tkfm-theme="label">
+<script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'label' });</script>
 <header class="neon-header">
  <div class="brand">
   <div class="brand-logo"></div>
