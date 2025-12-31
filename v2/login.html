@@ -1,317 +1,244 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>TKFM Radio — Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — Member Sign In</title>
+  <meta name="description" content="Member Sign In — TKFM (They Krave For Me Radio)."/>
   <style>
-    :root {
-      --bg: #020617;
-      --card: rgba(15,23,42,0.95);
-      --accent: #38bdf8;
-      --accent-soft: rgba(56,189,248,0.3);
-      --accent-strong: #e879f9;
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --danger: #f97373;
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
     }
-    * {
-      box-sizing:border-box;
-    }
-    body {
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
       margin:0;
-      min-height:100vh;
-      background:radial-gradient(circle at top, #0f172a 0, #020617 55%);
-      color:var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      overflow:hidden;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
     }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.20), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.16), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.12), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.98;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.06) 0px, rgba(34,211,238,.06) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.05) 0px, rgba(168,85,247,.05) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
 
-    /* Neon background FX */
-    .orb {
-      position:fixed;
-      width:420px;
-      height:420px;
-      border-radius:999px;
-      background:radial-gradient(circle, rgba(56,189,248,0.12), transparent 65%);
-      filter:blur(1px);
-      z-index:-2;
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
     }
-    .orb.pink {
-      right:-120px;
-      top:-40px;
-      background:radial-gradient(circle, rgba(236,72,153,0.13), transparent 60%);
+    header .wrap{max-width:1100px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{
+      width:46px;height:46px;border-radius:14px;position:relative;overflow:hidden;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(2,6,23,.62);
+      box-shadow:0 0 0 1px rgba(255,255,255,.03),0 18px 60px rgba(0,0,0,.45);
     }
-    .orb.teal {
-      left:-140px;
-      bottom:-80px;
-      background:radial-gradient(circle, rgba(45,212,191,0.16), transparent 65%);
+    .logo:before{
+      content:"";position:absolute;inset:-12px;border-radius:16px;
+      background:
+        radial-gradient(closest-side at 50% 50%, rgba(168,85,247,.20), transparent 70%),
+        radial-gradient(closest-side at 35% 65%, rgba(236,72,153,.16), transparent 72%),
+        radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.14), transparent 72%);
+      filter:blur(10px);opacity:.95;animation:hue 7.2s linear infinite;pointer-events:none;
     }
+    @keyframes hue{0%{filter:blur(10px) hue-rotate(0deg)}100%{filter:blur(10px) hue-rotate(360deg)}}
+    .logo img{position:absolute;inset:0;margin:auto;height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 18px rgba(34,211,238,.14))}
+    .title{font-weight:950;letter-spacing:.06em}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
 
-    .scanline {
-      position:fixed;
-      inset:0;
-      background:linear-gradient(
-        rgba(15,23,42,0.4),
-        rgba(15,23,42,0.35)
-      );
-      mix-blend-mode:soft-light;
-      pointer-events:none;
-      z-index:-1;
-    }
+    main{max-width:1100px;margin:0 auto;padding:18px 22px 44px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:900px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
 
-    .shell {
-      width:100%;
-      max-width:420px;
-    }
-
-    header {
-      text-align:center;
-      margin-bottom:18px;
-    }
-    header h1 {
-      margin:0;
-      font-size:24px;
-      letter-spacing:0.18em;
-      text-transform:uppercase;
-    }
-    header p {
-      margin:6px 0 0;
-      font-size:12px;
-      color:var(--text-muted);
-      letter-spacing:0.16em;
-      text-transform:uppercase;
-    }
-
-    .card {
-      position:relative;
-      background:var(--card);
-      border-radius:22px;
-      border:1px solid rgba(148,163,184,0.6);
-      box-shadow:0 0 32px rgba(15,23,42,0.9),
-                  0 0 24px rgba(56,189,248,0.25);
-      padding:22px 22px 18px;
-      overflow:hidden;
-    }
-    .card::before {
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:radial-gradient(circle at top, var(--accent-soft), transparent 60%);
-      opacity:0.9;
-      pointer-events:none;
-      z-index:-1;
-    }
-
-    .badge-row {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:12px;
-      font-size:11px;
-    }
-    .badge {
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,0.7);
-      padding:3px 9px;
-      text-transform:uppercase;
-      letter-spacing:0.18em;
-      font-size:9px;
-      color:var(--text-muted);
-    }
-    .tiny-link {
-      font-size:11px;
-      color:var(--accent);
-      text-decoration:none;
-    }
-    .tiny-link:hover {
-      text-decoration:underline;
-    }
-
-    label {
-      display:block;
-      margin-top:10px;
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:0.14em;
-      color:var(--text-muted);
-    }
-    input {
-      width:100%;
-      margin-top:6px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,0.7);
-      background:rgba(15,23,42,0.9);
-      color:var(--text-main);
-      padding:9px 12px;
-      font-size:13px;
+    .form{display:grid;gap:10px}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:680px){.row2{grid-template-columns:1fr}}
+    .inp{
+      width:100%;padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.22);
+      background:rgba(15,23,42,.55);
+      color:rgba(226,232,240,.95);
       outline:none;
-      transition:border-color 0.15s, box-shadow 0.15s, background 0.15s;
     }
-    input:focus {
-      border-color:var(--accent);
-      box-shadow:0 0 0 1px rgba(56,189,248,0.5);
-      background:rgba(15,23,42,1);
-    }
-
-    button {
-      width:100%;
-      margin-top:16px;
-      border:none;
-      border-radius:999px;
-      padding:10px 16px;
-      font-size:13px;
-      font-weight:600;
+    .inp:focus{border-color:rgba(34,211,238,.55);box-shadow:0 0 0 3px rgba(34,211,238,.10)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
       cursor:pointer;
-      background:linear-gradient(90deg, var(--accent), var(--accent-strong));
-      color:#0b1120;
-      text-transform:uppercase;
-      letter-spacing:0.16em;
-      box-shadow:0 0 0 1px rgba(8,47,73,0.7),
-                 0 0 20px rgba(56,189,248,0.6);
-      transition:transform 0.12s, box-shadow 0.12s, filter 0.12s;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
     }
-    button:hover {
-      filter:brightness(1.05);
-      transform:translateY(-1px);
-    }
-    button:disabled {
-      opacity:0.6;
-      cursor:default;
-      filter:none;
-      transform:none;
-      box-shadow:0 0 0 1px rgba(30,64,175,0.5);
-    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
+    .note{font-size:12px;color:rgba(148,163,184,.95);line-height:1.5}
+    .err{display:none;margin-top:10px;padding:12px;border-radius:16px;border:1px solid rgba(236,72,153,.35);background:rgba(236,72,153,.08);color:rgba(226,232,240,.96)}
+    .ok{display:none;margin-top:10px;padding:12px;border-radius:16px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);color:rgba(226,232,240,.96)}
 
-    .error {
-      margin-top:10px;
-      font-size:11px;
-      color:var(--danger);
-      min-height:1em;
+    .side{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .side:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
     }
-
-    .footer-row {
-      margin-top:14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      font-size:11px;
-      color:var(--text-muted);
-    }
-
-    .footer-row a {
-      color:var(--accent-strong);
-      text-decoration:none;
-      text-transform:uppercase;
-      letter-spacing:0.14em;
-      font-size:10px;
-    }
-    .footer-row a:hover {
-      text-decoration:underline;
+    .side>*{position:relative}
+    .tagRow{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
     }
   </style>
 </head>
 <body>
+  <div class="bg"></div>
 
-<div class="orb pink"></div>
-<div class="orb teal"></div>
-<div class="scanline"></div>
-
-<div class="shell">
   <header>
-    <h1>TKFM RADIO</h1>
-    <p>Independent Artist Power Station</p>
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <div class="logo" aria-hidden="true">
+          <img src="/tkfm-radio-logo.png" alt="TKFM"/>
+        </div>
+        <div>
+          <div class="k">They Krave For Me Radio</div>
+          <div class="title">Member Access</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Member Nav">
+        <a class="pill" href="register.html">Create Account</a>
+        <a class="pill" href="pricing.html">Monthly Tiers</a>
+        <a class="pill hot" href="index.html">Back to Station</a>
+      </nav>
+    </div>
   </header>
 
-  <div class="card">
-    <div class="badge-row">
-      <span class="badge">Secure Login</span>
-      <a href="index.html" class="tiny-link">← Back to Home</a>
-    </div>
+  <main>
+    <section class="glass card">
+      <div class="k">Sign In</div>
+      <div class="h1"><span class="grad">Member Sign In</span></div>
+      <p class="p">Sign in to access your profile, community chat, and tier-based tools.</p>
+      <div class="divider"></div>
 
-    <form id="login-form" autocomplete="on">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" autocomplete="email" required />
+      <div class="grid">
+        <div class="glass side">
+          <div class="k">Member Account</div>
+          <div style="margin-top:8px;font-weight:950;font-size:18px">Sign in</div>
+          <p class="p" style="margin-top:8px;max-width:none">This is the member login. Owner access is separate and not linked from the public site.</p>
 
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required />
+          <form class="form" id="form" autocomplete="on">
+            <div class="row2">
+              <input class="inp" id="email" name="email" autocomplete="email" placeholder="Email" />
+              <input class="inp" id="password" name="password" type="password" autocomplete="current-password" placeholder="Password" />
+            </div>
 
-      <button type="submit" id="login-button">Sign In</button>
+            <div class="note">If this is your first time, create an account first.</div>
 
-      <div id="error" class="error"></div>
+            <div class="btnRow">
+              <button class="btn btnHot" type="submit" id="loginBtn">Sign In</button>
+              <a class="btn" href="register.html">Create Account</a>
+              <button class="btn" type="button" id="logoutBtn">Sign Out</button>
+            </div>
 
-      <div class="footer-row">
-        <span>Need an account?</span>
-        <a href="register.html">Register</a>
+            <div class="ok" id="ok"></div>
+            <div class="err" id="err"></div>
+          </form>
+        </div>
+
+        <aside class="glass side">
+          <div class="k">Tiers</div>
+          <div style="margin-top:8px;font-weight:950;font-size:18px">Free / Fan Pass / Creator / DJ / Label</div>
+          <p class="p" style="margin-top:8px;max-width:none">Each tier unlocks different lanes. DJ and Label are not free.</p>
+          <div class="tagRow">
+            <span class="tag">Free</span>
+            <span class="tag">Fan Pass</span>
+            <span class="tag">Creator</span>
+            <span class="tag">DJ</span>
+            <span class="tag">Label</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="k">What members get</div>
+          <div style="margin-top:10px;font-weight:950">Free Account</div>
+          <p class="p" style="margin-top:6px;max-width:none">Profile • Community chat read/write • Basic submissions (limited) • Browse radio + news</p>
+
+          <div style="margin-top:10px;font-weight:950">Fan Pass (paid)</div>
+          <p class="p" style="margin-top:6px;max-width:none">Badge • Priority chat • Exclusives • Early drops</p>
+
+          <div style="margin-top:10px;font-weight:950">Creator Pass (paid)</div>
+          <p class="p" style="margin-top:6px;max-width:none">Creator tools • Uploads • Submissions console • Selected engines</p>
+
+          <div style="margin-top:10px;font-weight:950">DJ Toolkit (paid)</div>
+          <p class="p" style="margin-top:6px;max-width:none">DJ portal tools • “DJ on the station” lane (paid tier required)</p>
+
+          <div style="margin-top:10px;font-weight:950">Label (paid + approved)</div>
+          <p class="p" style="margin-top:6px;max-width:none">Label workflows • Locked unless approved + active</p>
+
+          <div class="btnRow">
+            <a class="btn" href="pricing.html">View Monthly Tiers</a>
+            <a class="btn" href="radio-hub.html">Go to Radio Hub</a>
+          </div>
+        </aside>
       </div>
-    </form>
-  </div>
-</div>
+    </section>
+  </main>
 
-<script type="module">
-  import { supabase } from "./src/supabaseClient.js";
-  import { routeAfterLogin } from "./auth-gateway.js";
-
-  const form = document.getElementById("login-form");
-  const btn = document.getElementById("login-button");
-  const errorBox = document.getElementById("error");
-
-  function showError(msg) {
-    errorBox.textContent = msg || "";
-  }
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    showError("");
-
-    const email = form.email.value.trim();
-    const password = form.password.value;
-
-    if (!email || !password) {
-      showError("Please enter email and password.");
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = "Signing in…";
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        console.error("Supabase login error:", error);
-        showError(error.message || "Login failed. Check your email/password.");
-        btn.disabled = false;
-        btn.textContent = "Sign In";
-        return;
-      }
-
-      // data.user should exist here
-      if (!data || !data.user) {
-        showError("Login response missing user. Try again.");
-        btn.disabled = false;
-        btn.textContent = "Sign In";
-        return;
-      }
-
-      // 🔑 Hand off to auth-gateway to route by role
-      routeAfterLogin(data.user);
-    } catch (err) {
-      console.error("Unexpected login error:", err);
-      showError("Something went wrong during login.");
-      btn.disabled = false;
-      btn.textContent = "Sign In";
-    }
-  });
-</script>
-
+  <script src="/js/tkfm-member-session.js"></script>
 </body>
 </html>
