@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="tkfm-theme" content="label" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-label.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
+  <meta charset="utf-8">
+  <title>Apply to TKFM Records • They Krave For Me Radio</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(6,8,20,0.98);
+      --bg-soft: rgba(15,23,42,0.96);
+      --gold: #facc15;
+      --gold-deep: #eab308;
+      --amber: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f9fafb;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border-subtle: rgba(148,163,184,0.35);
+
+      /* helpers for this page */
+      --accent: var(--accent-pink);
+      --accent-2: var(--accent-purple);
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top,#111827 0,transparent 52%),
+        radial-gradient(circle at top right,rgba(234,179,8,0.55) 0,transparent 60%),
+        radial-gradient(circle at top left,rgba(248,113,113,0.45) 0,transparent 60%),
+        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
+      color:var(--text-main);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:1.6rem .9rem 2.3rem;
+      overflow-x:hidden;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    .shell {
+      max-width:1120px;
+      margin:0 auto;
+    }
+
+    /* NAV */
+    .nav {
+      position:sticky;
+      top:0;
+      z-index:20;
+      margin:-1.6rem -.9rem 1rem;
+      padding:.7rem .9rem;
+      background:linear-gradient(to right,rgba(6,8,20,0.98),rgba(15,23,42,0.96));
+      border-bottom:1px solid var(--border-subtle);
+      backdrop-filter:blur(16px);
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+    }
+    .nav-left {
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+    }
+    .logo-orb {
+      width:2.1rem;
+      height:2.1rem;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 15% 0,#f97316,#ec4899 46%,#a855f7 90%);
+      box-shadow:
+        0 0 18px rgba(248,113,113,.8),
+        0 0 22px rgba(168,85,247,.8);
+      border:1px solid rgba(248,113,113,.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.78rem;
+      font-weight:700;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      color:#020617;
+    }
+    .brand-text {
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .brand-kicker {
+      font-size:.63rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--text-soft);
+    }
+    .brand-main {
+      font-size:.8rem;
+      font-weight:600;
+    }
+    .nav-right {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+    }
+    .nav-pill {
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      padding:.35rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      color:var(--text-muted);
+      background:rgba(15,23,42,0.96);
+      display:flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    .nav-pill.primary {
+      border-color:var(--accent-pink);
+      color:#020617;
+      background:linear-gradient(135deg,var(--accent-pink),var(--accent-purple));
+      box-shadow:0 0 18px rgba(236,72,153,.85);
+    }
+    @media(max-width:640px){
+      .nav-right{display:none;}
+    }
+
+    /* LAYOUT */
+    .hero {
+      margin-top:.6rem;
+      display:grid;
+      grid-template-columns:minmax(0,1.3fr) minmax(0,1.1fr);
+      gap:1.4rem;
+      align-items:flex-start;
+    }
+    @media(max-width:880px){
+      .hero{grid-template-columns:1fr;}
+    }
+
+    .kicker {
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.22em;
+      color:var(--text-soft);
+      margin-bottom:.4rem;
+    }
+    .title {
+      font-size:clamp(1.6rem,3vw,1.9rem);
+      font-weight:700;
+      line-height:1.1;
+      margin-bottom:.5rem;
+    }
+    .title span {
+      background:linear-gradient(135deg,var(--gold),var(--accent-pink),var(--accent-purple));
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+    .sub {
+      font-size:.87rem;
+      color:var(--text-muted);
+      max-width:34rem;
+      margin-bottom:.8rem;
+    }
+
+    .pill-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      margin-bottom:.7rem;
+    }
+    .role-pill {
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      padding:.4rem .7rem;
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      color:var(--text-muted);
+      cursor:pointer;
+      background:var(--bg-soft);
+      display:flex;
+      gap:.35rem;
+      align-items:center;
+      transition:all .15s ease-out;
+    }
+    .role-pill span.icon { font-size:.9rem; }
+    .role-pill.active {
+      border-color:var(--accent-pink);
+      color:#020617;
+      background:linear-gradient(135deg,var(--accent-pink),var(--accent-purple));
+      box-shadow:0 0 16px rgba(236,72,153,.8);
+    }
+
+    .hint {
+      font-size:.72rem;
+      color:var(--text-soft);
+      margin-bottom:.2rem;
+    }
+
+    /* SIDE CARD */
+    .side-card {
+      border-radius:1.1rem;
+      border:1px solid var(--border-subtle);
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.25),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(248,113,113,0.25),transparent 60%),
+        var(--bg-card);
+      padding:.8rem .8rem .9rem;
+      box-shadow:0 0 26px rgba(15,23,42,1);
+      font-size:.72rem;
+    }
+    .side-title {
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.2em;
+      color:var(--text-soft);
+      margin-bottom:.4rem;
+    }
+    .side-row { display:flex; flex-direction:column; gap:.45rem; }
+    .side-item { display:flex; gap:.5rem; }
+    .side-badge {
+      width:1.25rem;
+      height:1.25rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.7rem;
+      color:var(--gold);
+      background:#020617;
+    }
+    .side-tag {
+      margin-top:.55rem;
+      display:inline-block;
+      padding:.3rem .6rem;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      font-size:.62rem;
+      color:var(--text-soft);
+    }
+
+    /* FORM CARD */
+    .form-card {
+      margin-top:.85rem;
+      border-radius:1.1rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-card);
+      padding:.8rem .9rem .9rem;
+      box-shadow:0 0 28px rgba(15,23,42,1);
+    }
+    .field-row {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.55rem;
+    }
+    @media(max-width:640px){
+      .field-row{grid-template-columns:1fr;}
+    }
+    label {
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.19em;
+      color:var(--text-soft);
+      display:block;
+      margin-bottom:.25rem;
+    }
+    input, textarea {
+      width:100%;
+      padding:.45rem .55rem;
+      border-radius:.6rem;
+      border:1px solid rgba(51,65,85,0.95);
+      background:#020617;
+      color:var(--text-main);
+      font-size:.78rem;
+      outline:none;
+    }
+    input:focus, textarea:focus {
+      border-color:var(--accent-pink);
+      box-shadow:0 0 0 1px rgba(236,72,153,0.7);
+    }
+    textarea { min-height:5.2rem; resize:vertical; }
+
+    .note {
+      font-size:.7rem;
+      color:var(--text-soft);
+      margin-top:.45rem;
+    }
+
+    .actions {
+      margin-top:.7rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      align-items:center;
+    }
+    .btn-main {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      padding:.52rem .95rem;
+      border-radius:999px;
+      border:1px solid var(--accent-pink);
+      background:linear-gradient(135deg,var(--accent-pink),var(--accent-purple));
+      color:#020617;
+      cursor:pointer;
+      font-weight:650;
+      box-shadow:0 0 18px rgba(236,72,153,.85);
+    }
+    .btn-ghost {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.17em;
+      padding:.44rem .85rem;
+      border-radius:999px;
+      border:1px dashed var(--border-subtle);
+      background:var(--bg-soft);
+      color:var(--text-soft);
+      cursor:pointer;
+    }
+
+    .status {
+      font-size:.7rem;
+      color:var(--text-soft);
+      margin-top:.5rem;
+    }
+    .status span.good { color:#22c55e; }
+    .status span.bad { color:#fb7185; }
+
+    /* OWNER FAB */
+    .owner-fab {
+      position:fixed;
+      right:.85rem;
+      bottom:.85rem;
+      z-index:30;
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      padding:.5rem .8rem;
+      border-radius:999px;
+      border:1px solid var(--gold);
+      color:var(--gold);
+      background:var(--bg-soft);
+      box-shadow:0 0 22px rgba(250,204,21,0.7);
+      display:flex;
+      align-items:center;
+      gap:.4rem;
+    }
+    .owner-fab span.key {
+      font-size:.6rem;
+      color:var(--text-soft);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- NAV -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-orb">TR</div>
+        <div class="brand-text">
+          <div class="brand-kicker">TKFM Records</div>
+          <div class="brand-main">Label Intake • Applications</div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-pill">⬅ TKFM Portal</a>
+        <a href="artist-upload.html" class="nav-pill">🎤 Artist Upload</a>
+        <a href="login.html" class="nav-pill primary">🔐 Login</a>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <div class="kicker">Apply to TKFM Records</div>
+        <h1 class="title">
+          Tell us who you are,<br>
+          and why <span>TKFM should move with you.</span>
+        </h1>
+        <p class="sub">
+          Artists, DJs, producers — this form drops your info straight into the TKFM Records label console.
+          Once the staff flags you, AI spins up contract drafts inside the Contracts Lab.
+        </p>
+
+        <div class="pill-row" id="rolePills">
+          <button class="role-pill active" data-role="artist">
+            <span class="icon">🎤</span> Artist
+          </button>
+          <button class="role-pill" data-role="producer">
+            <span class="icon">🎹</span> Producer
+          </button>
+          <button class="role-pill" data-role="dj">
+            <span class="icon">🎛</span> DJ
+          </button>
+        </div>
+
+        <p class="hint">
+          Choose the lane that fits you best. Mention collectives, teams, and extra roles in the goals section.
+        </p>
+      </div>
+
+      <aside>
+        <div class="side-card">
+          <div class="side-title">What TKFM Records Checks</div>
+          <div class="side-row">
+            <div class="side-item">
+              <div class="side-badge">1</div>
+              <div>
+                <strong>Identity & brand.</strong><br>
+                Stage name, energy, visuals, and how you’re moving right now.
+              </div>
+            </div>
+            <div class="side-item">
+              <div class="side-badge">2</div>
+              <div>
+                <strong>Music & proof.</strong><br>
+                Tapes, singles, performances, and anything that shows you’re serious.
+              </div>
+            </div>
+            <div class="side-item">
+              <div class="side-badge">3</div>
+              <div>
+                <strong>Goals & fit.</strong><br>
+                Rotation, mixtape hosting, placements, full label play — or all of the above.
+              </div>
+            </div>
+          </div>
+          <div class="side-tag">feeds label hub + contracts lab — same pipeline TKFM staff uses</div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- FORM -->
+    <section class="form-card">
+      <form id="appForm">
+        <input type="hidden" id="role" value="artist">
+
+        <div class="field-row">
+          <div>
+            <label for="stageName">Stage / Artist Name</label>
+            <input id="stageName" placeholder="Artist / DJ / Producer name" required>
+          </div>
+          <div>
+            <label for="legalName">Legal Name (for contracts)</label>
+            <input id="legalName" placeholder="Government name (optional)">
+          </div>
+        </div>
+
+        <div class="field-row" style="margin-top:.5rem;">
+          <div>
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="you@domain.com" required>
+          </div>
+          <div>
+            <label for="phone">Phone / WhatsApp</label>
+            <input id="phone" placeholder="+1 ... (optional)">
+          </div>
+        </div>
+
+        <div class="field-row" style="margin-top:.5rem;">
+          <div>
+            <label for="city">City / Region</label>
+            <input id="city" placeholder="City, State / Country">
+          </div>
+          <div>
+            <label for="projectType">Primary Project Type</label>
+            <input id="projectType" placeholder="Single, EP, album, mixtape, beat pack, etc.">
+          </div>
+        </div>
+
+        <div class="field-row" style="margin-top:.5rem;">
+          <div>
+            <label for="linksMain">Main Music Link</label>
+            <input id="linksMain" placeholder="Spotify, Apple, SoundCloud, etc.">
+          </div>
+          <div>
+            <label for="linksSocial">Main Social / IG / TikTok</label>
+            <input id="linksSocial" placeholder="@handle or full URL">
+          </div>
+        </div>
+
+        <div style="margin-top:.55rem;">
+          <label for="goals">What are you looking for with TKFM?</label>
+          <textarea id="goals" placeholder="Rotation, mixtape hosting, production placements, label situation, tour support, etc. Be honest about your level and your next move."></textarea>
+        </div>
+
+        <p class="note">
+          By submitting, you allow TKFM Records to review this info and your links internally.
+          This is not a deal yet — it’s your first step into the label conversation.
+        </p>
+
+        <div class="actions">
+          <button type="submit" class="btn-main">Submit Application</button>
+          <button type="button" class="btn-ghost" id="clearBtn">Clear Form</button>
+        </div>
+
+        <div id="status" class="status">
+          Your application will be saved as <code>tkfm_records_applications</code> and appear instantly in the label console.
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <a href="god-view.html" class="owner-fab">
+    GOD VIEW
+    <span class="key">Owner / Label Access</span>
+  </a>
+
+  <script>
+    const KEY_APPS = 'tkfm_records_applications';
+
+    const roleInput = document.getElementById('role');
+    const rolePills = document.getElementById('rolePills');
+    const form = document.getElementById('appForm');
+    const statusEl = document.getElementById('status');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function setStatus(message, type) {
+      if (!statusEl) return;
+      if (type === 'good') {
+        statusEl.innerHTML = '<span class="good">' + message + '</span>';
+      } else if (type === 'bad') {
+        statusEl.innerHTML = '<span class="bad">' + message + '</span>';
+      } else {
+        statusEl.textContent = message;
+      }
+    }
+
+    function loadApps() {
+      try {
+        const raw = localStorage.getItem(KEY_APPS);
+        if (!raw) return [];
+        const arr = JSON.parse(raw);
+        if (!Array.isArray(arr)) return [];
+        return arr;
+      } catch (e) {
+        console.error('Error parsing applications', e);
+        return [];
+      }
+    }
+
+    function saveApps(list) {
+      try {
+        localStorage.setItem(KEY_APPS, JSON.stringify(list));
+      } catch (e) {
+        console.error('Error saving applications', e);
+      }
+    }
+
+    function generateShortCode() {
+      const base = Math.floor(Math.random() * 9999).toString().padStart(4,'0');
+      return 'TKFM-' + base;
+    }
+
+    if (rolePills) {
+      rolePills.addEventListener('click', (e) => {
+        const btn = e.target.closest('.role-pill');
+        if (!btn) return;
+        const selectedRole = btn.getAttribute('data-role');
+        if (!selectedRole) return;
+        document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        roleInput.value = selectedRole;
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        form.reset();
+        roleInput.value = 'artist';
+        document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
+        const first = document.querySelector('.role-pill[data-role="artist"]');
+        if (first) first.classList.add('active');
+        setStatus('Form cleared. Previous submissions stay visible on the label side.', null);
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const role = roleInput.value || 'artist';
+
+        const stageName = document.getElementById('stageName').value.trim();
+        const legalName = document.getElementById('legalName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const projectType = document.getElementById('projectType').value.trim();
+        const linksMain = document.getElementById('linksMain').value.trim();
+        const linksSocial = document.getElementById('linksSocial').value.trim();
+        const goals = document.getElementById('goals').value.trim();
+
+        if (!stageName || !email) {
+          setStatus('Stage name and email are required.', 'bad');
+          return;
+        }
+
+        const apps = loadApps();
+        const now = Date.now();
+        const shortCode = generateShortCode();
+
+        const app = {
+          id: crypto.randomUUID ? crypto.randomUUID() : (String(now) + '-' + apps.length),
+          code: shortCode,
+          createdAt: now,
+          role,
+          stageName,
+          legalName,
+          email,
+          phone,
+          city,
+          projectType,
+          linksMain,
+          linksSocial,
+          goals,
+          source: 'public_records_application',
+          status: 'new',
+          statusHistory: [
+            { at: now, status: 'new', note: 'Application submitted from public TKFM Records form.' }
+          ]
+        };
+
+        apps.push(app);
+        saveApps(apps);
+        setStatus('Application received. Your reference code is ' + shortCode + '. TKFM Records will review on the label side.', 'good');
+
+        try {
+          localStorage.setItem('tkfm_last_application_code', shortCode);
+        } catch (e) {}
+      });
+    }
+  </script>
+</body>
+</html>

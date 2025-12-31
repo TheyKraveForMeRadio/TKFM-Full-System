@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>They Krave For Me Radio — TKFM</title>
+  <meta name="description" content="They Krave For Me Radio (TKFM) — live station + creator ecosystem. Submit music, unlock promo lanes, and scale with automation engines."/>
+  <meta name="tkfm-radio-stream" content=""/>
+  <link rel="stylesheet" href="/tkfm-ui.css"/>
+  <script src="/js/logo-check.js" defer></script>
+  <script src="/js/access-gates.js" defer></script>
+  <script src="/js/tkfm-ui.js" defer></script>
+  <style>
+    /* Page-only touches */
+    .split{ display:grid; grid-template-columns: 1.2fr .8fr; gap:12px; margin-top:12px }
+    @media (max-width: 980px){ .split{ grid-template-columns: 1fr } }
+
+    .playerCard{ padding:18px }
+    .bigLive{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .liveStamp{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(16,185,129,.30);
+      background: rgba(2,6,23,.62);
+      font-size:11px; letter-spacing:.26em; text-transform:uppercase;
+    }
+    .liveStamp .led{ width:10px; height:10px; border-radius:999px; background: rgba(16,185,129,1); box-shadow: 0 0 18px rgba(16,185,129,.30) }
+
+    .miniGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px }
+    @media (max-width: 720px){ .miniGrid{ grid-template-columns: 1fr } }
+
+    .stat{ padding:14px; border-radius:22px }
+    .stat .k{ font-size:10px; letter-spacing:.34em; text-transform:uppercase; color: rgba(148,163,184,.95) }
+    .stat .v{ margin-top:10px; font-size:26px; font-weight:950 }
+    .stat .p{ margin-top:6px; color: rgba(148,163,184,.95); font-size:12px; line-height:1.5 }
+
+    .showList{ margin-top:10px; display:grid; gap:10px }
+    .show{ padding:14px; border-radius:20px; border:1px solid rgba(148,163,184,.18); background: rgba(2,6,23,.55) }
+    .showTop{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap }
+    .showName{ font-weight:950 }
+    .showTime{ color: rgba(148,163,184,.95); font-size:12px; letter-spacing:.18em; text-transform:uppercase }
+    .showDesc{ margin-top:6px; color: rgba(148,163,184,.95); font-size:13px; line-height:1.5 }
+
+    .ctaRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px }
+  </style>
+</head>
+
+<body data-theme="radio">
+  <header class="tkfm-topbar">
+    <div class="tkfm-wrap">
+      <a class="tkfm-brand" href="index.html">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio"/>
+        <div>
+          <div class="kicker">They Krave For Me Radio</div>
+          <div class="title">Live Station + Creator Ecosystem</div>
+        </div>
+      </a>
+
+      <nav class="tkfm-nav">
+        <a class="tkfm-pill" href="radio-hub.html">Radio Hub</a>
+        <a class="tkfm-pill" href="app-hub.html">Creator Hub</a>
+        <a class="tkfm-pill" href="artist-upload.html">Submit</a>
+        <a class="tkfm-pill" href="pricing.html">Pricing</a>
+        <a class="tkfm-pill" href="label-home.html">Label</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="tkfm-wrap tkfm-hero">
+    <section class="tkfm-glass tkfm-heroCard">
+      <span class="tkfm-badge"><span class="tkfm-dot"></span> LIVE RADIO • DJ HOSTED • CREATOR LANES</span>
+      <h1 class="tkfm-h1">
+        The station that turns drops into motion.
+        <span class="tkfm-grad">Radio-first. Creator-powered. Built to scale.</span>
+      </h1>
+      <p class="tkfm-sub">
+        Stream the station, submit records, and activate paid lanes for visibility, automation, and label workflows.
+        Everything routes through the TKFM pipeline.
+      </p>
+
+      <div class="tkfm-divider"></div>
+
+      <div class="split">
+        <div class="tkfm-glass playerCard">
+          <div class="bigLive">
+            <div class="liveStamp"><span class="led"></span> NOW LIVE</div>
+            <div class="tkfm-badge" style="border-color:rgba(34,211,238,.28)">STATUS: <b data-tkfm-status>FREE</b></div>
+          </div>
+
+          <div class="miniGrid">
+            <div class="tkfm-glass stat" style="box-shadow:none">
+              <div class="k">How to get spins</div>
+              <div class="v">Submit → Route → Rotate</div>
+              <div class="p">Use Artist Upload to enter the submissions console. Paid boosts and engines accelerate routing.</div>
+            </div>
+            <div class="tkfm-glass stat" style="box-shadow:none">
+              <div class="k">High-impact products</div>
+              <div class="v">Mixtapes • Promo • Engines</div>
+              <div class="p">Mixtape hosting, promo campaigns, and autopilot engines stack on top of your access tier.</div>
+            </div>
+          </div>
+
+          <div class="ctaRow">
+            <a class="tkfm-btn tkfm-btnHot" href="radio-hub.html">Open Radio Hub</a>
+            <a class="tkfm-btn" href="artist-upload.html">Submit Music</a>
+            <a class="tkfm-btn" href="app-hub.html">Creator Hub</a>
+            <a class="tkfm-btn" href="pricing.html">View Pricing</a>
+          </div>
+        </div>
+
+        <div class="tkfm-glass playerCard">
+          <div class="tkfm-sectionK">Programming</div>
+          <div class="tkfm-sectionT">Featured blocks</div>
+          <div class="tkfm-sectionP">Radio should feel like radio: shows, schedules, DJs, and live energy.</div>
+
+          <div class="showList">
+            <div class="show">
+              <div class="showTop">
+                <div class="showName">DJ KRAVE — Prime Rotation</div>
+                <div class="showTime">Daily • Night Drive</div>
+              </div>
+              <div class="showDesc">New drops + momentum records. Where releases get tested and pushed.</div>
+            </div>
+
+            <div class="show">
+              <div class="showTop">
+                <div class="showName">Open Submissions Hour</div>
+                <div class="showTime">Weekly • New heat</div>
+              </div>
+              <div class="showDesc">Artists and DJs in the ecosystem get spotlighted—priority lanes apply.</div>
+            </div>
+
+            <div class="show">
+              <div class="showTop">
+                <div class="showName">TKFM Spotlight</div>
+                <div class="showTime">Weekly • Featured</div>
+              </div>
+              <div class="showDesc">Sponsored placements + interviews. Built for visibility and conversion.</div>
+            </div>
+          </div>
+
+          <div class="ctaRow">
+            <a class="tkfm-btn" href="dj-schedule.html">Schedule</a>
+            <a class="tkfm-btn" href="djs.html">DJ Lineup</a>
+            <a class="tkfm-btn" href="now-playing.html">Now Playing</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tkfm-section">
+      <div class="tkfm-sectionK">Core lanes</div>
+      <div class="tkfm-sectionT">Everything routes through the pipeline</div>
+      <div class="tkfm-sectionP">These are the pages that make the station feel like a station while keeping the business engine intact.</div>
+
+      <div class="tkfm-grid">
+        <div class="tkfm-glass tkfm-card">
+          <div class="tkfm-cardK">Radio</div>
+          <div class="tkfm-cardH">Radio Hub</div>
+          <div class="tkfm-cardP">Live player, schedule, DJ lineup, and featured programming.</div>
+          <div class="tkfm-tags"><span class="tkfm-tag hot">LIVE</span><span class="tkfm-tag">STATION</span></div>
+          <div class="tkfm-btnRow"><a class="tkfm-btn tkfm-btnHot" href="radio-hub.html">Open</a></div>
+        </div>
+
+        <div class="tkfm-glass tkfm-card">
+          <div class="tkfm-cardK">Creator</div>
+          <div class="tkfm-cardH">Artist Upload</div>
+          <div class="tkfm-cardP">Submission form that records FREE/CREATOR/ELITE on every drop.</div>
+          <div class="tkfm-tags"><span class="tkfm-tag">SUBMIT</span><span class="tkfm-tag pay">LANES</span></div>
+          <div class="tkfm-btnRow"><a class="tkfm-btn tkfm-btnHot" href="artist-upload.html">Open</a></div>
+        </div>
+
+        <div class="tkfm-glass tkfm-card">
+          <div class="tkfm-cardK">Ops</div>
+          <div class="tkfm-cardH">Autopilot Engine</div>
+          <div class="tkfm-cardP">Counts + revenue split + pipeline visibility.</div>
+          <div class="tkfm-tags"><span class="tkfm-tag hot">OPS</span><span class="tkfm-tag">DASHBOARD</span></div>
+          <div class="tkfm-btnRow"><a class="tkfm-btn" href="autopilot-engine.html">Open</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="tkfm-footer">
+    <div class="tkfm-wrap">© 2025 They Krave For Me Radio (TKFM) — Radio Neon • Independent Artist Power Station</div>
+  </footer>
+
+  <div data-tkfm-player></div>
+</body>
+</html>

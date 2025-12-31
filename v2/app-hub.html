@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM App Hub — Owner + Creator Center</title>
+
+  <!-- Owner tools are internal, but hub itself can be reached by you. -->
+  <script src="./js/owner-status-chip.js" defer></script>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.98);
+      --bg-soft: rgba(15,23,42,0.96);
+      --gold: #facc15;
+      --amber: #f97316;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --blue: #38bdf8;
+      --text-main: #f9fafb;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border-subtle: rgba(148,163,184,0.35);
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top,#111827 0,transparent 52%),
+        radial-gradient(circle at top right,rgba(250,204,21,0.45) 0,transparent 60%),
+        radial-gradient(circle at top left,rgba(236,72,153,0.5) 0,transparent 60%),
+        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
+      color:var(--text-main);
+      font-family:system-ui,-apple-system,"SF Pro Text","Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:1.6rem .9rem 2.3rem;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    /* NAVBAR */
+    .nav-shell {
+      max-width:1180px;
+      margin:0 auto 1.7rem;
+      padding:.55rem .9rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(224,231,255,0.45);
+      background:
+        radial-gradient(circle at top,rgba(15,23,42,0.98) 0,rgba(15,23,42,0.95) 55%,rgba(15,23,42,0.93) 100%);
+      box-shadow:
+        0 26px 55px rgba(15,23,42,0.98),
+        0 0 40px rgba(250,204,21,0.45);
+      backdrop-filter:blur(18px);
+    }
+
+    .nav {
+      display:flex;
+      align-items:center;
+      gap:.9rem;
+    }
+
+    .nav-logo {
+      font-size:.95rem;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      background:linear-gradient(120deg,#a855f7,#ec4899,#facc15);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 18px rgba(250,250,249,0.9);
+      white-space:nowrap;
+    }
+
+    .nav-tag {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-muted);
+      white-space:nowrap;
+      display:none;
+    }
+
+    .nav-links {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      font-size:.75rem;
+    }
+
+    .nav-link {
+      padding:.26rem .8rem;
+      border-radius:999px;
+      border:1px solid transparent;
+      background:rgba(15,23,42,0.96);
+      color:var(--text-soft);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      cursor:pointer;
+    }
+    .nav-link:hover {
+      border-color:rgba(250,250,249,0.85);
+      color:#f9fafb;
+      background:rgba(15,23,42,1);
+    }
+
+    .nav-link-primary {
+      border-color:rgba(250,250,249,0.9);
+      background:radial-gradient(circle at top,#a855f7 0,#ec4899 45%,#facc15 100%);
+      color:#020617;
+      box-shadow:
+        0 0 20px rgba(250,250,249,0.9),
+        0 0 32px rgba(236,72,153,0.9);
+    }
+
+    .nav-link-radio {
+      border-color:rgba(56,189,248,0.85);
+      background:radial-gradient(circle at top,rgba(56,189,248,0.3) 0,rgba(15,23,42,0.98) 60%);
+      color:#e0f2fe;
+    }
+
+    @media (min-width:880px){ .nav-tag{display:block;} }
+    @media (max-width:840px){
+      .nav-shell{padding-inline:.8rem;}
+      .nav{flex-wrap:wrap;gap:.5rem;}
+      .nav-links{width:100%;justify-content:flex-start;}
+    }
+    @media (max-width:640px){
+      body{padding:1.3rem .7rem 2.1rem;}
+      .nav-shell{margin-bottom:1.4rem;}
+      .nav-links{font-size:.72rem;}
+    }
+
+    main{max-width:1180px;margin:0 auto;}
+
+    /* HERO */
+    .hero{
+      border-radius:1.4rem;
+      border:1px solid rgba(148,163,184,0.6);
+      background:
+        radial-gradient(circle at top,rgba(15,23,42,0.98) 0,rgba(15,23,42,0.95) 55%,rgba(15,23,42,0.94) 100%);
+      box-shadow:
+        0 24px 55px rgba(15,23,42,0.97),
+        0 0 50px rgba(250,204,21,0.45);
+      padding:1.3rem 1.3rem 1.2rem;
+      margin-bottom:1.8rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-110% -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.5) 0,transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.5) 0,transparent 55%);
+      opacity:.9;
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+    .hero-inner{position:relative;z-index:1;}
+
+    .hero-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.6rem;
+      align-items:flex-start;
+      margin-bottom:.6rem;
+    }
+
+    .hero-kicker{
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.24em;
+      color:#facc15;
+      margin-bottom:.55rem;
+    }
+    .hero-title{
+      font-size:clamp(2.1rem,2.6vw + 1.4rem,2.7rem);
+      line-height:1.05;
+      margin-bottom:.4rem;
+      text-shadow:
+        0 0 30px rgba(0,0,0,0.9),
+        0 0 40px rgba(250,204,21,0.85);
+    }
+
+    .hero-sub{
+      font-size:.86rem;
+      line-height:1.7;
+      color:#e5e7eb;
+      max-width:40rem;
+      margin-bottom:.6rem;
+    }
+    .hero-sub strong{color:var(--amber);}
+
+    .hero-strip{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem .8rem;
+      align-items:center;
+      font-size:.78rem;
+      color:#e5e7eb;
+    }
+    .hero-pill{
+      border-radius:999px;
+      padding:.22rem .7rem;
+      border:1px solid rgba(148,163,184,0.9);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-size:.72rem;
+      color:#e5e7eb;
+      background:rgba(15,23,42,0.96);
+    }
+
+    .creator-chip{
+      border-radius:999px;
+      padding:.25rem .8rem;
+      border:1px solid rgba(96,165,250,0.9);
+      color:#bfdbfe;
+      font-size:.74rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      cursor:pointer;
+      background:rgba(15,23,42,0.98);
+    }
+    .creator-dot{
+      width:.44rem;height:.44rem;border-radius:999px;
+      background:radial-gradient(circle,#38bdf8 0,#1d4ed8 75%);
+      box-shadow:0 0 8px rgba(59,130,246,0.9);
+    }
+    .creator-chip.creator{
+      border-color:rgba(250,204,21,0.9);
+      color:#fef9c3;
+    }
+    .creator-chip.elite{
+      border-color:rgba(236,72,153,0.9);
+      color:#fed7e2;
+    }
+
+    /* GRID */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:1rem;
+      margin-bottom:1.4rem;
+    }
+    @media (max-width:1024px){
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media (max-width:720px){
+      .grid{grid-template-columns:minmax(0,1fr);}
+    }
+
+    .tile{
+      border-radius:1.1rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-card);
+      padding:.9rem .9rem .9rem;
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .tile::before{
+      content:"";
+      position:absolute;
+      inset:-60% -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.28) 0,transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.25) 0,transparent 60%);
+      opacity:.75;
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+    .tile-inner{position:relative;z-index:1;}
+
+    .tile:hover{
+      transform:translateY(-2px);
+      box-shadow:0 20px 45px rgba(0,0,0,0.9);
+      border-color:rgba(250,204,21,0.85);
+    }
+
+    .tile-title{
+      font-size:.95rem;
+      font-weight:600;
+      margin-bottom:.15rem;
+    }
+    .tile-sub{
+      font-size:.78rem;
+      color:#e5e7eb;
+      margin-bottom:.45rem;
+    }
+
+    .tile-tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.3rem .45rem;
+      font-size:.7rem;
+    }
+
+    .tile-tag{
+      border-radius:999px;
+      padding:.18rem .55rem;
+      border:1px solid rgba(148,163,184,0.9);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:.68rem;
+      color:#e5e7eb;
+      background:rgba(15,23,42,0.96);
+    }
+
+    .tile-tag.owner{border-color:rgba(250,204,21,0.9);color:#fef9c3;}
+    .tile-tag.creator{border-color:rgba(59,130,246,0.9);color:#bfdbfe;}
+    .tile-tag.elite{border-color:rgba(236,72,153,0.9);color:#fed7e2;}
+
+    .tile-creator-highlight{
+      border-color:rgba(59,130,246,0.9);
+      box-shadow:0 0 28px rgba(37,99,235,0.7);
+    }
+    .tile-elite-highlight{
+      border-color:rgba(236,72,153,0.95);
+      box-shadow:0 0 32px rgba(236,72,153,0.8);
+    }
+
+    .section-title{
+      font-size:.85rem;
+      text-transform:uppercase;
+      letter-spacing:.2em;
+      color:var(--text-muted);
+      margin-bottom:.5rem;
+    }
+
+    .footer-note{
+      font-size:.75rem;
+      color:var(--text-muted);
+      text-align:center;
+      margin-top:.6rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">TKFM App Hub</div>
+    <div class="nav-tag">Radio • Label • DJ KRAVE</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link nav-link-radio">TKFM Radio</a>
+      <a href="creator-pass.html" class="nav-link">Creator Pass</a>
+      <a href="owner-login.html" class="nav-link">Owner Login</a>
+      <a href="autopilot-engine.html" class="nav-link nav-link-primary">Autopilot</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-head">
+        <div>
+          <div class="hero-kicker">Command center</div>
+          <h1 class="hero-title">Everything TKFM lives here now.</h1>
+        </div>
+        <button class="creator-chip" id="creatorChip" type="button">
+          <span class="creator-dot"></span>
+          <span id="creatorChipText">Creator: FREE</span>
+        </button>
+      </div>
+      <p class="hero-sub">
+        This hub splits in two lanes: <strong>Owner tools</strong> (Autopilot, AI DJ, Label Hub)
+        and the <strong>Creator side</strong> (uploads, hosting, passes). Your Creator status decides
+        how the artist tools treat you.
+      </p>
+      <div class="hero-strip">
+        <span class="hero-pill">Owner view + Creator status</span>
+        <span class="hero-pill">Mixtape hosting & uploads</span>
+        <span class="hero-pill">Label pipeline</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:1.1rem;">
+    <div class="section-title">Creator tools</div>
+    <div class="grid">
+      <article class="tile" data-link="dj-mixtape-hosting.html" data-creator-feature="true">
+        <div class="tile-inner">
+          <div class="tile-title">DJ KRAVE Mixtape Hosting</div>
+          <div class="tile-sub">
+            Sell $500+ hosted mixtapes. Artists book packages, Autopilot tracks the money.
+          </div>
+          <div class="tile-tag-row">
+            <span class="tile-tag creator">Creator</span>
+            <span class="tile-tag">Artists • DJs</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="tile" data-link="artist-upload.html" data-creator-feature="true">
+        <div class="tile-inner">
+          <div class="tile-title">Artist / DJ / Producer Upload</div>
+          <div class="tile-sub">
+            Intake form that feeds Autopilot + Label. Creator Pass gets more love.
+          </div>
+          <div class="tile-tag-row">
+            <span class="tile-tag creator">Creator</span>
+            <span class="tile-tag">Intake</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="tile" data-link="creator-pass.html">
+        <div class="tile-inner">
+          <div class="tile-title">Creator Pass Levels</div>
+          <div class="tile-sub">
+            Flip between FREE, Creator Pass and Elite so the system knows how to treat you.
+          </div>
+          <div class="tile-tag-row">
+            <span class="tile-tag">Membership</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Owner tools (internal)</div>
+    <div class="grid">
+      <article class="tile" data-link="autopilot-engine.html">
+        <div class="tile-inner">
+          <div class="tile-title">Autopilot Engine</div>
+          <div class="tile-sub">
+            Revenue + mixtape funnel. Reads Creator status to see where money is coming from.
+          </div>
+          <div class="tile-tag-row">
+            <span class="tile-tag owner">Owner</span>
+            <span class="tile-tag">Revenue</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="tile" data-link="ai-dj-engine.html">
+        <div class="tile-inner">
+          <div class="tile-title">AI DJ Engine</div>
+          <div class="tile-sub">
+            Internal-only AI DJ brain. Owner-gated with status chip.
+          </div>
+          <div class="tile-tag-row">
+            <span class="tile-tag owner">Owner</span>
+            <span class="tile-tag">AI</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="tile" data-link="label-hub.html">
+        <div class="tile-inner">
+          <div class="tile-title">Label Hub</div>
+          <div class="tile-sub">
+            Where mixtape leads and contracts land when someone flags “label eyes”.
+          </div>
+          <div class="tile-tag-row">
+            <span class="tile-tag owner">Owner</span>
+            <span class="tile-tag">Label</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    Creator status key: <code>tkfm_creatorStatus</code> — FREE • creator • elite.
+    Owner tools still respect Owner Mode keys on their own pages.
+  </p>
+</main>
+
+<script>
+  (function () {
+    const KEY = 'tkfm_creatorStatus';
+
+    function getStatus() {
+      try {
+        return localStorage.getItem(KEY) || 'free';
+      } catch (e) {
+        return 'free';
+      }
+    }
+
+    function labelFor(level) {
+      switch (level) {
+        case 'creator': return 'CREATOR PASS';
+        case 'elite': return 'ELITE CREATOR';
+        default: return 'FREE';
+      }
+    }
+
+    function applyCreatorHighlight() {
+      const level = getStatus();
+      const tiles = document.querySelectorAll('[data-creator-feature="true"]');
+      tiles.forEach(tile => {
+        tile.classList.remove('tile-creator-highlight','tile-elite-highlight');
+        if (level === 'creator') {
+          tile.classList.add('tile-creator-highlight');
+        } else if (level === 'elite') {
+          tile.classList.add('tile-elite-highlight');
+        }
+      });
+
+      const chip = document.getElementById('creatorChip');
+      const chipText = document.getElementById('creatorChipText');
+      if (chip) {
+        chip.classList.remove('creator','elite');
+        if (level === 'creator') chip.classList.add('creator');
+        if (level === 'elite') chip.classList.add('elite');
+      }
+      if (chipText) {
+        chipText.textContent = 'Creator: ' + labelFor(level);
+      }
+    }
+
+    function init() {
+      applyCreatorHighlight();
+
+      document.querySelectorAll('.tile').forEach(tile => {
+        const link = tile.getAttribute('data-link');
+        if (!link) return;
+        tile.addEventListener('click', () => {
+          window.location.href = link;
+        });
+      });
+
+      const chip = document.getElementById('creatorChip');
+      if (chip) {
+        chip.addEventListener('click', () => {
+          window.location.href = 'creator-pass.html';
+        });
+      }
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === KEY) applyCreatorHighlight();
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+</body>
+</html>

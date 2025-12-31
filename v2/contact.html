@@ -1,64 +1,863 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta name="tkfm-theme" content="radio" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-radio.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Contact — TKFM</title>
-  <meta name="description" content="Contact TKFM for business, submissions, DJs, and sponsorships." />
-  <meta property="og:image" content="/tkfm-logo.jpg" />
+  <title>Contact TKFM — They Krave For Me Radio</title>
+  <meta name="description" content="They Krave For Me Radio — contact, booking, label and sponsor inquiries for The Independent Artist Power Station." />
+
+  <style>
+    /* ===== ROOT / BACKGROUND ===== */
+    body.tkfm-graphfx-root {
+      position: relative !important;
+      min-height: 100vh !important;
+      overflow-x: hidden !important;
+      background: radial-gradient(circle at top left, #020014, #020617 55%, #000000 100%) !important;
+      color: #f9fafb !important;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .tkfm-bg-main {
+      position: fixed;
+      inset: -25%;
+      pointer-events: none;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 0, 128, 0.5), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.45), transparent 60%);
+      filter: blur(10px);
+      animation: tkfmGlowContact 28s linear infinite alternate;
+      opacity: 0.9;
+    }
+
+    .tkfm-bg-orbit {
+      position: fixed;
+      inset: -40%;
+      pointer-events: none;
+      z-index: -4;
+      background:
+        conic-gradient(
+          from 200deg,
+          rgba(255, 0, 128, 0.28),
+          rgba(56, 189, 248, 0.28),
+          rgba(250, 204, 21, 0.16),
+          rgba(255, 0, 128, 0.28)
+        );
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      filter: blur(45px);
+      animation: tkfmOrbitContact 44s linear infinite;
+    }
+
+    @keyframes tkfmGlowContact {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(2%, -3%, 0) scale(1.02); }
+      100% { transform: translate3d(-3%, 3%, 0) scale(1.03); }
+    }
+
+    @keyframes tkfmOrbitContact {
+      0% { transform: rotate(0deg) scale(1.06); }
+      100% { transform: rotate(360deg) scale(1.06); }
+    }
+
+    /* ===== CRT MODE ===== */
+    body.crt-active {
+      background: #010101 !important;
+      color: #f9fafb !important;
+      text-shadow: 0 0 2px rgba(0, 255, 128, 0.6);
+    }
+
+    body.crt-active main,
+    body.crt-active .tkfm-card,
+    body.crt-active .tkfm-grid-panel,
+    body.crt-active .tkfm-contact-form {
+      filter: contrast(1.15) saturate(1.2) hue-rotate(-8deg);
+    }
+
+    .tkfm-crt-mask {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      opacity: 0;
+      mix-blend-mode: soft-light;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.12), transparent 55%);
+      background-size: 100% 2px, 120% 120%;
+      animation: tkfmCrtFlicker 0.2s infinite alternate;
+    }
+
+    body.crt-active .tkfm-crt-mask {
+      opacity: 0.3;
+    }
+
+    @keyframes tkfmCrtFlicker {
+      0% { opacity: 0.22; transform: translate3d(0,0,0); }
+      50% { opacity: 0.33; transform: translate3d(0,-0.5px,0); }
+      100% { opacity: 0.19; transform: translate3d(0,0.5px,0); }
+    }
+
+    /* ===== PARTICLES ===== */
+    #tkfm-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    main.tkfm-main {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem 3.5rem;
+    }
+
+    /* ===== HEADER / HERO ===== */
+    .tkfm-page-header {
+      margin-bottom: 1.6rem;
+    }
+
+    .tkfm-kicker {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(191, 219, 254, 0.98);
+      margin-bottom: 0.3rem;
+    }
+
+    .tkfm-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.6rem;
+      justify-content: space-between;
+    }
+
+    .tkfm-title {
+      font-size: 2rem;
+      margin: 0;
+      font-weight: 900;
+      background: linear-gradient(110deg, #ff007f, #f97316, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 20px rgba(244, 63, 94, 0.7),
+        0 0 34px rgba(34, 211, 238, 0.7);
+    }
+
+    .tkfm-sub {
+      font-size: 0.9rem;
+      color: rgba(226, 232, 240, 0.94);
+      max-width: 38rem;
+      margin-top: 0.35rem;
+    }
+
+    .tkfm-sub span {
+      color: #fbbf24;
+    }
+
+    .tkfm-header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .tkfm-pill-tag {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: rgba(226, 232, 240, 0.96);
+    }
+
+    .tkfm-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.45rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.75);
+      color: #e0f2fe;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.52), rgba(15,23,42,0.98));
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform 0.16s ease-out,
+        box-shadow 0.16s ease-out,
+        border-color 0.16s ease-out,
+        background 0.16s ease-out;
+    }
+
+    .tkfm-btn-ghost {
+      background: rgba(15, 23, 42, 0.8);
+      border-style: dashed;
+    }
+
+    .tkfm-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.5), transparent 60%);
+      opacity: 0;
+      transform: translate3d(-40%, -40%, 0);
+      transition:
+        opacity 0.18s ease-out,
+        transform 0.24s ease-out;
+      pointer-events: none;
+    }
+
+    .tkfm-btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.9),
+        0 0 20px rgba(56, 189, 248, 0.65);
+      border-color: rgba(56, 189, 248, 0.98);
+    }
+
+    .tkfm-btn:hover::after {
+      opacity: 0.7;
+      transform: translate3d(0,0,0);
+    }
+
+    /* ===== LAYOUT ===== */
+    .tkfm-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 1.4rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 980px) {
+      .tkfm-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* Fade-in FX */
+    .tkfm-fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      transition:
+        opacity 0.3s ease-out,
+        transform 0.3s ease-out;
+    }
+
+    .tkfm-fade-in.tkfm-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* LEFT: CONTACT FORM PANEL */
+    .tkfm-contact-form {
+      position: relative;
+      border-radius: 22px;
+      padding: 1rem 1rem 1.1rem;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.95),
+        0 0 32px rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+    }
+
+    .tkfm-contact-form::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: conic-gradient(
+        from 220deg,
+        rgba(255, 0, 128, 0.3),
+        rgba(56, 189, 248, 0.3),
+        rgba(250, 204, 21, 0.2),
+        rgba(255, 0, 128, 0.3)
+      );
+      opacity: 0.15;
+      filter: blur(26px);
+      z-index: -1;
+    }
+
+    .tkfm-form-header {
+      margin-bottom: 0.8rem;
+    }
+
+    .tkfm-form-kicker {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(191, 219, 254, 0.95);
+      margin-bottom: 0.18rem;
+    }
+
+    .tkfm-form-title {
+      font-size: 1rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .tkfm-form-sub {
+      font-size: 0.8rem;
+      color: rgba(226, 232, 240, 0.9);
+      margin: 0;
+    }
+
+    form.tkfm-form {
+      margin-top: 0.65rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .tkfm-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+
+    .tkfm-label {
+      font-size: 0.76rem;
+      color: rgba(209, 213, 219, 0.98);
+    }
+
+    .tkfm-label span {
+      color: rgba(248, 113, 113, 0.95);
+    }
+
+    .tkfm-input,
+    .tkfm-textarea,
+    .tkfm-select {
+      border-radius: 12px;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      background: rgba(15, 23, 42, 0.96);
+      padding: 0.5rem 0.55rem;
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      outline: none;
+      transition:
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out,
+        transform 0.18s ease-out;
+    }
+
+    .tkfm-input::placeholder,
+    .tkfm-textarea::placeholder {
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    .tkfm-textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .tkfm-input:focus,
+    .tkfm-textarea:focus,
+    .tkfm-select:focus {
+      border-color: rgba(56, 189, 248, 0.96);
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.6), rgba(15,23,42,0.97));
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 1),
+        0 0 18px rgba(56, 189, 248, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .tkfm-row-inline {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 0.6rem;
+    }
+
+    @media (max-width: 640px) {
+      .tkfm-row-inline {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .tkfm-form-note {
+      font-size: 0.74rem;
+      color: rgba(148, 163, 184, 0.96);
+    }
+
+    .tkfm-form-note strong {
+      color: rgba(248, 250, 252, 0.98);
+    }
+
+    .tkfm-form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-top: 0.3rem;
+    }
+
+    .tkfm-btn-primary {
+      border-color: rgba(219, 39, 119, 0.9);
+      background: radial-gradient(circle at top left, rgba(219,39,119,0.85), rgba(15,23,42,0.98));
+      color: #fdf2f8;
+    }
+
+    .tkfm-mini-meta {
+      font-size: 0.74rem;
+      color: rgba(148, 163, 184, 0.96);
+    }
+
+    /* RIGHT: GRID PANEL */
+    .tkfm-grid-panel {
+      position: relative;
+      border-radius: 22px;
+      padding: 0.9rem 0.9rem 1rem;
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.78), rgba(15,23,42,0.98));
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.95),
+        0 0 32px rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+    }
+
+    .tkfm-grid-panel::before {
+      content: "";
+      position: absolute;
+      inset: -25%;
+      background: conic-gradient(
+        from 220deg,
+        rgba(255, 0, 128, 0.3),
+        rgba(56, 189, 248, 0.3),
+        rgba(250, 204, 21, 0.2),
+        rgba(255, 0, 128, 0.3)
+      );
+      opacity: 0.45;
+      filter: blur(26px);
+      z-index: -1;
+    }
+
+    .tkfm-grid-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.4rem;
+      align-items: baseline;
+      margin-bottom: 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .tkfm-grid-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .tkfm-grid-tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(191, 219, 254, 0.96);
+    }
+
+    .tkfm-grid {
+      position: relative;
+      border-radius: 18px;
+      padding: 0.7rem 0.7rem 0.8rem;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(51, 65, 85, 0.96);
+      overflow: hidden;
+    }
+
+    .tkfm-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(15,23,42,0.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,0.6) 1px, transparent 1px);
+      background-size: 20px 20px, 20px 20px;
+      opacity: 0.35;
+      mix-blend-mode: soft-light;
+      animation: tkfmGridDrift 28s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes tkfmGridDrift {
+      0% { transform: translate3d(0,0,0); }
+      100% { transform: translate3d(-20px, -20px, 0); }
+    }
+
+    .tkfm-grid-glow {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.26), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255,0,128,0.26), transparent 60%);
+      opacity: 0.7;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .tkfm-grid-body {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.55rem;
+      font-size: 0.8rem;
+    }
+
+    .tkfm-grid-row-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(191, 219, 254, 0.98);
+    }
+
+    .tkfm-grid-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.4rem;
+      align-items: baseline;
+    }
+
+    .tkfm-grid-row span {
+      font-size: 0.78rem;
+      color: rgba(226, 232, 240, 0.96);
+    }
+
+    .tkfm-grid-row span:last-child {
+      font-variant-numeric: tabular-nums;
+      color: rgba(190, 242, 100, 0.96);
+    }
+
+    .tkfm-grid-note {
+      font-size: 0.75rem;
+      color: rgba(148, 163, 184, 0.96);
+      margin-top: 0.4rem;
+    }
+
+    .tkfm-contact-meta {
+      margin-top: 0.7rem;
+      font-size: 0.78rem;
+      color: rgba(209, 213, 219, 0.98);
+    }
+
+    .tkfm-contact-meta strong {
+      color: rgba(248, 250, 252, 0.98);
+    }
+
+    .tkfm-contact-meta span {
+      display: block;
+      font-size: 0.74rem;
+      color: rgba(148, 163, 184, 0.96);
+      margin-top: 0.2rem;
+    }
+
+    /* ===== BOTTOM ===== */
+    .tkfm-bottom-row {
+      margin-top: 1.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: rgba(148, 163, 184, 0.98);
+    }
+
+    .tkfm-bottom-row span strong {
+      color: rgba(248, 250, 252, 0.98);
+    }
+
+    @media (max-width: 640px) {
+      .tkfm-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .tkfm-header-actions {
+        justify-content: flex-start;
+      }
+      .tkfm-bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
-<body>
+<body class="tkfm-graphfx-root">
+  <div class="tkfm-crt-mask"></div>
+  <div class="tkfm-bg-main"></div>
+  <div class="tkfm-bg-orbit"></div>
+  <canvas id="tkfm-particles"></canvas>
+
   <div id="tkfm-header"></div>
 
-  <main class="container">
-    <section class="page-hero">
-      <h1><span class="gradient">Contact</span></h1>
-      <p>For artists, DJs, sponsors, and business inquiries. Clean, professional communication only.</p>
-    </section>
-
-    <div class="panel"><div class="panel-inner">
-      <div class="grid3">
-        <div class="card"><div class="inner">
-          <h3>Artists</h3>
-          <p>Rotation, features, interviews, and submissions.</p>
-          <div style="margin-top:12px;"><a class="btn btn-primary" href="/submit.html">Submit</a></div>
-        </div></div>
-        <div class="card"><div class="inner">
-          <h3>DJs</h3>
-          <p>Slots, memberships, and platform placement.</p>
-          <div style="margin-top:12px;"><a class="btn btn-primary" href="/djs.html">DJ Info</a></div>
-        </div></div>
-        <div class="card"><div class="inner">
-          <h3>Sponsors</h3>
-          <p>Premium packages built for real brands.</p>
-          <div style="margin-top:12px;"><a class="btn btn-primary" href="/sponsors.html">Packages</a></div>
-        </div></div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="card">
-        <div class="inner">
-          <h3>Contact Form (wire later)</h3>
-          <p>Use Netlify Forms or a function. This layout is ready.</p>
-          <form class="form">
-            <input class="input" placeholder="Name" />
-            <input class="input" placeholder="Email" />
-            <input class="input" placeholder="What is this about? (Artist/DJ/Sponsor)" />
-            <input class="input" placeholder="Message" />
-            <button class="btn btn-primary" type="button">Send (connect)</button>
-          </form>
+  <main class="tkfm-main">
+    <!-- HEADER -->
+    <header class="tkfm-page-header tkfm-fade-in">
+      <div class="tkfm-kicker">Contact & Booking</div>
+      <div class="tkfm-title-row">
+        <div>
+          <h1 class="tkfm-title">Talk to TKFM Like It’s Business.</h1>
+          <p class="tkfm-sub">
+            <span>Artist, DJ, Label, Sponsor.</span> This is the inbox for serious moves — spins, shows,
+            segments, and station partnerships with They Krave For Me Radio.
+          </p>
+        </div>
+        <div class="tkfm-header-actions">
+          <div class="tkfm-pill-tag">The Independent Artist Power Station</div>
+          <a href="/index.html" class="tkfm-btn tkfm-btn-ghost">Back Home</a>
         </div>
       </div>
+    </header>
 
-    </div></div>
+    <!-- MAIN LAYOUT -->
+    <section class="tkfm-layout">
+      <!-- LEFT: FORM -->
+      <div class="tkfm-contact-form tkfm-fade-in">
+        <div class="tkfm-form-header">
+          <div class="tkfm-form-kicker">Station Inbox</div>
+          <h2 class="tkfm-form-title">Tell Us Who You Are & What You Want.</h2>
+          <p class="tkfm-form-sub">
+            Use this when you’re ready to move with intention — not just “check something out”.
+          </p>
+        </div>
+
+        <!-- Placeholder form (can be wired to Netlify / Supabase later) -->
+        <form class="tkfm-form" autocomplete="on">
+          <div class="tkfm-row-inline">
+            <div class="tkfm-field">
+              <label class="tkfm-label" for="name">Name <span>*</span></label>
+              <input id="name" name="name" type="text" class="tkfm-input" placeholder="Your name or brand" required />
+            </div>
+            <div class="tkfm-field">
+              <label class="tkfm-label" for="email">Email <span>*</span></label>
+              <input id="email" name="email" type="email" class="tkfm-input" placeholder="you@email.com" required />
+            </div>
+          </div>
+
+          <div class="tkfm-field">
+            <label class="tkfm-label" for="lane">Who are you?</label>
+            <select id="lane" name="lane" class="tkfm-select">
+              <option value="">Pick your lane</option>
+              <option value="artist">Artist</option>
+              <option value="dj">DJ</option>
+              <option value="label">Label</option>
+              <option value="sponsor">Sponsor / Brand</option>
+              <option value="listener">Listener / Other</option>
+            </select>
+          </div>
+
+          <div class="tkfm-field">
+            <label class="tkfm-label" for="subject">Subject</label>
+            <input id="subject" name="subject" type="text" class="tkfm-input" placeholder="Booking, segment sponsor, rollout, etc." />
+          </div>
+
+          <div class="tkfm-field">
+            <label class="tkfm-label" for="message">Message <span>*</span></label>
+            <textarea id="message" name="message" class="tkfm-textarea" placeholder="Drop details: who you are, what you want to do with TKFM, and your timeline." required></textarea>
+          </div>
+
+          <p class="tkfm-form-note">
+            <strong>Direct line:</strong> theykraveformeradio@gmail.com<br />
+            Use subject: <strong>“TKFM — Contact & Booking”</strong> so you can spot it fast.
+          </p>
+
+          <div class="tkfm-form-actions">
+            <!-- This button is visual only right now -->
+            <button type="button" class="tkfm-btn tkfm-btn-primary">
+              Draft Email
+            </button>
+            <span class="tkfm-mini-meta">
+              You can wire this form to Netlify Forms or Supabase when you’re ready.
+            </span>
+          </div>
+        </form>
+      </div>
+
+      <!-- RIGHT: ANIMATED GRID PANEL -->
+      <aside class="tkfm-grid-panel tkfm-fade-in">
+        <div class="tkfm-grid-header">
+          <div class="tkfm-grid-title">Signal Board.</div>
+          <div class="tkfm-grid-tag">How We Read Requests</div>
+        </div>
+
+        <div class="tkfm-grid">
+          <div class="tkfm-grid-lines"></div>
+          <div class="tkfm-grid-glow"></div>
+          <div class="tkfm-grid-body">
+            <div>
+              <div class="tkfm-grid-row-label">Lanes</div>
+              <div class="tkfm-grid-row">
+                <span>Artist / DJ</span>
+                <span>Heat & consistency</span>
+              </div>
+              <div class="tkfm-grid-row">
+                <span>Label</span>
+                <span>Roster & rollout plan</span>
+              </div>
+              <div class="tkfm-grid-row">
+                <span>Sponsor</span>
+                <span>Audience fit & story</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="tkfm-grid-row-label">Strong Signals</div>
+              <div class="tkfm-grid-row">
+                <span>Clear goal</span>
+                <span>Booked</span>
+              </div>
+              <div class="tkfm-grid-row">
+                <span>Budget ready</span>
+                <span>Serious</span>
+              </div>
+              <div class="tkfm-grid-row">
+                <span>Timeline</span>
+                <span>Locked-in</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="tkfm-grid-row-label">TKFM Matching</div>
+              <div class="tkfm-grid-row">
+                <span>Artist heat</span>
+                <span>Rotation + features</span>
+              </div>
+              <div class="tkfm-grid-row">
+                <span>DJ presence</span>
+                <span>Shows + takeovers</span>
+              </div>
+              <div class="tkfm-grid-row">
+                <span>Label / sponsor</span>
+                <span>Segments + nights</span>
+              </div>
+            </div>
+
+            <p class="tkfm-grid-note">
+              Anything that hits this inbox gets read like a control board:
+              which lane you’re in, how serious the move is, and how it plugs into the TKFM station.
+            </p>
+          </div>
+        </div>
+
+        <div class="tkfm-contact-meta">
+          <strong>Backup contact:</strong> theykraveformeradio@gmail.com
+          <span>
+            If the form isn’t wired yet, email directly with links, EPKs, or sponsor decks
+            and write which lane you’re in in the first line.
+          </span>
+        </div>
+      </aside>
+    </section>
+
+    <!-- BOTTOM -->
+    <section class="tkfm-bottom-row tkfm-fade-in">
+      <span>
+        <strong>TKFM rule:</strong> if it’s business, say it plain — who you are, what you want, and when you want to move.
+      </span>
+      <span>
+        Build this page local on <strong>localhost:5173/contact.html</strong> until you’re ready to flip it live.
+      </span>
+    </section>
   </main>
 
   <div id="tkfm-footer"></div>
 
   <script type="module">
     import { mountShell } from "/src/_page.js";
+
+    // Attach shared header/footer
     mountShell("contact");
+
+    // CRT toggle hook (can be wired to nav)
+    const crtMask = document.querySelector(".tkfm-crt-mask");
+    function toggleCRT() {
+      document.body.classList.toggle("crt-active");
+    }
+    window.tkfmToggleCRT = toggleCRT;
+
+    // GraphFX particles
+    const canvas = document.getElementById("tkfm-particles");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
+      const particles = [];
+
+      function spawnParticle(x, y) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 0.9,
+          vy: (Math.random() - 0.5) * 0.9 - 0.2,
+          life: 1,
+        });
+      }
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        const amount = 3;
+        for (let i = 0; i < amount; i++) {
+          spawnParticle(e.clientX, e.clientY);
+        }
+      });
+
+      function renderParticles() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.01;
+          p.life -= 0.02;
+
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          const alpha = p.life;
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 14);
+          grad.addColorStop(0, `rgba(255, 0, 128, ${alpha})`);
+          grad.addColorStop(0.5, `rgba(56, 189, 248, ${alpha * 0.8})`);
+          grad.addColorStop(1, `rgba(0, 0, 0, 0)`);
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(renderParticles);
+      }
+      requestAnimationFrame(renderParticles);
+    }
+
+    // Fade-in on scroll
+    const fadeEls = document.querySelectorAll(".tkfm-fade-in");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("tkfm-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    fadeEls.forEach((el) => observer.observe(el));
   </script>
 </body>
 </html>

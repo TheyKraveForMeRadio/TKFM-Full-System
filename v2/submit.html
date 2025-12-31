@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="tkfm-theme" content="radio" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-radio.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Submit Your Heat — They Krave For Me Radio</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.96);
+      --bg-card-soft: rgba(15,23,42,0.9);
+      --accent-orange: #f97316;
+      --accent-pink: #ec4899;
+      --accent-blue: #38bdf8;
+      --accent-violet: #a855f7;
+      --accent-gold: #facc15;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.9);
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.16),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.18),transparent 60%),
+        radial-gradient(circle at 50% 120%,#020617,#020617 70%);
+      color:var(--text-main);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    main {
+      max-width:1180px;
+      margin:0 auto;
+      padding:1.6rem .9rem 3rem;
+      position:relative;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    /* HALOS */
+    .halo-left,
+    .halo-right {
+      position:fixed;
+      width:280px;
+      height:280px;
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,0.7);
+      top:6%;
+      opacity:0.45;
+      pointer-events:none;
+      mix-blend-mode:screen;
+      animation:haloSpin 28s linear infinite;
+    }
+    .halo-left {
+      left:-8%;
+      box-shadow:0 0 50px rgba(236,72,153,0.45);
+    }
+    .halo-right {
+      right:-8%;
+      animation-duration:32s;
+      box-shadow:0 0 50px rgba(56,189,248,0.45);
+    }
+    .halo-left::before,
+    .halo-right::before {
+      content:"";
+      position:absolute;
+      inset:16%;
+      border-radius:999px;
+    }
+    .halo-left::before {
+      border:1px solid rgba(236,72,153,0.9);
+      box-shadow:
+        0 0 32px rgba(236,72,153,0.9),
+        0 0 40px rgba(248,113,113,0.7);
+    }
+    .halo-right::before {
+      border:1px solid rgba(56,189,248,0.9);
+      box-shadow:
+        0 0 32px rgba(56,189,248,0.9),
+        0 0 40px rgba(15,23,42,1);
+    }
+
+    @keyframes haloSpin {
+      to { transform:rotate(360deg); }
+    }
+
+    /* NAV */
+    .nav-shell {
+      position:sticky;
+      top:0;
+      z-index:40;
+      backdrop-filter:blur(18px);
+      background:linear-gradient(to bottom,rgba(15,23,42,0.96),rgba(15,23,42,0.35),transparent);
+      border-bottom:1px solid rgba(148,163,184,0.35);
+      margin:-1.6rem -0.9rem 1.4rem;
+      padding:.45rem .9rem .55rem;
+    }
+    .nav {
+      max-width:1180px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      gap:.8rem;
+    }
+    .nav-logo {
+      font-size:.95rem;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      background:linear-gradient(120deg,#f97316,#ec4899,#38bdf8);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 16px rgba(248,113,113,0.9);
+      white-space:nowrap;
+    }
+    .nav-tag {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--text-muted);
+      white-space:nowrap;
+    }
+    .nav-links {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      font-size:.78rem;
+    }
+    .nav-link {
+      padding:.26rem .7rem;
+      border-radius:999px;
+      border:1px solid transparent;
+      cursor:pointer;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#cbd5f5;
+      background:transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        color .16s,
+        transform .16s;
+    }
+    .nav-link:hover {
+      background:rgba(15,23,42,0.9);
+      border-color:rgba(148,163,184,0.9);
+      transform:translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color:rgba(248,113,113,0.9);
+      background:radial-gradient(circle at 0 0,rgba(248,113,113,0.35),transparent 60%);
+      color:#fef9c3;
+      box-shadow:0 0 18px rgba(248,113,113,0.7);
+    }
+    .nav-link-label {
+      border-color:rgba(250,204,21,0.85);
+      background:radial-gradient(circle at 100% 0,rgba(250,204,21,0.25),transparent 60%);
+      color:#fef3c7;
+    }
+
+    @media (max-width:840px){ .nav-tag{display:none;} }
+    @media (max-width:720px){ .nav-links{justify-content:flex-end;} }
+
+    /* HERO */
+    .hero {
+      position:relative;
+      border-radius:30px;
+      padding:1.7rem 1.4rem 2rem;
+      border:1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.22),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.22),transparent 60%),
+        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(15,23,42,1) 70%);
+      box-shadow:
+        0 0 40px rgba(0,0,0,0.9),
+        0 0 70px rgba(56,189,248,0.35);
+      overflow:hidden;
+      margin-bottom:1.8rem;
+    }
+    .hero-fx {
+      position:absolute;
+      inset:-32%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(236,72,153,0.3),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.25),transparent 60%),
+        radial-gradient(circle at 50% 0,rgba(168,85,247,0.4),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .hero-inner { position:relative; z-index:1; display:grid; grid-template-columns:1.35fr 1.05fr; gap:1.1rem; }
+    @media (max-width:960px){ .hero-inner{grid-template-columns:1fr;} }
+
+    .hero-kicker {
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:#e5e7eb;
+      margin-bottom:.25rem;
+    }
+    h1 {
+      margin:0;
+      font-size:2.2rem;
+      font-weight:900;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      background:linear-gradient(120deg,#f97316,#ec4899,#38bdf8);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:
+        0 0 28px rgba(236,72,153,0.9),
+        0 0 45px rgba(15,23,42,1);
+    }
+    .hero-sub {
+      margin-top:.4rem;
+      font-size:.95rem;
+      max-width:540px;
+      color:#e5e7eb;
+    }
+    .hero-sub strong { color:#fef9c3; }
+
+    .hero-pills {
+      margin-top:.7rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem;
+      font-size:.78rem;
+    }
+
+    .pill {
+      border-radius:999px;
+      padding:.28rem .8rem;
+      border:1px solid rgba(248,250,252,0.3);
+      background:rgba(15,23,42,0.96);
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    .pill span {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--accent-blue);
+      box-shadow:0 0 12px rgba(56,189,248,0.9);
+    }
+    .pill-gold span {
+      background:var(--accent-gold);
+      box-shadow:0 0 12px var(--accent-gold);
+    }
+
+    .hero-note {
+      margin-top:.7rem;
+      font-size:.8rem;
+      color:var(--text-muted);
+      max-width:260px;
+    }
+
+    /* FORM WRAPPER */
+    .form-shell {
+      border-radius:22px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card);
+      padding:1rem .95rem 1.1rem;
+      box-shadow:0 0 30px rgba(0,0,0,0.85);
+      position:relative;
+      overflow:hidden;
+    }
+    .form-shell::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.18),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .form-inner { position:relative; z-index:1; }
+
+    form {
+      display:flex;
+      flex-direction:column;
+      gap:.7rem;
+      font-size:.82rem;
+    }
+
+    label {
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.11em;
+      color:#cbd5f5;
+      display:block;
+      margin-bottom:.18rem;
+    }
+    .label-row {
+      display:flex;
+      justify-content:space-between;
+      gap:.4rem;
+      align-items:flex-end;
+    }
+    .label-hint {
+      font-size:.72rem;
+      color:var(--text-muted);
+      text-transform:none;
+      letter-spacing:0;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    textarea,
+    select {
+      width:100%;
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,0.9);
+      background:rgba(15,23,42,0.96);
+      padding:.45rem .7rem;
+      color:var(--text-main);
+      font-size:.82rem;
+      outline:none;
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color:rgba(148,163,184,0.9);
+    }
+    textarea { resize:vertical; min-height:80px; }
+
+    .field-row {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:.6rem;
+    }
+
+    .option-chips {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      font-size:.76rem;
+    }
+    .chip {
+      border-radius:999px;
+      padding:.22rem .7rem;
+      border:1px solid rgba(148,163,184,0.9);
+      background:rgba(15,23,42,0.98);
+      cursor:pointer;
+    }
+
+    .hint-line {
+      font-size:.76rem;
+      color:var(--text-muted);
+    }
+
+    .divider {
+      margin:.7rem 0;
+      border-top:1px dashed rgba(148,163,184,0.7);
+    }
+
+    .submit-actions {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.55rem;
+      align-items:center;
+      margin-top:.5rem;
+    }
+
+    .btn-main {
+      border-radius:999px;
+      padding:.55rem 1.25rem;
+      border:none;
+      cursor:pointer;
+      font-size:.82rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.13em;
+      background:linear-gradient(135deg,#f97316,#ec4899,#38bdf8);
+      color:#020617;
+      box-shadow:
+        0 0 24px rgba(236,72,153,0.9),
+        0 0 40px rgba(15,23,42,0.95);
+    }
+
+    .btn-ghost {
+      border-radius:999px;
+      padding:.45rem 1rem;
+      border:1px solid rgba(148,163,184,0.9);
+      background:rgba(15,23,42,0.98);
+      color:var(--text-main);
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      cursor:pointer;
+    }
+
+    .submit-note {
+      font-size:.76rem;
+      color:var(--text-muted);
+      max-width:340px;
+    }
+
+    /* SECONDARY SECTION */
+    .section {
+      margin-top:1.7rem;
+      border-radius:22px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card);
+      padding:1rem .95rem 1.1rem;
+      box-shadow:0 0 30px rgba(0,0,0,0.85);
+      position:relative;
+      overflow:hidden;
+    }
+    .section::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.14),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.14),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .section-inner { position:relative; z-index:1; }
+
+    .section-title {
+      font-size:.9rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      margin:0 0 .2rem;
+    }
+    .section-sub {
+      font-size:.8rem;
+      color:var(--text-muted);
+      max-width:640px;
+      margin:0 0 .8rem;
+    }
+
+    .grid-2 {
+      display:grid;
+      grid-template-columns:1.25fr 1.05fr;
+      gap:.9rem;
+    }
+    @media (max-width:960px){ .grid-2{grid-template-columns:1fr;} }
+
+    .card-note {
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,0.9);
+      background:var(--bg-card-soft);
+      padding:.8rem .8rem .9rem;
+      font-size:.8rem;
+      box-shadow:0 0 24px rgba(0,0,0,0.85);
+    }
+
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+      font-size:.72rem;
+      border-radius:999px;
+      padding:.18rem .7rem;
+      border:1px solid rgba(248,250,252,0.3);
+      background:rgba(15,23,42,0.98);
+      margin-bottom:.4rem;
+    }
+    .badge-dot {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 10px #22c55e;
+    }
+
+    .label-bridge {
+      border-radius:18px;
+      border:1px solid rgba(250,204,21,0.9);
+      background:linear-gradient(145deg,rgba(15,23,42,1),rgba(15,23,42,0.9));
+      padding:.85rem .85rem 1rem;
+      box-shadow:
+        0 0 28px rgba(250,204,21,0.7),
+        0 0 34px rgba(15,23,42,0.95);
+      font-size:.8rem;
+    }
+
+    .label-bridge-title {
+      font-size:.95rem;
+      font-weight:600;
+      margin-bottom:.2rem;
+      color:#fef3c7;
+    }
+
+    .label-bridge p { margin:.3rem 0; }
+
+    .btn-label {
+      border-radius:999px;
+      padding:.42rem 1rem;
+      border:1px solid rgba(250,204,21,0.9);
+      background:rgba(15,23,42,0.98);
+      color:#fef3c7;
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      cursor:pointer;
+    }
+
+    .footer-note {
+      margin-top:1.4rem;
+      font-size:.75rem;
+      color:var(--text-muted);
+      text-align:center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .halo-left,.halo-right{animation:none;}
+    }
+  </style>
+</head>
+<body>
+<div class="halo-left"></div>
+<div class="halo-right"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">They Krave For Me Radio</div>
+    <div class="nav-tag">The Independent Artist Power Station</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="submit.html" class="nav-link nav-link-primary">Submit Heat</a>
+      <a href="dj-mixtape-hosting.html" class="nav-link">DJ Hosting</a>
+      <a href="app-hub.html" class="nav-link">App Hub</a>
+      <a href="label-home.html" class="nav-link nav-link-label">Label Side</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO / INTRO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">TKFM RADIO • SUBMIT YOUR HEAT</div>
+        <h1>Get your record in rotation</h1>
+        <p class="hero-sub">
+          This form is for **They Krave For Me Radio** (neon station side) — features, rotation,
+          mixtape consideration and interviews. If you’re aiming for **They Krave For Me Records**
+          contracts, you’ll tap in through the label side after you move some weight here.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Station features • Rotation • Ticker placement</div>
+          <div class="pill"><span></span> DJ &amp; mixtape consideration</div>
+          <div class="pill pill-gold"><span></span> Separate black &amp; gold label universe</div>
+        </div>
+
+        <p class="hero-note">
+          No files actually upload yet — this is the **front-end shell** we’ll connect later to
+          Supabase / Netlify Functions.
+        </p>
+      </div>
+
+      <!-- Quick info card -->
+      <aside class="form-shell">
+        <div class="form-inner">
+          <div class="badge">
+            <span class="badge-dot"></span> Submission tips
+          </div>
+          <p style="font-size:.8rem;margin:.1rem 0 .4rem;">
+            You’ll usually get the best results when you:
+          </p>
+          <ul style="margin:0 0 .5rem;padding-left:1.1rem;font-size:.78rem;color:var(--text-main);">
+            <li>Submit **one clear single** with artwork and links.</li>
+            <li>Include your **best social &amp; streaming links**.</li>
+            <li>Mention if you’re interested in **future label talks**.</li>
+          </ul>
+          <p class="hint-line">
+            Use the form on the left to send full details. Later we can route this to <code>contracts-ai</code> or label
+            onboarding when the time is right.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SUBMIT FORM -->
+  <section class="form-shell">
+    <div class="form-inner">
+      <form action="#" method="post">
+        <!-- 1: WHO ARE YOU -->
+        <div class="label-row">
+          <label for="artist-name">Artist / stage name</label>
+          <span class="label-hint">Put the name you want displayed on TKFM.</span>
+        </div>
+        <input id="artist-name" name="artist_name" type="text" placeholder="They Krave For Me" />
+
+        <div class="field-row">
+          <div>
+            <label for="contact-name">Contact name</label>
+            <input id="contact-name" name="contact_name" type="text" placeholder="Full name or manager" />
+          </div>
+          <div>
+            <label for="email">Contact email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="city">City</label>
+            <input id="city" name="city" type="text" placeholder="City / region" />
+          </div>
+          <div>
+            <label for="social-handle">Main social handle</label>
+            <input id="social-handle" name="social_handle" type="text" placeholder="@theykraveforme" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 2: WHAT ARE YOU SENDING -->
+        <div class="label-row">
+          <label for="submission-type">What are you submitting?</label>
+          <span class="label-hint">This is for TKFM radio, not label contracts.</span>
+        </div>
+        <select id="submission-type" name="submission_type">
+          <option value="">Select one</option>
+          <option value="single">Single (main record)</option>
+          <option value="project">EP / album focus track</option>
+          <option value="mixtape">Mixtape / DJ mix</option>
+          <option value="interview">Interview / spotlight request</option>
+          <option value="feature_plus_label_interest">Feature + I’m label-interested</option>
+        </select>
+
+        <div class="field-row">
+          <div>
+            <label for="track-title">Track or project title</label>
+            <input id="track-title" name="track_title" type="text" placeholder="Record title" />
+          </div>
+          <div>
+            <label for="feature-plan">Which level are you aiming for?</label>
+            <select id="feature-plan" name="feature_plan">
+              <option value="">I’m not sure yet</option>
+              <option value="starter">Starter Spotlight ($97)</option>
+              <option value="pro">Artist Feature Pro ($197)</option>
+              <option value="elite">Elite Campaign ($397)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="stream-link">Primary streaming link</label>
+            <input id="stream-link" name="stream_link" type="url" placeholder="https://..." />
+          </div>
+          <div>
+            <label for="video-link">Video link (optional)</label>
+            <input id="video-link" name="video_link" type="url" placeholder="YouTube / Vevo / etc." />
+          </div>
+        </div>
+
+        <div>
+          <label for="file-links">File / download links</label>
+          <textarea id="file-links" name="file_links" placeholder="Paste Dropbox / Google Drive / private links (no passwords in plain text if you can avoid it)."></textarea>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 3: STORY & FIT -->
+        <div class="label-row">
+          <label for="story">What’s the story?</label>
+          <span class="label-hint">Give TKFM the context we need to pitch you right.</span>
+        </div>
+        <textarea id="story" name="story" placeholder="Who are you, what does this record mean, and what type of motion are you looking for from TKFM?"></textarea>
+
+        <div class="field-row">
+          <div>
+            <label>How did you hear about TKFM?</label>
+            <div class="option-chips">
+              <span class="chip">Instagram</span>
+              <span class="chip">TikTok</span>
+              <span class="chip">Word of mouth</span>
+              <span class="chip">DJ</span>
+              <span class="chip">Other</span>
+            </div>
+          </div>
+          <div>
+            <label for="timing">Timing / release date</label>
+            <input id="timing" name="timing" type="text" placeholder="Already out / drop date / ASAP" />
+          </div>
+        </div>
+
+        <div>
+          <div class="label-row">
+            <label for="extras">Anything else TKFM should know?</label>
+            <span class="label-hint">Co-signs, previous placements, tour dates, budget, etc.</span>
+          </div>
+          <textarea id="extras" name="extras" placeholder="Examples: recent milestones, notable co-signs, sponsor interest, budget range."></textarea>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 4: LABEL INTEREST TOGGLE (just info for now) -->
+        <div class="label-row">
+          <label>Are you interested in future label talks?</label>
+          <span class="label-hint">This is NOT a contract. Just a flag for the label side.</span>
+        </div>
+        <div class="option-chips">
+          <span class="chip">Yes — They Krave For Me Records</span>
+          <span class="chip">Maybe later</span>
+          <span class="chip">Radio only</span>
+        </div>
+        <p class="hint-line">
+          If TKFM sees real motion, you may get invited into **They Krave For Me Records** via
+          label onboarding and the AI contract lab (black &amp; gold side).
+        </p>
+
+        <!-- SUBMIT -->
+        <div class="submit-actions">
+          <button type="submit" class="btn-main">
+            Submit To TKFM
+          </button>
+          <button type="button" class="btn-ghost" onclick="window.location.href='pricing.html'">
+            Review Pricing First
+          </button>
+          <p class="submit-note">
+            This form doesn’t send anywhere yet — front-end only. Later we’ll wire it to a
+            Netlify Function (and optionally Supabase) to store submissions and feed your feature
+            engine / label radar.
+          </p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- LABEL BRIDGE / EDUCATION -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">TKFM vs They Krave For Me Records</h2>
+      <p class="section-sub">
+        To keep the brand clean: **this page is TKFM radio only**. Real label conversations, splits
+        and contracts live on a **separate black &amp; gold environment**.
+      </p>
+
+      <div class="grid-2">
+        <article class="card-note">
+          <div class="badge">
+            <span class="badge-dot"></span> Station side (neon)
+          </div>
+          <p>
+            TKFM radio is where you:
+          </p>
+          <ul style="margin:.15rem 0 .5rem;padding-left:1.1rem;font-size:.78rem;">
+            <li>Submit tracks, tapes and interviews.</li>
+            <li>Buy **feature / rotation / hosting** packages.</li>
+            <li>Test which records the streets &amp; listeners respond to.</li>
+          </ul>
+          <p style="font-size:.78rem;color:var(--text-muted);">
+            All of that data later powers your **feature leaderboards, revenue engine and AI
+            autopilot pricing**.
+          </p>
+        </article>
+
+        <article class="label-bridge">
+          <div class="label-bridge-title">They Krave For Me Records (Black &amp; Gold)</div>
+          <p>
+            When TKFM motion is real, you can be moved into:
+          </p>
+          <ul style="margin:.15rem 0 .5rem;padding-left:1.1rem;font-size:.78rem;color:#fef3c7;">
+            <li>Label onboarding &amp; **artist roster hub**.</li>
+            <li>AI contract presets in **label-contract-lab**.</li>
+            <li>Revenue &amp; sponsor engines on the label side.</li>
+          </ul>
+          <p style="font-size:.78rem;color:#e5e7eb;">
+            That universe has its own look, pricing and rules so TKFM feels like a **powerful
+            station**, not a cheap “play for pay” board.
+          </p>
+          <button class="btn-label" onclick="window.location.href='label-home.html'">
+            View Label Overview
+          </button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    Front-end only for now — safe for Netlify free.  
+    When you’re ready, we’ll wire this form into your **feature engine, A&amp;R radar and label
+    onboarding** flows behind the scenes.
+  </p>
+</main>
+
+</body>
+</html>

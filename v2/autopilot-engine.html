@@ -1,722 +1,840 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>TKFM — Autopilot Engine</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="tkfm-access" content="owner" />
+  <script src="/js/access-gates.js" defer></script>
 
+  <meta charset="utf-8" />
+  <title>TKFM Autopilot Engine — Weighted Rotation Builder</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="TKFM Autopilot Engine builds weighted rotation packs from artist uploads, label decisions and mixtape projects for They Krave For Me Radio." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/logo-check.js" defer></script>
   <style>
-    :root{
-      --bg:#050014;
-      --bg2:#020013;
-      --card:#020617;
-      --card-soft:rgba(15,23,42,.98);
-      --border:rgba(148,163,184,.6);
-      --border-strong:rgba(55,65,81,.95);
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --neon:#c084fc;
-      --hot:#ec4899;
-      --cyan:#22d3ee;
-      --gold:#facc15;
-      --lime:#22c55e;
-      --danger:#fb7185;
-    }
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
-    }
     body{
-      min-height:100vh;
-      color:var(--text);
-      background:
-        radial-gradient(circle at 0 0,rgba(236,72,153,.22),transparent 60%),
-        radial-gradient(circle at 100% 100%,rgba(34,211,238,.22),transparent 60%),
-        linear-gradient(to bottom,var(--bg2),var(--bg));
-      display:flex;
-      flex-direction:column;
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 10% 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 90% 0,rgba(236,72,153,0.18),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(34,211,238,0.16),transparent 55%);
     }
-    a{text-decoration:none;color:inherit;}
-
-    header{
-      position:sticky;
-      top:0;
-      z-index:20;
-      padding:.9rem 1.4rem;
-      display:flex;
-      align-items:center;
-      gap:.8rem;
-      background:rgba(5,6,27,.96);
-      border-bottom:1px solid rgba(148,163,184,.65);
-      backdrop-filter:blur(18px);
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:.7rem;
-    }
-    .brand-logo{
-      width:32px;
-      height:32px;
-      border-radius:999px;
-      border:1px solid var(--neon);
-      background:
-        radial-gradient(circle at 25% 0,#e879f9,#22d3ee 45%,#020617 100%);
-      box-shadow:
-        0 0 26px rgba(192,132,252,.82),
-        0 0 26px rgba(34,211,238,.7);
-    }
-    .brand-text{
-      display:flex;
-      flex-direction:column;
-      gap:.05rem;
-    }
-    .brand-kicker{
-      font-size:.7rem;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--muted);
-    }
-    .brand-main{
-      font-size:1rem;
-      font-weight:650;
-    }
-    .header-right{
-      margin-left:auto;
-      display:flex;
-      flex-wrap:wrap;
-      gap:.4rem;
-      font-size:.74rem;
-    }
-    .chip{
-      font-size:.7rem;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      padding:.3rem .7rem;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.7);
-      background:radial-gradient(circle at top,rgba(148,163,184,.22),transparent 60%);
-      color:var(--muted);
-    }
-    .chip.hot{
-      border-color:var(--gold);
-      color:var(--gold);
-    }
-
-    main{
-      flex:1;
-      padding:1.3rem;
-      display:grid;
-      grid-template-columns:minmax(0,1.25fr) minmax(0,1.1fr);
-      gap:1rem;
-    }
-    @media(max-width:960px){
-      main{
-        grid-template-columns:1fr;
-        padding:1rem;
-      }
-      header{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-    }
-
-    .panel{
-      background:var(--card-soft);
-      border-radius:1rem;
-      border:1px solid var(--border);
-      padding:.9rem .9rem 1rem;
-      box-shadow:0 0 35px rgba(15,23,42,.95);
-    }
-    .panel-title{
-      font-size:.8rem;
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      color:var(--muted);
-      margin-bottom:.2rem;
-    }
-    .panel-sub{
-      font-size:.8rem;
-      color:var(--muted);
-      margin-bottom:.6rem;
-    }
-
-    /* summary */
-    .summary-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.7rem;
-      margin-bottom:.9rem;
-    }
-    .summary-card{
-      flex:1 1 140px;
-      background:rgba(15,23,42,.98);
-      border-radius:.85rem;
-      border:1px solid var(--border-strong);
-      padding:.55rem .7rem;
-    }
-    .sum-label{
-      font-size:.68rem;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      color:var(--muted);
-    }
-    .sum-value{
-      font-size:1.2rem;
-      font-weight:650;
-    }
-    .sum-sub{
-      font-size:.72rem;
-      color:var(--muted);
-    }
-
-    /* controls */
-    .form-grid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:.55rem;
-      margin-bottom:.6rem;
-    }
-    @media(max-width:720px){
-      .form-grid{
-        grid-template-columns:1fr;
-      }
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:.2rem;
-      font-size:.78rem;
-    }
-    .label{
-      font-size:.7rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--muted);
-    }
-    input[type="number"]{
-      width:100%;
-      padding:.32rem .55rem;
-      border-radius:.55rem;
-      border:1px solid rgba(148,163,184,.8);
-      background:rgba(15,23,42,.98);
-      color:var(--text);
-      font-size:.8rem;
-    }
-    .hint{
-      font-size:.7rem;
-      color:var(--muted);
-    }
-
-    .btn-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.4rem;
-      margin-bottom:.4rem;
-    }
-    .btn{
-      font-size:.7rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      padding:.35rem .8rem;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.8);
-      background:rgba(15,23,42,.98);
-      color:var(--text);
-      cursor:pointer;
-    }
-    .btn.primary{
-      border-color:var(--neon);
-      box-shadow:0 0 16px rgba(192,132,252,.7);
-    }
-    .btn.green{
-      border-color:var(--lime);
-      color:var(--lime);
-    }
-    .btn.ghost{
-      border-style:dashed;
-      color:var(--muted);
-    }
-    .btn:disabled{
-      opacity:.5;
-      cursor:not-allowed;
-    }
-
-    .notice{
-      font-size:.74rem;
-      color:var(--muted);
-      margin-top:.3rem;
-    }
-    .notice span.key{
-      color:var(--cyan);
-    }
-    .notice span.bad{
-      color:var(--danger);
-    }
-    .notice span.good{
-      color:var(--lime);
-    }
-
-    /* right side: pack preview */
-    .section-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:.5rem;
-      margin-bottom:.35rem;
-    }
-    .section-title{
-      font-size:.8rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--muted);
-    }
-    .badge{
-      font-size:.68rem;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      padding:.2rem .6rem;
-      border-radius:.7rem;
-      border:1px solid rgba(148,163,184,.7);
-      color:var(--muted);
-    }
-    .badge.good{
-      border-color:var(--lime);
-      color:var(--lime);
-    }
-    .badge.warn{
-      border-color:var(--danger);
-      color:var(--danger);
-    }
-
-    .timeline{
-      border-radius:.85rem;
-      border:1px solid var(--border-strong);
-      background:rgba(15,23,42,.98);
-      max-height:58vh;
-      overflow:auto;
-    }
-    .row{
-      display:grid;
-      grid-template-columns:32px minmax(0,2.2fr) minmax(0,1.5fr);
-      gap:.4rem;
-      padding:.42rem .55rem;
-      border-bottom:1px solid rgba(31,41,55,.95);
-      font-size:.78rem;
-    }
-    .row:nth-child(even){
-      background:rgba(15,23,42,.94);
-    }
-    .row-index{
-      font-size:.7rem;
-      color:var(--muted);
-    }
-    .row-main-title{
-      font-weight:600;
-    }
-    .row-main-sub{
-      font-size:.74rem;
-      color:var(--muted);
-    }
-    .row-meta{
-      font-size:.72rem;
-      color:var(--muted);
-    }
-
-    .tag{
-      display:inline-block;
-      font-size:.65rem;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      padding:.12rem .36rem;
-      border-radius:.7rem;
-      border:1px solid rgba(148,163,184,.7);
-      margin-right:.25rem;
-    }
-    .tag.tier{
-      border-color:var(--cyan);
-      color:var(--cyan);
-    }
-    .tag.featured{
-      border-color:var(--gold);
-      color:var(--gold);
-    }
-    .tag.elite{
-      border-color:var(--hot);
-      color:var(--hot);
-    }
-    .tag.sponsor{
-      border-color:var(--lime);
-      color:var(--lime);
-    }
-
-    .empty-state{
-      font-size:.78rem;
-      color:var(--muted);
-      padding:.45rem .55rem;
-    }
-
-    .meta-block{
-      margin-top:.6rem;
-      border-radius:.75rem;
-      border:1px dashed rgba(148,163,184,.7);
-      padding:.5rem .6rem;
-      font-size:.74rem;
-      color:var(--muted);
-    }
-    .meta-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.4rem;
-      margin-top:.15rem;
-    }
-    .meta-item{
-      font-size:.72rem;
-    }
-    .meta-item strong{
-      color:var(--gold);
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+    .glass{
+      background-color:rgba(15,23,42,0.92);
+      backdrop-filter:blur(24px);
     }
   </style>
 </head>
+<body class="text-slate-50 min-h-screen flex flex-col">
 
-<body>
-<header>
-  <div class="brand">
-    <div class="brand-logo"></div>
-    <div class="brand-text">
-      <div class="brand-kicker">TKFM RADIO</div>
-      <div class="brand-main">Autopilot Engine</div>
+  <!-- NAV -->
+  <header class="w-full border-b border-slate-800/80 bg-black/70 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
+        <div class="leading-tight">
+          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
+            They Krave For Me Radio
+          </div>
+          <div class="text-sm font-semibold">
+            TKFM <span class="text-cyan-300">Autopilot Engine</span>
+          </div>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
+          <span>📻</span><span>Radio Hub</span>
+        </a>
+        <a href="ai-dj-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200 flex items-center gap-1">
+          <span>🤖</span><span>AI DJ</span>
+        </a>
+        <a href="label-hub.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200 flex items-center gap-1">
+          <span>🏛</span><span>Label Hub</span>
+        </a>
+        <a href="dj-mixtape-hosting.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200 flex items-center gap-1">
+          <span>🔥</span><span>Mixtape Hosting</span>
+        </a>
+        <a href="tkfm-dev-console.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200 flex items-center gap-1">
+          <span>🧪</span><span>Dev Console</span>
+        </a>
+      </nav>
     </div>
-  </div>
-  <div class="header-right">
-    <div class="chip">Catalog → Weighted Pack → AI DJ</div>
-    <div class="chip hot">Writes tkfm_autopilot_last_pack</div>
-  </div>
-</header>
+  </header>
 
-<main>
-  <!-- LEFT: CONTROLS + SUMMARY -->
-  <section class="panel">
-    <div class="panel-title">Pack Builder</div>
-    <div class="panel-sub">
-      Build a weighted rotation pack from <code>tkfm_catalog</code>. Featured and elite
-      entries get more weight. When you generate, the pack is saved to
-      <span class="key">tkfm_autopilot_last_pack</span> for the AI DJ to consume.
-    </div>
+  <!-- MAIN -->
+  <main class="flex-1">
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-12 space-y-7">
 
-    <div class="summary-row">
-      <div class="summary-card">
-        <div class="sum-label">Catalog Tracks</div>
-        <div id="sumCatalog" class="sum-value">0</div>
-        <div class="sum-sub" id="sumCatalogDetail">–</div>
+      <!-- HERO + SNAPSHOT -->
+      <div class="flex flex-col lg:flex-row gap-6 items-start">
+        <!-- HERO -->
+        <div class="flex-1 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-cyan-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Autopilot • Weighted Rotation Builder
+          </div>
+
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            Build a <span class="text-cyan-300 drop-shadow-[0_0_26px_rgba(56,189,248,0.9)]">smart rotation pack</span>
+            from uploads, label calls & mixtape projects.
+          </h1>
+
+          <p class="text-sm md:text-base text-slate-100/90 max-w-2xl">
+            This engine reads <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_artist_uploads</span>,
+            <span class="font-mono text-cyan-300 text-[0.8rem]">mixtapeOrders</span> and your label decisions
+            to build a **weighted pack** saved as
+            <span class="font-mono text-cyan-300 text-[0.8rem]">tkfm_autopilot_last_pack</span>
+            for TKFM Radio + the AI DJ Engine.
+          </p>
+
+          <p class="text-[0.78rem] text-slate-400 max-w-xl">
+            Dev mode only: everything here writes to <span class="font-mono text-cyan-300 text-[0.75rem]">localStorage</span>.
+            In production this pattern can sit on top of a real DB + cron.
+          </p>
+
+          <div class="flex flex-wrap gap-3 text-[0.8rem] mt-2">
+            <button id="ap-generate" class="px-4 py-2 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 font-medium uppercase tracking-[0.22em]">
+              Generate Pack
+            </button>
+            <button id="ap-preview" class="px-4 py-2 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-100 uppercase tracking-[0.22em]">
+              Preview Selection
+            </button>
+            <a href="radio-hub.html" class="px-4 py-2 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+              <span>📻</span><span>Open Radio Hub</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- SNAPSHOT CARD -->
+        <aside class="w-full max-w-sm rounded-3xl border border-slate-800 glass relative overflow-hidden">
+          <div class="pointer-events-none absolute -inset-20 opacity-40 blur-3xl bg-[conic-gradient(from_120deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
+          <div class="relative p-4 space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
+                  Autopilot Snapshot (This Device)
+                </p>
+                <p class="text-xs text-slate-100">
+                  Reads the last pack + core TKFM keys.
+                </p>
+              </div>
+              <button id="ap-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
+                Refresh
+              </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="text-slate-300 mb-0.5">Artist Uploads</p>
+                <p id="ap-uploads" class="text-lg font-bold text-cyan-200">0</p>
+              </div>
+              <div>
+                <p class="text-slate-300 mb-0.5">Mixtape Orders</p>
+                <p id="ap-orders" class="text-lg font-bold text-cyan-200">0</p>
+              </div>
+              <div>
+                <p class="text-slate-300 mb-0.5">Fan Profiles</p>
+                <p id="ap-fans" class="text-lg font-bold text-cyan-200">0</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <p class="text-slate-300 mb-0.5">Last Pack</p>
+                <p id="ap-pack-summary" class="text-sm font-semibold text-emerald-200">None</p>
+              </div>
+              <div>
+                <p class="text-slate-300 mb-0.5">Created</p>
+                <p id="ap-pack-date" class="text-[0.7rem] text-slate-200">—</p>
+              </div>
+            </div>
+
+            <p class="text-[0.72rem] text-slate-300">
+              Key: <span class="font-mono text-cyan-300 text-[0.7rem]">tkfm_autopilot_last_pack</span> +
+              updates <span class="font-mono text-cyan-300 text-[0.7rem]">tkfm_radio_state</span> &
+              <span class="font-mono text-cyan-300 text-[0.7rem]">tkfm_radio_now_playing</span>.
+            </p>
+          </div>
+        </aside>
       </div>
-      <div class="summary-card">
-        <div class="sum-label">Last Pack Size</div>
-        <div id="sumPack" class="sum-value">0</div>
-        <div class="sum-sub" id="sumPackDetail">–</div>
-      </div>
-      <div class="summary-card">
-        <div class="sum-label">Sponsor Bumpers</div>
-        <div id="sumSponsors" class="sum-value">0</div>
-        <div class="sum-sub" id="sumSponsorsDetail">–</div>
-      </div>
-      <div class="summary-card">
-        <div class="sum-label">Effective Cells</div>
-        <div id="sumCells" class="sum-value">0</div>
-        <div class="sum-sub">Tracks + bumpers slots.</div>
-      </div>
+
+      <!-- CONTROL PANEL -->
+      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
+        <!-- Left: Weights & Modes -->
+        <div class="rounded-3xl border border-slate-800 glass p-4 md:p-5 text-sm space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Rotation Controls
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                Define how Autopilot treats your ecosystem.
+              </h2>
+            </div>
+            <span class="text-xl">⚙</span>
+          </header>
+
+          <!-- Mode + Pack Size -->
+          <div class="grid gap-3 md:grid-cols-3 text-[0.8rem]">
+            <label class="space-y-1">
+              <span class="text-slate-300">Show Mode</span>
+              <select id="ap-mode" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
+                <option value="night-drive">Night Drive</option>
+                <option value="club-energy">Club Energy</option>
+                <option value="label-focus">Label Focus</option>
+                <option value="mixtape-premiere">Mixtape Premiere</option>
+                <option value="balanced">Balanced Mix</option>
+              </select>
+            </label>
+            <label class="space-y-1">
+              <span class="text-slate-300">Pack Size</span>
+              <select id="ap-pack-size" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
+                <option value="10">10 Records</option>
+                <option value="15">15 Records</option>
+                <option value="20">20 Records</option>
+                <option value="30">30 Records</option>
+              </select>
+            </label>
+            <label class="space-y-1">
+              <span class="text-slate-300">Max Per Artist</span>
+              <select id="ap-max-per-artist" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
+                <option value="0">No limit</option>
+                <option value="2">2 per artist</option>
+                <option value="3">3 per artist</option>
+              </select>
+            </label>
+          </div>
+
+          <!-- Weights -->
+          <div class="grid gap-3 md:grid-cols-2 mt-1 text-[0.8rem]">
+            <div class="space-y-1">
+              <p class="text-slate-300">Weight Rules</p>
+              <div class="flex flex-col gap-1.5">
+                <label class="inline-flex items-center gap-2">
+                  <input id="ap-w-featured" type="checkbox" class="rounded border-slate-600 bg-slate-950" checked />
+                  <span class="text-slate-200">Boost <span class="font-semibold text-emerald-300">featured</span> uploads</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                  <input id="ap-w-accepted" type="checkbox" class="rounded border-slate-600 bg-slate-950" checked />
+                  <span class="text-slate-200">Boost uploads with <span class="font-semibold">accepted / label</span> status</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                  <input id="ap-w-mixtape" type="checkbox" class="rounded border-slate-600 bg-slate-950" checked />
+                  <span class="text-slate-200">Include &amp; boost <span class="font-semibold text-purple-300">mixtape projects</span></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <p class="text-slate-300">Tier Emphasis</p>
+              <p class="text-[0.75rem] text-slate-400">
+                Higher tiers = more weight. These multipliers stack with the base rules above.
+              </p>
+              <div class="grid grid-cols-3 gap-2">
+                <label class="space-y-0.5">
+                  <span class="text-[0.75rem] text-slate-300">Starter</span>
+                  <select id="ap-m-starter" class="w-full rounded bg-slate-950/90 border border-slate-700/80 px-2 py-1.5 text-[0.75rem]">
+                    <option value="0.5">0.5x</option>
+                    <option value="1" selected>1x</option>
+                    <option value="1.5">1.5x</option>
+                  </select>
+                </label>
+                <label class="space-y-0.5">
+                  <span class="text-[0.75rem] text-slate-300">Pro</span>
+                  <select id="ap-m-pro" class="w-full rounded bg-slate-950/90 border border-slate-700/80 px-2 py-1.5 text-[0.75rem]">
+                    <option value="1">1x</option>
+                    <option value="1.5" selected>1.5x</option>
+                    <option value="2">2x</option>
+                  </select>
+                </label>
+                <label class="space-y-0.5">
+                  <span class="text-[0.75rem] text-slate-300">Elite</span>
+                  <select id="ap-m-elite" class="w-full rounded bg-slate-950/90 border border-slate-700/80 px-2 py-1.5 text-[0.75rem]">
+                    <option value="1.5">1.5x</option>
+                    <option value="2" selected>2x</option>
+                    <option value="3">3x</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="grid gap-3 md:grid-cols-2 mt-2 text-[0.8rem]">
+            <div class="space-y-1">
+              <p class="text-slate-300">Filter</p>
+              <div class="flex flex-col gap-1.5">
+                <label class="inline-flex items-center gap-2">
+                  <input id="ap-filter-city" type="checkbox" class="rounded border-slate-600 bg-slate-950" />
+                  <span class="text-slate-200">Focus on a single city</span>
+                </label>
+                <input id="ap-filter-city-input" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5 text-[0.8rem]" placeholder="Example: Detroit, MI" />
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <p class="text-slate-300">Label Focus Extras</p>
+              <div class="flex flex-col gap-1.5">
+                <label class="inline-flex items-center gap-2">
+                  <input id="ap-only-labeled" type="checkbox" class="rounded border-slate-600 bg-slate-950" />
+                  <span class="text-slate-200">Prefer uploads with label / spotlight status</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                  <input id="ap-add-news" type="checkbox" class="rounded border-slate-600 bg-slate-950" />
+                  <span class="text-slate-200">Drop a system note into <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_news_manual</span></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <p id="ap-status" class="text-[0.75rem] text-emerald-300 mt-1"></p>
+        </div>
+
+        <!-- Right: Candidate Summary -->
+        <aside class="rounded-3xl border border-slate-800 glass p-4 md:p-5 text-sm space-y-3">
+          <header class="flex items-center justify-between gap-2">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+                Candidate Pool
+              </p>
+              <h2 class="text-sm font-semibold text-slate-50">
+                What Autopilot can pull from.
+              </h2>
+            </div>
+            <span class="text-xl">🎚</span>
+          </header>
+
+          <p class="text-[0.8rem] text-slate-300">
+            Built from:
+            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span> +
+            <span class="font-mono text-cyan-300 text-[0.75rem]">mixtapeOrders</span>.
+            Use the Dev Console’s **Load Demo Data** if you need a quick test.
+          </p>
+
+          <div id="ap-candidates-empty" class="text-[0.8rem] text-slate-400">
+            No eligible records yet. Add uploads, mixtape orders or load demo data first.
+          </div>
+
+          <div id="ap-candidates" class="hidden space-y-2 text-[0.78rem] max-h-64 overflow-y-auto">
+            <!-- Filled by JS -->
+          </div>
+
+          <p class="text-[0.7rem] text-slate-400">
+            Weights are shown as a hint. Final pack uses **weighted random without replacement** on each generate.
+          </p>
+        </aside>
+      </section>
+
+      <!-- PREVIEW PANEL -->
+      <section class="rounded-3xl border border-slate-800 glass p-4 md:p-5 text-sm space-y-3">
+        <header class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">
+              Pack Preview
+            </p>
+            <h2 class="text-sm font-semibold text-slate-50">
+              See what you’re about to hand the DJ.
+            </h2>
+          </div>
+          <span class="text-xl">📼</span>
+        </header>
+
+        <div id="ap-preview-empty" class="text-[0.8rem] text-slate-400">
+          Click <span class="text-emerald-300 font-semibold">Preview Selection</span> or
+          <span class="text-emerald-300 font-semibold">Generate Pack</span> to see the current build.
+        </div>
+
+        <div id="ap-preview-list" class="hidden grid gap-2 md:grid-cols-2 lg:grid-cols-3 text-[0.78rem]">
+          <!-- Filled by JS -->
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-black/70">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
+      <span>© 2025 TKFM — Autopilot Engine v2.</span>
+      <span class="opacity-80">
+        Builds tkfm_autopilot_last_pack and updates radio state for TKFM Radio & AI DJ Engine.
+      </span>
     </div>
+  </footer>
 
-    <div class="form-grid">
-      <div class="field">
-        <div class="label">Max Tracks</div>
-        <input id="inputMaxTracks" type="number" min="5" max="120" step="1" value="40">
-        <div class="hint">How deep the pack should be.</div>
-      </div>
-      <div class="field">
-        <div class="label">Featured Boost</div>
-        <input id="inputFeaturedBoost" type="number" min="0" max="5" step="0.5" value="1">
-        <div class="hint">Extra weight for <strong>featured</strong> tracks.</div>
-      </div>
-      <div class="field">
-        <div class="label">Elite Boost</div>
-        <input id="inputEliteBoost" type="number" min="0" max="6" step="0.5" value="2">
-        <div class="hint">Extra weight for <strong>elite</strong> records.</div>
-      </div>
-    </div>
-
-    <div class="btn-row">
-      <button id="btnGenerate" class="btn primary">Generate New Pack</button>
-      <button id="btnReload" class="btn green">Reload Last Pack</button>
-      <button id="btnClear" class="btn ghost">Clear Pack</button>
-    </div>
-
-    <div class="notice">
-      • Reads from <span class="key">tkfm_catalog</span> and writes to
-      <span class="key">tkfm_autopilot_last_pack</span>.<br>
-      • If a <span class="good">Sponsor Rotator</span> is active on this domain, it will
-      inject bumpers into the pack via <code>window.injectSponsorBumpers(pack)</code>.
-    </div>
-  </section>
-
-  <!-- RIGHT: PACK PREVIEW -->
-  <section class="panel">
-    <div class="section-header">
-      <div class="section-title">Current Rotation Pack Preview</div>
-      <div id="packBadge" class="badge">No Pack</div>
-    </div>
-    <div class="panel-sub">
-      First 40 entries of <code>tkfm_autopilot_last_pack</code>, including sponsor bumpers if present.
-    </div>
-
-    <div id="timeline" class="timeline">
-      <div id="timelineEmpty" class="empty-state">
-        No pack yet. Generate a pack from the controls on the left.
-      </div>
-    </div>
-
-    <div class="meta-block">
-      <div>Pack Breakdown</div>
-      <div class="meta-row">
-        <div class="meta-item"><strong id="metaStandard">0</strong> standard</div>
-        <div class="meta-item"><strong id="metaFeatured">0</strong> featured</div>
-        <div class="meta-item"><strong id="metaElite">0</strong> elite</div>
-        <div class="meta-item"><strong id="metaSponsor">0</strong> sponsor bumpers</div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<script type="module">
-  import {
-    getCatalog,
-    getAutopilotPack,
-    setAutopilotPack,
-    generateAutopilotPack
-  } from './js/tkfm-core.js';
-
-  const sumCatalog         = document.getElementById('sumCatalog');
-  const sumCatalogDetail   = document.getElementById('sumCatalogDetail');
-  const sumPack            = document.getElementById('sumPack');
-  const sumPackDetail      = document.getElementById('sumPackDetail');
-  const sumSponsors        = document.getElementById('sumSponsors');
-  const sumSponsorsDetail  = document.getElementById('sumSponsorsDetail');
-  const sumCells           = document.getElementById('sumCells');
-
-  const inputMaxTracks     = document.getElementById('inputMaxTracks');
-  const inputFeaturedBoost = document.getElementById('inputFeaturedBoost');
-  const inputEliteBoost    = document.getElementById('inputEliteBoost');
-
-  const btnGenerate        = document.getElementById('btnGenerate');
-  const btnReload          = document.getElementById('btnReload');
-  const btnClear           = document.getElementById('btnClear');
-
-  const timeline           = document.getElementById('timeline');
-  const timelineEmpty      = document.getElementById('timelineEmpty');
-  const packBadge          = document.getElementById('packBadge');
-
-  const metaStandard       = document.getElementById('metaStandard');
-  const metaFeatured       = document.getElementById('metaFeatured');
-  const metaElite          = document.getElementById('metaElite');
-  const metaSponsor        = document.getElementById('metaSponsor');
-
-  function normalizeTrack(t, index){
-    const isBumper = !!t.isBumper || t.title === '**SPONSOR_BREAK**';
-    const artist = isBumper
-      ? (t.sponsorName || 'Sponsor Break')
-      : (t.artistName || t.artist || 'Unknown Artist');
-    const title = isBumper
-      ? ('Sponsored by ' + (t.sponsorName || 'Sponsor'))
-      : (t.trackTitle || t.title || 'Untitled');
-
-    return {
-      index,
-      isBumper,
-      artist,
-      title,
-      tier: (t.tier || 'standard').toLowerCase(),
-      featured: !!t.featured,
-      elite: !!t.elite
-    };
-  }
-
-  function computeCells(pack){
-    if(!pack.length) return 0;
-    return pack.length; // bumpers already included as cells
-  }
-
-  function renderSummary(){
-    const catalog = getCatalog() || [];
-    const pack    = getAutopilotPack() || [];
-
-    const featured = catalog.filter(t => t.featured).length;
-    const elite    = catalog.filter(t => t.elite).length;
-
-    sumCatalog.textContent = catalog.length;
-    sumCatalogDetail.textContent =
-      `${featured} featured · ${elite} elite in catalog`;
-
-    const sponsorCount = pack.filter(t => t.isBumper || t.title === '**SPONSOR_BREAK**').length;
-
-    sumPack.textContent = pack.length;
-    sumPackDetail.textContent = pack.length
-      ? `${pack.length - sponsorCount} music · ${sponsorCount} bumpers`
-      : 'No pack saved';
-
-    sumSponsors.textContent = sponsorCount;
-    sumSponsorsDetail.textContent = sponsorCount
-      ? 'Injected via Sponsor Rotator'
-      : 'No sponsor bumpers in current pack';
-
-    sumCells.textContent = computeCells(pack);
-  }
-
-  function renderPack(){
-    const packRaw = getAutopilotPack() || [];
-    const pack    = Array.isArray(packRaw) ? packRaw : [];
-
-    timeline.innerHTML = '';
-    if(!pack.length){
-      timeline.appendChild(timelineEmpty);
-      packBadge.textContent = 'No Pack';
-      packBadge.className = 'badge warn';
-      // restore empty content text
-      timelineEmpty.textContent = 'No pack yet. Generate a pack from the controls on the left.';
-      renderSummary();
-      metaStandard.textContent = '0';
-      metaFeatured.textContent = '0';
-      metaElite.textContent    = '0';
-      metaSponsor.textContent  = '0';
-      return;
+  <script>
+    // ---------- helpers ----------
+    function apSafeParse(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (e) {
+        console.warn('Autopilot parse fail', key, e);
+        return fallback;
+      }
+    }
+    function apArray(key) {
+      const v = apSafeParse(key, []);
+      return Array.isArray(v) ? v : [];
+    }
+    function apPrettyDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return '';
+      return d.toLocaleString();
+    }
+    function apEscape(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
     }
 
-    packBadge.textContent = 'Live Pack';
-    packBadge.className = 'badge good';
+    function apSetStatus(msg, isError) {
+      const el = document.getElementById('ap-status');
+      if (!msg) { el.textContent = ''; return; }
+      el.textContent = msg;
+      el.style.color = isError ? '#fca5a5' : '#6ee7b7';
+    }
 
-    const subset = pack.slice(0,40).map((t, i) => normalizeTrack(t, i+1));
+    function apBuildCandidates(options) {
+      const uploads = apArray('tkfm_artist_uploads');
+      const orders = apArray('mixtapeOrders');
+      const { includeMixtapes, focusCity, onlyLabel } = options || {};
 
-    let cStandard = 0, cFeatured = 0, cElite = 0, cSponsor = 0;
+      const candidates = [];
 
-    subset.forEach(track => {
-      const row = document.createElement('div');
-      row.className = 'row';
-
-      const colIndex = document.createElement('div');
-      colIndex.className = 'row-index';
-      colIndex.textContent = String(track.index).padStart(2,'0');
-
-      const colMain = document.createElement('div');
-      const titleEl = document.createElement('div');
-      titleEl.className = 'row-main-title';
-      titleEl.textContent = `"${track.title}"`;
-      const subEl = document.createElement('div');
-      subEl.className = 'row-main-sub';
-      subEl.textContent = track.artist;
-      colMain.appendChild(titleEl);
-      colMain.appendChild(subEl);
-
-      const colMeta = document.createElement('div');
-      colMeta.className = 'row-meta';
-
-      if(track.isBumper){
-        const tag = document.createElement('span');
-        tag.className = 'tag sponsor';
-        tag.textContent = 'SPONSOR BUMPER';
-        colMeta.appendChild(tag);
-        cSponsor++;
-      }else{
-        const tierTag = document.createElement('span');
-        tierTag.className = 'tag tier';
-        tierTag.textContent = track.tier.toUpperCase();
-        colMeta.appendChild(tierTag);
-
-        if(track.featured){
-          const t = document.createElement('span');
-          t.className = 'tag featured';
-          t.textContent = 'FEATURED';
-          colMeta.appendChild(t);
-        }
-        if(track.elite){
-          const t = document.createElement('span');
-          t.className = 'tag elite';
-          t.textContent = 'ELITE';
-          colMeta.appendChild(t);
+      // Artist uploads
+      uploads.forEach((u, idx) => {
+        if (!u) return;
+        const city = u.city || '';
+        if (focusCity && city && !city.toLowerCase().includes(focusCity.toLowerCase())) {
+          return;
         }
 
-        if(track.elite)      cElite++;
-        else if(track.featured) cFeatured++;
-        else                 cStandard++;
+        const status = (u.status || '').toLowerCase();
+        const isFeatured = status === 'featured';
+        const isLabelish = status === 'accepted' || status === 'label' || status === 'elite';
+
+        if (onlyLabel && !isFeatured && !isLabelish) return;
+
+        let tier = 'Standard';
+        if (isFeatured) tier = 'Featured';
+        if (isLabelish) tier = 'Label';
+
+        candidates.push({
+          sourceType: 'upload',
+          id: u.id || ('upload-' + idx),
+          artistName: u.artistName || u.artist || 'Unknown Artist',
+          trackTitle: u.trackTitle || u.title || 'Untitled Record',
+          city: city,
+          status: u.status || '',
+          tier,
+          tag: u.tag || '',
+          sourceKey: 'tkfm_artist_uploads',
+          raw: u
+        });
+      });
+
+      // Mixtape orders as "projects"
+      if (includeMixtapes) {
+        orders.forEach((o, idx) => {
+          if (!o) return;
+          const city = o.city || '';
+          if (focusCity && city && !city.toLowerCase().includes(focusCity.toLowerCase())) {
+            return;
+          }
+          const tier = o.tier || 'Starter';
+          const status = o.status || '';
+          candidates.push({
+            sourceType: 'mixtape',
+            id: o.id || ('mix-' + idx),
+            artistName: o.clientName || 'Mixtape Client',
+            trackTitle: o.projectTitle || 'Mixtape Project',
+            city: city,
+            status,
+            tier,
+            tag: 'Mixtape ' + tier,
+            sourceKey: 'mixtapeOrders',
+            raw: o
+          });
+        });
       }
 
-      row.appendChild(colIndex);
-      row.appendChild(colMain);
-      row.appendChild(colMeta);
-      timeline.appendChild(row);
+      return candidates;
+    }
+
+    function apComputeWeight(item, opts) {
+      let w = 1;
+
+      const status = (item.status || '').toLowerCase();
+      const tier = (item.tier || '').toLowerCase();
+
+      if (opts.boostFeatured && status === 'featured') w += 1.5;
+      if (opts.boostAccepted && (status === 'accepted' || status === 'label' || status === 'elite')) w += 1;
+
+      if (item.sourceType === 'mixtape' && opts.boostMixtape) {
+        w += 1;
+      }
+
+      // tier multipliers (based on mixtape tier if present)
+      if (tier.includes('starter')) w *= opts.mStarter;
+      if (tier.includes('pro'))     w *= opts.mPro;
+      if (tier.includes('elite'))   w *= opts.mElite;
+
+      // mode tweaks
+      const mode = opts.mode;
+      if (mode === 'night-drive') {
+        if (tier.includes('featured') || tier.includes('elite')) w *= 1.2;
+      } else if (mode === 'club-energy') {
+        if (item.sourceType === 'mixtape') w *= 1.3;
+      } else if (mode === 'label-focus') {
+        if (status === 'accepted' || status === 'label' || status === 'elite') w *= 1.4;
+      } else if (mode === 'mixtape-premiere') {
+        if (item.sourceType === 'mixtape') w *= 1.6;
+      }
+
+      if (w < 0.1) w = 0.1;
+      return w;
+    }
+
+    function apWeightedSample(items, size, weightFn, maxPerArtist) {
+      const pool = items.map(i => ({ ...i }));
+      const out = [];
+      const countsByArtist = {};
+
+      while (out.length < size && pool.length > 0) {
+        let total = 0;
+        const weights = pool.map(it => {
+          const w = weightFn(it);
+          total += w;
+          return w;
+        });
+        if (!total || total <= 0) break;
+
+        let r = Math.random() * total;
+        let idx = 0;
+        for (; idx < weights.length; idx++) {
+          r -= weights[idx];
+          if (r <= 0) break;
+        }
+        if (idx >= pool.length) idx = pool.length - 1;
+
+        const chosen = pool[idx];
+        const key = (chosen.artistName || '').toLowerCase() || chosen.id;
+        const allowedLimit = maxPerArtist || 0;
+
+        if (allowedLimit > 0) {
+          const current = countsByArtist[key] || 0;
+          if (current >= allowedLimit) {
+            pool.splice(idx, 1);
+            continue;
+          }
+          countsByArtist[key] = current + 1;
+        }
+
+        out.push(chosen);
+        pool.splice(idx, 1);
+      }
+
+      return out;
+    }
+
+    function apRenderSnapshot() {
+      const uploads = apArray('tkfm_artist_uploads');
+      const orders = apArray('mixtapeOrders');
+      const fans   = apArray('tkfm_fan_profiles');
+      const pack   = apSafeParse('tkfm_autopilot_last_pack', null);
+
+      document.getElementById('ap-uploads').textContent = uploads.length;
+      document.getElementById('ap-orders').textContent  = orders.length;
+      document.getElementById('ap-fans').textContent    = fans.length;
+
+      const sumEl = document.getElementById('ap-pack-summary');
+      const dateEl = document.getElementById('ap-pack-date');
+
+      if (!pack) {
+        sumEl.textContent = 'None';
+        dateEl.textContent = '—';
+        return;
+      }
+
+      const tracks = Array.isArray(pack.tracks) ? pack.tracks.length :
+                     Array.isArray(pack.items)  ? pack.items.length  :
+                     pack.size || 0;
+
+      const mode = pack.mode || pack.profile || 'default';
+      sumEl.textContent = tracks
+        ? mode + ' • ' + tracks + ' track' + (tracks !== 1 ? 's' : '')
+        : mode;
+
+      dateEl.textContent = apPrettyDate(pack.createdAt || pack.timestamp) || '—';
+    }
+
+    function apRenderCandidates(cands, weightOpts) {
+      const wrap = document.getElementById('ap-candidates');
+      const empty = document.getElementById('ap-candidates-empty');
+
+      if (!cands.length) {
+        wrap.classList.add('hidden');
+        empty.classList.remove('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      wrap.classList.remove('hidden');
+
+      wrap.innerHTML = cands.slice(0, 40).map(item => {
+        const w = apComputeWeight(item, weightOpts);
+        const tier = item.tier || '';
+        const city = item.city || '';
+        const src  = item.sourceType === 'mixtape' ? 'Mixtape' : 'Upload';
+        const status = item.status || '';
+        return (
+          '<div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-2 flex flex-col gap-1">' +
+            '<div class="flex items-center justify-between gap-2">' +
+              '<div class="min-w-0">' +
+                '<p class="text-[0.78rem] font-semibold truncate">' + apEscape(item.trackTitle) + '</p>' +
+                '<p class="text-[0.7rem] text-slate-300 truncate">' + apEscape(item.artistName) + (city ? ' • ' + apEscape(city) : '') + '</p>' +
+              '</div>' +
+              '<span class="text-[0.65rem] px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200">' +
+                apEscape(src) +
+              '</span>' +
+            '</div>' +
+            '<div class="flex items-center justify-between gap-2 text-[0.7rem] text-slate-400">' +
+              '<span class="truncate">' +
+                (tier ? 'Tier: ' + apEscape(tier) : 'Tier: n/a') +
+                (status ? ' • ' + apEscape(status) : '') +
+              '</span>' +
+              '<span class="text-cyan-300">w≈' + w.toFixed(2) + '</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+
+      if (cands.length > 40) {
+        wrap.innerHTML +=
+          '<p class="text-[0.7rem] text-slate-400 mt-1">+' + (cands.length - 40) + ' more in pool…</p>';
+      }
+    }
+
+    function apRenderPreview(list) {
+      const empty = document.getElementById('ap-preview-empty');
+      const grid  = document.getElementById('ap-preview-list');
+
+      if (!list || !list.length) {
+        empty.classList.remove('hidden');
+        grid.classList.add('hidden');
+        grid.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      grid.classList.remove('hidden');
+
+      grid.innerHTML = list.map((item, idx) => {
+        const city = item.city || '';
+        const src  = item.sourceType === 'mixtape' ? 'Mixtape' : 'Upload';
+        const tier = item.tier || '';
+        return (
+          '<div class="rounded-2xl border border-slate-800 bg-slate-950/90 px-3 py-2 flex flex-col gap-1">' +
+            '<div class="flex items-center justify-between gap-2">' +
+              '<span class="text-[0.7rem] text-slate-500">#' + (idx + 1) + '</span>' +
+              '<span class="text-[0.65rem] px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200">' +
+                apEscape(src) +
+              '</span>' +
+            '</div>' +
+            '<p class="text-[0.8rem] font-semibold truncate">' + apEscape(item.trackTitle) + '</p>' +
+            '<p class="text-[0.75rem] text-slate-300 truncate">' + apEscape(item.artistName) + (city ? ' • ' + apEscape(city) : '') + '</p>' +
+            '<p class="text-[0.7rem] text-slate-400 truncate">' +
+              (tier ? 'Tier: ' + apEscape(tier) : 'Tier: n/a') +
+              (item.tag ? ' • ' + apEscape(item.tag) : '') +
+            '</p>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function apAddSystemNews(mode, size) {
+      try {
+        const existing = apSafeParse('tkfm_news_manual', []);
+        const arr = Array.isArray(existing) ? existing : [];
+        const now = new Date().toISOString();
+        arr.push({
+          title: 'New Autopilot pack generated',
+          subtitle: 'Mode: ' + mode + ' • Size: ' + size,
+          body: 'TKFM Autopilot Engine just built a fresh rotation pack based on current uploads, label signals and mixtape projects.',
+          channel: 'system',
+          city: '',
+          actor: 'Autopilot Engine',
+          tags: ['autopilot','rotation','system'],
+          createdAt: now
+        });
+        localStorage.setItem('tkfm_news_manual', JSON.stringify(arr));
+      } catch (e) {
+        console.warn('Failed to add system news', e);
+      }
+    }
+
+    function apSavePack(mode, profile, selected) {
+      const now = new Date().toISOString();
+      const tracks = selected.map(item => ({
+        id: item.id,
+        artistName: item.artistName,
+        trackTitle: item.trackTitle,
+        city: item.city || '',
+        tier: item.tier || '',
+        tag: item.tag || '',
+        source: item.sourceKey || '',
+        sourceType: item.sourceType || '',
+      }));
+
+      const pack = {
+        mode,
+        profile,
+        createdAt: now,
+        tracks
+      };
+
+      localStorage.setItem('tkfm_autopilot_last_pack', JSON.stringify(pack));
+
+      const radioState = {
+        index: 0,
+        updatedAt: now
+      };
+      const nowPlaying = {
+        index: 0,
+        track: tracks[0] || null,
+        updatedAt: now
+      };
+      localStorage.setItem('tkfm_radio_state', JSON.stringify(radioState));
+      localStorage.setItem('tkfm_radio_now_playing', JSON.stringify(nowPlaying));
+
+      return pack;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const btnRefresh  = document.getElementById('ap-refresh');
+      const btnGenerate = document.getElementById('ap-generate');
+      const btnPreview  = document.getElementById('ap-preview');
+
+      const modeSel     = document.getElementById('ap-mode');
+      const sizeSel     = document.getElementById('ap-pack-size');
+      const maxArtistSel= document.getElementById('ap-max-per-artist');
+
+      const wFeatured   = document.getElementById('ap-w-featured');
+      const wAccepted   = document.getElementById('ap-w-accepted');
+      const wMixtape    = document.getElementById('ap-w-mixtape');
+
+      const mStarterSel = document.getElementById('ap-m-starter');
+      const mProSel     = document.getElementById('ap-m-pro');
+      const mEliteSel   = document.getElementById('ap-m-elite');
+
+      const filterCityChk   = document.getElementById('ap-filter-city');
+      const filterCityInput = document.getElementById('ap-filter-city-input');
+      const onlyLabelChk    = document.getElementById('ap-only-labeled');
+      const addNewsChk      = document.getElementById('ap-add-news');
+
+      function getWeightOptions() {
+        return {
+          mode: modeSel.value,
+          boostFeatured: !!wFeatured.checked,
+          boostAccepted: !!wAccepted.checked,
+          boostMixtape: !!wMixtape.checked,
+          mStarter: parseFloat(mStarterSel.value || '1') || 1,
+          mPro: parseFloat(mProSel.value || '1') || 1,
+          mElite: parseFloat(mEliteSel.value || '1') || 1
+        };
+      }
+
+      function getFilterOptions() {
+        const focusCity = filterCityChk.checked
+          ? (filterCityInput.value || '').trim()
+          : '';
+        return {
+          includeMixtapes: !!wMixtape.checked,
+          focusCity: focusCity || '',
+          onlyLabel: !!onlyLabelChk.checked
+        };
+      }
+
+      function buildPool() {
+        const filterOpts = getFilterOptions();
+        const weightOpts = getWeightOptions();
+        const cands = apBuildCandidates(filterOpts);
+        apRenderCandidates(cands, weightOpts);
+        return { cands, weightOpts, filterOpts };
+      }
+
+      function previewPack() {
+        apSetStatus('', false);
+        const { cands, weightOpts } = buildPool();
+
+        if (!cands.length) {
+          apSetStatus('No eligible records in pool. Add uploads / mixtape orders or load demo data.', true);
+          apRenderPreview([]);
+          return;
+        }
+
+        const packSize = parseInt(sizeSel.value || '10', 10) || 10;
+        const maxPer = parseInt(maxArtistSel.value || '0', 10) || 0;
+
+        const selected = apWeightedSample(
+          cands,
+          Math.min(packSize, cands.length),
+          (item) => apComputeWeight(item, weightOpts),
+          maxPer
+        );
+        apRenderPreview(selected);
+        apSetStatus('Previewed ' + selected.length + ' record(s) for the current settings.', false);
+        return selected;
+      }
+
+      function generatePack() {
+        apSetStatus('', false);
+        const selected = previewPack();
+        if (!selected || !selected.length) return;
+
+        const mode = modeSel.value;
+        let profile = 'TKFM Rotation — ' + mode;
+
+        if (mode === 'night-drive')      profile = 'TKFM Night Drive';
+        if (mode === 'club-energy')      profile = 'TKFM Club Energy';
+        if (mode === 'label-focus')      profile = 'TKFM Label Focus';
+        if (mode === 'mixtape-premiere') profile = 'TKFM Mixtape Premiere';
+
+        const pack = apSavePack(mode, profile, selected);
+        if (addNewsChk.checked) {
+          apAddSystemNews(mode, selected.length);
+        }
+
+        apRenderSnapshot();
+        apSetStatus('Saved new Autopilot pack with ' + pack.tracks.length + ' track(s) and updated radio state.', false);
+      }
+
+      btnRefresh?.addEventListener('click', () => {
+        apSetStatus('', false);
+        apRenderSnapshot();
+        buildPool();
+      });
+
+      btnPreview?.addEventListener('click', () => {
+        previewPack();
+      });
+
+      btnGenerate?.addEventListener('click', () => {
+        generatePack();
+      });
+
+      // Initial render
+      apRenderSnapshot();
+      buildPool();
     });
-
-    metaStandard.textContent = cStandard;
-    metaFeatured.textContent = cFeatured;
-    metaElite.textContent    = cElite;
-    metaSponsor.textContent  = cSponsor;
-
-    renderSummary();
-  }
-
-  function safeNumber(input, fallback){
-    const n = Number(input.value);
-    if(isNaN(n) || !isFinite(n)) return fallback;
-    return n;
-  }
-
-  btnGenerate.addEventListener('click', () => {
-    const catalog = getCatalog() || [];
-    if(!catalog.length){
-      alert('No tracks in tkfm_catalog yet. Approve some uploads first.');
-      return;
-    }
-
-    btnGenerate.disabled = true;
-
-    const maxTracks = Math.min(Math.max(safeNumber(inputMaxTracks, 40), 5), 120);
-    const featuredBoost = Math.max(safeNumber(inputFeaturedBoost, 1), 0);
-    const eliteBoost    = Math.max(safeNumber(inputEliteBoost, 2), 0);
-
-    let pack = generateAutopilotPack({
-      maxTracks,
-      featuredBoost,
-      eliteBoost
-    }) || [];
-
-    // 🔥 Sponsor bumpers hook (optional, if sponsor-rotator is loaded)
-    if(typeof window.injectSponsorBumpers === 'function'){
-      try{
-        pack = window.injectSponsorBumpers(pack) || pack;
-      }catch(e){
-        console.error('Sponsor injection failed:', e);
-      }
-    }
-
-    // ensure we save the final version (with bumpers, if any)
-    setAutopilotPack(pack);
-
-    btnGenerate.disabled = false;
-    renderPack();
-  });
-
-  btnReload.addEventListener('click', () => {
-    renderPack();
-  });
-
-  btnClear.addEventListener('click', () => {
-    if(!confirm('Clear tkfm_autopilot_last_pack?')) return;
-    setAutopilotPack([]);
-    renderPack();
-  });
-
-  // initial render
-  renderPack();
-</script>
+  </script>
 </body>
 </html>

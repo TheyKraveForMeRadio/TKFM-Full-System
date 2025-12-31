@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="tkfm-theme" content="radio" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-radio.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM Radio — Feature Revenue Engine</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.96);
+      --neon-purple: #a855f7;
+      --neon-pink: #ec4899;
+      --neon-cyan: #22d3ee;
+      --neon-indigo: #4f46e5;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #22c55e;
+      --accent-red: #ef4444;
+      --accent-slate: #64748b;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.6);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(236,72,153,0.23), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.21), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 3rem;
+      position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ORBIT / WAVE FX */
+    .orbit {
+      position: fixed;
+      width: 320px;
+      height: 320px;
+      border-radius: 999px;
+      border: 1px solid rgba(236,72,153,0.45);
+      top: -80px;
+      right: -100px;
+      opacity: 0.6;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 90px rgba(236,72,153,0.9),
+        0 0 130px rgba(0,0,0,1);
+      animation: orbitSpin 26s linear infinite;
+    }
+    .orbit::before {
+      content: "";
+      position: absolute;
+      inset: 22%;
+      border-radius: 999px;
+      border: 1px solid rgba(129,140,248,0.95);
+      box-shadow:
+        0 0 40px rgba(129,140,248,1),
+        0 0 60px rgba(0,0,0,1);
+    }
+    @keyframes orbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .wave {
+      position: fixed;
+      inset: auto -20% -180px -20%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(56,189,248,0.2), transparent 60%),
+        radial-gradient(circle at 90% 20%, rgba(236,72,153,0.18), transparent 60%);
+      opacity: 0.8;
+      pointer-events: none;
+      filter: blur(8px);
+    }
+
+    @media (max-width: 768px) {
+      .orbit { opacity: 0.3; }
+      .wave { opacity: 0.6; }
+    }
+
+    /* NAV — TKFM NEON SIDE */
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(22px);
+      background: linear-gradient(to bottom,
+        rgba(15,23,42,0.98),
+        rgba(15,23,42,0.6),
+        transparent
+      );
+      border-bottom: 1px solid rgba(129,140,248,0.5);
+      margin: -1.6rem -0.9rem 1.4rem;
+      padding: .45rem .9rem .55rem;
+    }
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: conic-gradient(from 200deg, #22d3ee, #a855f7, #ec4899, #22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 26px rgba(236,72,153,1),
+        0 0 40px rgba(0,0,0,1);
+      white-space: nowrap;
+    }
+    .nav-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .78rem;
+    }
+    .nav-link {
+      padding: .26rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #e5e7eb;
+      background: transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        transform .16s,
+        box-shadow .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.97);
+      border-color: rgba(129,140,248,0.9);
+      transform: translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color: rgba(236,72,153,0.95);
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.26),transparent 60%);
+      box-shadow:
+        0 0 26px rgba(236,72,153,1),
+        0 0 38px rgba(0,0,0,1);
+      color: #f9fafb;
+    }
+
+    @media (max-width: 960px) {
+      .nav-tag { display:none; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 30px;
+      padding: 1.7rem 1.4rem 2rem;
+      border: 1px solid rgba(129,140,248,0.9);
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.26),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.24),transparent 55%),
+        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(0,0,0,1) 70%);
+      box-shadow:
+        0 0 50px rgba(15,23,42,1),
+        0 0 96px rgba(0,0,0,1);
+      overflow: hidden;
+      margin-bottom: 1.9rem;
+    }
+    .hero-noise {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(129,140,248,0.25),transparent 65%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.23),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.35fr 1.05fr;
+      gap: 1.1rem;
+    }
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; }
+    }
+
+    .hero-kicker {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #a5b4fc;
+      margin-bottom: .32rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: linear-gradient(130deg,#22d3ee,#a855f7,#ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 38px rgba(236,72,153,1),
+        0 0 60px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .6rem;
+      font-size: .95rem;
+      max-width: 580px;
+      color: #e5e7eb;
+    }
+    .hero-sub strong {
+      color: #e0f2fe;
+    }
+
+    .hero-pills {
+      margin-top: .8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .78rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .3rem .8rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .pill span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--neon-pink);
+      box-shadow: 0 0 18px rgba(236,72,153,0.9);
+    }
+    .pill-alt span {
+      background: var(--neon-cyan);
+      box-shadow: 0 0 18px rgba(34,211,238,0.9);
+    }
+
+    .hero-note {
+      margin-top: .7rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 300px;
+    }
+
+    /* HERO PANEL */
+    .hero-card {
+      border-radius: 22px;
+      border: 1px solid rgba(129,140,248,0.9);
+      background: radial-gradient(circle at 0 0,rgba(56,189,248,0.23),transparent 65%),
+                  radial-gradient(circle at 100% 100%,rgba(15,23,42,1),rgba(0,0,0,0.96));
+      padding: .9rem .9rem 1.1rem;
+      box-shadow:
+        0 0 30px rgba(56,189,248,1),
+        0 0 44px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .hero-card-inner { position: relative; z-index: 1; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      border-radius: 999px;
+      padding: .18rem .7rem;
+      border: 1px solid rgba(248,250,252,0.3);
+      background: rgba(15,23,42,0.96);
+      margin-bottom: .4rem;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(34,211,238,1);
+    }
+    .hero-card-title {
+      font-size: .92rem;
+      font-weight: 600;
+      margin-bottom: .18rem;
+    }
+    .hero-card-body {
+      margin-bottom: .35rem;
+      color: #e5e7eb;
+    }
+    .hero-card-list {
+      margin: 0 0 .6rem;
+      padding-left: 1.1rem;
+      color: var(--text-main);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .45rem 1.05rem;
+      border: 1px solid rgba(129,140,248,0.95);
+      background: rgba(15,23,42,0.98);
+      color: #e0f2fe;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom: 1.7rem;
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.1rem 1rem 1.3rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.18),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .section-inner { position: relative; z-index: 1; }
+
+    .section-title {
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 0 0 .25rem;
+      color: #e0f2fe;
+    }
+    .section-sub {
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 840px;
+      margin: 0 0 .85rem;
+    }
+
+    /* GRID + CARDS */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.25fr 1.05fr;
+      gap: .9rem;
+    }
+    @media (max-width: 980px) {
+      .grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .grid-2 { grid-template-columns: minmax(0,1fr); }
+    }
+    @media (max-width: 720px) {
+      .grid-3 { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.85);
+      background: rgba(15,23,42,0.96);
+      padding: .9rem .9rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 22px rgba(0,0,0,1);
+      transition:
+        transform .18s,
+        box-shadow .18s,
+        border-color .18s,
+        background .18s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.22),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .card-tier::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 65%);
+    }
+    .card-autopilot::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(129,140,248,0.24),transparent 65%);
+    }
+    .card-god::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(248,113,113,0.28),transparent 65%);
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(236,72,153,0.95);
+      background: rgba(15,23,42,1);
+      box-shadow:
+        0 0 30px rgba(236,72,153,0.9),
+        0 0 45px rgba(0,0,0,1);
+    }
+
+    .card-name {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .1rem;
+    }
+    .card-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+      margin-bottom: .4rem;
+    }
+
+    .badge-small {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .7rem;
+      border-radius: 999px;
+      padding: .16rem .6rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.96);
+      margin-bottom: .35rem;
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--neon-pink);
+      box-shadow: 0 0 10px rgba(236,72,153,0.9);
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      margin: .3rem 0 .6rem;
+      font-size: .75rem;
+    }
+    .meta-chip {
+      border-radius: 999px;
+      padding: .2rem .65rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.96);
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: .3rem 0 .8rem;
+      font-size: .78rem;
+    }
+    .feature-list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+      align-items: flex-start;
+    }
+    .dot {
+      margin-top: .24rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+      flex-shrink: 0;
+    }
+    .dot-purple {
+      background: var(--neon-purple);
+      box-shadow: 0 0 10px rgba(168,85,247,1);
+    }
+    .dot-cyan {
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(34,211,238,1);
+    }
+    .dot-red {
+      background: var(--accent-red);
+      box-shadow: 0 0 10px rgba(248,113,113,1);
+    }
+    .dot-slate {
+      background: var(--accent-slate);
+      box-shadow: 0 0 10px rgba(148,163,184,1);
+    }
+    .dot-amber {
+      background: var(--accent-amber);
+      box-shadow: 0 0 10px rgba(245,158,11,1);
+    }
+
+    .btn-main {
+      border-radius: 999px;
+      padding: .45rem .95rem;
+      border: none;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      background: linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+      color: #f9fafb;
+      box-shadow:
+        0 0 18px rgba(236,72,153,1),
+        0 0 30px rgba(0,0,0,1);
+    }
+    .btn-secondary {
+      border-radius: 999px;
+      padding: .4rem .9rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    .lookup {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .72rem;
+      background: rgba(15,23,42,0.96);
+      border-radius: 999px;
+      padding: .22rem .6rem;
+      border: 1px solid rgba(55,65,81,0.9);
+      color: #e5e7eb;
+    }
+
+    .ticker {
+      margin-top: .6rem;
+      font-size: .78rem;
+      border-radius: 999px;
+      padding: .3rem .75rem;
+      border: 1px solid rgba(129,140,248,0.8);
+      background: radial-gradient(circle at 0 0,rgba(56,189,248,0.18),transparent 65%);
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+    }
+    .ticker-label {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: .7rem;
+      color: #a5b4fc;
+    }
+    .ticker-pill {
+      border-radius: 999px;
+      padding: .14rem .6rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      font-size: .72rem;
+      background: rgba(15,23,42,0.96);
+    }
+
+    .footer-note {
+      margin-top: 1.1rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .orbit{animation:none;}
+      .card{transition:none;}
+    }
+  </style>
+</head>
+<body>
+<div class="orbit"></div>
+<div class="wave"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">TKFM RADIO</div>
+    <div class="nav-tag">Feature Revenue Engine • Neon Control Room</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="dj-mixtape-hosting.html" class="nav-link">DJ Hosting</a>
+      <a href="client-vault.html" class="nav-link">Client Vault</a>
+      <a href="feature-leaderboard.html" class="nav-link">Leaderboard</a>
+      <a href="ai-dj-engine.html" class="nav-link">AI DJ Engine</a>
+      <a href="feature-revenue-engine.html" class="nav-link nav-link-primary">Revenue Engine</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">POWER MODE</div>
+        <h1>Every feature. Every dollar. One neon board.</h1>
+        <p class="hero-sub">
+          The **Feature Revenue Engine** is the TKFM side that watches
+          <strong>what got bought, what got spun, and what actually moved</strong>.  
+          It’s built to sync with your **label packs, AI pricing, sponsor engine and God View** —
+          but lives in the TKFM neon universe.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Tracks feature revenue by tier, artist, DJ &amp; campaign</div>
+          <div class="pill pill-alt"><span></span> Feeds TKFM Feature Leaderboard &amp; Client Vault</div>
+          <div class="pill"><span></span> Talks to label-side engines without showing contracts</div>
+        </div>
+
+        <div class="ticker">
+          <div class="ticker-label">Live glow</div>
+          <div class="ticker-pill">Today: Heavy Feature Slots • SOLD OUT</div>
+          <div class="ticker-pill">Midwave Slots • 60% capacity</div>
+          <div class="ticker-pill">Sponsor Takeovers • 1 pending approval</div>
+        </div>
+
+        <p class="hero-note">
+          This page is a **visual control shell**. When you’re ready, data can flow in from Stripe,
+          Supabase and label-side engines.
+        </p>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-inner">
+          <div class="badge">
+            <span class="badge-dot"></span> Owner &amp; staff only
+          </div>
+          <div class="hero-card-title">How the engine connects</div>
+          <p class="hero-card-body">
+            This room should sit between:
+          </p>
+          <ul class="hero-card-list">
+            <li>TKFM **pricing &amp; checkout** (lookup_keys).</li>
+            <li>Label **Revenue Engine** + **Pack Builder**.</li>
+            <li>Client-facing **Vault + Leaderboard**.</li>
+          </ul>
+          <button class="btn-ghost" type="button" onclick="window.location.href='label-revenue-engine.html'">
+            Jump To Label Revenue Engine
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- TIERS OVERVIEW -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">1. Feature tier overview</h2>
+      <p class="section-sub">
+        These cards represent the **public-facing TKFM feature tiers** (not label packs).  
+        Behind the scenes, each tier can map to Stripe **lookup_keys** and label-side packs.
+      </p>
+
+      <div class="grid-3">
+        <!-- LIGHT -->
+        <article class="card card-tier">
+          <div class="card-inner">
+            <div class="card-name">Light Motion Feature</div>
+            <div class="card-tag">Tier 1 • Entry heat</div>
+
+            <div class="badge-small">
+              <span class="badge-dot"></span> Built for fresh artists testing the waters
+            </div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> Radio mentions + playlist love at a **lighter frequency**.</li>
+              <li><span class="dot-slate"></span> Intro slot on TKFM client vault &amp; spotlight carousels.</li>
+              <li><span class="dot-purple"></span> Can be bundled into starter label packs.</li>
+            </ul>
+
+            <div class="meta-row">
+              <span class="lookup">lookup_key: tkfm_feature_light_motion_monthly</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-chip">Use-case: discovery</span>
+              <span class="meta-chip">Risk: underpriced if heat spikes</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- MID -->
+        <article class="card card-tier">
+          <div class="card-inner">
+            <div class="card-name">Midwave Feature Run</div>
+            <div class="card-tag">Tier 2 • Momentum</div>
+
+            <div class="badge-small">
+              <span class="badge-dot"></span> Designed for bubbling records &amp; campaigns
+            </div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> Stronger rotation blocks + more promo windows.</li>
+              <li><span class="dot-amber"></span> Eligible for **AI social boosts** and extra playlisting.</li>
+              <li><span class="dot-purple"></span> Connects to label “Artist Launch Gold” &amp; DJ packs.</li>
+            </ul>
+
+            <div class="meta-row">
+              <span class="lookup">lookup_key: tkfm_feature_midwave_run_monthly</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-chip">Use-case: building motion</span>
+              <span class="meta-chip">Engine: adjusts price with demand</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- HEAVY -->
+        <article class="card card-tier card-god">
+          <div class="card-inner">
+            <div class="card-name">Heavy Motion Takeover</div>
+            <div class="card-tag">Tier 3 • Full blast</div>
+
+            <div class="badge-small">
+              <span class="badge-dot"></span> Limited seats • serious heat only
+            </div>
+
+            <ul class="feature-list">
+              <li><span class="dot-purple"></span> Priority rotations + “you can’t ignore this” visibility.</li>
+              <li><span class="dot-cyan"></span> Plugs into **AI DJ Engine** and sponsor segments.</li>
+              <li><span class="dot-red"></span> Autopilot pricing should guard this tier the hardest.</li>
+            </ul>
+
+            <div class="meta-row">
+              <span class="lookup">lookup_key: tkfm_feature_heavy_motion_monthly</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-chip">Use-case: breakout records</span>
+              <span class="meta-chip">God View can hard-cap slots</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTOPILOT LOGIC SHELL -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">2. Autopilot logic — how the engine “thinks”</h2>
+      <p class="section-sub">
+        This section describes how the **Autopilot Pricing Engine** should treat TKFM features,
+        using signals from **Client Vault, Label Packs, AR Radar and God View** — without exposing
+        any label secrets on the public side.
+      </p>
+
+      <div class="grid-2">
+        <article class="card card-autopilot">
+          <div class="card-inner">
+            <div class="card-name">Signals it can read</div>
+            <div class="card-tag">Heat-aware pricing brain</div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> **Demand:** how many Light / Mid / Heavy slots are already booked.</li>
+              <li><span class="dot-cyan"></span> **Artist glow:** Client Vault metrics (saves, spins, engagement).</li>
+              <li><span class="dot-amber"></span> **Pack status:** if artist is on a label **flagship pack**.</li>
+              <li><span class="dot-slate"></span> **God View rules:** max slots, minimum prices, protected windows.</li>
+            </ul>
+
+            <div class="meta-row">
+              <span class="meta-chip">Future: tkfm_autopilot_rules table</span>
+              <span class="meta-chip">Input: metrics + pack_id</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card card-autopilot">
+          <div class="card-inner">
+            <div class="card-name">Moves it can suggest</div>
+            <div class="card-tag">Never sell yourself short</div>
+
+            <ul class="feature-list">
+              <li><span class="dot-purple"></span> “Bump Heavy Motion base price +10% — slots near sold out.”</li>
+              <li><span class="dot"></span> “Suggest Midwave instead of Light — artist is already moving.”</li>
+              <li><span class="dot-red"></span> “Block discount: label contract says keep this artist premium.”</li>
+              <li><span class="dot-cyan"></span> “Bundle AI Social pack when sponsor money is involved.”</li>
+            </ul>
+
+            <div class="meta-row">
+              <span class="meta-chip">Human override: always via God View</span>
+              <span class="meta-chip">Label side sees full explanation</span>
+            </div>
+
+            <button class="btn-secondary" type="button" onclick="window.location.href='god-view.html'">
+              Review Overrides In God View
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVENUE SNAPSHOT + PIPELINE SHELL -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">3. Revenue snapshot &amp; pipeline (visual shell)</h2>
+      <p class="section-sub">
+        This is a **front-end only shell** for how you might visualize TKFM feature revenue over
+        time. Later, real numbers can load in from Stripe / Supabase.
+      </p>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-name">Neon bar rings</div>
+            <div class="card-tag">Example snapshot (sample numbers)</div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> Today’s feature revenue: <strong>$X,XXX</strong> (all tiers).</li>
+              <li><span class="dot-amber"></span> This week vs last week: <strong>+XX%</strong> uplift.</li>
+              <li><span class="dot-purple"></span> Heavy Motion: **limited slots**, highest average per slot.</li>
+              <li><span class="dot-cyan"></span> Midwave: steady, perfect for scaling without burning out the station.</li>
+            </ul>
+
+            <div class="meta-row">
+              <span class="meta-chip">Visual: glowing bars / arcs</span>
+              <span class="meta-chip">Data: aggregated from Stripe</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-name">Pipeline flow</div>
+            <div class="card-tag">From checkout → motion</div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> A feature purchase hits this engine with **tier + artist + source**.</li>
+              <li><span class="dot-slate"></span> Engine logs it and pushes a **visible piece** into Client Vault.</li>
+              <li><span class="dot"></span> Feature Leaderboard uses the motion for **ranking &amp; bragging rights**.</li>
+              <li><span class="dot-red"></span> Label revenue engine sees the **full story** with packs + contracts.</li>
+            </ul>
+
+            <div class="meta-row">
+              <span class="meta-chip">Public view: TKFM side</span>
+              <span class="meta-chip">Private view: label side</span>
+            </div>
+
+            <button class="btn-secondary" type="button" onclick="window.location.href='feature-leaderboard.html'">
+              Jump To Feature Leaderboard
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONNECTIONS TO LABEL SIDE -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">4. How TKFM engine talks to the label side</h2>
+      <p class="section-sub">
+        TKFM Feature Revenue Engine is **neon**. They Krave For Me Records is **black &amp; gold**.  
+        This is how they send each other information without breaking that split.
+      </p>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-name">From TKFM → label</div>
+            <div class="card-tag">Soft signals only</div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> Sends pack-safe metrics: **slots sold, heat level, consistency**.</li>
+              <li><span class="dot-cyan"></span> Flags artists / DJs to **Label AR Radar** for deeper review.</li>
+              <li><span class="dot-slate"></span> Never exposes raw TKFM discounts or consumer data directly.</li>
+            </ul>
+
+            <button class="btn-secondary" type="button" onclick="window.location.href='label-ar-radar.html'">
+              View On AR Radar
+            </button>
+          </div>
+        </article>
+
+        <article class="card card-god">
+          <div class="card-inner">
+            <div class="card-name">From label → TKFM</div>
+            <div class="card-tag">Hard rules + guardrails</div>
+
+            <ul class="feature-list">
+              <li><span class="dot-purple"></span> God View sets **min prices, max slots, VIP bans**.</li>
+              <li><span class="dot"></span> Label Pack Builder decides which packs unlock which TKFM tiers.</li>
+              <li><span class="dot-red"></span> Contract Lab can mark certain artists as “no cheap placements”.</li>
+            </ul>
+
+            <button class="btn-secondary" type="button" onclick="window.location.href='label-pack-builder.html'">
+              Edit Packs In Label Builder
+            </button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-name">Client-facing mirror</div>
+            <div class="card-tag">Vault + dashboard</div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> Client Vault shows “Feature history, spend, motion” in a clean way.</li>
+              <li><span class="dot-cyan"></span> Leaderboard gives them bragging rights + social proof.</li>
+              <li><span class="dot-slate"></span> None of the label-side contract details leak into this layer.</li>
+            </ul>
+
+            <button class="btn-secondary" type="button" onclick="window.location.href='client-vault.html'">
+              Preview Client Vault View
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    TKFM Radio • Feature Revenue Engine • Neon side only.  
+    One place to see how features turn into motion, while the label side handles the deeper numbers.
+  </p>
+</main>
+
+</body>
+</html>

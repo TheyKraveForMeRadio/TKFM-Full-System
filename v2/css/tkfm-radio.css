@@ -1,0 +1,17 @@
+/* TKFM RADIO — Neon Cyberwave theme */
+body.tkfm-theme-radio{
+  --bg:#020617;
+  --panel: rgba(2,6,23,.74);
+  --panel2: rgba(15,23,42,.55);
+  --stroke: rgba(148,163,184,.22);
+  --text: rgba(226,232,240,1);
+  --muted: rgba(148,163,184,1);
+
+  --c1:#22d3ee;
+  --c2:#ec4899;
+  --c3:#a855f7;
+  --c4:#3b82f6;
+}
+
+body.tkfm-theme-radio .tkfm-topbar{border-bottom-color: rgba(30,41,59,.65)}
+body.tkfm-theme-radio .tkfm-pill:hover{border-color: rgba(34,211,238,.75)}

@@ -2,329 +2,316 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login — TKFM Power Station</title>
-  <meta name="description" content="Log in to your TKFM Radio dashboard as an artist, DJ, sponsor or label." />
+  <title>TKFM Radio — Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    body.tkfm-graphfx-root {
-      position: relative !important;
-      min-height: 100vh !important;
-      overflow: hidden !important;
-      background: radial-gradient(circle at top left, #0b0214, #020617 55%, #000000 100%) !important;
-      color: #f9fafb !important;
+    :root {
+      --bg: #020617;
+      --card: rgba(15,23,42,0.95);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.3);
+      --accent-strong: #e879f9;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+    }
+    * {
+      box-sizing:border-box;
+    }
+    body {
+      margin:0;
+      min-height:100vh;
+      background:radial-gradient(circle at top, #0f172a 0, #020617 55%);
+      color:var(--text-main);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      overflow:hidden;
     }
 
-    .tkfm-bg-main {
-      position: fixed;
-      inset: -25%;
-      pointer-events: none;
-      z-index: -2;
-      background:
-        radial-gradient(circle at 0 0, rgba(255, 0, 128, 0.4), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.35), transparent 60%);
-      filter: blur(10px);
-      animation: tkfmGlowLogin 24s linear infinite alternate;
-      opacity: 0.9;
+    /* Neon background FX */
+    .orb {
+      position:fixed;
+      width:420px;
+      height:420px;
+      border-radius:999px;
+      background:radial-gradient(circle, rgba(56,189,248,0.12), transparent 65%);
+      filter:blur(1px);
+      z-index:-2;
+    }
+    .orb.pink {
+      right:-120px;
+      top:-40px;
+      background:radial-gradient(circle, rgba(236,72,153,0.13), transparent 60%);
+    }
+    .orb.teal {
+      left:-140px;
+      bottom:-80px;
+      background:radial-gradient(circle, rgba(45,212,191,0.16), transparent 65%);
     }
 
-    @keyframes tkfmGlowLogin {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(-3%, 3%, 0) scale(1.02); }
-      100% { transform: translate3d(3%, -3%, 0) scale(1.03); }
-    }
-
-    main.tkfm-auth-main {
-      position: relative;
-      z-index: 1;
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 2.25rem 1.2rem 3.5rem;
-    }
-
-    .tkfm-auth-card {
-      position: relative;
-      border-radius: 22px;
-      padding: 1.5rem 1.4rem 1.3rem;
-      border: 1px solid rgba(148, 163, 184, 0.32);
-      background: radial-gradient(circle at top left, rgba(30,64,175,0.78), rgba(15,23,42,0.98));
-      box-shadow:
-        0 18px 40px rgba(15, 23, 42, 0.95),
-        0 0 32px rgba(15, 23, 42, 0.9);
-      overflow: hidden;
-    }
-
-    .tkfm-auth-card::before {
-      content: "";
-      position: absolute;
-      inset: -25%;
-      background: conic-gradient(
-        from 200deg,
-        rgba(255, 0, 128, 0.3),
-        rgba(56, 189, 248, 0.3),
-        rgba(250, 204, 21, 0.16),
-        rgba(255, 0, 128, 0.3)
+    .scanline {
+      position:fixed;
+      inset:0;
+      background:linear-gradient(
+        rgba(15,23,42,0.4),
+        rgba(15,23,42,0.35)
       );
-      opacity: 0.4;
-      filter: blur(30px);
-      z-index: -1;
+      mix-blend-mode:soft-light;
+      pointer-events:none;
+      z-index:-1;
     }
 
-    .tkfm-auth-header {
-      text-align: center;
-      margin-bottom: 1.2rem;
+    .shell {
+      width:100%;
+      max-width:420px;
     }
 
-    .tkfm-auth-kicker {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: rgba(191, 219, 254, 0.98);
-      margin-bottom: 0.3rem;
+    header {
+      text-align:center;
+      margin-bottom:18px;
+    }
+    header h1 {
+      margin:0;
+      font-size:24px;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+    }
+    header p {
+      margin:6px 0 0;
+      font-size:12px;
+      color:var(--text-muted);
+      letter-spacing:0.16em;
+      text-transform:uppercase;
     }
 
-    .tkfm-auth-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin: 0 0 0.3rem;
-      background: linear-gradient(90deg, #ff007f, #00f5ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 14px rgba(255, 0, 128, 0.6);
+    .card {
+      position:relative;
+      background:var(--card);
+      border-radius:22px;
+      border:1px solid rgba(148,163,184,0.6);
+      box-shadow:0 0 32px rgba(15,23,42,0.9),
+                  0 0 24px rgba(56,189,248,0.25);
+      padding:22px 22px 18px;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:radial-gradient(circle at top, var(--accent-soft), transparent 60%);
+      opacity:0.9;
+      pointer-events:none;
+      z-index:-1;
     }
 
-    .tkfm-auth-sub {
-      font-size: 0.8rem;
-      color: rgba(226, 232, 240, 0.95);
+    .badge-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+      font-size:11px;
+    }
+    .badge {
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.7);
+      padding:3px 9px;
+      text-transform:uppercase;
+      letter-spacing:0.18em;
+      font-size:9px;
+      color:var(--text-muted);
+    }
+    .tiny-link {
+      font-size:11px;
+      color:var(--accent);
+      text-decoration:none;
+    }
+    .tiny-link:hover {
+      text-decoration:underline;
     }
 
-    form.tkfm-auth-form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      margin-top: 1rem;
+    label {
+      display:block;
+      margin-top:10px;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      color:var(--text-muted);
+    }
+    input {
+      width:100%;
+      margin-top:6px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.7);
+      background:rgba(15,23,42,0.9);
+      color:var(--text-main);
+      padding:9px 12px;
+      font-size:13px;
+      outline:none;
+      transition:border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    input:focus {
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(56,189,248,0.5);
+      background:rgba(15,23,42,1);
     }
 
-    .tkfm-field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      font-size: 0.8rem;
+    button {
+      width:100%;
+      margin-top:16px;
+      border:none;
+      border-radius:999px;
+      padding:10px 16px;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+      background:linear-gradient(90deg, var(--accent), var(--accent-strong));
+      color:#0b1120;
+      text-transform:uppercase;
+      letter-spacing:0.16em;
+      box-shadow:0 0 0 1px rgba(8,47,73,0.7),
+                 0 0 20px rgba(56,189,248,0.6);
+      transition:transform 0.12s, box-shadow 0.12s, filter 0.12s;
+    }
+    button:hover {
+      filter:brightness(1.05);
+      transform:translateY(-1px);
+    }
+    button:disabled {
+      opacity:0.6;
+      cursor:default;
+      filter:none;
+      transform:none;
+      box-shadow:0 0 0 1px rgba(30,64,175,0.5);
     }
 
-    .tkfm-field label {
-      color: rgba(226, 232, 240, 0.9);
+    .error {
+      margin-top:10px;
+      font-size:11px;
+      color:var(--danger);
+      min-height:1em;
     }
 
-    .tkfm-input {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.65);
-      background: rgba(15, 23, 42, 0.9);
-      padding: 0.5rem 0.9rem;
-      font-size: 0.82rem;
-      color: #e5e7eb;
-      outline: none;
-      transition:
-        border-color 0.15s ease-out,
-        box-shadow 0.15s ease-out,
-        background 0.15s ease-out;
+    .footer-row {
+      margin-top:14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      color:var(--text-muted);
     }
 
-    .tkfm-input:focus {
-      border-color: rgba(56, 189, 248, 0.95);
-      box-shadow:
-        0 0 0 1px rgba(56, 189, 248, 0.7),
-        0 0 12px rgba(56, 189, 248, 0.7);
-      background: rgba(15, 23, 42, 0.96);
+    .footer-row a {
+      color:var(--accent-strong);
+      text-decoration:none;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      font-size:10px;
     }
-
-    .tkfm-auth-footer-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      margin-top: 0.9rem;
-    }
-
-    .tkfm-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.8rem;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.75);
-      color: #e0f2fe;
-      background: radial-gradient(circle at top left, rgba(56,189,248,0.52), rgba(15,23,42,0.98));
-      text-decoration: none;
-      cursor: pointer;
-      overflow: hidden;
-      transition:
-        transform 0.16s ease-out,
-        box-shadow 0.16s ease-out,
-        border-color 0.16s ease-out,
-        background 0.16s ease-out;
-      width: 100%;
-    }
-
-    .tkfm-btn-primary {
-      border-color: rgba(219, 39, 119, 0.9);
-      background: radial-gradient(circle at top left, rgba(219,39,119,0.8), rgba(15,23,42,0.98));
-      color: #fdf2f8;
-    }
-
-    .tkfm-btn::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.4), transparent 60%);
-      opacity: 0;
-      transform: translate3d(-40%, -40%, 0);
-      transition:
-        opacity 0.18s ease-out,
-        transform 0.24s ease-out;
-      pointer-events: none;
-    }
-
-    .tkfm-btn:hover {
-      transform: translateY(-1px) scale(1.02);
-      box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.9),
-        0 0 18px rgba(56, 189, 248, 0.65);
-      border-color: rgba(56, 189, 248, 0.98);
-    }
-
-    .tkfm-btn-primary:hover {
-      box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.9),
-        0 0 20px rgba(244, 63, 94, 0.85);
-      border-color: rgba(244, 63, 94, 0.98);
-    }
-
-    .tkfm-btn:hover::after {
-      opacity: 0.7;
-      transform: translate3d(0,0,0);
-    }
-
-    .tkfm-auth-alt {
-      font-size: 0.76rem;
-      color: rgba(226, 232, 240, 0.9);
-      margin-top: 0.7rem;
-      text-align: center;
-    }
-
-    .tkfm-auth-alt a {
-      color: rgba(129, 230, 217, 0.96);
-      text-decoration: none;
-    }
-
-    .tkfm-auth-alt a:hover {
-      text-decoration: underline;
-    }
-
-    .tkfm-auth-status {
-      font-size: 0.75rem;
-      margin-top: 0.65rem;
-      min-height: 1em;
-      color: rgba(248, 250, 252, 0.95);
-    }
-
-    .tkfm-auth-status.error {
-      color: #fecaca;
-    }
-
-    .tkfm-auth-status.ok {
-      color: #bbf7d0;
+    .footer-row a:hover {
+      text-decoration:underline;
     }
   </style>
 </head>
-<body class="tkfm-graphfx-root">
-  <div class="tkfm-bg-main"></div>
+<body>
 
-  <div id="tkfm-header"></div>
+<div class="orb pink"></div>
+<div class="orb teal"></div>
+<div class="scanline"></div>
 
-  <main class="tkfm-auth-main">
-    <div class="tkfm-auth-card">
-      <div class="tkfm-auth-header">
-        <div class="tkfm-auth-kicker">TKFM Power Station</div>
-        <h1 class="tkfm-auth-title">Welcome Back</h1>
-        <p class="tkfm-auth-sub">
-          Log in to manage your artist, DJ, sponsor or label lane. One password, multiple ways to move.
-        </p>
-      </div>
+<div class="shell">
+  <header>
+    <h1>TKFM RADIO</h1>
+    <p>Independent Artist Power Station</p>
+  </header>
 
-      <form id="login-form" class="tkfm-auth-form">
-        <div class="tkfm-field">
-          <label for="login-email">Email</label>
-          <input id="login-email" type="email" class="tkfm-input" autocomplete="email" required />
-        </div>
-
-        <div class="tkfm-field">
-          <label for="login-password">Password</label>
-          <input id="login-password" type="password" class="tkfm-input" autocomplete="current-password" required />
-        </div>
-
-        <div class="tkfm-auth-footer-row">
-          <button type="submit" class="tkfm-btn tkfm-btn-primary">Log In</button>
-        </div>
-
-        <div id="login-status" class="tkfm-auth-status"></div>
-      </form>
-
-      <div class="tkfm-auth-alt">
-        Don’t have an account yet?
-        <a href="/register.html">Create one now</a>
-      </div>
+  <div class="card">
+    <div class="badge-row">
+      <span class="badge">Secure Login</span>
+      <a href="index.html" class="tiny-link">← Back to Home</a>
     </div>
-  </main>
 
-  <div id="tkfm-footer"></div>
+    <form id="login-form" autocomplete="on">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="email" required />
 
-  <script type="module">
-    import { mountShell } from "/src/_page.js";
-    import { supabase } from "/src/supabaseClient.js";
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required />
 
-    mountShell("");
+      <button type="submit" id="login-button">Sign In</button>
 
-    const form = document.getElementById("login-form");
-    const emailInput = document.getElementById("login-email");
-    const passwordInput = document.getElementById("login-password");
-    const statusEl = document.getElementById("login-status");
+      <div id="error" class="error"></div>
 
-    function setStatus(msg, type = "") {
-      statusEl.textContent = msg || "";
-      statusEl.className = "tkfm-auth-status" + (type ? " " + type : "");
+      <div class="footer-row">
+        <span>Need an account?</span>
+        <a href="register.html">Register</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+  import { routeAfterLogin } from "./auth-gateway.js";
+
+  const form = document.getElementById("login-form");
+  const btn = document.getElementById("login-button");
+  const errorBox = document.getElementById("error");
+
+  function showError(msg) {
+    errorBox.textContent = msg || "";
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    showError("");
+
+    const email = form.email.value.trim();
+    const password = form.password.value;
+
+    if (!email || !password) {
+      showError("Please enter email and password.");
+      return;
     }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      setStatus("Signing you in...", "");
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
 
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-        if (error) {
-          console.error(error);
-          setStatus(error.message || "Login failed", "error");
-          return;
-        }
-
-        setStatus("Login successful. Redirecting...", "ok");
-        window.location.href = "/dashboard.html";
-      } catch (err) {
-        console.error(err);
-        setStatus("Unexpected error during login", "error");
+      if (error) {
+        console.error("Supabase login error:", error);
+        showError(error.message || "Login failed. Check your email/password.");
+        btn.disabled = false;
+        btn.textContent = "Sign In";
+        return;
       }
-    });
-  </script>
+
+      // data.user should exist here
+      if (!data || !data.user) {
+        showError("Login response missing user. Try again.");
+        btn.disabled = false;
+        btn.textContent = "Sign In";
+        return;
+      }
+
+      // 🔑 Hand off to auth-gateway to route by role
+      routeAfterLogin(data.user);
+    } catch (err) {
+      console.error("Unexpected login error:", err);
+      showError("Something went wrong during login.");
+      btn.disabled = false;
+      btn.textContent = "Sign In";
+    }
+  });
+</script>
+
 </body>
 </html>

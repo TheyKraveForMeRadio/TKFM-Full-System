@@ -1,810 +1,716 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta name="tkfm-theme" content="radio" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-radio.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
   <meta charset="utf-8" />
+  <title>TKFM Pricing — Radio Neon + Label Gold</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TKFM Radio Pricing — The Independent Artist Power Station</title>
+  <meta name="description" content="TKFM — Professional radio + promotion + label ecosystem. Built for artists, DJs, labels, and sponsors." />
+
+  <script src="/js/logo-check.js" defer></script>
+  <script src="/js/access-gates.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <script src="/js/stripe-checkout.js" defer></script>
 
   <style>
-    :root {
-      --bg-deep: #020617;
-      --bg-card: rgba(15,23,42,0.96);
-      --bg-card-soft: rgba(15,23,42,0.9);
-      --accent-orange: #f97316;
-      --accent-pink: #ec4899;
-      --accent-blue: #38bdf8;
-      --accent-violet: #a855f7;
-      --accent-gold: #facc15;
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --border-soft: rgba(148,163,184,0.9);
+    :root{
+      --bg:#020617;
+      --purple:#a855f7;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+
+      --gold:#facc15;
+      --gold2:#eab308;
+      --amber:#f97316;
+
+      --slate:#0b1226;
+      --stroke: rgba(148,163,184,.22);
+      --glass: rgba(2,6,23,.78);
+      --text: rgba(226,232,240,1);
+      --muted: rgba(148,163,184,1);
     }
 
-    * { box-sizing:border-box; }
-
-    body {
+    * { box-sizing: border-box; }
+    body{
       margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:
-        radial-gradient(circle at 0 0,rgba(248,113,113,0.16),transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(56,189,248,0.18),transparent 60%),
-        radial-gradient(circle at 50% 120%,#020617,#020617 70%);
-      color:var(--text-main);
-      min-height:100vh;
-      overflow-x:hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(900px 500px at 15% 5%, rgba(34,211,238,.18), transparent 60%),
+        radial-gradient(900px 500px at 85% 12%, rgba(236,72,153,.18), transparent 60%),
+        radial-gradient(900px 500px at 45% 92%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(1100px 650px at 70% 70%, rgba(59,130,246,.10), transparent 70%);
+      min-height: 100vh;
     }
 
-    main {
-      max-width:1180px;
-      margin:0 auto;
-      padding:1.6rem .9rem 3rem;
-      position:relative;
+    a { color: inherit; text-decoration: none; }
+
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 24px; }
+
+    .topbar{
+      position: sticky; top:0; z-index:50;
+      background: rgba(0,0,0,.70);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(30,41,59,.7);
+    }
+    .topbar .wrap{ padding: 14px 24px; display:flex; align-items:center; gap:14px; }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .brand img{ height:40px; width:auto; object-fit:contain; }
+    .brand .kicker{ font-size:10px; letter-spacing:.35em; text-transform:uppercase; color: var(--muted); }
+    .brand .title{ font-size:13px; font-weight:700; letter-spacing:.06em; }
+    .nav{ margin-left:auto; display:flex; gap:10px; align-items:center; }
+    .pill{
+      padding:10px 14px; border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background: rgba(15,23,42,.55);
+      font-size:11px; letter-spacing:.26em; text-transform:uppercase;
+      color: rgba(226,232,240,.95);
+    }
+    .pill:hover{ border-color: rgba(34,211,238,.75); }
+
+    .glass{
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
     }
 
-    a { color:inherit; text-decoration:none; }
-
-    /* HALO FX */
-    .halo-left,
-    .halo-right {
-      position:fixed;
-      width:280px;
-      height:280px;
-      border-radius:999px;
-      border:1px dashed rgba(148,163,184,0.7);
-      top:6%;
-      opacity:0.45;
-      pointer-events:none;
-      mix-blend-mode:screen;
-      animation:haloSpin 26s linear infinite;
+    .hero{ padding: 22px 0 8px; }
+    .heroCard{ padding: 24px; border-radius: 28px; }
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px; border-radius:999px;
+      border:1px solid rgba(148,163,184,.22);
+      background: rgba(2,6,23,.60);
+      font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+      color: rgba(226,232,240,.92);
     }
-    .halo-left {
-      left:-8%;
-      box-shadow:0 0 50px rgba(236,72,153,0.45);
+    .dot{ width:10px; height:10px; border-radius:999px; background: rgba(16,185,129,1); box-shadow: 0 0 18px rgba(16,185,129,.30); }
+    .h1{
+      margin: 14px 0 0;
+      font-size: 38px;
+      line-height: 1.05;
+      font-weight: 900;
     }
-    .halo-right {
-      right:-8%;
-      animation-duration:32s;
-      box-shadow:0 0 50px rgba(56,189,248,0.45);
-    }
-    .halo-left::before,
-    .halo-right::before {
-      content:"";
-      position:absolute;
-      inset:16%;
-      border-radius:999px;
-    }
-    .halo-left::before {
-      border:1px solid rgba(236,72,153,0.9);
-      box-shadow:
-        0 0 32px rgba(236,72,153,0.9),
-        0 0 40px rgba(248,113,113,0.7);
-    }
-    .halo-right::before {
-      border:1px solid rgba(56,189,248,0.9);
-      box-shadow:
-        0 0 32px rgba(56,189,248,0.9),
-        0 0 40px rgba(15,23,42,1);
-    }
-
-    @keyframes haloSpin {
-      to { transform:rotate(360deg); }
-    }
-
-    /* NAV */
-    .nav-shell {
-      position:sticky;
-      top:0;
-      z-index:40;
-      backdrop-filter:blur(18px);
-      background:linear-gradient(to bottom,rgba(15,23,42,0.96),rgba(15,23,42,0.35),transparent);
-      border-bottom:1px solid rgba(148,163,184,0.35);
-      margin:-1.6rem -0.9rem 1.4rem;
-      padding:.45rem .9rem .55rem;
-    }
-    .nav {
-      max-width:1180px;
-      margin:0 auto;
-      display:flex;
-      align-items:center;
-      gap:.8rem;
-    }
-    .nav-logo {
-      font-size:.95rem;
-      font-weight:800;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      background:linear-gradient(120deg,#f97316,#ec4899,#38bdf8);
-      -webkit-background-clip:text;
+    .grad{
+      display:block;
+      margin-top:10px;
+      background-image: linear-gradient(90deg, var(--cyan), var(--pink), var(--purple));
+      -webkit-background-clip: text;
       background-clip:text;
-      color:transparent;
-      text-shadow:0 0 16px rgba(248,113,113,0.9);
-      white-space:nowrap;
+      color: transparent;
     }
-    .nav-tag {
-      font-size:.7rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--text-muted);
-      white-space:nowrap;
-    }
-    .nav-links {
-      margin-left:auto;
-      display:flex;
-      flex-wrap:wrap;
-      gap:.35rem;
-      font-size:.78rem;
-    }
-    .nav-link {
-      padding:.26rem .7rem;
-      border-radius:999px;
-      border:1px solid transparent;
-      cursor:pointer;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#cbd5f5;
-      background:transparent;
-      transition:
-        background .16s,
-        border-color .16s,
-        color .16s,
-        transform .16s;
-    }
-    .nav-link:hover {
-      background:rgba(15,23,42,0.9);
-      border-color:rgba(148,163,184,0.9);
-      transform:translateY(-1px);
-    }
-    .nav-link-primary {
-      border-color:rgba(248,113,113,0.9);
-      background:radial-gradient(circle at 0 0,rgba(248,113,113,0.35),transparent 60%);
-      color:#fef9c3;
-      box-shadow:0 0 18px rgba(248,113,113,0.7);
-    }
-    .nav-link-label {
-      border-color:rgba(250,204,21,0.85);
-      background:radial-gradient(circle at 100% 0,rgba(250,204,21,0.25),transparent 60%);
-      color:#fef3c7;
+    .sub{
+      margin-top: 14px;
+      color: rgba(148,163,184,.95);
+      line-height: 1.55;
+      max-width: 860px;
+      font-size: 15px;
     }
 
-    @media (max-width:840px){ .nav-tag{display:none;} }
-    @media (max-width:720px){ .nav-links{justify-content:flex-end;} }
+    .section{ margin-top: 24px; }
+    .sectionHead{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom: 12px; }
+    .sectionK{ font-size:11px; letter-spacing:.30em; text-transform:uppercase; color: rgba(148,163,184,.9); }
+    .sectionT{ font-size: 22px; font-weight: 900; margin-top: 4px; }
+    .sectionP{ color: rgba(148,163,184,.95); font-size: 14px; margin-top: 6px; max-width: 820px; }
 
-    /* HEADER / HERO */
-    .hero {
-      position:relative;
-      border-radius:30px;
-      padding:1.7rem 1.4rem 2rem;
-      border:1px solid rgba(148,163,184,0.9);
-      background:
-        radial-gradient(circle at 0 0,rgba(248,113,113,0.22),transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(56,189,248,0.22),transparent 60%),
-        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(15,23,42,1) 70%);
-      box-shadow:
-        0 0 40px rgba(0,0,0,0.9),
-        0 0 70px rgba(56,189,248,0.35);
-      overflow:hidden;
-      margin-bottom:1.8rem;
-    }
-    .hero-fx {
-      position:absolute;
-      inset:-32%;
-      background:
-        radial-gradient(circle at 0 100%,rgba(236,72,153,0.3),transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(56,189,248,0.25),transparent 60%),
-        radial-gradient(circle at 50% 0,rgba(168,85,247,0.4),transparent 60%);
-      mix-blend-mode:screen;
-      opacity:.9;
-      pointer-events:none;
-    }
-    .hero-inner { position:relative; z-index:1; }
+    .grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } .h1{ font-size: 30px; } }
 
-    .hero-kicker {
-      font-size:.78rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:#e5e7eb;
-      opacity:.85;
-      margin-bottom:.25rem;
+    .card{ padding: 18px; border-radius: 22px; }
+    .cardK{ font-size:10px; letter-spacing:.34em; text-transform:uppercase; color: rgba(148,163,184,.95); }
+    .priceRow{ display:flex; align-items:baseline; gap:10px; margin-top: 10px; }
+    .price{ font-size: 34px; font-weight: 950; }
+    .per{ color: rgba(148,163,184,.9); font-size: 14px; }
+    .ul{ margin-top: 12px; padding-left: 0; list-style:none; color: rgba(148,163,184,.95); font-size: 13px; line-height: 1.55; }
+    .ul li{ margin-top: 6px; }
+    .btn{
+      width:100%;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border:1px solid rgba(148,163,184,.34);
+      background: rgba(15,23,42,.72);
+      color: rgba(226,232,240,.96);
+      cursor: pointer;
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-weight: 800;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
     }
-    h1 {
-      margin:0;
-      font-size:2.2rem;
-      font-weight:900;
-      letter-spacing:.13em;
-      text-transform:uppercase;
-      background:linear-gradient(120deg,#f97316,#ec4899,#38bdf8);
-      -webkit-background-clip:text;
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(34,211,238,.72); background: rgba(15,23,42,.92); }
+    .btnHot{ border-color: rgba(34,211,238,.78); box-shadow: 0 0 0 1px rgba(34,211,238,.20), 0 0 22px rgba(34,211,238,.14); }
+    .btnCta{ border-color: rgba(236,72,153,.75); box-shadow: 0 0 0 1px rgba(236,72,153,.20), 0 0 22px rgba(236,72,153,.12); }
+    .ringCyan{ box-shadow: 0 0 0 1px rgba(34,211,238,.30), 0 0 30px rgba(34,211,238,.10); }
+    .ringPink{ box-shadow: 0 0 0 1px rgba(236,72,153,.28), 0 0 30px rgba(236,72,153,.10); }
+
+    .goldBlock{
+      border: 1px solid rgba(250,204,21,.22);
+      background: rgba(2,6,23,.80);
+      box-shadow: 0 0 0 1px rgba(250,204,21,.10), 0 0 26px rgba(250,204,21,.08);
+    }
+    .goldTitle{
+      background-image: linear-gradient(90deg, var(--gold), var(--gold2), var(--amber));
+      -webkit-background-clip: text;
       background-clip:text;
-      color:transparent;
-      text-shadow:
-        0 0 28px rgba(236,72,153,0.9),
-        0 0 45px rgba(15,23,42,1);
-    }
-    .hero-sub {
-      margin-top:.4rem;
-      font-size:.95rem;
-      max-width:640px;
-      color:#e5e7eb;
-    }
-    .hero-sub strong { color:#fef9c3; }
-
-    .hero-row {
-      display:flex;
-      flex-wrap:wrap;
-      gap:.7rem;
-      margin-top:.8rem;
-      align-items:center;
+      color: transparent;
+      font-weight: 950;
     }
 
-    .hero-pill {
-      font-size:.76rem;
-      border-radius:999px;
-      padding:.28rem .8rem;
-      border:1px solid rgba(248,250,252,0.3);
-      background:rgba(15,23,42,0.96);
-      display:inline-flex;
-      align-items:center;
-      gap:.4rem;
-    }
-    .hero-pill span {
-      width:9px;
-      height:9px;
-      border-radius:999px;
-      background:var(--accent-blue);
-      box-shadow:0 0 12px rgba(56,189,248,0.9);
+    .divider{
+      height:1px;
+      margin: 16px 0;
+      background: linear-gradient(90deg, transparent, rgba(34,211,238,.22), rgba(236,72,153,.22), transparent);
     }
 
-    .hero-note {
-      font-size:.8rem;
-      color:var(--text-muted);
-      max-width:260px;
+    footer{
+      margin-top: 26px;
+      border-top: 1px solid rgba(30,41,59,.7);
+      background: rgba(0,0,0,.55);
+      color: rgba(148,163,184,.95);
+      font-size: 12px;
+      letter-spacing: .08em;
     }
-
-    /* SECTIONS */
-    .section {
-      margin-bottom:1.7rem;
-      border-radius:24px;
-      border:1px solid var(--border-soft);
-      background:var(--bg-card);
-      padding:1.1rem 1rem 1.25rem;
-      box-shadow:0 0 30px rgba(0,0,0,0.85);
-      position:relative;
-      overflow:hidden;
-    }
-    .section::before {
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:
-        radial-gradient(circle at 0 0,rgba(248,113,113,0.18),transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
-      mix-blend-mode:screen;
-      opacity:.9;
-      pointer-events:none;
-    }
-    .section-inner { position:relative; z-index:1; }
-
-    .section-title {
-      font-size:.9rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      margin:0 0 .2rem;
-    }
-    .section-sub {
-      font-size:.8rem;
-      color:var(--text-muted);
-      max-width:680px;
-      margin:0 0 .85rem;
-    }
-
-    /* GRID */
-    .pricing-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:.9rem;
-    }
-
-    .card {
-      border-radius:20px;
-      border:1px solid rgba(148,163,184,0.9);
-      background:var(--bg-card-soft);
-      padding:.9rem .85rem 1.1rem;
-      position:relative;
-      overflow:hidden;
-      box-shadow:0 0 26px rgba(0,0,0,0.85);
-      font-size:.8rem;
-      transition:
-        transform .16s,
-        border-color .16s,
-        box-shadow .16s,
-        background .16s;
-    }
-    .card::before {
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:
-        radial-gradient(circle at 0 0,rgba(248,113,113,0.16),transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(56,189,248,0.14),transparent 60%);
-      mix-blend-mode:screen;
-      opacity:.9;
-      pointer-events:none;
-    }
-    .card-inner { position:relative; z-index:1; }
-
-    .card-highlight {
-      border-image:linear-gradient(120deg,#f97316,#ec4899,#38bdf8) 1;
-      border-width:1px;
-      border-style:solid;
-      box-shadow:
-        0 0 24px rgba(236,72,153,0.7),
-        0 0 32px rgba(15,23,42,0.95);
-    }
-    .card-gold {
-      border-image:linear-gradient(120deg,#facc15,#f97316) 1;
-      border-width:1px;
-      border-style:solid;
-      box-shadow:
-        0 0 24px rgba(250,204,21,0.75),
-        0 0 32px rgba(15,23,42,0.95);
-    }
-
-    .card:hover {
-      transform:translateY(-3px) scale(1.01);
-      background:rgba(15,23,42,1);
-    }
-
-    .card-kicker {
-      font-size:.75rem;
-      text-transform:uppercase;
-      letter-spacing:.13em;
-      color:#cbd5f5;
-      margin-bottom:.18rem;
-    }
-    .card-title {
-      font-size:.98rem;
-      font-weight:600;
-      margin-bottom:.16rem;
-    }
-
-    .price-row {
-      display:flex;
-      align-items:baseline;
-      gap:.25rem;
-      margin-bottom:.4rem;
-    }
-    .price-main {
-      font-size:1.45rem;
-      font-weight:800;
-      letter-spacing:.06em;
-    }
-    .price-main span {
-      font-size:.9rem;
-      opacity:.9;
-      margin-right:.08rem;
-    }
-    .price-sub {
-      font-size:.76rem;
-      color:var(--text-muted);
-    }
-
-    .card-body {
-      font-size:.8rem;
-      color:#e5e7eb;
-      margin-bottom:.5rem;
-    }
-
-    .feature-list {
-      list-style:none;
-      padding:0;
-      margin:0 0 .6rem;
-      font-size:.78rem;
-    }
-    .feature-list li {
-      display:flex;
-      gap:.35rem;
-      align-items:flex-start;
-      margin-bottom:.25rem;
-    }
-    .feature-dot {
-      width:8px;
-      height:8px;
-      border-radius:999px;
-      margin-top:.2rem;
-      background:var(--accent-blue);
-      box-shadow:0 0 10px rgba(56,189,248,0.9);
-    }
-    .feature-dot-gold {
-      background:var(--accent-gold);
-      box-shadow:0 0 10px var(--accent-gold);
-    }
-
-    .plan-meta {
-      font-size:.72rem;
-      color:var(--text-muted);
-      margin-bottom:.45rem;
-    }
-
-    .btn-plan {
-      border-radius:999px;
-      padding:.4rem .9rem;
-      border:none;
-      cursor:pointer;
-      font-size:.78rem;
-      text-transform:uppercase;
-      letter-spacing:.13em;
-      display:inline-flex;
-      align-items:center;
-      gap:.35rem;
-      background:linear-gradient(135deg,#f97316,#ec4899,#38bdf8);
-      color:#020617;
-      box-shadow:0 0 20px rgba(236,72,153,0.9);
-    }
-    .btn-plan-secondary {
-      border-radius:999px;
-      padding:.36rem .9rem;
-      border:1px solid rgba(148,163,184,0.9);
-      background:rgba(15,23,42,0.98);
-      color:var(--text-main);
-      font-size:.76rem;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      cursor:pointer;
-    }
-    .btn-plan-secondary:hover {
-      border-color:#38bdf8;
-      box-shadow:0 0 14px rgba(56,189,248,0.7);
-    }
-
-    .badge {
-      display:inline-flex;
-      align-items:center;
-      gap:.3rem;
-      font-size:.72rem;
-      border-radius:999px;
-      padding:.18rem .7rem;
-      border:1px solid rgba(248,250,252,0.3);
-      background:rgba(15,23,42,0.98);
-      margin-bottom:.35rem;
-    }
-    .badge-dot {
-      width:8px;
-      height:8px;
-      border-radius:999px;
-      background:#22c55e;
-      box-shadow:0 0 10px #22c55e;
-    }
-
-    .stripe-note {
-      margin-top:.6rem;
-      font-size:.76rem;
-      color:var(--text-muted);
-    }
-
-    .footer-note {
-      margin-top:.5rem;
-      font-size:.75rem;
-      color:var(--text-muted);
-      text-align:center;
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .halo-left,.halo-right{animation:none;}
-      .card{transition:none;}
-    }
+    footer .wrap{ padding: 18px 24px; }
   </style>
 </head>
+
 <body>
-<div class="halo-left"></div>
-<div class="halo-right"></div>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" />
+        <div>
+          <div class="kicker">They Krave For Me Radio</div>
+          <div class="title">Pricing & Access — TKFM V2</div>
+        </div>
+      </a>
 
-<div class="nav-shell">
-  <nav class="nav">
-    <div class="nav-logo">They Krave For Me Radio</div>
-    <div class="nav-tag">The Independent Artist Power Station</div>
-    <div class="nav-links">
-      <a href="index.html" class="nav-link">Home</a>
-      <a href="pricing.html" class="nav-link nav-link-primary">Pricing</a>
-      <a href="submit.html" class="nav-link">Submit Music</a>
-      <a href="dj-mixtape-hosting.html" class="nav-link">DJ Hosting</a>
-      <a href="app-hub.html" class="nav-link">App Hub</a>
-      <a href="label-home.html" class="nav-link nav-link-label">Label Side</a>
-    </div>
-  </nav>
-</div>
-
-<main>
-  <!-- HERO -->
-  <header class="hero">
-    <div class="hero-fx"></div>
-    <div class="hero-inner">
-      <div class="hero-kicker">TKFM RADIO • NEON PRICING ROOM</div>
-      <h1>Pick your level of motion</h1>
-      <p class="hero-sub">
-        These are <strong>station-side</strong> plays only — features, rotation, interviews &amp; DJ
-        hosting on They Krave For Me Radio. The **black &amp; gold label side** (They Krave For Me
-        Records) is invite-only and lives on a separate pricing path.
-      </p>
-
-      <div class="hero-row">
-        <div class="hero-pill"><span></span> All prices are for TKFM Radio (neon) — not label deals</div>
-        <div class="hero-pill"><span></span> Label contracts &amp; rosters live in They Krave For Me Records</div>
-        <p class="hero-note">
-          You can always raise these later in the **Autopilot Engine** without changing this page’s
-          design.
-        </p>
-      </div>
+      <nav class="nav">
+        <a class="pill" href="radio-hub.html">Radio</a>
+        <a class="pill" href="social-engine.html">Promo</a>
+        <a class="pill" href="dj-mixtape-hosting.html">Mixtapes</a>
+        <a class="pill" href="label-home.html">Label</a>
+      </nav>
     </div>
   </header>
 
-  <!-- ARTIST FEATURE PLANS -->
-  <section class="section">
-    <div class="section-inner">
-      <h2 class="section-title">Artist Feature Plans</h2>
-      <p class="section-sub">
-        Designed to feel like **real promotion**, not cheap spins. These map cleanly into Stripe
-        products so you can plug them into your <strong>create-checkout</strong> function later.
+  <main class="wrap hero">
+    <section class="glass heroCard">
+      <span class="badge"><span class="dot"></span> Professional Radio + Promotion + Label Ecosystem</span>
+      <h1 class="h1">
+        Move like a real brand — not just a drop.
+        <span class="grad">Access tiers + Auto Engines + Paid Feature Lanes.</span>
+      </h1>
+      <p class="sub">
+        Keep your existing pricing exactly the same — then stack new paid engines on top:
+        Autopilot scheduling, AI DJ automation, label workflows, analytics and priority lanes.
+        Everything is wired through Stripe in one click.
       </p>
 
-      <div class="pricing-grid">
-        <!-- STARTER -->
-        <article class="card">
-          <div class="card-inner">
-            <div class="card-kicker">Entry feature</div>
-            <h3 class="card-title">Starter Spotlight</h3>
-            <div class="price-row">
-              <div class="price-main"><span>$</span>97</div>
-              <div class="price-sub">one-time per track</div>
-            </div>
-            <p class="card-body">
-              For artists who want to **test a record** on TKFM and tap into the neon ecosystem
-              without committing to a full roll-out.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot"></span> 1x home page spotlight block (48 hours)</li>
-              <li><span class="feature-dot"></span> Starter rotation in mix blocks</li>
-              <li><span class="feature-dot"></span> One social mention (feed or story)</li>
-              <li><span class="feature-dot"></span> Included in “New Heat” ticker line</li>
-            </ul>
-            <p class="plan-meta">
-              Stripe product idea: <strong>artist_feature_starter</strong>
-              (lookup_key style) — map to your lowest radio feature SKU.
-            </p>
-            <button class="btn-plan">
-              Lock Starter Slot
-            </button>
-          </div>
-        </article>
+      <div class="divider"></div>
 
-        <!-- CORE PLAN -->
-        <article class="card card-highlight">
-          <div class="card-inner">
-            <div class="badge">
-              <span class="badge-dot"></span> Most popular
-            </div>
-            <div class="card-kicker">Core rollout</div>
-            <h3 class="card-title">Artist Feature Pro</h3>
-            <div class="price-row">
-              <div class="price-main"><span>$</span>197</div>
-              <div class="price-sub">one-time per single</div>
-            </div>
-            <p class="card-body">
-              The sweet spot for serious artists: **louder rotation**, stronger branding, and more
-              time in front of TKFM’s audience.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot"></span> Home page feature for 7 days</li>
-              <li><span class="feature-dot"></span> Priority rotation in mix shows</li>
-              <li><span class="feature-dot"></span> One station drop + shoutout slot</li>
-              <li><span class="feature-dot"></span> Placement on TKFM “They Krave List” playlist</li>
-              <li><span class="feature-dot"></span> Basic media kit placement (cover, links)</li>
-            </ul>
-            <p class="plan-meta">
-              Stripe product idea: <strong>artist_feature_pro</strong> — your main “lock me in”
-              radio feature SKU.
-            </p>
-            <button class="btn-plan">
-              Go Pro Feature
-            </button>
-          </div>
-        </article>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="pill" href="#artist-dj">Artist/DJ</a>
+        <a class="pill" href="#auto">Auto Engines</a>
+        <a class="pill" href="#label">Label</a>
+        <a class="pill" href="#promo">Promo</a>
+        <a class="pill" href="#packs">Paid Feature Packs</a>
+        <a class="pill" href="#mixtapes">Mixtape Hosting</a>
+        <a class="pill" href="#sponsors">Sponsors</a>
+        <a class="pill" href="#ai">AI Store</a>
+      </div>
+    </section>
 
-        <!-- ELITE PLAN -->
-        <article class="card card-gold">
-          <div class="card-inner">
-            <div class="card-kicker">High intent</div>
-            <h3 class="card-title">Elite Campaign</h3>
-            <div class="price-row">
-              <div class="price-main"><span>$</span>397</div>
-              <div class="price-sub">per campaign</div>
-            </div>
-            <p class="card-body">
-              For moments that matter: album, EP or major single. This is where TKFM moves like a
-              **street label** before the actual label kicks in.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot-gold"></span> 14-day homepage + feature rotation</li>
-              <li><span class="feature-dot-gold"></span> Heavy spins across key dayparts</li>
-              <li><span class="feature-dot-gold"></span> Interview or spotlight segment (pre-recorded)</li>
-              <li><span class="feature-dot-gold"></span> Extended media kit push + link routing</li>
-              <li><span class="feature-dot-gold"></span> Flag for A&amp;R radar on label side</li>
-            </ul>
-            <p class="plan-meta">
-              Stripe product idea: <strong>artist_feature_elite</strong> — this should feel like a
-              **serious** investment, not a cheap spin.
-            </p>
-            <div style="display:flex;flex-wrap:wrap;gap:.4rem;">
-              <button class="btn-plan">Run Elite Campaign</button>
-              <button class="btn-plan-secondary">Talk to Station First</button>
-            </div>
-          </div>
-        </article>
+    <!-- ARTIST / DJ ACCESS (UNCHANGED PRICES) -->
+    <section id="artist-dj" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">Monthly Access</div>
+          <div class="sectionT">Artist & DJ Access</div>
+          <div class="sectionP">Same core plans. New upsells live below (Auto Engines + Packs).</div>
+        </div>
       </div>
 
-      <p class="stripe-note">
-        When you’re ready to wire Stripe, you’ll point buttons like these at your Netlify function
-        (for example <code>create-checkout</code>) using your Stripe <strong>lookup_keys</strong>.
-      </p>
-    </div>
-  </section>
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Creator Pass</div>
+          <div class="priceRow"><div class="price">$29</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Platform access + submissions lane</li>
+            <li>• Basic profile + visibility</li>
+            <li>• Eligible for paid boosts + engines</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="creator_pass_monthly">Activate Creator Pass</button>
+        </div>
 
-  <!-- DJ & MIXTAPE HOSTING -->
-  <section class="section">
-    <div class="section-inner">
-      <h2 class="section-title">DJ Mixtape Hosting &amp; Krave Packs</h2>
-      <p class="section-sub">
-        This block is for **DJs only** — neon TKFM side. Label-level packs and producer deals live
-        on the black &amp; gold label pages.
-      </p>
+        <div class="glass card ringCyan">
+          <div class="cardK" style="color: rgba(34,211,238,.95);">Motion • Most Popular</div>
+          <div class="priceRow"><div class="price">$99</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Stronger placement pathways</li>
+            <li>• Faster promo eligibility</li>
+            <li>• Best for active releases</li>
+          </ul>
+          <button class="btn btnHot js-checkout" data-plan="motion_monthly">Upgrade to Motion</button>
+        </div>
 
-      <div class="pricing-grid">
-        <!-- MIX HOST -->
-        <article class="card">
-          <div class="card-inner">
-            <div class="card-kicker">Mixtape hosting</div>
-            <h3 class="card-title">Hosted Mixtape Slot</h3>
-            <div class="price-row">
-              <div class="price-main"><span>$</span>147</div>
-              <div class="price-sub">per tape</div>
-            </div>
-            <p class="card-body">
-              Host your tape on TKFM with a custom landing section, stream integration and
-              scheduled mix replays.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot"></span> One hosted mixtape slot on TKFM</li>
-              <li><span class="feature-dot"></span> Dedicated tape landing section</li>
-              <li><span class="feature-dot"></span> 2x replay slots on schedule board</li>
-              <li><span class="feature-dot"></span> Mention in mixtape ticker</li>
-            </ul>
-            <p class="plan-meta">Stripe idea: <strong>dj_mixtape_hosting</strong></p>
-            <button class="btn-plan">Host My Tape</button>
-          </div>
-        </article>
-
-        <!-- RESIDENCY -->
-        <article class="card card-highlight">
-          <div class="card-inner">
-            <div class="badge">
-              <span class="badge-dot"></span> For active DJs
-            </div>
-            <div class="card-kicker">Monthly residency</div>
-            <h3 class="card-title">Krave Residency</h3>
-            <div class="price-row">
-              <div class="price-main"><span>$</span>97</div>
-              <div class="price-sub">per month</div>
-            </div>
-            <p class="card-body">
-              Recurring show slot on TKFM with mix rotations, priority schedule placement and a
-              mini promo lane.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot"></span> Monthly residency slot on schedule board</li>
-              <li><span class="feature-dot"></span> Show mention in marketing blocks</li>
-              <li><span class="feature-dot"></span> Light mixtape hosting perks</li>
-              <li><span class="feature-dot"></span> Eligible for sponsor overlays later</li>
-            </ul>
-            <p class="plan-meta">Stripe idea: <strong>dj_residency_monthly</strong> (recurring)</p>
-            <button class="btn-plan">Claim Residency</button>
-          </div>
-        </article>
-
-        <!-- PREMIUM DJ PACK -->
-        <article class="card card-gold">
-          <div class="card-inner">
-            <div class="card-kicker">Premium pack</div>
-            <h3 class="card-title">Krave Mixtape + Show Pack</h3>
-            <div class="price-row">
-              <div class="price-main"><span>$</span>247</div>
-              <div class="price-sub">bundle</div>
-            </div>
-            <p class="card-body">
-              Bundle a hosted tape, show slot and promotion. Designed for DJs ready to sit at the
-              **center** of the TKFM ecosystem.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot-gold"></span> Hosted mixtape + landing section</li>
-              <li><span class="feature-dot-gold"></span> Monthly show slot for 2 months</li>
-              <li><span class="feature-dot-gold"></span> Playlist + ticker placement</li>
-              <li><span class="feature-dot-gold"></span> Early access to AI DJ console tests</li>
-            </ul>
-            <p class="plan-meta">
-              Stripe idea: <strong>dj_krave_pack</strong> — bundle SKU you can upsell from the
-              residency or hosting tiers.
-            </p>
-            <button class="btn-plan">Run Krave Pack</button>
-          </div>
-        </article>
+        <div class="glass card ringPink">
+          <div class="cardK" style="color: rgba(236,72,153,.95);">Takeover Viral</div>
+          <div class="priceRow"><div class="price">$199</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Premium lane + priority momentum</li>
+            <li>• Built to scale your presence</li>
+            <li>• Designed for aggressive growth</li>
+          </ul>
+          <button class="btn btnCta js-checkout" data-plan="takeover_viral_monthly">Go Takeover Viral</button>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- BRIDGE TO LABEL SIDE -->
-  <section class="section">
-    <div class="section-inner">
-      <h2 class="section-title">They Krave For Me Records (Label)</h2>
-      <p class="section-sub">
-        Real **label contracts, splits and rosters** do <strong>not</strong> live on this page.
-        They’re managed in the **They Krave For Me Records** black &amp; gold environment with its
-        own pricing logic and AI contract lab.
-      </p>
-
-      <div class="pricing-grid">
-        <article class="card">
-          <div class="card-inner">
-            <div class="card-kicker">Label path</div>
-            <h3 class="card-title">When do we talk label?</h3>
-            <p class="card-body">
-              After you’ve moved through TKFM features and DJ hosting, high-performing artists can
-              be flagged for **label onboarding** and **AI contract presets**.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot-gold"></span> Invite-only entry to They Krave For Me Records</li>
-              <li><span class="feature-dot-gold"></span> Lives on <code>label-home.html</code> &amp; friends</li>
-              <li><span class="feature-dot-gold"></span> Managed through GOD VIEW &amp; contract lab</li>
-            </ul>
-            <p class="plan-meta">
-              There will be separate **label packages / retainers** on the black &amp; gold side so
-              the brand feels bigger than a radio price list.
-            </p>
-            <a href="label-home.html"><button class="btn-plan-secondary">Visit Label Side Overview</button></a>
+    <!-- NEW: AUTO ENGINES -->
+    <section id="auto" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">NEW Paid Engines</div>
+          <div class="sectionT">Auto Engines</div>
+          <div class="sectionP">
+            These are the “always-on” revenue lanes: automation that keeps artists moving, keeps DJs rotating, keeps sponsors spending.
           </div>
-        </article>
-
-        <article class="card">
-          <div class="card-inner">
-            <div class="card-kicker">Owner controls</div>
-            <h3 class="card-title">AI Autopilot &amp; God View</h3>
-            <p class="card-body">
-              As your catalog grows, you’ll manage **actual numbers** in the <strong>Autopilot
-              Engine</strong> and **GOD VIEW**, not by editing this page. This keeps the front-end
-              clean while your back-end thinks.
-            </p>
-            <ul class="feature-list">
-              <li><span class="feature-dot"></span> Autopilot Engine for smart pricing changes</li>
-              <li><span class="feature-dot"></span> GOD VIEW for station + label metrics</li>
-              <li><span class="feature-dot"></span> Owner login required (no public access)</li>
-            </ul>
-            <p class="plan-meta">
-              When you’re ready: we’ll wire Stripe + Supabase behind the scenes, while this neon
-              pricing room stays the same on the surface.
-            </p>
-            <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
-              <a href="app-hub.html"><button class="btn-plan-secondary">Open App Hub</button></a>
-              <a href="owner-login.html"><button class="btn-plan-secondary">Owner Login</button></a>
-            </div>
-          </div>
-        </article>
+        </div>
       </div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Autopilot Lite</div>
+          <div class="priceRow"><div class="price">$39</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Auto scheduling + basic rotation rules</li>
+            <li>• Drop queue → rotation assist</li>
+            <li>• Great entry engine upsell</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="autopilot_lite_monthly">Enable Autopilot Lite</button>
+        </div>
+
+        <div class="glass card ringCyan">
+          <div class="cardK" style="color: rgba(34,211,238,.95);">Autopilot Pro</div>
+          <div class="priceRow"><div class="price">$149</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Smart rotation + priority rules</li>
+            <li>• Campaign windows + boost logic</li>
+            <li>• Best engine for serious artists</li>
+          </ul>
+          <button class="btn btnHot js-checkout" data-plan="autopilot_pro_monthly">Upgrade to Autopilot Pro</button>
+        </div>
+
+        <div class="glass card ringPink">
+          <div class="cardK" style="color: rgba(236,72,153,.95);">AI DJ Autopilot</div>
+          <div class="priceRow"><div class="price">$99</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• AI DJ imaging workflow lane</li>
+            <li>• Drops + intros + radio-style cadence</li>
+            <li>• Adds “station energy” to releases</li>
+          </ul>
+          <button class="btn btnCta js-checkout" data-plan="ai_dj_autopilot_monthly">Enable AI DJ Autopilot</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="glass card goldBlock">
+          <div class="cardK">Label Autopilot</div>
+          <div class="priceRow"><div class="price goldTitle">$199</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Automated label workflows + release lanes</li>
+            <li>• Contract pipeline assist + catalog ops</li>
+            <li>• Built for TKFM Records operations</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="label_autopilot_monthly">Enable Label Autopilot</button>
+        </div>
+
+        <div class="glass card goldBlock">
+          <div class="cardK">Sponsor Autopilot</div>
+          <div class="priceRow"><div class="price goldTitle">$299</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Sponsor rotation + placement automation</li>
+            <li>• Click/rotation tracking lanes</li>
+            <li>• Keeps brands renewing monthly</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="sponsor_autopilot_monthly">Enable Sponsor Autopilot</button>
+        </div>
+
+        <div class="glass card">
+          <div class="cardK">Analytics Pro</div>
+          <div class="priceRow"><div class="price">$49</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Enhanced stats + campaign tracking</li>
+            <li>• Growth dashboard lane</li>
+            <li>• Converts free users → pay</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="analytics_pro_monthly">Enable Analytics Pro</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LABEL (UNCHANGED PRICES) -->
+    <section id="label" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">Label Tools</div>
+          <div class="sectionT">TKFM Records — Label Access</div>
+          <div class="sectionP">Same label pricing. (Label Autopilot above is an optional engine.)</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">DJ Toolkit</div>
+          <div class="priceRow"><div class="price">$49</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• DJ tools inside the ecosystem</li>
+            <li>• Workflow helpers</li>
+            <li>• Access upgrades available</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="dj_toolkit_monthly">Activate DJ Toolkit</button>
+        </div>
+
+        <div class="glass card goldBlock">
+          <div class="cardK" style="color: rgba(250,204,21,.95);">Label Core</div>
+          <div class="priceRow"><div class="price goldTitle">$149</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Catalog workflows + ops</li>
+            <li>• Contract pipeline tools</li>
+            <li>• Built for structured growth</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="label_core_monthly">Activate Label Core</button>
+        </div>
+
+        <div class="glass card goldBlock">
+          <div class="cardK" style="color: rgba(250,204,21,.95);">Label Pro</div>
+          <div class="priceRow"><div class="price goldTitle">$299</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Full label power lane</li>
+            <li>• Scaling workflows</li>
+            <li>• Best for serious releases</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="label_pro_monthly">Upgrade to Label Pro</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Contract Lab Pro</div>
+          <div class="priceRow"><div class="price">$79</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Advanced contract lab lane</li>
+            <li>• Higher-output templates</li>
+            <li>• Adds paid value to labels</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="contract_lab_pro_monthly">Enable Contract Lab Pro</button>
+        </div>
+
+        <div class="glass card">
+          <div class="cardK">Submissions Priority</div>
+          <div class="priceRow"><div class="price">$19</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Priority lane in review queue</li>
+            <li>• Faster decision flow</li>
+            <li>• Converts urgent artists</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="submissions_priority_monthly">Enable Priority</button>
+        </div>
+
+        <div class="glass card">
+          <div class="cardK">Distribution Assist</div>
+          <div class="priceRow"><div class="price">$59</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Release packaging lane</li>
+            <li>• Rollout checklist + admin support</li>
+            <li>• Smooths label operations</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="distribution_assist_monthly">Enable Distribution Assist</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROMO (UNCHANGED) -->
+    <section id="promo" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">Promotion</div>
+          <div class="sectionT">Promo & Rotation Boosts</div>
+          <div class="sectionP">Time-based visibility boosts across TKFM properties.</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Homepage Feature</div>
+          <div class="priceRow"><div class="price">$150</div></div>
+          <ul class="ul">
+            <li>• Front-facing placement</li>
+            <li>• Drives clicks + attention</li>
+            <li>• One-time feature</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="homepage_feature_artist">Buy Homepage Feature</button>
+        </div>
+
+        <div class="glass card ringCyan">
+          <div class="cardK" style="color: rgba(34,211,238,.95);">Rotation Boost</div>
+          <div class="priceRow"><div class="price">$200</div></div>
+          <ul class="ul">
+            <li>• Heavier rotation lane</li>
+            <li>• Keeps the record moving</li>
+            <li>• One-time campaign</li>
+          </ul>
+          <button class="btn btnHot js-checkout" data-plan="rotation_boost_campaign">Buy Rotation Boost</button>
+        </div>
+
+        <div class="glass card ringPink">
+          <div class="cardK" style="color: rgba(236,72,153,.95);">Social Starter</div>
+          <div class="priceRow"><div class="price">$49</div><div class="per">/ month</div></div>
+          <ul class="ul">
+            <li>• Paid social lane access</li>
+            <li>• Campaign submissions</li>
+            <li>• Built for creators</li>
+          </ul>
+          <button class="btn btnCta js-checkout" data-plan="social_starter_monthly">Enable Social Starter</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: PAID FEATURE PACKS -->
+    <section id="packs" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">NEW One-Time Upsells</div>
+          <div class="sectionT">Paid Feature Packs</div>
+          <div class="sectionP">High-margin packs you can sell on top of any plan. Instant checkout, instant unlock.</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Priority Submission Pack</div>
+          <div class="priceRow"><div class="price">$75</div></div>
+          <ul class="ul">
+            <li>• One-time priority lane token</li>
+            <li>• Perfect for urgent drops</li>
+            <li>• Instant upsell</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="priority_submission_pack">Buy Pack</button>
+        </div>
+
+        <div class="glass card ringCyan">
+          <div class="cardK" style="color: rgba(34,211,238,.95);">Playlist Pitch Pack</div>
+          <div class="priceRow"><div class="price">$250</div></div>
+          <ul class="ul">
+            <li>• Pitch formatting lane</li>
+            <li>• Rollout support checklist</li>
+            <li>• Great mid-ticket add-on</li>
+          </ul>
+          <button class="btn btnHot js-checkout" data-plan="playlist_pitch_pack">Buy Pack</button>
+        </div>
+
+        <div class="glass card ringPink">
+          <div class="cardK" style="color: rgba(236,72,153,.95);">Press Run Pack</div>
+          <div class="priceRow"><div class="price">$500</div></div>
+          <ul class="ul">
+            <li>• EPK alignment + press kit lane</li>
+            <li>• High-ticket, high-conversion</li>
+            <li>• Built for serious releases</li>
+          </ul>
+          <button class="btn btnCta js-checkout" data-plan="press_run_pack">Buy Pack</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Radio Interview Slot</div>
+          <div class="priceRow"><div class="price">$150</div></div>
+          <ul class="ul">
+            <li>• Scheduled interview lane</li>
+            <li>• Creator growth product</li>
+            <li>• One-time booking</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="radio_interview_slot">Book Slot</button>
+        </div>
+
+        <div class="glass card goldBlock">
+          <div class="cardK">Homepage Takeover Day</div>
+          <div class="priceRow"><div class="price goldTitle">$500</div></div>
+          <ul class="ul">
+            <li>• Premium front-page domination</li>
+            <li>• Perfect for release day</li>
+            <li>• One-time takeover</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="homepage_takeover_day">Buy Takeover Day</button>
+        </div>
+
+        <div class="glass card">
+          <div class="cardK">Owner / Founder Access</div>
+          <div class="priceRow"><div class="price">$0</div><div class="per">(Owner only)</div></div>
+          <ul class="ul">
+            <li>• Controlled by OWNER_EMAIL / PASSWORD</li>
+            <li>• Admin consoles + God View</li>
+            <li>• Not for public sale unless you decide</li>
+          </ul>
+          <button class="btn js-checkout" data-plan="owner_founder_access">Owner Only</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MIXTAPES (UNCHANGED PRICES) -->
+    <section id="mixtapes" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">DJ KRAVE</div>
+          <div class="sectionT">Professional Mixtape Hosting</div>
+          <div class="sectionP">DJ-hosted releases + placement. Same tiers.</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Starter</div>
+          <div class="priceRow"><div class="price">$500</div></div>
+          <ul class="ul"><li>• Hosted release lane + placement</li><li>• Clean rollout support</li></ul>
+          <button class="btn js-checkout" data-plan="mixtape_hosting_starter">Buy Starter</button>
+        </div>
+
+        <div class="glass card ringCyan">
+          <div class="cardK" style="color: rgba(34,211,238,.95);">Pro</div>
+          <div class="priceRow"><div class="price">$1,000</div></div>
+          <ul class="ul"><li>• Heavier placement</li><li>• Stronger rollout support</li></ul>
+          <button class="btn btnHot js-checkout" data-plan="mixtape_hosting_pro">Buy Pro</button>
+        </div>
+
+        <div class="glass card ringPink">
+          <div class="cardK" style="color: rgba(236,72,153,.95);">Elite</div>
+          <div class="priceRow"><div class="price">$2,500</div></div>
+          <ul class="ul"><li>• Top-tier hosting lane</li><li>• Maximum impact package</li></ul>
+          <button class="btn btnCta js-checkout" data-plan="mixtape_hosting_elite">Buy Elite</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPONSORS (UNCHANGED PRICES) -->
+    <section id="sponsors" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">Brands</div>
+          <div class="sectionT">Sponsors & Takeovers</div>
+          <div class="sectionP">Same sponsor lanes. Sponsor Autopilot is the new retention engine.</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">Starter Sponsor</div>
+          <div class="priceRow"><div class="price">$1,000</div><div class="per">/ month</div></div>
+          <ul class="ul"><li>• Consistent visibility lane</li><li>• Great entry sponsor product</li></ul>
+          <button class="btn js-checkout" data-plan="starter_sponsor_monthly">Activate Starter Sponsor</button>
+        </div>
+
+        <div class="glass card ringCyan">
+          <div class="cardK" style="color: rgba(34,211,238,.95);">City Sponsor</div>
+          <div class="priceRow"><div class="price">$3,000</div><div class="per">/ month</div></div>
+          <ul class="ul"><li>• Expanded placement</li><li>• Bigger campaign lane</li></ul>
+          <button class="btn btnHot js-checkout" data-plan="sponsor_city_monthly">Activate City Sponsor</button>
+        </div>
+
+        <div class="glass card ringPink">
+          <div class="cardK" style="color: rgba(236,72,153,.95);">Takeover Sponsor</div>
+          <div class="priceRow"><div class="price">$7,000</div><div class="per">/ month</div></div>
+          <ul class="ul"><li>• Major brand dominance</li><li>• Premium takeover lane</li></ul>
+          <button class="btn btnCta js-checkout" data-plan="sponsor_takeover_monthly">Activate Takeover</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI STORE (UNCHANGED PRICES) -->
+    <section id="ai" class="section">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionK">AI Add-Ons</div>
+          <div class="sectionT">AI Feature Store</div>
+          <div class="sectionP">Same pricing. One-time creative assets.</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">AI Radio Intro</div>
+          <div class="priceRow"><div class="price">$150</div></div>
+          <ul class="ul"><li>• Station-style intro asset</li></ul>
+          <button class="btn js-checkout" data-plan="ai_radio_intro">Buy AI Radio Intro</button>
+        </div>
+
+        <div class="glass card">
+          <div class="cardK">Feature Verse Kit</div>
+          <div class="priceRow"><div class="price">$250</div></div>
+          <ul class="ul"><li>• AI-assisted feature components</li></ul>
+          <button class="btn js-checkout" data-plan="ai_feature_verse_kit">Buy Feature Verse Kit</button>
+        </div>
+
+        <div class="glass card ringCyan">
+          <div class="cardK" style="color: rgba(34,211,238,.95);">Imaging Pack</div>
+          <div class="priceRow"><div class="price">$400</div></div>
+          <ul class="ul"><li>• Station-ready imaging assets</li></ul>
+          <button class="btn btnHot js-checkout" data-plan="ai_imaging_pack">Buy Imaging Pack</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="glass card">
+          <div class="cardK">AI Social Pack</div>
+          <div class="priceRow"><div class="price">$300</div></div>
+          <button class="btn js-checkout" data-plan="ai_social_pack">Buy AI Social Pack</button>
+        </div>
+
+        <div class="glass card ringPink">
+          <div class="cardK" style="color: rgba(236,72,153,.95);">Launch Campaign</div>
+          <div class="priceRow"><div class="price">$1,000</div></div>
+          <button class="btn btnCta js-checkout" data-plan="ai_launch_campaign">Buy Launch Campaign</button>
+        </div>
+
+        <div class="glass card goldBlock">
+          <div class="cardK">Label Brand Pack</div>
+          <div class="priceRow"><div class="price goldTitle">$2,500</div></div>
+          <button class="btn js-checkout" data-plan="ai_label_brand_pack">Buy Label Brand Pack</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <section class="glass card" style="margin-top:14px;">
+        <div class="cardK">Instant Unlock</div>
+        <div style="margin-top:8px; color: rgba(148,163,184,.95); font-size: 13px; line-height:1.55;">
+          Successful checkout returns to <b>pricing.html</b> with <b>?unlocked=YOUR_ITEM</b>.
+          Your TKFM unlock script can persist access and open pages/engines.
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      © 2025 They Krave For Me Radio (TKFM) — Radio Neon + Label Gold • Built for independent artist power.
     </div>
-  </section>
-
-  <p class="footer-note">
-    Front-end only — safe on Netlify free.  
-    Later, each button can call Netlify Functions (&amp; Stripe checkout) using your
-    <strong>lookup_keys</strong> without changing this layout.
-  </p>
-</main>
-
+  </footer>
 </body>
 </html>

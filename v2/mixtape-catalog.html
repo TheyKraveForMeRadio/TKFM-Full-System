@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="tkfm-theme" content="label" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-label.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
+  <meta charset="UTF-8" />
+  <title>TKFM v2 — Mixtape Catalog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .neon-card {
+      box-shadow:
+        0 0 24px rgba(168, 85, 247, 0.35),
+        0 0 60px rgba(56, 189, 248, 0.25);
+    }
+    .soft-float {
+      animation: softFloat 7s ease-in-out infinite;
+    }
+    @keyframes softFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-black via-slate-950 to-black text-purple-100 min-h-screen font-mono">
+  <!-- HEADER -->
+  <header class="border-b border-purple-800/70 px-4 md:px-8 py-4 flex items-center justify-between bg-black/70 backdrop-blur sticky top-0 z-20">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-fuchsia-500 via-purple-500 to-sky-400 flex items-center justify-center text-xl shadow-lg shadow-fuchsia-500/50">
+        🎚
+      </div>
+      <div>
+        <h1 class="text-lg md:text-2xl font-bold tracking-wide">
+          TKFM — Mixtape Catalog
+        </h1>
+        <p class="text-[11px] md:text-xs text-purple-300">
+          This is the library Autopilot + AI DJ pull from. Tiers, statuses, and flags decide rotation priority.
+        </p>
+      </div>
+    </div>
+
+    <div class="text-right text-[10px] md:text-xs text-purple-400 space-y-1">
+      <div>Store: <code>mixtapeCatalog</code></div>
+      <div>Flags: <code>/netlify/functions/update-mixtape-catalog-flags</code></div>
+      <div id="overviewMeta">Loading…</div>
+    </div>
+  </header>
+
+  <main class="px-4 md:px-8 py-6 max-w-6xl mx-auto space-y-6">
+    <!-- TOP GRID -->
+    <section class="grid lg:grid-cols-3 gap-4 items-stretch">
+      <article class="lg:col-span-2 bg-black/70 border border-purple-800/80 rounded-3xl p-4 md:p-6 neon-card soft-float">
+        <h2 class="text-sm font-semibold mb-2 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          How the catalog drives TKFM
+        </h2>
+        <p class="text-[11px] text-purple-200 mb-2">
+          Each row in this catalog is a mixtape / project that can be fed into:
+        </p>
+        <ul class="list-disc list-inside text-[11px] text-purple-200 space-y-1">
+          <li><span class="font-semibold text-emerald-300">Autopilot rotation packs</span> (used by AI DJ Engine + AI DJ Console).</li>
+          <li><span class="font-semibold text-amber-300">Label reporting</span> (via Label Hub overview stats).</li>
+          <li><span class="font-semibold text-fuchsia-300">Future sponsor / feature modules</span> (e.g., “Sponsored by TKFM”).</li>
+        </ul>
+        <p class="text-[10px] text-purple-400 mt-2">
+          <span class="font-semibold">Tier</span> = how premium the deal is (starter / pro / elite).  
+          <span class="font-semibold">Status</span> = where it sits in your deal flow (approved / in-contract / completed).  
+          <span class="font-semibold">Autopilot Enabled</span> = whether it’s allowed into rotation packs.
+        </p>
+      </article>
+
+      <aside class="bg-black/70 border border-purple-800/80 rounded-3xl p-4 md:p-5 flex flex-col justify-between">
+        <div>
+          <h3 class="text-sm font-semibold mb-2">Navigation</h3>
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a href="label-hub.html"
+                 class="flex items-center justify-between px-3 py-2 rounded-xl border border-purple-700 hover:bg-purple-900/40">
+                <span>Label Hub</span><span>🏷️</span>
+              </a>
+            </li>
+            <li>
+              <a href="artist-submissions-console.html"
+                 class="flex items-center justify-between px-3 py-2 rounded-xl border border-fuchsia-700 hover:bg-fuchsia-900/40">
+                <span>Artist Submissions Console</span><span>📥</span>
+              </a>
+            </li>
+            <li>
+              <a href="mixtape-label-console.html"
+                 class="flex items-center justify-between px-3 py-2 rounded-xl border border-amber-700 hover:bg-amber-900/40">
+                <span>Mixtape Label Console</span><span>🧾</span>
+              </a>
+            </li>
+            <li>
+              <a href="autopilot-engine.html"
+                 class="flex items-center justify-between px-3 py-2 rounded-xl border border-cyan-700 hover:bg-cyan-900/40">
+                <span>Autopilot Engine</span><span>🤖</span>
+              </a>
+            </li>
+            <li>
+              <a href="ai-dj-engine.html"
+                 class="flex items-center justify-between px-3 py-2 rounded-xl border border-purple-700 hover:bg-purple-900/40">
+                <span>AI DJ Engine</span><span>🎛</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="mt-3 text-[10px] text-purple-500 border-t border-purple-900/60 pt-2">
+          Internal owner-only view. Public-facing views should use filtered data from here.
+        </div>
+      </aside>
+    </section>
+
+    <!-- STATS -->
+    <section class="bg-black/70 border border-purple-800/80 rounded-3xl p-4 md:p-5">
+      <div class="grid md:grid-cols-4 gap-3 text-[11px]">
+        <div class="bg-black/70 border border-purple-800 rounded-2xl p-3">
+          <div class="text-[9px] uppercase text-purple-400 mb-1">Total in Catalog</div>
+          <div id="statTotal" class="text-xl font-semibold">—</div>
+        </div>
+        <div class="bg-black/70 border border-emerald-800 rounded-2xl p-3">
+          <div class="text-[9px] uppercase text-emerald-400 mb-1">Autopilot Enabled</div>
+          <div id="statAutopilotEnabled" class="text-xl font-semibold">—</div>
+        </div>
+        <div class="bg-black/70 border border-fuchsia-800 rounded-2xl p-3">
+          <div class="text-[9px] uppercase text-fuchsia-400 mb-1">Featured / Priority</div>
+          <div id="statFeatured" class="text-xl font-semibold">—</div>
+        </div>
+        <div class="bg-black/70 border border-amber-800 rounded-2xl p-3">
+          <div class="text-[9px] uppercase text-amber-400 mb-1">Rotation-Ready (status)</div>
+          <div id="statRotationReady" class="text-xl font-semibold">—</div>
+          <div class="text-[10px] text-amber-300 mt-1">
+            approved + in-contract + completed
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 grid md:grid-cols-2 gap-4 text-[10px]">
+        <div>
+          <div class="font-semibold mb-1 text-purple-200">By Tier</div>
+          <div id="statByTier" class="space-y-0.5">
+            <!-- tier pills -->
+          </div>
+        </div>
+        <div>
+          <div class="font-semibold mb-1 text-purple-200">By Status</div>
+          <div id="statByStatus" class="space-y-0.5">
+            <!-- status pills -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTERS -->
+    <section class="bg-black/70 border border-purple-800/80 rounded-3xl p-4 md:p-5">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div class="space-y-2 flex-1">
+          <label class="block text-[11px] text-purple-300 mb-1">Search (artist / project / email / notes)</label>
+          <input id="searchInput" type="text"
+                 class="w-full bg-black/80 border border-purple-700 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-purple-400"
+                 placeholder="Type to filter catalog…" />
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:w-[500px]">
+          <div>
+            <label class="block text-[11px] text-purple-300 mb-1">Tier</label>
+            <select id="tierFilter"
+                    class="w-full bg-black/80 border border-purple-700 rounded-lg px-2 py-2 text-xs focus:outline-none focus:border-purple-400">
+              <option value="all">All</option>
+              <option value="starter">Starter</option>
+              <option value="pro">Pro</option>
+              <option value="elite">Elite</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-purple-300 mb-1">Status</label>
+            <select id="statusFilter"
+                    class="w-full bg-black/80 border border-purple-700 rounded-lg px-2 py-2 text-xs focus:outline-none focus:border-purple-400">
+              <option value="all">All</option>
+              <option value="approved">Approved</option>
+              <option value="in-contract">In Contract</option>
+              <option value="completed">Completed</option>
+              <option value="pending-intake">Pending Intake</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-purple-300 mb-1">Source</label>
+            <select id="sourceFilter"
+                    class="w-full bg-black/80 border border-purple-700 rounded-lg px-2 py-2 text-xs focus:outline-none focus:border-purple-400">
+              <option value="all">All</option>
+              <option value="artist-upload">Artist Upload</option>
+              <option value="mixtape-hosting">Mixtape Hosting</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-purple-300 mb-1">Autopilot</label>
+            <select id="autopilotFilter"
+                    class="w-full bg-black/80 border border-purple-700 rounded-lg px-2 py-2 text-xs focus:outline-none focus:border-purple-400">
+              <option value="all">All</option>
+              <option value="enabled">Enabled</option>
+              <option value="disabled">Disabled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3 flex items-center justify-between text-[11px]">
+        <button id="refreshBtn"
+                class="bg-purple-700 hover:bg-purple-600 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-md shadow-purple-900/60">
+          🔄 Refresh Catalog
+        </button>
+        <span id="resultCount" class="text-purple-400">0 results</span>
+      </div>
+    </section>
+
+    <!-- TABLE -->
+    <section class="bg-black/70 border border-purple-800/80 rounded-3xl p-4 md:p-5">
+      <div id="emptyState" class="text-center text-purple-500 text-xs py-10">
+        No catalog entries for this filter yet.
+      </div>
+
+      <div class="bg-black/60 border border-purple-800 rounded-2xl overflow-hidden shadow-lg shadow-purple-900/40">
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-xs md:text-sm">
+            <thead class="bg-purple-900/60 text-purple-100 uppercase text-[10px] md:text-xs">
+              <tr>
+                <th class="px-3 py-2 text-left">Artist / Project</th>
+                <th class="px-3 py-2 text-left hidden md:table-cell">Tier / Status</th>
+                <th class="px-3 py-2 text-left hidden md:table-cell">Source</th>
+                <th class="px-3 py-2 text-left">Autopilot / Featured</th>
+                <th class="px-3 py-2 text-left hidden md:table-cell">Created</th>
+                <th class="px-3 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-purple-800/40">
+              <!-- rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEV VIEW -->
+    <section class="bg-black/70 border border-purple-900 rounded-3xl p-4 md:p-5 shadow-inner shadow-purple-900/60">
+      <details class="text-[11px] text-purple-300">
+        <summary class="cursor-pointer mb-2">Developer View — Raw mixtapeCatalog JSON</summary>
+        <pre id="jsonDump"
+             class="mt-2 bg-black/70 border border-purple-900 rounded-2xl p-3 overflow-x-auto max-h-72 text-[10px] text-emerald-200">
+No data yet.
+        </pre>
+      </details>
+    </section>
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast"
+       class="fixed bottom-4 right-4 bg-purple-900/95 border border-purple-500 text-xs md:text-sm px-3 py-2 rounded-lg shadow-xl opacity-0 pointer-events-none transition-opacity z-50">
+    <span id="toastText"></span>
+  </div>
+
+  <script>
+    const overviewMeta = document.getElementById('overviewMeta')
+    const statTotal = document.getElementById('statTotal')
+    const statAutopilotEnabled = document.getElementById('statAutopilotEnabled')
+    const statFeatured = document.getElementById('statFeatured')
+    const statRotationReady = document.getElementById('statRotationReady')
+    const statByTier = document.getElementById('statByTier')
+    const statByStatus = document.getElementById('statByStatus')
+
+    const searchInput = document.getElementById('searchInput')
+    const tierFilter = document.getElementById('tierFilter')
+    const statusFilter = document.getElementById('statusFilter')
+    const sourceFilter = document.getElementById('sourceFilter')
+    const autopilotFilter = document.getElementById('autopilotFilter')
+    const refreshBtn = document.getElementById('refreshBtn')
+
+    const tableBody = document.getElementById('tableBody')
+    const emptyState = document.getElementById('emptyState')
+    const resultCount = document.getElementById('resultCount')
+    const jsonDump = document.getElementById('jsonDump')
+
+    const toast = document.getElementById('toast')
+    const toastText = document.getElementById('toastText')
+
+    let latestData = []
+
+    function showToast(message) {
+      toastText.textContent = message
+      toast.classList.remove('opacity-0', 'pointer-events-none')
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none')
+      }, 2600)
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '-'
+      try {
+        const d = new Date(iso)
+        return d.toLocaleDateString() + ' ' + d.toLocaleTimeString()
+      } catch {
+        return iso
+      }
+    }
+
+    function statusBadgeClass(status) {
+      switch (status) {
+        case 'approved': return 'bg-green-900/70 border border-green-600 text-green-100'
+        case 'in-contract': return 'bg-blue-900/70 border border-blue-600 text-blue-100'
+        case 'completed': return 'bg-emerald-900/70 border border-emerald-600 text-emerald-100'
+        case 'pending-intake': return 'bg-purple-900/70 border border-purple-600 text-purple-100'
+        case 'rejected': return 'bg-red-900/70 border border-red-600 text-red-100'
+        default: return 'bg-black/70 border border-purple-700 text-purple-100'
+      }
+    }
+
+    function tierBadgeClass(tier) {
+      switch (tier) {
+        case 'starter': return 'bg-slate-900/70 border border-slate-600 text-slate-100'
+        case 'pro': return 'bg-indigo-900/70 border border-indigo-600 text-indigo-100'
+        case 'elite': return 'bg-fuchsia-900/70 border border-fuchsia-600 text-fuchsia-100'
+        case 'custom': return 'bg-zinc-900/70 border border-zinc-600 text-zinc-100'
+        default: return 'bg-black/70 border border-purple-700 text-purple-100'
+      }
+    }
+
+    function sourceBadgeClass(source) {
+      switch (source) {
+        case 'artist-upload': return 'bg-emerald-900/70 border border-emerald-600 text-emerald-100'
+        case 'mixtape-hosting': return 'bg-amber-900/70 border border-amber-600 text-amber-100'
+        default: return 'bg-slate-900/70 border border-slate-600 text-slate-100'
+      }
+    }
+
+    function renderPills(map, container, paletteFn) {
+      container.innerHTML = ''
+      const entries = Object.entries(map || {})
+      if (!entries.length) {
+        container.textContent = 'No data yet.'
+        return
+      }
+      entries.forEach(([key, value]) => {
+        const span = document.createElement('span')
+        span.className =
+          'inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] mr-1 mb-1 ' +
+          paletteFn(key)
+        span.textContent = `${key}: ${value}`
+        container.appendChild(span)
+      })
+    }
+
+    function computeStats() {
+      const total = latestData.length
+      statTotal.textContent = total
+
+      let autoEnabled = 0
+      let featuredCount = 0
+      let rotationReady = 0
+      const byTier = {}
+      const byStatus = {}
+
+      latestData.forEach(item => {
+        if (item.autopilotEnabled) autoEnabled++
+        if (item.featured) featuredCount++
+
+        const status = item.orderStatus || 'pending-intake'
+        const tier = item.tier || 'custom'
+
+        byStatus[status] = (byStatus[status] || 0) + 1
+        byTier[tier] = (byTier[tier] || 0) + 1
+
+        if (['approved', 'in-contract', 'completed'].includes(status)) {
+          rotationReady++
+        }
+      })
+
+      statAutopilotEnabled.textContent = autoEnabled
+      statFeatured.textContent = featuredCount
+      statRotationReady.textContent = rotationReady
+
+      renderPills(byTier, statByTier, tierBadgeClass)
+      renderPills(byStatus, statByStatus, statusBadgeClass)
+    }
+
+    function preview(text, max = 60) {
+      if (!text) return '-'
+      if (text.length <= max) return text
+      return text.slice(0, max) + '…'
+    }
+
+    async function updateFlags(id, flags) {
+      try {
+        const res = await fetch('/.netlify/functions/update-mixtape-catalog-flags', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, ...flags })
+        })
+        const data = await res.json().catch(() => ({}))
+
+        if (!res.ok || !data.ok) {
+          console.error('update-mixtape-catalog-flags error:', data)
+          showToast('Update failed')
+          return
+        }
+
+        showToast('Catalog flags updated')
+        fetchCatalog()
+      } catch (err) {
+        console.error(err)
+        showToast('Error updating flags')
+      }
+    }
+
+    function buildRow(item) {
+      const tr = document.createElement('tr')
+      tr.className = 'hover:bg-purple-900/30 transition-colors align-top'
+
+      const status = item.orderStatus || 'pending-intake'
+      const tier = item.tier || 'custom'
+      const source = item.source || 'other'
+      const autopilotEnabled = !!item.autopilotEnabled
+      const featured = !!item.featured
+
+      const autopilotLabel = autopilotEnabled ? 'On' : 'Off'
+      const featuredLabel = featured ? 'Yes' : 'No'
+
+      tr.innerHTML = `
+        <td class="px-3 py-2">
+          <div class="font-semibold">${item.artistName || 'Unknown Artist'}</div>
+          <div class="text-[10px] text-purple-300">${preview(item.projectTitle || '', 50)}</div>
+          <div class="text-[10px] text-purple-500 md:hidden">
+            ${tier.toUpperCase()} • ${status}
+          </div>
+        </td>
+        <td class="px-3 py-2 hidden md:table-cell">
+          <div class="flex flex-wrap gap-1 mb-1">
+            <span class="inline-flex px-2 py-1 rounded-full text-[10px] ${tierBadgeClass(tier)}">
+              ${tier}
+            </span>
+            <span class="inline-flex px-2 py-1 rounded-full text-[10px] ${statusBadgeClass(status)}">
+              ${status}
+            </span>
+          </div>
+          <div class="text-[10px] text-purple-400">
+            Email: ${item.email || '-'}
+          </div>
+        </td>
+        <td class="px-3 py-2 hidden md:table-cell">
+          <div class="inline-flex px-2 py-1 rounded-full text-[10px] ${sourceBadgeClass(source)} mb-1">
+            ${source}
+          </div>
+          <div class="text-[10px] text-purple-400">
+            ${item.sourceUploadId ? 'Upload: ' + item.sourceUploadId : ''}
+            ${item.sourceOrderId ? 'Order: ' + item.sourceOrderId : ''}
+          </div>
+          <div class="text-[10px] text-emerald-300 truncate">
+            ${item.links || ''}
+          </div>
+        </td>
+        <td class="px-3 py-2">
+          <div class="flex flex-col gap-1 text-[10px]">
+            <button class="toggle-autopilot px-2 py-1 rounded-full border ${autopilotEnabled
+              ? 'border-emerald-500 text-emerald-200 bg-emerald-900/40'
+              : 'border-slate-600 text-slate-200 hover:bg-slate-800/60'}">
+              🎛 Autopilot: ${autopilotLabel}
+            </button>
+            <button class="toggle-featured px-2 py-1 rounded-full border ${featured
+              ? 'border-fuchsia-500 text-fuchsia-200 bg-fuchsia-900/40'
+              : 'border-slate-600 text-slate-200 hover:bg-slate-800/60'}">
+              ⭐ Featured: ${featuredLabel}
+            </button>
+          </div>
+        </td>
+        <td class="px-3 py-2 hidden md:table-cell">
+          <div class="text-[11px]">${formatDate(item.createdAt)}</div>
+          <div class="text-[10px] text-purple-500">Updated: ${formatDate(item.updatedAt)}</div>
+        </td>
+        <td class="px-3 py-2">
+          <div class="flex flex-wrap gap-1 text-[10px]">
+            <a href="${item.links || '#'}" target="_blank"
+               class="px-2 py-1 rounded border border-emerald-600 text-emerald-200 hover:bg-emerald-900/60 ${item.links ? '' : 'pointer-events-none opacity-40'}">
+              🔗 Open Link
+            </a>
+            <button class="notes-btn px-2 py-1 rounded border border-purple-600 text-purple-200 hover:bg-purple-800/60">
+              📝 Notes
+            </button>
+          </div>
+        </td>
+      `
+
+      const toggleAutopilotBtn = tr.querySelector('.toggle-autopilot')
+      const toggleFeaturedBtn = tr.querySelector('.toggle-featured')
+      const notesBtn = tr.querySelector('.notes-btn')
+
+      toggleAutopilotBtn.addEventListener('click', () => {
+        updateFlags(item.id, { autopilotEnabled: !autopilotEnabled })
+      })
+
+      toggleFeaturedBtn.addEventListener('click', () => {
+        updateFlags(item.id, { featured: !featured })
+      })
+
+      notesBtn.addEventListener('click', () => {
+        const existing = item.labelNotes || ''
+        const next = window.prompt('Label internal notes for this catalog entry:', existing)
+        if (next === null) return
+        updateFlags(item.id, { labelNotes: next })
+      })
+
+      return tr
+    }
+
+    function renderTable(data) {
+      tableBody.innerHTML = ''
+      if (!data.length) {
+        emptyState.classList.remove('hidden')
+        resultCount.textContent = '0 results'
+        return
+      }
+      emptyState.classList.add('hidden')
+      data.forEach(item => tableBody.appendChild(buildRow(item)))
+      resultCount.textContent = data.length + ' result' + (data.length === 1 ? '' : 's')
+    }
+
+    function applyFiltersLocal() {
+      const q = searchInput.value.trim().toLowerCase()
+      const tier = tierFilter.value
+      const status = statusFilter.value
+      const source = sourceFilter.value
+      const auto = autopilotFilter.value
+
+      let filtered = latestData.slice()
+
+      if (tier !== 'all') {
+        filtered = filtered.filter(i => (i.tier || 'custom') === tier)
+      }
+      if (status !== 'all') {
+        filtered = filtered.filter(i => (i.orderStatus || 'pending-intake') === status)
+      }
+      if (source !== 'all') {
+        filtered = filtered.filter(i => {
+          const s = i.source || 'other'
+          if (source === 'other') return s !== 'artist-upload' && s !== 'mixtape-hosting'
+          return s === source
+        })
+      }
+      if (auto !== 'all') {
+        filtered = filtered.filter(i => {
+          const flag = !!i.autopilotEnabled
+          return auto === 'enabled' ? flag : !flag
+        })
+      }
+      if (q) {
+        filtered = filtered.filter(i => {
+          const blob = [
+            i.artistName,
+            i.projectTitle,
+            i.email,
+            i.notes,
+            i.labelNotes
+          ].join(' ').toLowerCase()
+          return blob.includes(q)
+        })
+      }
+
+      renderTable(filtered)
+    }
+
+    async function fetchCatalog() {
+      // same helper as Label Hub uses: just read the store via getStore proxied function
+      // here we reuse get-label-overview if you want, but simplest is a tiny passthrough function.
+      // For now, we assume a direct JSON endpoint exists at /.netlify/functions/get-store-mixtape-catalog
+      // BUT since we didn't define that, we'll mimic a small internal function:
+      try {
+        overviewMeta.textContent = 'Loading catalog…'
+        // Reuse existing label-overview feed if available
+        // Fallback: simple direct function that returns mixtapeCatalog only is recommended later.
+        const res = await fetch('/.netlify/functions/get-label-overview')
+        const data = await res.json()
+        const catalog = (data.catalog && data.catalog.full) || data.catalogItems || data.catalog || []
+
+        // If catalog is an array already:
+        latestData = Array.isArray(catalog) ? catalog : []
+
+        jsonDump.textContent = JSON.stringify(latestData, null, 2)
+
+        overviewMeta.textContent = 'Loaded ' + latestData.length + ' catalog entries.'
+        computeStats()
+        applyFiltersLocal()
+      } catch (err) {
+        console.error(err)
+        overviewMeta.textContent = 'Error loading catalog.'
+        showToast('Error loading catalog')
+      }
+    }
+
+    // Because get-label-overview currently returns summary only in this project,
+    // we’ll provide a tiny fallback loader that hits a dedicated catalog function if you add it later.
+    // For now we try to read /get-mixtape-catalog if it exists.
+    async function fetchCatalogFallbackIfNeeded() {
+      if (latestData.length) return
+      try {
+        const res = await fetch('/.netlify/functions/get-mixtape-catalog')
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          latestData = data
+          jsonDump.textContent = JSON.stringify(latestData, null, 2)
+          overviewMeta.textContent = 'Loaded ' + latestData.length + ' catalog entries (direct).'
+          computeStats()
+          applyFiltersLocal()
+        }
+      } catch (err) {
+        console.error('fallback catalog loader error', err)
+      }
+    }
+
+    refreshBtn.addEventListener('click', () => {
+      latestData = []
+      fetchCatalog().then(fetchCatalogFallbackIfNeeded)
+    })
+    searchInput.addEventListener('input', applyFiltersLocal)
+    tierFilter.addEventListener('change', applyFiltersLocal)
+    statusFilter.addEventListener('change', applyFiltersLocal)
+    sourceFilter.addEventListener('change', applyFiltersLocal)
+    autopilotFilter.addEventListener('change', applyFiltersLocal)
+
+    // init
+    fetchCatalog().then(fetchCatalogFallbackIfNeeded)
+  </script>
+</body>
+</html>

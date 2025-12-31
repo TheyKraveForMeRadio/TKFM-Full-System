@@ -4,7 +4,12 @@
 dist/
 node_modules/
 <<<<<<< HEAD
+<<<<<<< HEAD
 v2/node_modules/
+=======
+dist/
+.vite/
+>>>>>>> v2-clean-neon
 =======
 dist/
 .vite/

@@ -1,0 +1,22 @@
+/* TKFM RECORDS — Luxury Gold Estate theme */
+body.tkfm-theme-label{
+  --bg:#020617;
+  --panel: rgba(2,6,23,.80);
+  --panel2: rgba(15,23,42,.55);
+  --stroke: rgba(250,204,21,.18);
+  --text: rgba(226,232,240,1);
+  --muted: rgba(203,213,225,.85);
+
+  --c1:#facc15;
+  --c2:#eab308;
+  --c3:#f97316;
+  --c4:#facc15;
+}
+
+body.tkfm-theme-label .tkfm-topbar{border-bottom-color: rgba(250,204,21,.16)}
+body.tkfm-theme-label .tkfm-pill{
+  border-color: rgba(250,204,21,.20);
+}
+body.tkfm-theme-label .tkfm-pill:hover{
+  border-color: rgba(250,204,21,.55);
+}

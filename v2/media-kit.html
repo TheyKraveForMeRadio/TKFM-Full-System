@@ -1,51 +1,880 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta name="tkfm-theme" content="radio" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-radio.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Media Kit — TKFM</title>
-  <meta name="description" content="TKFM media kit and sponsor package overview." />
-  <meta property="og:image" content="/tkfm-logo.jpg" />
+  <title>TKFM Media Kit — They Krave For Me Radio</title>
+  <meta name="description" content="They Krave For Me Radio — TKFM Media Kit. Sponsor tiers and label packages for The Independent Artist Power Station." />
+
+  <style>
+    /* ROOT / BACKGROUND */
+    body.tkfm-graphfx-root {
+      position: relative !important;
+      min-height: 100vh !important;
+      overflow-x: hidden !important;
+      background: radial-gradient(circle at top left, #020014, #020617 55%, #000000 100%) !important;
+      color: #f9fafb !important;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .tkfm-bg-main {
+      position: fixed;
+      inset: -25%;
+      pointer-events: none;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 0, 128, 0.5), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.45), transparent 60%);
+      filter: blur(10px);
+      animation: tkfmGlowMK 28s linear infinite alternate;
+      opacity: 0.9;
+    }
+
+    .tkfm-bg-orbit {
+      position: fixed;
+      inset: -40%;
+      pointer-events: none;
+      z-index: -4;
+      background:
+        conic-gradient(
+          from 200deg,
+          rgba(255, 0, 128, 0.28),
+          rgba(56, 189, 248, 0.28),
+          rgba(250, 204, 21, 0.16),
+          rgba(255, 0, 128, 0.28)
+        );
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      filter: blur(45px);
+      animation: tkfmOrbitMK 42s linear infinite;
+    }
+
+    @keyframes tkfmGlowMK {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(2%, -4%, 0) scale(1.02); }
+      100% { transform: translate3d(-3%, 3%, 0) scale(1.03); }
+    }
+
+    @keyframes tkfmOrbitMK {
+      0% { transform: rotate(0deg) scale(1.06); }
+      100% { transform: rotate(360deg) scale(1.06); }
+    }
+
+    /* CRT MODE */
+    body.crt-active {
+      background: #010101 !important;
+      color: #f9fafb !important;
+      text-shadow: 0 0 2px rgba(0, 255, 128, 0.6);
+    }
+
+    body.crt-active main,
+    body.crt-active .tkfm-card,
+    body.crt-active .tkfm-pricing-grid,
+    body.crt-active .tkfm-pill-section,
+    body.crt-active .tkfm-ticker {
+      filter: contrast(1.15) saturate(1.2) hue-rotate(-8deg);
+    }
+
+    .tkfm-crt-mask {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      opacity: 0;
+      mix-blend-mode: soft-light;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.12), transparent 55%);
+      background-size: 100% 2px, 120% 120%;
+      animation: tkfmCrtFlicker 0.2s infinite alternate;
+    }
+
+    body.crt-active .tkfm-crt-mask {
+      opacity: 0.3;
+    }
+
+    @keyframes tkfmCrtFlicker {
+      0% { opacity: 0.22; transform: translate3d(0,0,0); }
+      50% { opacity: 0.33; transform: translate3d(0,-0.5px,0); }
+      100% { opacity: 0.19; transform: translate3d(0,0.5px,0); }
+    }
+
+    /* PARTICLES */
+    #tkfm-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    main.tkfm-main {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem 3.5rem;
+    }
+
+    /* HEADER / HERO */
+    .tkfm-page-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .tkfm-kicker {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(191, 219, 254, 0.98);
+      margin-bottom: 0.3rem;
+    }
+
+    .tkfm-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.6rem;
+      justify-content: space-between;
+    }
+
+    .tkfm-title {
+      font-size: 2rem;
+      margin: 0;
+      font-weight: 900;
+      background: linear-gradient(110deg, #ff007f, #f97316, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 20px rgba(244, 63, 94, 0.7),
+        0 0 34px rgba(34, 211, 238, 0.7);
+    }
+
+    .tkfm-sub {
+      font-size: 0.9rem;
+      color: rgba(226, 232, 240, 0.94);
+      max-width: 40rem;
+      margin-top: 0.35rem;
+    }
+
+    .tkfm-sub span {
+      color: #fbbf24;
+    }
+
+    .tkfm-header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .tkfm-pill-tag {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: rgba(226, 232, 240, 0.96);
+    }
+
+    .tkfm-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.45rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.75);
+      color: #e0f2fe;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.52), rgba(15,23,42,0.98));
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform 0.16s ease-out,
+        box-shadow 0.16s ease-out,
+        border-color 0.16s ease-out,
+        background 0.16s ease-out;
+    }
+
+    .tkfm-btn-primary {
+      border-color: rgba(219, 39, 119, 0.9);
+      background: radial-gradient(circle at top left, rgba(219,39,119,0.85), rgba(15,23,42,0.98));
+      color: #fdf2f8;
+    }
+
+    .tkfm-btn-ghost {
+      background: rgba(15, 23, 42, 0.8);
+      border-style: dashed;
+    }
+
+    .tkfm-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.5), transparent 60%);
+      opacity: 0;
+      transform: translate3d(-40%, -40%, 0);
+      transition:
+        opacity 0.18s ease-out,
+        transform 0.24s ease-out;
+      pointer-events: none;
+    }
+
+    .tkfm-btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.9),
+        0 0 20px rgba(56, 189, 248, 0.65);
+      border-color: rgba(56, 189, 248, 0.98);
+    }
+
+    .tkfm-btn-primary:hover {
+      box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.9),
+        0 0 22px rgba(244, 63, 94, 0.9);
+      border-color: rgba(244, 63, 94, 0.98);
+    }
+
+    .tkfm-btn:hover::after {
+      opacity: 0.7;
+      transform: translate3d(0,0,0);
+    }
+
+    /* TICKER */
+    .tkfm-ticker {
+      position: relative;
+      margin: 1rem 0 1.6rem;
+      border-radius: 999px;
+      padding: 0.4rem 0;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(15,23,42,0.98));
+      overflow: hidden;
+      box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.95),
+        0 0 18px rgba(15, 23, 42, 0.9);
+    }
+
+    .tkfm-ticker-label {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(251, 113, 133, 0.98);
+    }
+
+    .tkfm-ticker-track-wrap {
+      overflow: hidden;
+      margin-left: 8rem;
+    }
+
+    .tkfm-ticker-track {
+      display: inline-flex;
+      gap: 2.5rem;
+      white-space: nowrap;
+      animation: tkfmTickerMove 24s linear infinite;
+      font-size: 0.8rem;
+      color: rgba(226, 232, 240, 0.95);
+    }
+
+    @keyframes tkfmTickerMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* GRID LAYOUT */
+    .tkfm-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 1.4rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 980px) {
+      .tkfm-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .tkfm-card {
+      position: relative;
+      border-radius: 22px;
+      padding: 1.1rem 1rem 1.1rem;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.78), rgba(15,23,42,0.98));
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.95),
+        0 0 32px rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+    }
+
+    .tkfm-card::before {
+      content: "";
+      position: absolute;
+      inset: -25%;
+      background: conic-gradient(
+        from 220deg,
+        rgba(255, 0, 128, 0.3),
+        rgba(56, 189, 248, 0.3),
+        rgba(250, 204, 21, 0.2),
+        rgba(255, 0, 128, 0.3)
+      );
+      opacity: 0.45;
+      filter: blur(26px);
+      z-index: -1;
+    }
+
+    .tkfm-glass {
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(15,23,42,0.94));
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.9),
+        0 0 32px rgba(15, 23, 42, 0.95);
+    }
+
+    .tkfm-card-header {
+      margin-bottom: 0.8rem;
+    }
+
+    .tkfm-card-kicker {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(191, 219, 254, 0.95);
+      margin-bottom: 0.18rem;
+    }
+
+    .tkfm-card-title {
+      font-size: 1rem;
+      margin: 0 0 0.2rem;
+    }
+
+    .tkfm-card-sub {
+      font-size: 0.8rem;
+      color: rgba(226, 232, 240, 0.9);
+      margin: 0;
+    }
+
+    /* PRICING GRID */
+    .tkfm-pricing-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.7rem;
+    }
+
+    .tkfm-tier {
+      border-radius: 18px;
+      padding: 0.7rem 0.75rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      font-size: 0.78rem;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(0) translateZ(0);
+      transition:
+        transform 0.16s ease-out,
+        border-color 0.16s ease-out,
+        box-shadow 0.16s ease-out,
+        background 0.16s ease-out;
+    }
+
+    .tkfm-tier::before {
+      content: "";
+      position: absolute;
+      inset: -25%;
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.28), transparent 60%);
+      opacity: 0;
+      mix-blend-mode: screen;
+      transform: translate3d(-18%, -12%, 0);
+      transition:
+        opacity 0.2s ease-out,
+        transform 0.2s ease-out;
+    }
+
+    .tkfm-tier:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(56, 189, 248, 0.96);
+      box-shadow:
+        0 14px 30px rgba(15, 23, 42, 0.98),
+        0 0 24px rgba(56, 189, 248, 0.8);
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.6), rgba(15,23,42,0.97));
+    }
+
+    .tkfm-tier:hover::before {
+      opacity: 0.9;
+      transform: translate3d(0,0,0);
+    }
+
+    .tkfm-tier-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      align-items: baseline;
+      margin-bottom: 0.25rem;
+    }
+
+    .tkfm-tier-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .tkfm-tier-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(251, 191, 36, 0.98);
+    }
+
+    .tkfm-tier-price {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 0.15rem;
+      background: linear-gradient(120deg, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
+    }
+
+    .tkfm-tier-desc {
+      font-size: 0.78rem;
+      color: rgba(226, 232, 240, 0.94);
+    }
+
+    .tkfm-tier-meta {
+      font-size: 0.74rem;
+      color: rgba(148, 163, 184, 0.96);
+      margin-top: 0.25rem;
+    }
+
+    .tkfm-tier-meta strong {
+      color: rgba(190, 242, 100, 0.98);
+    }
+
+    .tkfm-tier-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.35rem;
+    }
+
+    .tkfm-mini-link {
+      font-size: 0.74rem;
+      color: rgba(129, 230, 217, 0.96);
+      text-decoration: none;
+    }
+
+    .tkfm-mini-link:hover {
+      text-decoration: underline;
+    }
+
+    /* RIGHT COLUMN: HIGHLIGHTS + CONTACT */
+    .tkfm-pill-section {
+      border-radius: 18px;
+      padding: 0.7rem 0.8rem;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      font-size: 0.78rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .tkfm-pill-title {
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .tkfm-pill-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .tkfm-pill-list li::before {
+      content: "• ";
+      color: rgba(129, 230, 217, 0.96);
+    }
+
+    .tkfm-note-card {
+      border-radius: 16px;
+      padding: 0.6rem 0.7rem;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px dashed rgba(148, 163, 184, 0.9);
+      font-size: 0.78rem;
+      color: rgba(209, 213, 219, 0.98);
+      margin-top: 0.7rem;
+    }
+
+    .tkfm-note-card span {
+      display: block;
+      font-size: 0.74rem;
+      color: rgba(148, 163, 184, 0.98);
+      margin-top: 0.3rem;
+    }
+
+    .tkfm-contact-tag {
+      font-size: 0.78rem;
+      margin-top: 0.2rem;
+      color: rgba(191, 219, 254, 0.98);
+    }
+
+    .tkfm-contact-tag strong {
+      color: #e5e7eb;
+    }
+
+    /* BOTTOM ROW */
+    .tkfm-bottom-row {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: rgba(148, 163, 184, 0.98);
+    }
+
+    .tkfm-bottom-row span strong {
+      color: rgba(248, 250, 252, 0.98);
+    }
+
+    @media (max-width: 640px) {
+      .tkfm-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .tkfm-header-actions {
+        margin-top: 0.5rem;
+      }
+      .tkfm-bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
-<body>
+<body class="tkfm-graphfx-root">
+  <div class="tkfm-crt-mask"></div>
+  <div class="tkfm-bg-main"></div>
+  <div class="tkfm-bg-orbit"></div>
+  <canvas id="tkfm-particles"></canvas>
+
   <div id="tkfm-header"></div>
 
-  <main class="container">
-    <section class="page-hero">
-      <h1><span class="gradient">Media Kit</span></h1>
-      <p>Give sponsors a clean one-page summary: who you are, your audience, and packages.</p>
+  <main class="tkfm-main">
+    <!-- HEADER -->
+    <header class="tkfm-page-header">
+      <div class="tkfm-kicker">TKFM Media Kit</div>
+      <div class="tkfm-title-row">
+        <div>
+          <h1 class="tkfm-title">Sponsor & Label Power Tiers.</h1>
+          <p class="tkfm-sub">
+            <span>No more guessing or lowballing.</span> These are the lanes and minimums for
+            brands, labels, and serious partners who want to move with They Krave For Me Radio.
+          </p>
+        </div>
+        <div class="tkfm-header-actions">
+          <div class="tkfm-pill-tag">The Independent Artist Power Station</div>
+          <a href="/index.html" class="tkfm-btn tkfm-btn-ghost">Back Home</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- TICKER -->
+    <section class="tkfm-ticker">
+      <div class="tkfm-ticker-label">Rate pulse</div>
+      <div class="tkfm-ticker-track-wrap">
+        <div class="tkfm-ticker-track">
+          <span>Spotlight placements · Show segments · Label nights · Live reads · Rollout partners ·</span>
+          <span>We don’t sell followers — we move records and brand moments ·</span>
+          <span>They Krave For Me Radio — built for serious motion ·</span>
+        </div>
+      </div>
     </section>
 
-    <div class="panel"><div class="panel-inner">
-      <div class="list">
-        <div class="item">
-          <div><strong>Station Summary</strong><span>The Independent Artist Power Station. Premium platform positioning.</span></div>
-          <div class="tag">PDF soon</div>
+    <!-- MAIN LAYOUT -->
+    <section class="tkfm-layout">
+      <!-- LEFT: PRICING / TIERS -->
+      <div class="tkfm-card tkfm-glass">
+        <div class="tkfm-card-header">
+          <div class="tkfm-card-kicker">Sponsor & Label Tiers</div>
+          <h2 class="tkfm-card-title">Baseline Rates (You Can Always Go Higher).</h2>
+          <p class="tkfm-card-sub">
+            These are <strong>minimums</strong>. When demand grows, you move the numbers up,
+            not down. Everything connects back into TKFM’s lanes and rotation engine.
+          </p>
         </div>
-        <div class="item">
-          <div><strong>Packages</strong><span>Bronze $500 • Silver $1,000 • Gold $2,500+</span></div>
-          <div class="tag">Sponsor</div>
+
+        <div class="tkfm-pricing-grid">
+          <!-- Spotlight Feature -->
+          <article class="tkfm-tier">
+            <div class="tkfm-tier-header">
+              <div class="tkfm-tier-name">Spotlight Feature</div>
+              <div class="tkfm-tier-tag">Artist · Label</div>
+            </div>
+            <div class="tkfm-tier-price">$150+</div>
+            <div class="tkfm-tier-desc">
+              Highlight a single artist or release with on-air mentions, homepage placement, and social support.
+            </div>
+            <div class="tkfm-tier-meta">
+              <strong>Use when:</strong> you’re pushing 1 key record and want listeners to actually remember it.
+            </div>
+            <div class="tkfm-tier-links">
+              <a href="/artist-upload.html" class="tkfm-mini-link">Artist submissions →</a>
+            </div>
+          </article>
+
+          <!-- Segment Sponsor -->
+          <article class="tkfm-tier">
+            <div class="tkfm-tier-header">
+              <div class="tkfm-tier-name">Segment Sponsor (Weekly)</div>
+              <div class="tkfm-tier-tag">Sponsor</div>
+            </div>
+            <div class="tkfm-tier-price">$1,250 / mo</div>
+            <div class="tkfm-tier-desc">
+              Brand owns a recurring segment (countdown, show block, or “brought to you by” moment) listeners hear every week.
+            </div>
+            <div class="tkfm-tier-meta">
+              <strong>Baseline:</strong> weekly read + tags + site mention, with room to add clips and posts.
+            </div>
+            <div class="tkfm-tier-links">
+              <a href="/contact.html" class="tkfm-mini-link">Request segment →</a>
+            </div>
+          </article>
+
+          <!-- Show / Night Partner -->
+          <article class="tkfm-tier">
+            <div class="tkfm-tier-header">
+              <div class="tkfm-tier-name">Show / Night Partner</div>
+              <div class="tkfm-tier-tag">Label · Sponsor</div>
+            </div>
+            <div class="tkfm-tier-price">$2,500 / mo</div>
+            <div class="tkfm-tier-desc">
+              Co-branded show or night with deep integration: IDs, drops, intros, and consistent mentions baked into the format.
+            </div>
+            <div class="tkfm-tier-meta">
+              <strong>Baseline:</strong> show naming, on-air tags, site placement, and shared promo assets.
+            </div>
+            <div class="tkfm-tier-links">
+              <a href="/label.html" class="tkfm-mini-link">Label night intake →</a>
+              <a href="/contact.html" class="tkfm-mini-link">Show partner inquiry →</a>
+            </div>
+          </article>
+
+          <!-- Roster Sampler -->
+          <article class="tkfm-tier">
+            <div class="tkfm-tier-header">
+              <div class="tkfm-tier-name">Roster Sampler Takeover</div>
+              <div class="tkfm-tier-tag">Label</div>
+            </div>
+            <div class="tkfm-tier-price">$1,250 / drop</div>
+            <div class="tkfm-tier-desc">
+              1-hour label sampler special: multiple artists, tagged as your imprint, positioned as “Label Night” on TKFM.
+            </div>
+            <div class="tkfm-tier-meta">
+              <strong>Baseline:</strong> single special with rotation support for focus records.
+            </div>
+            <div class="tkfm-tier-links">
+              <a href="/label.html" class="tkfm-mini-link">Start label sampler →</a>
+            </div>
+          </article>
+
+          <!-- Custom Rollout Partner -->
+          <article class="tkfm-tier">
+            <div class="tkfm-tier-header">
+              <div class="tkfm-tier-name">Custom Rollout Partner</div>
+              <div class="tkfm-tier-tag">Label</div>
+            </div>
+            <div class="tkfm-tier-price">$2,500–$5,000+</div>
+            <div class="tkfm-tier-desc">
+              Multi-week project rollout: singles, remixes, interviews, drops, and live moments synced into one consistent motion.
+            </div>
+            <div class="tkfm-tier-meta">
+              <strong>Baseline:</strong> depends on markets, timeline, and deliverables — but never under this range.
+            </div>
+            <div class="tkfm-tier-links">
+              <a href="/label.html" class="tkfm-mini-link">Rollout intake →</a>
+            </div>
+          </article>
+
+          <!-- Station Partner -->
+          <article class="tkfm-tier">
+            <div class="tkfm-tier-header">
+              <div class="tkfm-tier-name">Station Partner</div>
+              <div class="tkfm-tier-tag">Sponsor · Label</div>
+            </div>
+            <div class="tkfm-tier-price">Custom (High)</div>
+            <div class="tkfm-tier-desc">
+              Top-tier partner across multiple shows, segments, and digital placements — when a brand or label wants
+              to live inside TKFM for a season.
+            </div>
+            <div class="tkfm-tier-meta">
+              <strong>Baseline:</strong> starts above the Show / Night level and scales with reach + time.
+            </div>
+            <div class="tkfm-tier-links">
+              <a href="/contact.html" class="tkfm-mini-link">Start station partner conversation →</a>
+            </div>
+          </article>
         </div>
-        <div class="item">
-          <div><strong>Contact</strong><span>Business inquiries and partnerships.</span></div>
-          <div class="tag">Email</div>
+
+        <div class="tkfm-note-card">
+          These numbers are the <strong>floor</strong>, not the ceiling.
+          <span>
+            When you connect this to Stripe, each tier can map to a product or plan so you never
+            discount by accident just because you forgot what you usually charge.
+          </span>
         </div>
       </div>
 
-      <div class="hr"></div>
+      <!-- RIGHT: WHY TKFM / CONTACT -->
+      <div>
+        <div class="tkfm-pill-section">
+          <div class="tkfm-pill-title">Why TKFM Hits Different.</div>
+          <ul class="tkfm-pill-list">
+            <li>Built as a <strong>station</strong>, not just a playlist or page.</li>
+            <li>Artist, DJ, label, and sponsor lanes all plug into the same rotation engine.</li>
+            <li>Live365-powered stream for real listening, not just background noise.</li>
+            <li>Neon visual identity that makes campaigns feel bigger than a single post.</li>
+          </ul>
+        </div>
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a class="btn btn-primary" href="/contact.html">Sponsor Inquiry</a>
-        <button class="btn js-copy-link" type="button" data-url="https://tkfmradio.com/media-kit">Copy Page Link</button>
+        <div class="tkfm-pill-section">
+          <div class="tkfm-pill-title">For Artists & DJs.</div>
+          <ul class="tkfm-pill-list">
+            <li><strong>Artists:</strong> use the Spotlight tier + rotation to launch new records.</li>
+            <li><strong>DJs:</strong> build shows and takeovers that can attach to sponsor tiers later.</li>
+            <li>Everyone moves inside the same TKFM ecosystem — so wins stack.</li>
+          </ul>
+          <div class="tkfm-tier-links" style="margin-top:0.4rem;">
+            <a href="/artist-upload.html" class="tkfm-mini-link">Artist submissions →</a>
+            <a href="/dj-tools.html" class="tkfm-mini-link">DJ portal →</a>
+          </div>
+        </div>
+
+        <div class="tkfm-pill-section">
+          <div class="tkfm-pill-title">Contact & Next Steps.</div>
+          <p>
+            When you’re ready for a real conversation, tell us where you fit:
+            <strong>Artist, DJ, Label, or Sponsor</strong> — and what kind of motion you’re looking for.
+          </p>
+          <p class="tkfm-contact-tag">
+            Email: <strong>theykraveformeradio@gmail.com</strong><br />
+            Subject line: <strong>“TKFM — Media Kit Inquiry”</strong>
+          </p>
+          <div class="tkfm-tier-links" style="margin-top:0.5rem;">
+            <a href="/contact.html" class="tkfm-mini-link">Open contact page →</a>
+            <a href="/index.html" class="tkfm-mini-link">Back to station home →</a>
+          </div>
+        </div>
+
+        <div class="tkfm-note-card">
+          <strong>Internal rule:</strong> if a brand or label wants more than this, the number goes <em>up</em>, not down.
+          <span>
+            You can keep building all of this locally on <strong>localhost:5173</strong> and only
+            flip it live on Netlify once you’re fully locked in.
+          </span>
+        </div>
       </div>
-    </div></div>
+    </section>
+
+    <!-- BOTTOM -->
+    <section class="tkfm-bottom-row">
+      <span>
+        <strong>TKFM promise:</strong> every partnership should feel like it lives in the culture you built — not just beside it.
+      </span>
+      <span>
+        Sponsor tiers + label packages today → Stripe-connected products later, when you’re ready.
+      </span>
+    </section>
   </main>
 
   <div id="tkfm-footer"></div>
 
   <script type="module">
     import { mountShell } from "/src/_page.js";
-    mountShell("");
+
+    mountShell("media-kit");
+
+    // CRT helper for shell toggle if you want to wire a button there
+    const crtMask = document.querySelector(".tkfm-crt-mask");
+    function toggleCRT() {
+      document.body.classList.toggle("crt-active");
+    }
+    window.tkfmToggleCRT = toggleCRT;
+
+    // GraphFX particles
+    const canvas = document.getElementById("tkfm-particles");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
+      const particles = [];
+
+      function spawnParticle(x, y) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 0.9,
+          vy: (Math.random() - 0.5) * 0.9 - 0.2,
+          life: 1,
+        });
+      }
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        const amount = 3;
+        for (let i = 0; i < amount; i++) {
+          spawnParticle(e.clientX, e.clientY);
+        }
+      });
+
+      function renderParticles() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.01;
+          p.life -= 0.02;
+
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          const alpha = p.life;
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 14);
+          grad.addColorStop(0, `rgba(255, 0, 128, ${alpha})`);
+          grad.addColorStop(0.5, `rgba(56, 189, 248, ${alpha * 0.8})`);
+          grad.addColorStop(1, `rgba(0, 0, 0, 0)`);
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(renderParticles);
+      }
+      requestAnimationFrame(renderParticles);
+    }
   </script>
 </body>
 </html>

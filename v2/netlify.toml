@@ -3,5 +3,13 @@
   publish = "dist"
   functions = "netlify/functions"
 
+[dev]
+  framework = "#custom"
+  command = "npm run dev -- --host --port 5174 --strictPort"
+  targetPort = 5174
+  port = 8888
+  functions = "netlify/functions"
+
 [functions]
-  node_bundler = "esbuild"
+  node_bundler = "zisi"
+  external_node_modules = ["stripe", "jsonwebtoken"]

@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="tkfm-theme" content="label" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-label.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Label Onboarding — They Krave For Me Records</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(6,8,20,0.98);
+      --bg-soft: rgba(15,23,42,0.96);
+      --gold: #facc15;
+      --gold-deep: #eab308;
+      --amber: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f9fafb;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border-subtle: rgba(148,163,184,0.35);
+      --error: #f97373;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top,#111827 0,transparent 52%),
+        radial-gradient(circle at top right,rgba(234,179,8,0.55) 0,transparent 60%),
+        radial-gradient(circle at top left,rgba(248,113,113,0.45) 0,transparent 60%),
+        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
+      color:var(--text-main);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:1.6rem .9rem 2.3rem;
+    }
+
+    a { color:inherit; text-decoration:none; }
+
+    /* NAVBAR */
+    .nav-shell {
+      max-width:1180px;
+      margin:0 auto 1.7rem;
+      padding:.55rem .9rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(224,231,255,0.45);
+      background:
+        radial-gradient(circle at top,rgba(15,23,42,0.98) 0,rgba(15,23,42,0.95) 55%,rgba(15,23,42,0.93) 100%);
+      box-shadow:
+        0 26px 55px rgba(15,23,42,0.98),
+        0 0 40px rgba(234,179,8,0.40);
+      backdrop-filter:blur(18px);
+    }
+
+    .nav {
+      display:flex;
+      align-items:center;
+      gap:.9rem;
+    }
+
+    .nav-logo {
+      font-size:.95rem;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      background:linear-gradient(120deg,#fde68a,#facc15,#f97316);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 18px rgba(250,250,249,0.9);
+      white-space:nowrap;
+    }
+
+    .nav-tag {
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--text-muted);
+      white-space:nowrap;
+      display:none;
+    }
+
+    .nav-links {
+      margin-left:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      font-size:.75rem;
+    }
+
+    .nav-link {
+      padding:.26rem .8rem;
+      border-radius:999px;
+      border:1px solid transparent;
+      background:rgba(15,23,42,0.96);
+      color:var(--text-soft);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      cursor:pointer;
+    }
+    .nav-link:hover {
+      border-color:rgba(250,250,249,0.85);
+      color:#f9fafb;
+      background:rgba(15,23,42,1);
+    }
+
+    .nav-link-primary {
+      border-color:rgba(250,250,249,0.9);
+      background:radial-gradient(circle at top,#facc15 0,#b45309 60%);
+      color:#020617;
+      box-shadow:
+        0 0 20px rgba(250,250,249,0.9),
+        0 0 32px rgba(245,158,11,0.9);
+    }
+
+    .nav-link-radio {
+      border-color:rgba(56,189,248,0.85);
+      background:radial-gradient(circle at top,rgba(56,189,248,0.3) 0,rgba(15,23,42,0.98) 60%);
+      color:#e0f2fe;
+    }
+
+    @media (min-width:880px){ .nav-tag{display:block;} }
+    @media (max-width:840px){
+      .nav-shell{padding-inline:.8rem;}
+      .nav{flex-wrap:wrap;gap:.5rem;}
+      .nav-links{width:100%;justify-content:flex-start;}
+    }
+    @media (max-width:640px){
+      body{padding:1.3rem .7rem 2.1rem;}
+      .nav-shell{margin-bottom:1.4rem;}
+      .nav-links{font-size:.72rem;}
+    }
+
+    main{max-width:1180px;margin:0 auto;}
+
+    /* HERO */
+    .hero{
+      border-radius:1.3rem;
+      border:1px solid rgba(148,163,184,0.55);
+      background:
+        radial-gradient(circle at top,rgba(15,23,42,0.98) 0,rgba(15,23,42,0.95) 55%,rgba(15,23,42,0.94) 100%);
+      box-shadow:
+        0 24px 55px rgba(15,23,42,0.97),
+        0 0 40px rgba(234,179,8,0.35);
+      padding:1.3rem 1.25rem 1.1rem;
+      margin-bottom:1.8rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-110% -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(234,179,8,0.45) 0,transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(248,113,113,0.35) 0,transparent 55%);
+      opacity:.9;
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+    .hero-inner{position:relative;z-index:1;}
+    .hero-kicker{
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.24em;
+      color:#facc15;
+      margin-bottom:.55rem;
+    }
+    .hero-title{
+      font-size:clamp(1.9rem,2.3vw + 1.4rem,2.4rem);
+      line-height:1.05;
+      margin-bottom:.7rem;
+      text-shadow:
+        0 0 26px rgba(0,0,0,0.9),
+        0 0 32px rgba(250,204,21,0.85);
+    }
+    .hero-sub{
+      font-size:.86rem;
+      line-height:1.7;
+      color:#e5e7eb;
+      max-width:40rem;
+      margin-bottom:.7rem;
+    }
+    .hero-sub strong{color:#f97316;}
+    .hero-note{
+      font-size:.78rem;
+      color:var(--text-muted);
+      max-width:26rem;
+    }
+    .hero-note strong{color:#facc15;}
+
+    /* LAYOUT */
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);
+      gap:1.4rem;
+      align-items:flex-start;
+    }
+    @media (max-width:980px){
+      .layout{
+        grid-template-columns:minmax(0,1fr);
+      }
+    }
+
+    /* FORM CARD */
+    .card{
+      border-radius:1.2rem;
+      border:1px solid var(--border-subtle);
+      background:var(--bg-card);
+      padding:1.15rem 1.1rem 1.1rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-60% -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(234,179,8,0.3) 0,transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.25) 0,transparent 60%);
+      opacity:.6;
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+    .card-inner{position:relative;z-index:1;}
+
+    .card-title{
+      font-size:.95rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      margin-bottom:.35rem;
+    }
+    .card-sub{
+      font-size:.8rem;
+      color:var(--text-muted);
+      margin-bottom:.9rem;
+    }
+
+    form{display:flex;flex-direction:column;gap:.75rem;}
+
+    .field-group{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.7rem;
+    }
+    @media (max-width:720px){
+      .field-group{
+        grid-template-columns:minmax(0,1fr);
+      }
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:.25rem;
+    }
+    .label-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:.4rem;
+    }
+    label{
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:#e5e7eb;
+    }
+    .label-hint{
+      font-size:.7rem;
+      color:var(--text-muted);
+    }
+    input, select, textarea{
+      border-radius:.6rem;
+      border:1px solid rgba(51,65,85,0.9);
+      background:rgba(15,23,42,0.98);
+      color:var(--text-main);
+      font-size:.82rem;
+      padding:.45rem .6rem;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(250,204,21,0.9);
+      box-shadow:0 0 0 1px rgba(250,204,21,0.5);
+    }
+    textarea{
+      resize:vertical;
+      min-height:70px;
+      max-height:200px;
+    }
+
+    .required-star{
+      color:#f97373;
+      margin-left:.15rem;
+      font-size:.8rem;
+    }
+
+    .help-text{
+      font-size:.72rem;
+      color:var(--text-soft);
+      margin-top:.15rem;
+    }
+
+    .error-text{
+      font-size:.72rem;
+      color:var(--error);
+      margin-top:.15rem;
+      display:none;
+    }
+
+    .form-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.6rem .75rem;
+      align-items:center;
+      margin-top:.9rem;
+    }
+
+    .btn-main{
+      border-radius:999px;
+      padding:.55rem 1.35rem;
+      border:1px solid rgba(250,250,249,0.95);
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.2em;
+      font-weight:600;
+      color:#020617;
+      background:radial-gradient(circle at top,#facc15 0,#b45309 60%);
+      cursor:pointer;
+      box-shadow:
+        0 0 20px rgba(250,250,249,0.85),
+        0 0 32px rgba(245,158,11,0.9);
+    }
+    .btn-main:hover{filter:brightness(1.05);}
+
+    .btn-ghost{
+      border-radius:999px;
+      padding:.48rem 1.2rem;
+      border:1px solid rgba(148,163,184,0.9);
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-weight:500;
+      color:var(--text-muted);
+      background:rgba(15,23,42,0.98);
+      cursor:pointer;
+    }
+    .btn-ghost:hover{
+      border-color:rgba(250,250,249,0.85);
+      color:#f9fafb;
+    }
+
+    /* SIDE PANEL */
+    .side-stack{
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
+    }
+    .side-card{
+      border-radius:1.1rem;
+      border:1px solid rgba(148,163,184,0.55);
+      background:var(--bg-soft);
+      padding:.9rem .9rem .9rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .side-card::before{
+      content:"";
+      position:absolute;
+      inset:-60% -30%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.25) 0,transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(168,85,247,0.25) 0,transparent 55%);
+      opacity:.7;
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+    .side-card-inner{position:relative;z-index:1;}
+    .side-kicker{
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:#facc15;
+      margin-bottom:.3rem;
+    }
+    .side-title{
+      font-size:.9rem;
+      font-weight:600;
+      margin-bottom:.25rem;
+    }
+    .side-body{
+      font-size:.8rem;
+      color:#e5e7eb;
+      margin-bottom:.45rem;
+    }
+    .side-body strong{color:#f97316;}
+    .side-footnote{
+      font-size:.72rem;
+      color:var(--text-muted);
+    }
+
+    .badge-small{
+      border-radius:999px;
+      padding:.16rem .6rem;
+      border:1px solid rgba(250,204,21,0.85);
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:#fef9c3;
+      background:rgba(15,23,42,0.98);
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .badge-dot{
+      width:.38rem;
+      height:.38rem;
+      border-radius:999px;
+      background:radial-gradient(circle,#facc15 0,#854d0e 75%);
+      box-shadow:0 0 8px rgba(250,204,21,0.9);
+    }
+
+    .footer-note{
+      margin-top:1.4rem;
+      font-size:.75rem;
+      color:var(--text-muted);
+      text-align:center;
+    }
+
+    .toast{
+      position:fixed;
+      inset:auto 1rem 1rem auto;
+      max-width:260px;
+      border-radius:.9rem;
+      border:1px solid rgba(250,204,21,0.8);
+      background:rgba(15,23,42,0.98);
+      box-shadow:0 18px 45px rgba(15,23,42,0.95);
+      padding:.7rem .8rem .75rem;
+      font-size:.78rem;
+      color:#fef9c3;
+      display:none;
+      z-index:50;
+    }
+    .toast-title{
+      font-weight:600;
+      margin-bottom:.18rem;
+    }
+    .toast-body{
+      font-size:.76rem;
+      color:#fefce8;
+    }
+
+    ::-webkit-scrollbar{width:8px;height:8px;}
+    ::-webkit-scrollbar-track{background:#020617;}
+    ::-webkit-scrollbar-thumb{
+      background:rgba(148,163,184,0.8);
+      border-radius:999px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">They Krave For Me Records</div>
+    <div class="nav-tag">Label • Onboarding • Deals</div>
+
+    <div class="nav-links">
+      <a href="label-home.html" class="nav-link">Label Home</a>
+      <a href="label-hub.html" class="nav-link">Label Hub</a>
+      <a href="label-onboarding.html" class="nav-link nav-link-primary">Onboarding</a>
+      <a href="label-contract-lab.html" class="nav-link">Contract Lab</a>
+      <a href="autopilot-engine.html" class="nav-link">Autopilot</a>
+      <a href="ai-dj-engine.html" class="nav-link">AI DJ</a>
+      <a href="app-hub.html" class="nav-link">App Hub</a>
+      <a href="index.html" class="nav-link nav-link-radio">TKFM Radio</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">Label intake</div>
+      <h1 class="hero-title">Onboard artists &amp; projects into your label world.</h1>
+      <p class="hero-sub">
+        This form is the <strong>front door</strong> for anyone who might get a contract.
+        You capture the right label + artist + deal info once, then let
+        <strong>Label Contract Lab</strong> build the draft language from it.
+      </p>
+      <p class="hero-note">
+        Data from this page is saved locally (browser / JSON engine later) so
+        <strong>label-contract-lab.html</strong> can pull it in and build your draft.
+      </p>
+    </div>
+  </section>
+
+  <section class="layout">
+    <!-- FORM -->
+    <section class="card">
+      <div class="card-inner">
+        <h2 class="card-title">Label onboarding form</h2>
+        <p class="card-sub">
+          Fill this out whenever a new <strong>artist or project graduates from the radio side</strong>
+          into serious label conversation.
+        </p>
+
+        <form id="onboarding-form" novalidate>
+          <!-- LABEL INFO -->
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="labelName">Label name<span class="required-star">*</span></label>
+              </div>
+              <input id="labelName" name="labelName" type="text" required placeholder="They Krave For Me Records" />
+              <div class="help-text">Your company / imprint name on the paperwork.</div>
+              <div class="error-text" data-error-for="labelName">Label name is required.</div>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="labelContact">Label contact<span class="required-star">*</span></label>
+              </div>
+              <input id="labelContact" name="labelContact" type="text" required placeholder="Your full name" />
+              <div class="help-text">Person who signs and speaks for the label.</div>
+              <div class="error-text" data-error-for="labelContact">Label contact is required.</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="contactEmail">Contact email<span class="required-star">*</span></label>
+              </div>
+              <input id="contactEmail" name="contactEmail" type="email" required placeholder="you@label.com" />
+              <div class="help-text">Where the official communication lives.</div>
+              <div class="error-text" data-error-for="contactEmail">A valid email is required.</div>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="contactPhone">Contact phone</label>
+              </div>
+              <input id="contactPhone" name="contactPhone" type="tel" placeholder="+1 (555) 123-4567" />
+              <div class="help-text">Optional, for the body of the contract.</div>
+            </div>
+          </div>
+
+          <!-- ARTIST / PROJECT -->
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="artistName">Artist / group name<span class="required-star">*</span></label>
+              </div>
+              <input id="artistName" name="artistName" type="text" required placeholder="Artist stage name" />
+              <div class="help-text">How they appear on artwork and radio.</div>
+              <div class="error-text" data-error-for="artistName">Artist name is required.</div>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="legalName">Artist legal name</label>
+              </div>
+              <input id="legalName" name="legalName" type="text" placeholder="Gov. name (optional for now)" />
+              <div class="help-text">Use later for formal contracts or addenda.</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="projectTitle">Project / track title<span class="required-star">*</span></label>
+              </div>
+              <input id="projectTitle" name="projectTitle" type="text" required placeholder="Mixtape / EP / single title" />
+              <div class="help-text">The main project this deal covers.</div>
+              <div class="error-text" data-error-for="projectTitle">Project title is required.</div>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="projectType">Project type</label>
+              </div>
+              <select id="projectType" name="projectType">
+                <option value="">Select type</option>
+                <option value="single">Single</option>
+                <option value="ep">EP</option>
+                <option value="album">Album</option>
+                <option value="mixtape">Mixtape</option>
+                <option value="catalog">Catalog / multi-project</option>
+              </select>
+              <div class="help-text">This helps shape the contract wording.</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="genre">Primary genre</label>
+              </div>
+              <input id="genre" name="genre" type="text" placeholder="Hip hop / R&amp;B / etc." />
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="releaseVision">Rollout vision</label>
+              </div>
+              <input id="releaseVision" name="releaseVision" type="text" placeholder="Mixtape first, then singles, etc." />
+              <div class="help-text">Optional note that can echo in the agreement.</div>
+            </div>
+          </div>
+
+          <!-- DEAL TERMS -->
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="termYears">Deal term (years)<span class="required-star">*</span></label>
+              </div>
+              <input id="termYears" name="termYears" type="number" min="0" step="1" required placeholder="1" />
+              <div class="help-text">How long the agreement runs (or “project-based”).</div>
+              <div class="error-text" data-error-for="termYears">Term is required (can be 0 for project-only).</div>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="territory">Territory<span class="required-star">*</span></label>
+              </div>
+              <input id="territory" name="territory" type="text" required placeholder="Worldwide / North America / etc." />
+              <div class="error-text" data-error-for="territory">Territory is required.</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="advanceAmount">Advance amount (if any)</label>
+              </div>
+              <input id="advanceAmount" name="advanceAmount" type="text" placeholder="$0 / $500 / etc." />
+              <div class="help-text">Use 0 if there is no advance.</div>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="deliveryRequirements">Delivery notes</label>
+              </div>
+              <input id="deliveryRequirements" name="deliveryRequirements" type="text" placeholder="Masters, WAVs, stems by X date" />
+            </div>
+          </div>
+
+          <!-- SPLITS -->
+          <div class="field-group">
+            <div class="field">
+              <div class="label-row">
+                <label for="splitLabel">Royalty split — label %<span class="required-star">*</span></label>
+              </div>
+              <input id="splitLabel" name="splitLabel" type="number" min="0" max="100" step="1" required placeholder="50" />
+              <div class="help-text">What % of net income the label keeps.</div>
+              <div class="error-text" data-error-for="splitLabel">Label % is required.</div>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <label for="splitArtist">Royalty split — artist %<span class="required-star">*</span></label>
+              </div>
+              <input id="splitArtist" name="splitArtist" type="number" min="0" max="100" step="1" required placeholder="50" />
+              <div class="help-text">What % of net income the artist keeps.</div>
+              <div class="error-text" data-error-for="splitArtist">Artist % is required.</div>
+            </div>
+          </div>
+
+          <!-- NOTES -->
+          <div class="field">
+            <div class="label-row">
+              <label for="specialTerms">Special terms / notes</label>
+            </div>
+            <textarea id="specialTerms" name="specialTerms" placeholder="Anything unique about this deal you want Contract Lab to echo."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-main" type="submit">Save onboarding data</button>
+            <button class="btn-ghost" type="button" id="clear-draft">Clear current draft</button>
+            <div class="help-text">
+              After saving, open <strong>label-contract-lab.html</strong> to build the contract draft.
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- SIDE INFO -->
+    <aside class="side-stack">
+      <section class="side-card">
+        <div class="side-card-inner">
+          <div class="side-kicker">Pipeline</div>
+          <div class="side-title">Where this data goes next</div>
+          <p class="side-body">
+            The info you enter here is stored as a <strong>single onboarding object</strong> in the browser for now.
+            Later, Netlify + JSON helpers will let you save it server-side too.
+          </p>
+          <p class="side-footnote">
+            Contract Lab will read this object, merge it into a template, and generate copy you can tweak.
+          </p>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <div class="side-card-inner">
+          <div class="side-kicker">Draft status</div>
+          <div class="side-title">Current onboarding draft</div>
+          <p class="side-body" id="draft-status">
+            No draft saved yet. Fill out the form and hit <strong>Save onboarding data</strong>.
+          </p>
+          <p class="side-footnote">
+            Stored under <code>tkfm_labelOnboardingDraft</code> in <strong>localStorage</strong>.
+          </p>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <div class="side-card-inner">
+          <div class="side-kicker">Shortcut</div>
+          <div class="side-title">App Hub &amp; Label Home</div>
+          <p class="side-body">
+            You can always jump back out to <strong>Label Home</strong> or the <strong>App Hub</strong>
+            when you’re done, and re-open this form later to adjust terms.
+          </p>
+          <div class="badge-small">
+            <span class="badge-dot"></span>
+            Part of the TKFM label world
+          </div>
+        </div>
+      </section>
+    </aside>
+  </section>
+
+  <p class="footer-note">
+    This page is about <strong>clean inputs</strong>. The contract pages are where that data turns into
+    <strong>black &amp; gold paperwork</strong>.
+  </p>
+</main>
+
+<div class="toast" id="toast">
+  <div class="toast-title">Onboarding draft saved</div>
+  <div class="toast-body">Open <strong>label-contract-lab.html</strong> next to build the contract.</div>
+</div>
+
+<script>
+  (function() {
+    const FORM_KEY = 'tkfm_labelOnboardingDraft';
+    const form = document.getElementById('onboarding-form');
+    const draftStatusEl = document.getElementById('draft-status');
+    const clearBtn = document.getElementById('clear-draft');
+    const toastEl = document.getElementById('toast');
+
+    function showToast() {
+      if (!toastEl) return;
+      toastEl.style.display = 'block';
+      setTimeout(() => {
+        toastEl.style.display = 'none';
+      }, 2600);
+    }
+
+    function setDraftStatus(text) {
+      if (draftStatusEl) draftStatusEl.textContent = text;
+    }
+
+    function loadDraft() {
+      try {
+        const raw = localStorage.getItem(FORM_KEY);
+        if (!raw) {
+          setDraftStatus('No draft saved yet. Fill out the form and hit Save onboarding data.');
+          return;
+        }
+        const data = JSON.parse(raw);
+        Object.keys(data).forEach(key => {
+          const field = document.getElementsByName(key)[0];
+          if (!field) return;
+          if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT' || field.tagName === 'SELECT') {
+            field.value = data[key];
+          }
+        });
+        setDraftStatus('Draft loaded from previous session. You can adjust and save again.');
+      } catch (err) {
+        console.error('Failed to load onboarding draft', err);
+        setDraftStatus('Could not load previous draft. You can overwrite it by saving again.');
+      }
+    }
+
+    function validateForm() {
+      let valid = true;
+      const requiredIds = [
+        'labelName',
+        'labelContact',
+        'contactEmail',
+        'artistName',
+        'projectTitle',
+        'termYears',
+        'territory',
+        'splitLabel',
+        'splitArtist'
+      ];
+
+      requiredIds.forEach(id => {
+        const field = document.getElementById(id);
+        const errEl = document.querySelector('[data-error-for="' + id + '"]');
+        if (!field) return;
+        let hasError = false;
+
+        if (!field.value || field.value.toString().trim() === '') {
+          hasError = true;
+        }
+
+        if (id === 'contactEmail' && field.value) {
+          const emailOk = field.value.includes('@') && field.value.includes('.');
+          if (!emailOk) hasError = true;
+        }
+
+        if (id === 'termYears' && field.value) {
+          const num = Number(field.value);
+          if (Number.isNaN(num) || num < 0) hasError = true;
+        }
+
+        if ((id === 'splitLabel' || id === 'splitArtist') && field.value) {
+          const num = Number(field.value);
+          if (Number.isNaN(num) || num < 0 || num > 100) hasError = true;
+        }
+
+        if (errEl) {
+          if (hasError) {
+            errEl.style.display = 'block';
+          } else {
+            errEl.style.display = 'none';
+          }
+        }
+
+        if (hasError) valid = false;
+      });
+
+      return valid;
+    }
+
+    function saveDraft() {
+      const data = {};
+      const fields = form.querySelectorAll('input, textarea, select');
+      fields.forEach(field => {
+        if (!field.name) return;
+        data[field.name] = field.value || '';
+      });
+
+      try {
+        localStorage.setItem(FORM_KEY, JSON.stringify(data));
+        setDraftStatus('Draft saved. Contract Lab can now pull this onboarding data.');
+        showToast();
+      } catch (err) {
+        console.error('Failed to save onboarding draft', err);
+        setDraftStatus('Could not save to localStorage. Check storage settings and try again.');
+      }
+    }
+
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!validateForm()) {
+          setDraftStatus('Please fix required fields before saving the onboarding draft.');
+          return;
+        }
+        saveDraft();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        try {
+          localStorage.removeItem(FORM_KEY);
+          setDraftStatus('Draft cleared. Fill out the form and hit Save onboarding data.');
+        } catch (err) {
+          console.error('Failed to clear onboarding draft', err);
+        }
+      });
+    }
+
+    loadDraft();
+  })();
+</script>
+
+</body>
+</html>

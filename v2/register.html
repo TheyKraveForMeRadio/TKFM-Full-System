@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM • Create Your Account</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.98);
+      --accent-orange: #fb923c;
+      --accent-pink: #ec4899;
+      --accent-cyan: #22d3ee;
+      --accent-purple: #6366f1;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.25), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(96,165,250,0.25), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem .9rem;
+      overflow: hidden;
+    }
+
+    .bg-orbit {
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      border: 1px solid rgba(129,140,248,0.7);
+      inset: auto -160px -220px auto;
+      opacity: .7;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 120px rgba(129,140,248,1),
+        0 0 180px rgba(0,0,0,1);
+      animation: spin 32s linear infinite;
+      pointer-events: none;
+    }
+    .bg-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: inherit;
+      border: 1px solid rgba(236,72,153,0.9);
+      box-shadow:
+        0 0 80px rgba(236,72,153,1),
+        0 0 130px rgba(0,0,0,1);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.6) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 880px) {
+      body { padding-top: 4.5rem; }
+      .shell { grid-template-columns: 1fr; }
+    }
+
+    .panel-left {
+      border-radius: 28px;
+      border: 1px solid rgba(59,130,246,0.7);
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.26), transparent 65%),
+        radial-gradient(circle at 100% 0, rgba(244,114,182,0.18), transparent 65%),
+        radial-gradient(circle at 50% 130%, rgba(15,23,42,0.96), #020617 75%);
+      padding: 1.6rem 1.5rem 1.7rem;
+      box-shadow:
+        0 0 90px rgba(15,23,42,1),
+        0 0 160px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-right {
+      border-radius: 28px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.4rem 1.4rem 1.6rem;
+      box-shadow: 0 0 60px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-left::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(251,113,133,0.18), transparent 65%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.18), transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+
+    .panel-right::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.18), transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .8;
+      pointer-events: none;
+    }
+
+    .panel-inner { position: relative; z-index: 1; }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(251,146,60,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fefce8;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.35), transparent 60%),
+        radial-gradient(circle at 100% 100%, #020617, #000000 65%);
+      box-shadow:
+        0 0 26px rgba(251,146,60,1),
+        0 0 40px rgba(0,0,0,1);
+      margin-bottom: .75rem;
+    }
+
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: .32em;
+      text-transform: uppercase;
+      margin: 0 0 .3rem;
+      background: linear-gradient(120deg,#fef3c7,#fb923c,#f97316,#22d3ee);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 40px rgba(251,146,60,0.9),
+        0 0 70px rgba(0,0,0,1);
+    }
+
+    .brand-sub {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .7rem;
+    }
+
+    .hero-copy {
+      font-size: .9rem;
+      color: #e5e7eb;
+      margin-bottom: 1rem;
+      max-width: 420px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .72rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .25rem .8rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .pill span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 16px rgba(34,211,238,1);
+    }
+
+    .form-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0 0 .35rem;
+    }
+    .form-sub {
+      font-size: .82rem;
+      color: var(--text-muted);
+      margin: 0 0 .9rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+
+    label {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--text-muted);
+      margin-bottom: .15rem;
+      display: block;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input, select {
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,1);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      padding: .55rem .9rem;
+      font-size: .85rem;
+      outline: none;
+      transition: border-color .16s, box-shadow .16s, background .16s;
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(96,165,250,1);
+      box-shadow:
+        0 0 18px rgba(96,165,250,0.9),
+        0 0 28px rgba(0,0,0,1);
+      background: rgba(15,23,42,1);
+    }
+
+    .hint {
+      font-size: .72rem;
+      color: var(--text-muted);
+      margin-top: .2rem;
+    }
+
+    .row-two {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .6rem;
+    }
+    @media (max-width: 520px) {
+      .row-two { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .submit-btn {
+      margin-top: .35rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      padding: .65rem 1.1rem;
+      font-size: .82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #020617;
+      background: linear-gradient(120deg,#f97316,#ec4899,#6366f1);
+      box-shadow:
+        0 0 26px rgba(236,72,153,1),
+        0 0 38px rgba(0,0,0,1);
+      transition: transform .14s, box-shadow .14s;
+    }
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 32px rgba(236,72,153,1),
+        0 0 48px rgba(0,0,0,1);
+    }
+
+    .status {
+      margin-top: .55rem;
+      font-size: .78rem;
+    }
+    .status--pending { color: #e5e7eb; }
+    .status--error { color: #fca5a5; }
+    .status--success { color: #bbf7d0; }
+
+    .login-link {
+      margin-top: .8rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+    }
+    .login-link a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbit"></div>
+<div class="scanline"></div>
+
+<div class="shell">
+  <section class="panel-left">
+    <div class="panel-inner">
+      <div class="logo-mark">TK</div>
+      <h1 class="brand-title">They Krave For Me</h1>
+      <p class="brand-sub">Radio • Records • Power Station</p>
+      <p class="hero-copy">
+        One login for everything: TKFM Radio, They Krave For Me Records,
+        DJ tools, sponsor engines and AI labs. Choose your lane and the system
+        routes you where you belong.
+      </p>
+
+      <div class="pill-row">
+        <div class="pill"><span></span> Artists → TKFM dashboards &amp; label tools</div>
+        <div class="pill"><span></span> DJs → portals, mixtape hosting &amp; schedule board</div>
+        <div class="pill"><span></span> Label side → black &amp; gold HQ</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel-right">
+    <div class="panel-inner">
+      <h2 class="form-title">Create your TKFM account</h2>
+      <p class="form-sub">
+        This will create a Supabase user and tag them with a <strong>tkfm_role</strong>,
+        so the system knows if they are an artist, DJ, label user or sponsor.
+      </p>
+
+      <form id="register-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required />
+        </div>
+
+        <div class="row-two">
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" minlength="6" required />
+            <p class="hint">Minimum 6 characters. Keep it secure.</p>
+          </div>
+
+          <div class="field">
+            <label for="role">I’m signing up as</label>
+            <select id="role" name="role" required>
+              <option value="artist">Artist</option>
+              <option value="dj">DJ</option>
+              <option value="label">Label / staff</option>
+              <option value="sponsor">Sponsor / brand</option>
+            </select>
+            <p class="hint">
+              Owner / admin accounts will be upgraded manually by you later.
+            </p>
+          </div>
+        </div>
+
+        <button class="submit-btn" type="submit">Create account</button>
+        <div id="status" class="status"></div>
+
+        <p class="login-link">
+          Already have an account? <a href="login.html">Log in here</a>.
+        </p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+
+  const form = document.getElementById("register-form");
+  const statusEl = document.getElementById("status");
+
+  function setStatus(message, type = "pending") {
+    statusEl.textContent = message;
+    statusEl.className = "status status--" + type;
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = form.email.value.trim();
+    const password = form.password.value;
+    const role = form.role.value;
+
+    if (!email || !password || !role) {
+      setStatus("Please fill out all fields.", "error");
+      return;
+    }
+
+    setStatus("Creating your account…", "pending");
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          tkfm_role: role
+        }
+      }
+    });
+
+    if (error) {
+      console.error(error);
+      setStatus(error.message || "Could not create account. Try again.", "error");
+      return;
+    }
+
+    setStatus(
+      "Account created. Check your email to confirm, then log in.",
+      "success"
+    );
+
+    // small delay so they can read the message
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 2200);
+  });
+</script>
+</body>
+</html>

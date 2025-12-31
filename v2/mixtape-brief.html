@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="tkfm-theme" content="label" />
+  <link rel="stylesheet" href="/css/tkfm-shell.css" />
+  <link rel="stylesheet" href="/css/tkfm-label.css" />
+  <script src="/js/tkfm-shell.js" defer></script>
+
+  <meta charset="UTF-8" />
+  <title>DJ KRAVE — Mixtape Brief</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-purple-100 min-h-screen font-mono">
+  <header class="border-b border-purple-700 px-6 py-4 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold tracking-wide">
+        🔥 DJ KRAVE Mixtape Brief
+      </h1>
+      <p class="text-sm text-purple-400 mt-1">
+        Payment confirmed. Drop your **details + links** so TKFM can lock in your tape.
+      </p>
+    </div>
+    <div class="text-right text-xs md:text-sm text-purple-400">
+      <div>Session: <span id="sessionIdLabel" class="font-semibold">—</span></div>
+      <div class="text-[10px]">Pulled from Stripe Checkout URL</div>
+    </div>
+  </header>
+
+  <main class="p-4 md:p-8 max-w-3xl mx-auto">
+    <section class="bg-black/70 border border-purple-700 rounded-2xl shadow-xl p-5 md:p-7">
+      <h2 class="text-xl font-semibold mb-4">
+        🎧 Artist & Project Details
+      </h2>
+
+      <form id="briefForm" class="space-y-4">
+        <input type="hidden" id="sessionId" />
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs mb-1 text-purple-300">Artist / DJ Name</label>
+            <input id="artistName" type="text"
+                   class="w-full bg-black/70 border border-purple-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+                   placeholder="Your artist or stage name" required />
+          </div>
+          <div>
+            <label class="block text-xs mb-1 text-purple-300">Contact Email</label>
+            <input id="email" type="email"
+                   class="w-full bg-black/70 border border-purple-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+                   placeholder="you@example.com" required />
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs mb-1 text-purple-300">Project / Mixtape Title</label>
+            <input id="projectTitle" type="text"
+                   class="w-full bg-black/70 border border-purple-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+                   placeholder="Name of your tape" required />
+          </div>
+          <div>
+            <label class="block text-xs mb-1 text-purple-300">Purchased Tier</label>
+            <select id="tier"
+                    class="w-full bg-black/70 border border-purple-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-400">
+              <option value="">Select tier (optional)</option>
+              <option value="starter">Starter — 30 min</option>
+              <option value="pro">Pro — 45–60 min</option>
+              <option value="elite">Elite — Full project</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs mb-1 text-purple-300">Download / Asset Links</label>
+          <textarea id="links" rows="3"
+                    class="w-full bg-black/70 border border-purple-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+                    placeholder="Dropbox / Google Drive / WeTransfer / DJ pools / private links etc."></textarea>
+          <p class="text-[10px] text-purple-500 mt-1">
+            Include any links to WAV/MP3 files, stems, acapellas, cover art, and reference mixes.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-xs mb-1 text-purple-300">Notes for DJ KRAVE</label>
+          <textarea id="notes" rows="4"
+                    class="w-full bg-black/70 border border-purple-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+                    placeholder="Vibe, energy, transitions you like, artists you want to keep in the mix, drops/shoutouts, deadlines, etc."></textarea>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-4">
+          <button type="submit"
+                  class="bg-purple-700 hover:bg-purple-600 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow-lg shadow-purple-900/60">
+            🚀 Submit Mixtape Brief
+          </button>
+          <p id="statusText" class="text-[11px] text-purple-400">
+            Once submitted, TKFM will lock your brief to your order and move you into the intake queue.
+          </p>
+        </div>
+      </form>
+    </section>
+
+    <section class="mt-6 text-xs text-purple-500">
+      <p>
+        After we receive your brief + payment, your order appears in the internal
+        <span class="font-semibold">Mixtape Intake Dashboard</span> for review, status updates, and label opportunities.
+      </p>
+    </section>
+  </main>
+
+  <div id="toast"
+       class="fixed bottom-4 right-4 bg-purple-900/95 border border-purple-500 text-xs md:text-sm px-3 py-2 rounded-lg shadow-xl opacity-0 pointer-events-none transition-opacity">
+    <span id="toastText"></span>
+  </div>
+
+  <script>
+    const sessionIdInput = document.getElementById('sessionId');
+    const sessionIdLabel = document.getElementById('sessionIdLabel');
+    const briefForm = document.getElementById('briefForm');
+    const statusText = document.getElementById('statusText');
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+
+    function showToast(message) {
+      toastText.textContent = message;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2600);
+    }
+
+    // Grab session_id from URL if present
+    (function init() {
+      const params = new URLSearchParams(window.location.search);
+      const sid = params.get('session_id');
+      if (sid) {
+        sessionIdInput.value = sid;
+        sessionIdLabel.textContent = sid.slice(0, 10) + '...';
+      } else {
+        sessionIdLabel.textContent = 'not-provided';
+      }
+    })();
+
+    briefForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        sessionId: sessionIdInput.value || null,
+        artistName: document.getElementById('artistName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        projectTitle: document.getElementById('projectTitle').value.trim(),
+        tier: document.getElementById('tier').value || '',
+        links: document.getElementById('links').value.trim(),
+        notes: document.getElementById('notes').value.trim()
+      };
+
+      if (!payload.artistName || !payload.email || !payload.projectTitle) {
+        showToast('Please fill in all required fields.');
+        return;
+      }
+
+      statusText.textContent = 'Submitting brief to TKFM…';
+
+      try {
+        const res = await fetch('/.netlify/functions/submit-mixtape-brief', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          showToast('Error: ' + txt);
+          statusText.textContent = 'There was a problem. Please try again or contact TKFM.';
+          return;
+        }
+
+        const data = await res.json();
+        showToast('Mixtape brief submitted ✅');
+        statusText.textContent = 'Brief received. Watch your email for next steps from TKFM.';
+
+        // Optional: lock form
+        briefForm.querySelectorAll('input, textarea, select, button[type="submit"]').forEach(el => {
+          el.disabled = true;
+          el.classList.add('opacity-70');
+        });
+      } catch (err) {
+        console.error(err);
+        showToast('Network error submitting brief.');
+        statusText.textContent = 'Network error. Please try again in a minute.';
+      }
+    });
+  </script>
+</body>
+</html>

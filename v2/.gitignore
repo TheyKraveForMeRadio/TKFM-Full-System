@@ -14,3 +14,4 @@ netlify/functions/v2/
 
 # IGNORE EVERYTHING GENERATED
 **/*.log
+_HOLD

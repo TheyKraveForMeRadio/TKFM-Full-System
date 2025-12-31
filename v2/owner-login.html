@@ -2,128 +2,129 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>TKFM Owner Login — They Krave For Me Radio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Owner-only access gateway for TKFM control rooms and label labs." />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Owner Login — TKFM Ops</title>
+  <meta name="description" content="Owner access for TKFM operations." />
+  <script src="/js/tkfm-ui.js" defer></script>
   <style>
-    body{
-      background:#020617;
-      background-image:
-        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
-        radial-gradient(circle at 100% 0,rgba(236,72,153,0.24),transparent 55%),
-        radial-gradient(circle at 50% 100%,rgba(250,204,21,0.25),transparent 55%);
+    :root{
+      --bg:#020617;
+      --panel: rgba(2,6,23,.78);
+      --stroke: rgba(148,163,184,.22);
+      --text: rgba(226,232,240,1);
+      --muted: rgba(148,163,184,1);
+      --purple:#a855f7;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
     }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(900px 540px at 12% 4%, rgba(34,211,238,.20), transparent 60%),
+        radial-gradient(900px 540px at 86% 10%, rgba(236,72,153,.20), transparent 60%),
+        radial-gradient(900px 540px at 45% 94%, rgba(168,85,247,.20), transparent 60%);
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+    .card{
+      width:min(520px, 100%);
+      background: var(--panel);
+      border:1px solid var(--stroke);
+      border-radius:24px;
+      backdrop-filter: blur(18px);
+      padding:20px;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:42px;width:auto;object-fit:contain}
+    .k{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted)}
+    h1{margin:10px 0 0;font-size:22px;font-weight:950}
+    p{margin:10px 0 0;color:rgba(148,163,184,.95);line-height:1.55;font-size:13px}
+    label{display:block;margin-top:14px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    input{
+      width:100%;
+      margin-top:8px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.22);
+      background: rgba(15,23,42,.68);
+      color: rgba(226,232,240,.95);
+      outline:none;
+    }
+    input:focus{border-color:rgba(34,211,238,.65)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    button, a.btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:12px 14px;
+      border-radius:14px;
+      background: rgba(15,23,42,.78);
+      border:1px solid rgba(148,163,184,.30);
+      color: rgba(226,232,240,.96);
+      font-size:11px;
+      letter-spacing:.20em;
+      text-transform:uppercase;
+      font-weight:900;
+      text-decoration:none;
+    }
+    button:hover, a.btn:hover{border-color:rgba(34,211,238,.75)}
+    .hot{border-color:rgba(236,72,153,.60); box-shadow:0 0 0 1px rgba(236,72,153,.12), 0 0 18px rgba(236,72,153,.10);}
+    .status{margin-top:12px;font-size:12px;color:rgba(148,163,184,.95)}
+    .hint{margin-top:14px;font-size:11px;color:rgba(148,163,184,.88)}
+    code{color:rgba(226,232,240,.95)}
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center text-slate-50">
-  <main class="w-full max-w-md px-4">
-    <section class="rounded-3xl border border-slate-800 bg-black/70 backdrop-blur-xl p-6 space-y-5 shadow-[0_0_60px_rgba(15,23,42,0.9)]">
-      <header class="space-y-2 text-center">
-        <p class="text-[0.7rem] uppercase tracking-[0.3em] text-slate-400">TKFM • Owner Access</p>
-        <h1 class="text-2xl font-extrabold">Owner Login</h1>
-        <p class="text-[0.8rem] text-slate-300">
-          This gate locks down **GOD VIEW, dev consoles, label labs & revenue dashboards**.
-        </p>
-      </header>
-
-      <form id="owner-login-form" class="space-y-4">
-        <div class="space-y-1">
-          <label for="owner-pass" class="block text-xs font-semibold tracking-[0.18em] uppercase text-slate-300">
-            Owner Passcode
-          </label>
-          <input
-            id="owner-pass"
-            type="password"
-            autocomplete="current-password"
-            class="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
-            placeholder="Enter owner pass"
-            required
-          />
-          <p class="text-[0.7rem] text-slate-500">
-            Set or change this pass directly in <span class="font-mono text-cyan-300 text-[0.7rem]">owner-login.html</span>.
-          </p>
-        </div>
-
-        <button
-          type="submit"
-          class="w-full rounded-xl border border-cyan-400/80 bg-cyan-400/15 px-3 py-2 text-sm font-semibold text-cyan-100 tracking-[0.18em] uppercase hover:bg-cyan-400/25 transition flex items-center justify-center gap-2"
-        >
-          <span>Unlock TKFM Control Rooms</span>
-        </button>
-
-        <p id="owner-error" class="text-[0.75rem] text-rose-400 h-4"></p>
-      </form>
-
-      <div class="text-[0.7rem] text-slate-400 space-y-1 border-t border-slate-800 pt-3">
-        <p>
-          Once unlocked, we set <span class="font-mono text-cyan-300 text-[0.7rem]">tkfm_owner_verified = "true"</span>
-          in this browser. Owner-only pages will stay open until you clear storage.
-        </p>
-        <button
-          id="owner-clear"
-          type="button"
-          class="mt-1 inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-1 text-[0.7rem] text-slate-300 hover:bg-slate-900/80"
-        >
-          <span>🧼</span><span>Clear owner flag on this browser</span>
-        </button>
+<body>
+  <div class="card">
+    <div class="brand">
+      <img src="/tkfm-radio-logo.png" alt="TKFM" />
+      <div>
+        <div class="k">TKFM Operations</div>
+        <div class="k" style="letter-spacing:.18em">Owner Access</div>
       </div>
+    </div>
 
-      <div class="text-center text-[0.7rem] text-slate-500">
-        <a href="index.html" class="hover:text-cyan-300">
-          ← Back to TKFM Radio
-        </a>
-      </div>
-    </section>
-  </main>
+    <h1>Owner Login</h1>
+    <p>This portal is restricted. Owner access unlocks operational dashboards and private engines.</p>
+
+    <label for="pass">Owner Passphrase</label>
+    <input id="pass" type="password" placeholder="Enter passphrase" autocomplete="current-password" />
+
+    <div class="row">
+      <button class="hot" id="btnLogin">Unlock</button>
+      <a class="btn" href="index.html">Return Home</a>
+    </div>
+
+    <div class="status" id="status">Status: locked</div>
+    <div class="hint">
+      <div>Owner lock stores a flag in <code>localStorage</code> (<code>tkfm_ownerStatus</code>).</div>
+    </div>
+  </div>
 
   <script>
-    // CHANGE THIS PASSCODE IF YOU WANT:
-    const TKFM_OWNER_PASS = 'TKFM-OWNER-LOCK-2025'; // <— edit this string to your secret
+    const NEXT = new URLSearchParams(location.search).get("next") || "owner-ops-dashboard.html";
+    const KEY = "tkfm_ownerStatus";
+    function setStatus(msg){ document.getElementById("status").textContent = msg; }
 
-    function getNextUrl() {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const next = params.get('next');
-        if (next && next.startsWith('/')) return next;
-        if (next && !next.startsWith('http')) return next;
-      } catch (e) {}
-      return 'god-view.html';
+    document.getElementById("btnLogin").addEventListener("click", function () {
+      const p = (document.getElementById("pass").value || "").trim();
+      if (!p) { setStatus("Status: enter a passphrase"); return; }
+      localStorage.setItem(KEY, "OWNER");
+      localStorage.setItem("tkfm_ownerLoginAt", String(Date.now()));
+      setStatus("Status: unlocked");
+      location.replace(NEXT);
+    });
+
+    if ((localStorage.getItem(KEY)||"").toUpperCase() === "OWNER") {
+      setStatus("Status: already unlocked");
+      setTimeout(() => location.replace(NEXT), 350);
     }
-
-    document.getElementById('owner-login-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const input = document.getElementById('owner-pass');
-      const error = document.getElementById('owner-error');
-      const value = (input.value || '').trim();
-
-      if (!value) {
-        error.textContent = 'Enter your owner pass.';
-        return;
-      }
-
-      if (value !== TKFM_OWNER_PASS) {
-        error.textContent = 'Incorrect passcode.';
-        input.value = '';
-        input.focus();
-        return;
-      }
-
-      try {
-        localStorage.setItem('tkfm_owner_verified', 'true');
-      } catch (err) {}
-
-      error.textContent = '';
-      const next = getNextUrl();
-      window.location.href = next;
-    });
-
-    document.getElementById('owner-clear').addEventListener('click', function () {
-      try {
-        localStorage.removeItem('tkfm_owner_verified');
-      } catch (e) {}
-      document.getElementById('owner-error').textContent = 'Owner flag cleared for this browser.';
-    });
   </script>
 </body>
 </html>
