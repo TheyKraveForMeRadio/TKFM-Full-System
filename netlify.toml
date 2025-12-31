@@ -6,7 +6,7 @@ functions = "v2/netlify/functions"
 [dev]
 framework = "#custom"
 port = 8888
-command = "cd v2 && npm run dev -- --port 5173 --strictPort"
+command = "dev.cmd"
 targetPort = 5173
 functions = "v2/netlify/functions"
 
