@@ -1,138 +1,79 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const PRICE_MAP = {
-  // EXISTING: Monthly access tiers
-  creator_pass_monthly: process.env.STRIPE_PRICE_CREATOR_PASS_MONTHLY,
-  creator_pass_yearly: process.env.STRIPE_PRICE_CREATOR_PASS_YEARLY,
-  motion_monthly: process.env.STRIPE_PRICE_MOTION_MONTHLY,
-  takeover_viral_monthly: process.env.STRIPE_PRICE_TAKEOVER_VIRAL_MONTHLY,
-  dj_toolkit_monthly: process.env.STRIPE_PRICE_DJ_TOOLKIT_MONTHLY,
-  label_core_monthly: process.env.STRIPE_PRICE_LABEL_CORE_MONTHLY,
-  label_pro_monthly: process.env.STRIPE_PRICE_LABEL_PRO_MONTHLY,
-  owner_founder_access: process.env.STRIPE_PRICE_OWNER_FOUNDER_ACCESS,
+const CATALOG = {
+  // MEMBERSHIPS (SUBSCRIPTIONS)
+  creator_pass_monthly:   { priceEnv: 'STRIPE_PRICE_CREATOR_PASS_MONTHLY',   mode: 'subscription', unlock: { tier: 'creator', features: ['creator_pass'] } },
+  creator_pass_yearly:    { priceEnv: 'STRIPE_PRICE_CREATOR_PASS_YEARLY',    mode: 'subscription', unlock: { tier: 'creator', features: ['creator_pass'] } },
 
-  // EXISTING: Mixtape Hosting (one-time)
-  mixtape_hosting_starter: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_STARTER,
-  mixtape_hosting_pro: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_PRO,
-  mixtape_hosting_elite: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_ELITE,
+  motion_monthly:         { priceEnv: 'STRIPE_PRICE_MOTION_MONTHLY',         mode: 'subscription', unlock: { tier: 'creator', features: ['social_engine','motion_monthly'] } },
+  takeover_viral_monthly: { priceEnv: 'STRIPE_PRICE_TAKEOVER_VIRAL_MONTHLY', mode: 'subscription', unlock: { tier: 'creator', features: ['social_engine','takeover_viral_monthly'] } },
 
-  // EXISTING: Promo / Social / Sponsors
-  social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
-  rotation_boost_campaign: process.env.STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN,
-  homepage_feature_artist: process.env.STRIPE_PRICE_HOMEPAGE_FEATURE_ARTIST,
-  starter_sponsor_monthly: process.env.STRIPE_PRICE_STARTER_SPONSOR_MONTHLY,
-  sponsor_city_monthly: process.env.STRIPE_PRICE_SPONSOR_CITY_MONTHLY,
-  sponsor_takeover_monthly: process.env.STRIPE_PRICE_SPONSOR_TAKEOVER_MONTHLY,
+  dj_toolkit_monthly:     { priceEnv: 'STRIPE_PRICE_DJ_TOOLKIT_MONTHLY',     mode: 'subscription', unlock: { tier: 'dj',      features: ['dj_toolkit'] } },
 
-  // EXISTING: AI Feature Store (one-time)
-  ai_radio_intro: process.env.STRIPE_PRICE_AI_RADIO_INTRO,
-  ai_feature_verse_kit: process.env.STRIPE_PRICE_AI_FEATURE_VERSE_KIT,
-  ai_imaging_pack: process.env.STRIPE_PRICE_AI_IMAGING_PACK,
-  ai_social_pack: process.env.STRIPE_PRICE_AI_SOCIAL_PACK,
-  ai_launch_campaign: process.env.STRIPE_PRICE_AI_LAUNCH_CAMPAIGN,
-  ai_epk: process.env.STRIPE_PRICE_AI_EPK,
-  ai_label_brand_pack: process.env.STRIPE_PRICE_AI_LABEL_BRAND_PACK,
+  label_core_monthly:     { priceEnv: 'STRIPE_PRICE_LABEL_CORE_MONTHLY',     mode: 'subscription', unlock: { tier: 'label',   features: ['label_core'] } },
+  label_pro_monthly:      { priceEnv: 'STRIPE_PRICE_LABEL_PRO_MONTHLY',      mode: 'subscription', unlock: { tier: 'label',   features: ['label_pro'] } },
 
-  // NEW: AUTO ENGINES (monthly)
-  autopilot_lite_monthly: process.env.STRIPE_PRICE_AUTOPILOT_LITE_MONTHLY,
-  autopilot_pro_monthly: process.env.STRIPE_PRICE_AUTOPILOT_PRO_MONTHLY,
-  ai_dj_autopilot_monthly: process.env.STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY,
-  label_autopilot_monthly: process.env.STRIPE_PRICE_LABEL_AUTOPILOT_MONTHLY,
-  sponsor_autopilot_monthly: process.env.STRIPE_PRICE_SPONSOR_AUTOPILOT_MONTHLY,
+  // MIXTAPE HOSTING (ONE-TIME)
+  mixtape_hosting_starter:{ priceEnv: 'STRIPE_PRICE_MIXTAPE_HOSTING_STARTER',mode: 'payment',      unlock: { features: ['mixtape_hosting_starter'] } },
+  mixtape_hosting_pro:    { priceEnv: 'STRIPE_PRICE_MIXTAPE_HOSTING_PRO',    mode: 'payment',      unlock: { features: ['mixtape_hosting_pro'] } },
+  mixtape_hosting_elite:  { priceEnv: 'STRIPE_PRICE_MIXTAPE_HOSTING_ELITE',  mode: 'payment',      unlock: { features: ['mixtape_hosting_elite'] } },
 
-  // NEW: PRO FEATURE LANES (monthly)
-  submissions_priority_monthly: process.env.STRIPE_PRICE_SUBMISSIONS_PRIORITY_MONTHLY,
-  analytics_pro_monthly: process.env.STRIPE_PRICE_ANALYTICS_PRO_MONTHLY,
-  contract_lab_pro_monthly: process.env.STRIPE_PRICE_CONTRACT_LAB_PRO_MONTHLY,
-  distribution_assist_monthly: process.env.STRIPE_PRICE_DISTRIBUTION_ASSIST_MONTHLY,
+  // PROMO / ROTATION (ONE-TIME)
+  rotation_boost_light:   { priceEnv: 'STRIPE_PRICE_ROTATION_BOOST_LIGHT',   mode: 'payment',      unlock: { features: ['rotation_boost_light'] } },
+  rotation_boost_heavy:   { priceEnv: 'STRIPE_PRICE_ROTATION_BOOST_HEAVY',   mode: 'payment',      unlock: { features: ['rotation_boost_heavy'] } },
+  rotation_boost_full:    { priceEnv: 'STRIPE_PRICE_ROTATION_BOOST_FULL',    mode: 'payment',      unlock: { features: ['rotation_boost_full'] } },
 
-  // NEW: ONE-TIME FEATURE PACKS
-  priority_submission_pack: process.env.STRIPE_PRICE_PRIORITY_SUBMISSION_PACK,
-  playlist_pitch_pack: process.env.STRIPE_PRICE_PLAYLIST_PITCH_PACK,
-  press_run_pack: process.env.STRIPE_PRICE_PRESS_RUN_PACK,
-  radio_interview_slot: process.env.STRIPE_PRICE_RADIO_INTERVIEW_SLOT,
-  homepage_takeover_day: process.env.STRIPE_PRICE_HOMEPAGE_TAKEOVER_DAY,
+  // SOCIAL (SUBSCRIPTION)
+  social_starter_monthly: { priceEnv: 'STRIPE_PRICE_SOCIAL_STARTER_MONTHLY', mode: 'subscription', unlock: { tier: 'creator', features: ['social_engine','social_starter_monthly'] } }
 };
 
-const SUBSCRIPTION_IDS = new Set([
-  'creator_pass_monthly',
-  'creator_pass_yearly',
-  'motion_monthly',
-  'takeover_viral_monthly',
-  'dj_toolkit_monthly',
-  'label_core_monthly',
-  'label_pro_monthly',
-  'owner_founder_access',
-  'social_starter_monthly',
-  'starter_sponsor_monthly',
-  'sponsor_city_monthly',
-  'sponsor_takeover_monthly',
-
-  // NEW subscriptions
-  'autopilot_lite_monthly',
-  'autopilot_pro_monthly',
-  'ai_dj_autopilot_monthly',
-  'label_autopilot_monthly',
-  'sponsor_autopilot_monthly',
-  'submissions_priority_monthly',
-  'analytics_pro_monthly',
-  'contract_lab_pro_monthly',
-  'distribution_assist_monthly',
-]);
-
-function json(statusCode, payload) {
-  return {
-    statusCode,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Allow-Methods': 'POST,OPTIONS',
-    },
-    body: JSON.stringify(payload),
-  };
+function getOrigin(headers = {}) {
+  const proto = headers['x-forwarded-proto'] || headers['X-Forwarded-Proto'] || 'https';
+  const host = headers['host'] || headers['Host'];
+  if (!host) return 'https://www.tkfmradio.com';
+  return `${proto}://${host}`;
 }
 
 export async function handler(event) {
-  if (event.httpMethod === 'OPTIONS') return json(200, { ok: true });
-  if (event.httpMethod !== 'POST') return json(405, { error: 'Method Not Allowed' });
-
-  let body;
   try {
-    body = JSON.parse(event.body || '{}');
-  } catch {
-    return json(400, { error: 'Invalid JSON body' });
-  }
+    if (event.httpMethod !== 'POST') {
+      return { statusCode: 405, body: 'Method Not Allowed' };
+    }
 
-  const { plan, feature } = body;
-  const id = plan || feature;
+    const body = JSON.parse(event.body || '{}');
+    const id = body.id || body.planId || body.featureId;
+    if (!id) return { statusCode: 400, body: JSON.stringify({ error: 'Missing id' }) };
 
-  if (!id) return json(400, { error: 'Missing plan/feature id' });
+    const item = CATALOG[id];
+    if (!item) return { statusCode: 400, body: JSON.stringify({ error: 'Unknown id', id }) };
 
-  const price = PRICE_MAP[id];
-  if (!price) return json(400, { error: `Unknown plan/feature: ${id}` });
+    const price = process.env[item.priceEnv];
+    if (!price) return { statusCode: 500, body: JSON.stringify({ error: 'Missing env price', env: item.priceEnv }) };
 
-  const origin = event.headers?.origin || event.headers?.Origin;
-  const SITE_URL = process.env.SITE_URL || origin || 'http://localhost:8888';
+    const origin = getOrigin(event.headers || {});
+    const success_url = `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`;
+    const cancel_url = `${origin}/cancel.html`;
 
-  const isSubscription = SUBSCRIPTION_IDS.has(id);
-
-  try {
     const session = await stripe.checkout.sessions.create({
-      mode: isSubscription ? 'subscription' : 'payment',
-      payment_method_types: ['card'],
+      mode: item.mode,
+      allow_promotion_codes: true,
       line_items: [{ price, quantity: 1 }],
-      success_url: `${SITE_URL}/pricing.html?unlocked=${encodeURIComponent(id)}`,
-      cancel_url: `${SITE_URL}/pricing.html?cancelled=${encodeURIComponent(id)}`,
-      metadata: { tkfm_id: id, platform: 'TKFM_V2', type: isSubscription ? 'subscription' : 'one_time' },
+      success_url,
+      cancel_url,
+      metadata: {
+        unlock_id: id,
+        unlock_json: JSON.stringify(item.unlock || {})
+      }
     });
 
-    return json(200, { url: session.url });
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: session.url })
+    };
   } catch (err) {
-    return json(500, { error: 'Stripe checkout failed', message: err?.message || 'Unknown error' });
+    return { statusCode: 500, body: JSON.stringify({ error: err?.message || String(err) }) };
   }
 }

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — Checkout Canceled</title>
+  <style>
+    :root { --bg:#020617; --p:#a855f7; --pk:#ec4899; --c:#22d3ee; }
+    html,body{height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;}
+    body{
+      background:
+        radial-gradient(800px 400px at 20% 15%, rgba(168,85,247,.20), transparent 60%),
+        radial-gradient(700px 380px at 70% 25%, rgba(236,72,153,.16), transparent 60%),
+        radial-gradient(800px 420px at 60% 80%, rgba(34,211,238,.12), transparent 60%),
+        var(--bg);
+      color:#e5e7eb;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .card{
+      width:min(720px, 92vw);
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(2,6,23,.75);
+      backdrop-filter: blur(10px);
+      border-radius:18px;
+      padding:26px;
+      box-shadow: 0 0 0 1px rgba(236,72,153,.10), 0 12px 50px rgba(0,0,0,.55);
+    }
+    .title{font-size:22px; font-weight:900; margin:0 0 10px;}
+    .sub{opacity:.9; margin:0 0 14px;}
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(90deg, rgba(168,85,247,.20), rgba(236,72,153,.18));
+      color:#fff;
+      text-decoration:none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p class="title">Checkout canceled</p>
+    <p class="sub">No worries — you can try again anytime.</p>
+    <a class="btn" href="/pricing.html">Back to Pricing</a>
+  </div>
+</body>
+</html>
