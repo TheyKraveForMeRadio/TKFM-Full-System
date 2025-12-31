@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TKFM — Stream Gateway</title>
+  <title>TKFM — Live Stream</title>
   <style>
     :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;}
     html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
@@ -16,7 +16,7 @@
       color:#e5e7eb;
       padding:18px;
     }
-    .wrap{max-width:1100px;margin:0 auto;}
+    .wrap{max-width:980px;margin:0 auto;}
     .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
     h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.3px;}
     .sub{opacity:.88;margin:8px 0 0;font-size:13px;line-height:1.55;max-width:760px;}
@@ -30,15 +30,7 @@
       padding:16px;
       box-shadow: 0 0 0 1px rgba(168,85,247,.10), 0 12px 50px rgba(0,0,0,.55);
     }
-    .grid{display:grid;grid-template-columns:1fr;gap:12px;}
-    @media(min-width:960px){.grid{grid-template-columns:1.2fr .8fr;}}
-    .panel{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.26);
-      border-radius:16px;
-      padding:14px;
-    }
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px;}
     button{
       border-radius:12px;
       padding:10px 14px;
@@ -46,14 +38,9 @@
       background: linear-gradient(90deg, rgba(168,85,247,.28), rgba(236,72,153,.22), rgba(34,211,238,.16));
       color:#fff;cursor:pointer;font-weight:900;
     }
-    input{
-      flex:1;min-width:240px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:12px;
-      padding:10px 12px;
-      color:#fff;outline:none;
-    }
+    .ok{color:#34d399;font-weight:900;}
+    .bad{color:#fb7185;font-weight:900;}
+    audio{width:100%;margin-top:10px;}
     .pill{
       display:inline-block;
       border:1px solid rgba(255,255,255,.12);
@@ -65,111 +52,43 @@
       opacity:.92;
       letter-spacing:.2px;
     }
-    .ok{color:#34d399;font-weight:900;}
-    .bad{color:#fb7185;font-weight:900;}
-    pre{
-      margin:0;
-      padding:12px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:12px;
-      overflow:auto;
-      max-height:40vh;
-      font-size:12px;
-    }
-    audio{width:100%;margin-top:10px;}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
       <div>
-        <h1>Stream Gateway <span class="pill" id="mode">LISTENER</span></h1>
-        <p class="sub">
-          This page is stable by design: <b>no auto-redirects</b>. If you want owner controls, unlock locally and the tools appear.
-        </p>
+        <h1>Live Stream <span class="pill">TKFM</span></h1>
+        <p class="sub">Press play to listen. If the stream doesn’t start, hit Reload Stream.</p>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
         <a href="/radio-hub.html">Radio Hub</a>
-        <a href="/owner-login.html?next=/radio-stream-gateway.html">Owner Login</a>
-        <a href="/owner-dashboard.html">Owner Console</a>
+        <a href="/index.html">Home</a>
       </div>
     </div>
 
     <div class="card">
-      <div class="grid">
-        <div class="panel">
-          <div style="font-weight:900;">Live Stream</div>
-          <div style="opacity:.86;font-size:12px;line-height:1.55;margin-top:6px;">
-            Uses the proxy function to avoid browser CORS issues:
-            <span class="pill">/.netlify/functions/radio-stream-proxy</span>
-          </div>
+      <div style="font-weight:900;">Now Playing</div>
+      <audio id="player" controls preload="none">
+        <source src="/.netlify/functions/radio-stream-proxy" />
+      </audio>
 
-          <audio id="player" controls preload="none">
-            <source src="/.netlify/functions/radio-stream-proxy" />
-          </audio>
-
-          <div class="row">
-            <button id="playBtn" type="button">Play</button>
-            <button id="stopBtn" type="button">Stop</button>
-            <button id="reloadBtn" type="button">Reload Stream</button>
-          </div>
-
-          <div style="margin-top:10px;font-size:12px;opacity:.9;" id="status"></div>
-        </div>
-
-        <div class="panel">
-          <div style="font-weight:900;">Owner Controls</div>
-          <div style="opacity:.86;font-size:12px;line-height:1.55;margin-top:6px;">
-            Unlock to reveal diagnostics + quick tools. This never forces navigation.
-          </div>
-
-          <div class="row" id="unlockRow">
-            <input id="key" type="password" placeholder="Paste TKFM_OWNER_KEY (local unlock)"/>
-            <button id="unlockBtn" type="button">Unlock</button>
-          </div>
-
-          <div class="row" id="lockRow" style="display:none;">
-            <button id="lockBtn" type="button">Lock Owner Mode</button>
-          </div>
-
-          <div style="margin-top:12px;">
-            <div style="font-weight:900;margin-bottom:8px;">Diagnostics</div>
-            <pre id="diag">{}</pre>
-          </div>
-        </div>
+      <div class="row">
+        <button id="playBtn" type="button">Play</button>
+        <button id="stopBtn" type="button">Stop</button>
+        <button id="reloadBtn" type="button">Reload Stream</button>
       </div>
+
+      <div style="margin-top:10px;font-size:12px;opacity:.9;" id="status"></div>
     </div>
   </div>
 
-  <script src="/js/tkfm-owner-session.js"></script>
   <script>
     const player = document.getElementById("player");
     const statusEl = document.getElementById("status");
-    const modeEl = document.getElementById("mode");
-    const unlockRow = document.getElementById("unlockRow");
-    const lockRow = document.getElementById("lockRow");
-    const diagEl = document.getElementById("diag");
 
     function setStatus(msg, ok){
       statusEl.innerHTML = ok ? `<span class="ok">${msg}</span>` : `<span class="bad">${msg}</span>`;
-    }
-
-    function setOwnerUI(){
-      const ok = window.TKFM_OWNER.isOwner();
-      modeEl.textContent = ok ? "OWNER" : "LISTENER";
-      unlockRow.style.display = ok ? "none" : "flex";
-      lockRow.style.display = ok ? "flex" : "none";
-
-      const diag = {
-        owner: ok,
-        has_token: !!window.TKFM_OWNER.getToken(),
-        memberTier: localStorage.getItem("tkfm_memberTier") || "free",
-        memberEmail: localStorage.getItem("tkfm_member_email") || "",
-        streamSrc: "/.netlify/functions/radio-stream-proxy",
-        time: new Date().toISOString()
-      };
-      diagEl.textContent = JSON.stringify(diag, null, 2);
     }
 
     document.getElementById("playBtn").addEventListener("click", async () => {
@@ -192,22 +111,6 @@
       setStatus("Stream reloaded.", true);
     });
 
-    document.getElementById("unlockBtn").addEventListener("click", () => {
-      const k = (document.getElementById("key").value || "").trim();
-      if (!k || k.length < 16) return setStatus("Invalid key.", false);
-      window.TKFM_OWNER.setOwner(k);
-      document.getElementById("key").value = "";
-      setOwnerUI();
-      setStatus("Owner mode unlocked (local).", true);
-    });
-
-    document.getElementById("lockBtn").addEventListener("click", () => {
-      window.TKFM_OWNER.clearOwner();
-      setOwnerUI();
-      setStatus("Owner mode locked.", true);
-    });
-
-    setOwnerUI();
     setStatus("Ready.", true);
   </script>
 </body>
