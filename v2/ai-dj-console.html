@@ -1,468 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta name="tkfm-access" content="owner" />
-  <script src="/js/access-gates.js" defer></script>
-
-  <meta charset="UTF-8" />
-  <title>They Krave For Me Radio — AI DJ Console</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AI DJ Console</title>
+  <meta name="robots" content="noindex,nofollow"/>
   <style>
-    /* Neon glow + subtle float */
-    .neon-card {
-      box-shadow:
-        0 0 15px rgba(168, 85, 247, 0.45),
-        0 0 40px rgba(59, 130, 246, 0.35);
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.84);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
     }
-    .float-soft {
-      animation: floatSoft 6s ease-in-out infinite;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
     }
-    @keyframes floatSoft {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.95;
     }
-
-    /* Equalizer bars animation */
-    .eq-bar {
-      animation: eqPulse 1.1s ease-in-out infinite;
-      transform-origin: bottom;
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
     }
-    .eq-bar:nth-child(2) { animation-delay: .15s; }
-    .eq-bar:nth-child(3) { animation-delay: .3s; }
-    .eq-bar:nth-child(4) { animation-delay: .45s; }
-    .eq-bar:nth-child(5) { animation-delay: .6s; }
-
-    @keyframes eqPulse {
-      0%, 100% { height: 16%; }
-      50% { height: 96%; }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+    .wrap{max-width:1240px;margin:0 auto;padding:22px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
     }
-
-    /* Glass / blur for hero */
-    .glass-panel {
-      backdrop-filter: blur(18px);
+    header .wrap{display:flex;align-items:center;gap:12px;padding:12px 22px}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
     }
-  </style>
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+    }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
+    .tag.warn{border-color:rgba(245,158,11,.28)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .box{
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(2,6,23,.55);
+      border-radius:18px;
+      padding:12px;
+      overflow:auto;
+    }
+</style>
 </head>
-<body class="bg-gradient-to-b from-black via-slate-950 to-black text-purple-100 min-h-screen font-mono">
-  <!-- HEADER -->
-  <header class="border-b border-purple-800/70 px-4 md:px-8 py-4 flex items-center justify-between bg-black/60 glass-panel sticky top-0 z-20">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-fuchsia-500 via-purple-500 to-sky-400 flex items-center justify-center text-xl shadow-lg shadow-fuchsia-500/50">
-        🎧
-      </div>
-      <div>
-        <h1 class="text-lg md:text-2xl font-bold tracking-wide">
-          THEY KRAVE FOR ME RADIO
-        </h1>
-        <p class="text-[11px] md:text-xs text-purple-300">
-          AI-powered rotation. Live DJ KRAVE curation.
-        </p>
-      </div>
-    </div>
+<body>
+  <div class="bg"></div>
 
-    <a href="dj-mixtape-hosting.html"
-       class="hidden sm:inline-flex items-center gap-2 text-[11px] md:text-xs px-3 py-2 rounded-full border border-emerald-500 bg-emerald-900/20 hover:bg-emerald-500/20 transition shadow-md shadow-emerald-500/30">
-      <span>🔥 Get Your Mixtape Hosted</span>
-      <span class="text-emerald-300 font-semibold">DJ KRAVE</span>
-    </a>
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">AI DJ Console</div>
+        <div style="font-weight:950;letter-spacing:.06em">TKFM • Owner</div>
+      </div>
+      <nav class="nav" aria-label="Owner Nav">
+        <a class="pill" href="god-view.html">God View</a>
+        <a class="pill" href="owner-ops-dashboard.html">Ops</a>
+        <a class="pill" href="tkfm-dev-console.html">Dev</a>
+        <a class="pill" href="ai-dj-engine.html">AI DJ</a>
+        <a class="pill" href="autopilot-engine.html">Autopilot</a>
+        <a class="pill" href="label-home.html">Label Home</a>
+        <a class="pill hot" href="owner-login.html" id="logoutLink">Logout</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="px-4 md:px-8 py-6 max-w-6xl mx-auto space-y-8">
-    <!-- HERO / NOW PLAYING -->
-    <section class="grid lg:grid-cols-3 gap-6 items-stretch">
-      <!-- Now Playing Card -->
-      <article class="lg:col-span-2 bg-black/70 glass-panel border border-purple-800/80 rounded-3xl p-5 md:p-6 neon-card float-soft">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-          <div>
-            <div class="flex items-center gap-2 text-xs text-purple-300 mb-1">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              LIVE NOW
-            </div>
-            <h2 class="text-xl md:text-2xl font-semibold tracking-wide">
-              AI DJ Console — Now Playing
-            </h2>
-            <p class="text-[11px] md:text-xs text-purple-400 mt-1">
-              Autopilot-powered rotation pack, tuned for TKFM. Updated in real-time.
-            </p>
-          </div>
+  <main class="wrap" style="padding-top:18px">
+    <section class="glass card">
+      <div class="k">AI DJ Console</div>
+      <div class="h1"><span class="grad">AI DJ Console</span></div>
+      <p class="p">Owner-only. Internal control surface placeholder for AI DJ testing and configuration.</p>
+      <div class="divider"></div>
 
-          <!-- Fake equalizer -->
-          <div class="flex flex-col items-end gap-2">
-            <div class="flex items-end gap-1 h-10 w-20 md:h-12 md:w-24">
-              <div class="eq-bar w-1.5 rounded-full bg-gradient-to-t from-cyan-400 via-fuchsia-400 to-amber-300"></div>
-              <div class="eq-bar w-1.5 rounded-full bg-gradient-to-t from-fuchsia-400 via-purple-400 to-sky-300"></div>
-              <div class="eq-bar w-1.5 rounded-full bg-gradient-to-t from-emerald-400 via-cyan-400 to-purple-300"></div>
-              <div class="eq-bar w-1.5 rounded-full bg-gradient-to-t from-amber-400 via-rose-400 to-indigo-300"></div>
-              <div class="eq-bar w-1.5 rounded-full bg-gradient-to-t from-sky-400 via-emerald-400 to-lime-300"></div>
-            </div>
-            <div class="text-[10px] text-purple-400">
-              AI rotation: <span id="rotationMeta" class="text-emerald-300">loading…</span>
-            </div>
-          </div>
-        </div>
+      <div class="grid">
+        <a class="glass tile" href="ai-dj-engine.html">
+  <div class="tileK">Back</div>
+  <div class="tileH">AI DJ Engine</div>
+  <div class="tileP">Return to AI DJ entry page.</div>
+  <div class="tags"><span class="tag ok">OWNER</span><span class="tag warn">NAV</span></div>
+</a>
+<a class="glass tile" href="autopilot-engine.html">
+  <div class="tileK">Automation</div>
+  <div class="tileH">Autopilot</div>
+  <div class="tileP">Check schedule + queue integration.</div>
+  <div class="tags"><span class="tag ok">ENGINE</span><span class="tag warn">SYNC</span></div>
+</a>
+<a class="glass tile" href="tkfm-dev-console.html">
+  <div class="tileK">Diagnostics</div>
+  <div class="tileH">Dev Console</div>
+  <div class="tileP">Feature flags and tier signals.</div>
+  <div class="tags"><span class="tag ok">OWNER</span><span class="tag warn">TOOLS</span></div>
+</a>
+<a class="glass tile" href="radio-stream-gateway.html">
+  <div class="tileK">Stream</div>
+  <div class="tileH">Stream Gateway</div>
+  <div class="tileP">Update stream URL and test play.</div>
+  <div class="tags"><span class="tag ok">ENGINE</span><span class="tag warn">ROUTE</span></div>
+</a>
+<a class="glass tile" href="now-playing.html">
+  <div class="tileK">Radio</div>
+  <div class="tileH">Now Playing</div>
+  <div class="tileP">Validate metadata output.</div>
+  <div class="tags"><span class="tag ok">PUBLIC</span><span class="tag warn">VERIFY</span></div>
+</a>
+<a class="glass tile" href="owner-ops-dashboard.html">
+  <div class="tileK">Ops</div>
+  <div class="tileH">Owner Ops</div>
+  <div class="tileP">Review intake + operations routing.</div>
+  <div class="tags"><span class="tag ok">OWNER</span><span class="tag warn">OPS</span></div>
+</a>
+      </div>
 
-        <!-- Now Playing content -->
-        <div id="nowPlayingEmpty" class="text-xs text-purple-400 bg-black/60 border border-dashed border-purple-700 rounded-2xl p-4 mt-2">
-          Autopilot is loading the first pack… hang tight.  
-          <span class="block mt-1 text-[10px] text-purple-500">
-            This console pulls from your Mixtape Catalog: approved / in-contract / completed DJ KRAVE hosting orders.
-          </span>
-        </div>
+      
+<div class="divider"></div>
+<div class="k">Console</div>
+<div class="p" style="margin-top:6px">This page is intentionally owner-only. Use it for internal testing and future control widgets.</div>
+<div class="btnRow">
+  <button class="btn btnHot" id="resetBtn" type="button">Reset AI Flags (local)</button>
+</div>
+<script>
+  (function(){
+    var b = document.getElementById('resetBtn');
+    if(!b) return;
+    b.addEventListener('click', function(){
+      try{
+        var f = JSON.parse(localStorage.getItem('tkfm_user_features')||'{}');
+        delete f.ai_dj_engine;
+        delete f.ai_dj_console;
+        localStorage.setItem('tkfm_user_features', JSON.stringify(f));
+      }catch(e){}
+      alert('Local AI flags reset on this device.');
+    });
+  })();
+</script>
 
-        <div id="nowPlayingCard" class="hidden mt-2 space-y-4">
-          <div class="grid md:grid-cols-[2fr,1.4fr] gap-4 md:gap-6 items-start">
-            <!-- Text info -->
-            <div class="space-y-2">
-              <div class="text-[11px] text-purple-400">Artist</div>
-              <div id="npArtist" class="text-2xl font-semibold tracking-wide truncate">
-                —
-              </div>
-              <div class="text-[11px] text-purple-400 mt-2">Project / Mixtape</div>
-              <div id="npProject" class="text-sm md:text-base font-semibold">
-                —
-              </div>
-
-              <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-purple-300">
-                <div>
-                  <div class="text-[9px] text-purple-500 mb-0.5">Tier</div>
-                  <div id="npTier"
-                       class="inline-flex items-center px-2 py-1 rounded-full bg-purple-900/70 border border-purple-500">
-                    —
-                  </div>
-                </div>
-                <div>
-                  <div class="text-[9px] text-purple-500 mb-0.5">Status</div>
-                  <div id="npStatus"
-                       class="inline-flex items-center px-2 py-1 rounded-full bg-purple-800/70 text-purple-100">
-                    —
-                  </div>
-                </div>
-                <div>
-                  <div class="text-[9px] text-purple-500 mb-0.5">Amount</div>
-                  <div id="npAmount">—</div>
-                </div>
-                <div>
-                  <div class="text-[9px] text-purple-500 mb-0.5">Source</div>
-                  <div id="npSource">—</div>
-                </div>
-              </div>
-
-              <div class="mt-3 text-[9px] text-purple-500">
-                Rotation ID: <span id="npId" class="font-mono">—</span>
-              </div>
-            </div>
-
-            <!-- Fake player / CTA -->
-            <div class="space-y-3">
-              <div class="bg-gradient-to-br from-purple-900/70 via-fuchsia-900/60 to-sky-900/60 border border-purple-500/80 rounded-2xl p-3 md:p-4">
-                <div class="flex items-center justify-between gap-2 mb-2">
-                  <div class="text-[11px] text-purple-200">
-                    TKFM Stream
-                  </div>
-                  <div class="text-[10px] text-emerald-300">
-                    Demo UI — plug in real stream URL later
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                  <button
-                    class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-400 flex items-center justify-center text-black text-lg font-bold shadow-lg shadow-emerald-500/40 transition">
-                    ▶
-                  </button>
-                  <div class="flex-1 space-y-1">
-                    <div class="h-1.5 rounded-full bg-black/60 overflow-hidden">
-                      <div class="h-full w-1/3 bg-gradient-to-r from-emerald-400 via-sky-400 to-purple-400 animate-pulse"></div>
-                    </div>
-                    <div class="flex items-center justify-between text-[9px] text-purple-200">
-                      <span>00:00</span>
-                      <span>Live Stream</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-black/70 border border-emerald-500/70 rounded-2xl p-3 text-[11px] text-emerald-100">
-                Artists & DJs — want this rotation energy for your project?
-                <a href="dj-mixtape-hosting.html"
-                   class="inline-flex items-center gap-1 mt-1 text-emerald-300 hover:text-emerald-100 underline decoration-dotted">
-                  Get your mixtape hosted by DJ KRAVE →
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- Right Side: Up Next + quick stats -->
-      <aside class="bg-black/70 glass-panel border border-purple-800/70 rounded-3xl p-4 md:p-5 flex flex-col justify-between gap-4">
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-semibold flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-amber-300 animate-pulse"></span>
-              Up Next In Rotation
-            </h3>
-            <button id="refreshBtn"
-                    class="text-[10px] px-2 py-1 rounded-full border border-purple-600 hover:bg-purple-900/60">
-              🔄 Refresh Pack
-            </button>
-          </div>
-
-          <div id="upNextEmpty" class="text-[11px] text-purple-400 mt-2">
-            Waiting on first rotation pack from Autopilot…
-          </div>
-
-          <div id="upNextList" class="mt-2 space-y-2 text-[11px] hidden">
-            <!-- items injected -->
-          </div>
-        </div>
-
-        <div class="text-[10px] text-purple-400 border-t border-purple-900/60 pt-3">
-          <div id="packStats">No pack loaded yet.</div>
-          <div class="mt-1 text-purple-500">
-            Internal source: <code>/netlify/functions/get-autopilot-rotation</code>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <!-- DEV / DEBUG VIEW (optional, collapse) -->
-    <section class="bg-black/70 border border-purple-900 rounded-3xl p-4 md:p-5 shadow-inner shadow-purple-900/60">
-      <details class="text-[11px] text-purple-300">
-        <summary class="cursor-pointer mb-2">
-          Developer View — Raw Autopilot Response
-        </summary>
-        <pre id="jsonDump"
-             class="mt-2 bg-black/70 border border-purple-900 rounded-2xl p-3 overflow-x-auto max-h-72 text-[10px] text-emerald-200">
-No data yet.
-        </pre>
-      </details>
     </section>
   </main>
 
-  <!-- TOAST -->
-  <div id="toast"
-       class="fixed bottom-4 right-4 bg-purple-900/95 border border-purple-500 text-xs md:text-sm px-3 py-2 rounded-lg shadow-xl opacity-0 pointer-events-none transition-opacity z-50">
-    <span id="toastText"></span>
-  </div>
-
+  
+  <script src="/js/tkfm-owner-guard.js"></script>
   <script>
-    const rotationMeta = document.getElementById('rotationMeta');
-    const nowPlayingEmpty = document.getElementById('nowPlayingEmpty');
-    const nowPlayingCard = document.getElementById('nowPlayingCard');
-    const npArtist = document.getElementById('npArtist');
-    const npProject = document.getElementById('npProject');
-    const npTier = document.getElementById('npTier');
-    const npStatus = document.getElementById('npStatus');
-    const npAmount = document.getElementById('npAmount');
-    const npSource = document.getElementById('npSource');
-    const npId = document.getElementById('npId');
-
-    const upNextEmpty = document.getElementById('upNextEmpty');
-    const upNextList = document.getElementById('upNextList');
-    const packStats = document.getElementById('packStats');
-    const jsonDump = document.getElementById('jsonDump');
-    const refreshBtn = document.getElementById('refreshBtn');
-
-    const toast = document.getElementById('toast');
-    const toastText = document.getElementById('toastText');
-
-    let lastPack = null;
-
-    function showToast(message) {
-      toastText.textContent = message;
-      toast.classList.remove('opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'pointer-events-none');
-      }, 2600);
-    }
-
-    function formatAmount(amount, currency) {
-      if (!amount) return '-';
-      const value = (amount / 100).toFixed(2);
-      return value + ' ' + (currency || 'usd').toUpperCase();
-    }
-
-    function formatDate(iso) {
-      if (!iso) return '-';
-      try {
-        const d = new Date(iso);
-        return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
-      } catch {
-        return iso;
-      }
-    }
-
-    function statusBadgeClass(status) {
-      switch (status) {
-        case 'approved': return 'bg-green-700/70 text-green-100';
-        case 'rejected': return 'bg-red-800/70 text-red-100';
-        case 'in-contract': return 'bg-blue-700/70 text-blue-100';
-        case 'completed': return 'bg-emerald-700/70 text-emerald-100';
-        default: return 'bg-purple-800/70 text-purple-100';
-      }
-    }
-
-    function setNowPlaying(item) {
-      if (!item) {
-        nowPlayingCard.classList.add('hidden');
-        nowPlayingEmpty.classList.remove('hidden');
-        rotationMeta.textContent = 'no current track';
-        return;
-      }
-
-      nowPlayingEmpty.classList.add('hidden');
-      nowPlayingCard.classList.remove('hidden');
-
-      const status = item.orderStatus || 'pending-intake';
-      const tier = item.tier || 'custom';
-
-      npArtist.textContent = item.artistName || 'Unknown Artist';
-      npProject.textContent = item.projectTitle || 'Untitled Project';
-      npTier.textContent = 'tier: ' + tier;
-      npStatus.textContent = status;
-      npStatus.className = 'inline-flex items-center px-2 py-1 rounded-full text-[10px] ' + statusBadgeClass(status);
-      npAmount.textContent = formatAmount(item.amount_total, item.currency);
-      npSource.textContent = item.source || 'mixtape-hosting';
-      npId.textContent = item.id || '—';
-
-      rotationMeta.textContent = tier.toUpperCase() + ' • ' + status;
-    }
-
-    function buildUpNextItem(item, index) {
-      const container = document.createElement('div');
-      const status = item.orderStatus || 'pending-intake';
-      const tier = item.tier || 'custom';
-
-      container.className = 'flex items-center gap-2 border border-purple-800/80 rounded-2xl px-3 py-2 bg-black/70';
-
-      container.innerHTML = `
-        <div class="w-5 text-[10px] text-purple-500 text-right">${index + 1}.</div>
-        <div class="flex-1">
-          <div class="flex items-center justify-between gap-2">
-            <div>
-              <div class="text-[11px] font-semibold">${item.artistName || 'Unknown Artist'}</div>
-              <div class="text-[10px] text-purple-400 truncate">${item.projectTitle || 'Untitled Project'}</div>
-            </div>
-            <div class="flex items-center gap-1 text-[9px]">
-              <span class="inline-block px-2 py-0.5 rounded-full ${statusBadgeClass(status)}">
-                ${status}
-              </span>
-              <span class="inline-block px-2 py-0.5 rounded-full bg-purple-900/70 border border-purple-600">
-                ${tier}
-              </span>
-            </div>
-          </div>
-          <div class="mt-1 grid grid-cols-2 gap-1 text-[9px] text-purple-300">
-            <div>
-              <div class="text-purple-500">Amount</div>
-              <div>${formatAmount(item.amount_total, item.currency)}</div>
-            </div>
-            <div>
-              <div class="text-purple-500">Updated</div>
-              <div>${formatDate(item.updatedAt || item.createdAt)}</div>
-            </div>
-          </div>
-        </div>
-      `;
-      return container;
-    }
-
-    function renderPack(data, meta) {
-      if (!data || !data.length) {
-        setNowPlaying(null);
-        upNextList.innerHTML = '';
-        upNextList.classList.add('hidden');
-        upNextEmpty.classList.remove('hidden');
-        packStats.textContent = 'No rotation results. Check catalog / statuses.';
-        return;
-      }
-
-      // first track = now playing
-      const [first, ...rest] = data;
-      setNowPlaying(first);
-
-      upNextList.innerHTML = '';
-      if (rest.length) {
-        rest.forEach((item, idx) => {
-          upNextList.appendChild(buildUpNextItem(item, idx));
-        });
-        upNextList.classList.remove('hidden');
-        upNextEmpty.classList.add('hidden');
-      } else {
-        upNextList.classList.add('hidden');
-        upNextEmpty.classList.remove('hidden');
-        upNextEmpty.textContent = 'Only one track in current pack — Autopilot needs more catalog fuel.';
-      }
-
-      const delivered = meta.sizeDelivered;
-      const eligible = meta.eligibleCount;
-      const total = meta.totalCatalog;
-
-      packStats.textContent =
-        `Pack size ${delivered}/${meta.sizeRequested} • Eligible ${eligible}/${total} • Tier filter: ${meta.tierFilter || 'all'} • Status: ${meta.statusFilter}`;
-    }
-
-    async function loadRotationPack() {
-      const params = new URLSearchParams();
-      params.set('size', '12'); // default front-end pack size
-      // default statuses: approved, in-contract, completed (function already defaults)
-      const qs = '?' + params.toString();
-
-      try {
-        rotationMeta.textContent = 'contacting Autopilot…';
-        const res = await fetch('/.netlify/functions/get-autopilot-rotation' + qs);
-        const data = await res.json();
-
-        lastPack = data;
-        jsonDump.textContent = JSON.stringify(data, null, 2);
-
-        if (!data || !Array.isArray(data.items)) {
-          showToast('Rotation response malformed');
-          rotationMeta.textContent = 'error: malformed rotation';
-          return;
+    (function(){
+      async function go(){
+        if(window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.requireOwner){
+          await window.TKFM_OWNER_GUARD.requireOwner();
+        } else {
+          location.href = 'owner-login.html?next=' + encodeURIComponent(location.pathname + location.search + location.hash);
         }
-
-        renderPack(data.items, data.meta);
-        showToast('Rotation pack updated.');
-      } catch (err) {
-        console.error(err);
-        showToast('Error loading rotation pack');
-        rotationMeta.textContent = 'error loading pack';
       }
-    }
-
-    refreshBtn.addEventListener('click', loadRotationPack);
-
-    // On load, try to use last pack from localStorage or fetch a fresh one
-    (function init() {
-      try {
-        const stored = localStorage.getItem('tkfm_autopilot_last_pack');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed && Array.isArray(parsed.items)) {
-            lastPack = parsed;
-            jsonDump.textContent = JSON.stringify(parsed, null, 2);
-            renderPack(parsed.items, parsed.meta || {
-              sizeRequested: parsed.items.length,
-              sizeDelivered: parsed.items.length,
-              eligibleCount: parsed.items.length,
-              totalCatalog: parsed.items.length,
-              tierFilter: 'all',
-              statusFilter: 'approved,in-contract,completed'
-            });
-            rotationMeta.textContent = 'using last DJ pack';
-            return;
-          }
-        }
-      } catch (err) {
-        console.error('localStorage error:', err);
-      }
-
-      // if nothing in storage, fetch fresh
-      loadRotationPack();
+      go();
     })();
   </script>
-  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
+
+
+  <script>
+    (function(){
+      var l = document.getElementById('logoutLink');
+      if(l){
+        l.addEventListener('click', function(e){
+          e.preventDefault();
+          try{ if(window.TKFM_OWNER_GUARD) window.TKFM_OWNER_GUARD.clearOwner(); }catch(_e){}
+          location.href = 'owner-login.html';
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

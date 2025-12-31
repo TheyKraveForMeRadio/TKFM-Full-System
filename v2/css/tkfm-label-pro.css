@@ -1,0 +1,229 @@
+/* TKFM RECORDS (Luxury Gold Estate) — PRO LABEL LOOK + FEEL
+   Separate world from radio. Gold strokes, subtle shimmer, clean ops layout.
+*/
+
+:root{
+  --bg:#020617;
+  --panel: rgba(2,6,23,.84);
+  --panel2: rgba(15,23,42,.62);
+  --stroke: rgba(250,204,21,.18);
+  --text: rgba(226,232,240,1);
+  --muted: rgba(203,213,225,.86);
+
+  --gold:#facc15;
+  --deep:#eab308;
+  --amber:#f97316;
+
+  --r: 26px;
+  --shadow: 0 0 0 1px rgba(255,255,255,.04), 0 18px 60px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color: var(--text);
+  background: var(--bg);
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+
+.tkfm-labelBg{
+  position:fixed; inset:0; z-index:-5;
+  background:
+    radial-gradient(1000px 600px at 18% 10%, rgba(250,204,21,.12), transparent 62%),
+    radial-gradient(900px 540px at 82% 18%, rgba(234,179,8,.10), transparent 64%),
+    radial-gradient(900px 560px at 52% 92%, rgba(249,115,22,.08), transparent 70%),
+    radial-gradient(1200px 720px at 70% 70%, rgba(250,204,21,.06), transparent 72%);
+}
+.tkfm-labelBg:after{
+  content:"";
+  position:absolute; inset:-10%;
+  background:
+    repeating-linear-gradient(0deg, rgba(250,204,21,.06) 0px, rgba(250,204,21,.06) 1px, transparent 1px, transparent 40px),
+    repeating-linear-gradient(90deg, rgba(234,179,8,.05) 0px, rgba(234,179,8,.05) 1px, transparent 1px, transparent 44px);
+  opacity:.22;
+  transform: rotate(-6deg);
+  animation: labelDrift 18s linear infinite;
+  pointer-events:none;
+}
+@keyframes labelDrift{
+  0%{transform: translate3d(-1%, -1%, 0) rotate(-6deg)}
+  50%{transform: translate3d(1.2%, 1%, 0) rotate(-6deg)}
+  100%{transform: translate3d(-1%, -1%, 0) rotate(-6deg)}
+}
+
+.tkfm-wrap{max-width:1240px;margin:0 auto;padding:24px}
+.tkfm-glass{
+  background: var(--panel);
+  border: 1px solid var(--stroke);
+  border-radius: var(--r);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+.tkfm-k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--muted)}
+.tkfm-h1{margin:12px 0 0;font-size:34px;line-height:1.08;font-weight:950}
+.tkfm-grad{
+  display:inline-block;
+  background-image: linear-gradient(90deg, var(--gold), var(--deep), var(--amber));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.tkfm-p{margin:10px 0 0;color:rgba(203,213,225,.88);line-height:1.6;font-size:14px;max-width:980px}
+
+.tkfm-topbar{
+  position:sticky;top:0;z-index:90;
+  background: rgba(0,0,0,.66);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(250,204,21,.16);
+}
+.tkfm-topbar .tkfm-wrap{
+  padding:12px 24px;
+  display:flex;align-items:center;gap:14px;
+}
+.tkfm-brand{display:flex;align-items:center;gap:12px;min-width:260px}
+.tkfm-logoWrap{
+  position:relative;
+  width:56px;height:56px;
+  border-radius:18px;
+  background: rgba(2,6,23,.55);
+  border: 1px solid rgba(250,204,21,.18);
+  overflow:hidden;
+}
+.tkfm-logoWrap:before{
+  content:"";
+  position:absolute; inset:-30%;
+  background: radial-gradient(closest-side at 40% 40%, rgba(250,204,21,.30), transparent 60%);
+  filter: blur(10px);
+  opacity:.85;
+  animation: goldShimmer 8s linear infinite;
+}
+@keyframes goldShimmer{
+  0%{transform: translate3d(-10%, -10%, 0) rotate(0deg)}
+  100%{transform: translate3d(10%, 10%, 0) rotate(360deg)}
+}
+.tkfm-brand img{
+  position:absolute; inset:0; margin:auto;
+  height:42px;width:auto;object-fit:contain;
+  filter: drop-shadow(0 0 12px rgba(250,204,21,.12));
+}
+.tkfm-title{font-size:13px;font-weight:950;letter-spacing:.06em;line-height:1.2}
+
+.tkfm-nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tkfm-pill{
+  padding:10px 14px;border-radius:999px;
+  border:1px solid rgba(250,204,21,.20);
+  background: rgba(15,23,42,.60);
+  font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color: rgba(226,232,240,.95);
+  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}
+.tkfm-pill:hover{
+  transform: translateY(-1px);
+  border-color: rgba(250,204,21,.55);
+  background: rgba(15,23,42,.88);
+}
+
+.tkfm-menuBtn{
+  display:none;
+  margin-left:auto;
+  width:44px;height:44px;border-radius:14px;
+  border:1px solid rgba(250,204,21,.20);
+  background: rgba(15,23,42,.60);
+  color: rgba(226,232,240,.96);
+  cursor:pointer;
+}
+.tkfm-menuBtn:hover{border-color: rgba(250,204,21,.55)}
+.tkfm-drawer{
+  display:none;
+  position:fixed;
+  left:16px; right:16px; top:74px;
+  z-index:120;
+  background: rgba(0,0,0,.70);
+  border:1px solid rgba(250,204,21,.18);
+  border-radius: 20px;
+  backdrop-filter: blur(14px);
+  padding: 10px;
+}
+.tkfm-drawer a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding: 12px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(250,204,21,.12);
+  background: rgba(15,23,42,.55);
+  margin: 8px 0;
+  font-size:12px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:900;
+}
+.tkfm-drawer a:hover{
+  border-color: rgba(250,204,21,.40);
+  background: rgba(15,23,42,.86);
+}
+@media (max-width: 860px){
+  .tkfm-nav{display:none}
+  .tkfm-menuBtn{display:grid;place-items:center}
+}
+
+/* label dashboard blocks */
+.tkfm-grid{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width: 1100px){.tkfm-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width: 720px){.tkfm-grid{grid-template-columns:1fr}}
+
+.tkfm-tile{
+  padding:16px;border-radius:22px;position:relative;overflow:hidden
+}
+.tkfm-tile:before{
+  content:"";position:absolute;inset:-2px;
+  background:
+    radial-gradient(560px 220px at 12% 12%, rgba(250,204,21,.10), transparent 60%),
+    radial-gradient(560px 220px at 86% 16%, rgba(249,115,22,.08), transparent 60%);
+  opacity:.95;pointer-events:none;
+}
+.tkfm-tile > *{position:relative}
+.tkfm-tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(203,213,225,.86)}
+.tkfm-tileH{margin-top:8px;font-size:18px;font-weight:950}
+.tkfm-tileP{margin-top:8px;color:rgba(203,213,225,.86);font-size:13px;line-height:1.55}
+.tkfm-tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.tkfm-tag{
+  padding:7px 10px;border-radius:999px;
+  border:1px solid rgba(250,204,21,.18);
+  background: rgba(2,6,23,.55);
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+}
+.tkfm-tag.ops{border-color: rgba(250,204,21,.30)}
+.tkfm-tag.pay{border-color: rgba(249,115,22,.30)}
+
+.tkfm-btnRow{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+.tkfm-btn{
+  padding:10px 12px;border-radius:14px;
+  border:1px solid rgba(250,204,21,.22);
+  background: rgba(15,23,42,.72);
+  color: rgba(226,232,240,.96);
+  cursor:pointer;
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}
+.tkfm-btn:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.55);background:rgba(15,23,42,.92)}
+.tkfm-btnHot{border-color:rgba(249,115,22,.55);box-shadow:0 0 0 1px rgba(249,115,22,.12), 0 0 22px rgba(249,115,22,.08);}
+
+.tkfm-footer{
+  margin-top:30px;
+  border-top:1px solid rgba(250,204,21,.16);
+  background: rgba(0,0,0,.55);
+  color: rgba(203,213,225,.86);
+  font-size:12px;
+  letter-spacing:.08em;
+}
+.tkfm-footer .tkfm-wrap{
+  padding:18px 24px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}

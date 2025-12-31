@@ -1,3 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>They Krave For Me Radio — Radio Hub</title>
+  <meta name="description" content="Live station hub: player, now playing, community chat, and paid lanes."/>
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1);
+      --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,textarea{font:inherit}
+    .bg{position:fixed;inset:0;z-index:-10}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.20), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.16), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.12), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.98;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.06) 0px, rgba(34,211,238,.06) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.05) 0px, rgba(168,85,247,.05) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
 
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>TKFM Radio Hub — Live Stream + Community</title><meta name="description" content="They Krave For Me Radio (TKFM) — Live stream, now playing, DJ schedule, submissions, paid lanes, and the station community chat."/><style>:root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--b:#3b82f6;--t:rgba(226,232,240,1);--m:rgba(148,163,184,.95);--stroke:rgba(148,163,184,.18);--panel:rgba(2,6,23,.82);--shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);--r:26px}*{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";color:var(--t);background:var(--bg);overflow-x:hidden}a{color:inherit;text-decoration:none}img{max-width:100%;display:block}button,input,textarea{font-family:inherit}.bg{position:fixed;inset:0;z-index:-5}.bg:before{content:"";position:absolute;inset:-35%;background:radial-gradient(900px 560px at 12% 10%,rgba(168,85,247,.18),transparent 60%),radial-gradient(900px 560px at 88% 14%,rgba(236,72,153,.14),transparent 60%),radial-gradient(900px 560px at 52% 92%,rgba(34,211,238,.12),transparent 60%),radial-gradient(1100px 650px at 74% 70%,rgba(59,130,246,.10),transparent 70%);filter:blur(2px);animation:drift 10.5s ease-in-out infinite;opacity:.95}.bg:after{content:"";position:absolute;inset:-25%;background:repeating-linear-gradient(0deg,rgba(34,211,238,.05) 0px,rgba(34,211,238,.05) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(168,85,247,.04) 0px,rgba(168,85,247,.04) 1px,transparent 1px,transparent 36px);transform:rotate(-6deg);opacity:.18;animation:grid 16s linear infinite}@keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}@keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}.wrap{max-width:1240px;margin:0 auto;padding:22px}.glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}.card{padding:18px;border-radius:28px}.k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}.h1{margin:10px 0 0;font-size:38px;line-height:1.06;font-weight:950}.p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}.grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}.divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}header{position:sticky;top:0;z-index:90;background:rgba(0,0,0,.72);border-bottom:1px solid rgba(30,41,59,.65);backdrop-filter:blur(14px)}header .wrap{display:flex;align-items:center;gap:14px;padding:12px 22px}.brand{display:flex;align-items:center;gap:12px;min-width:260px}.logoWrap{position:relative;width:58px;height:58px;border-radius:18px;transform-style:preserve-3d;animation:logoFloat 3s ease-in-out infinite}@keyframes logoFloat{0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg)}50%{transform:translate3d(0,-2px,0) rotateX(7deg) rotateY(-10deg)}}.logoGlow{position:absolute;inset:-12px;border-radius:22px;background:radial-gradient(closest-side at 50% 50%,rgba(168,85,247,.22),transparent 70%),radial-gradient(closest-side at 35% 65%,rgba(236,72,153,.18),transparent 72%),radial-gradient(closest-side at 70% 30%,rgba(34,211,238,.14),transparent 72%);filter:blur(10px);opacity:.95;animation:hue 7.2s linear infinite;pointer-events:none}@keyframes hue{0%{filter:blur(10px) hue-rotate(0deg)}100%{filter:blur(10px) hue-rotate(360deg)}}.brand img{position:absolute;inset:0;margin:auto;height:44px;width:auto;object-fit:contain;transform:translateZ(16px);filter:drop-shadow(0 0 16px rgba(34,211,238,.14))}.title{font-size:13px;font-weight:950;letter-spacing:.06em;line-height:1.2}.nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.62);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.95);transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap}.pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}.pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}.menuBtn{display:none;margin-left:auto;width:44px;height:44px;border-radius:14px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.60);color:rgba(226,232,240,.96);cursor:pointer}.drawer{display:none;position:fixed;left:16px;right:16px;top:74px;z-index:120;background:rgba(0,0,0,.72);border:1px solid rgba(148,163,184,.22);border-radius:20px;backdrop-filter:blur(14px);padding:10px}.drawer a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px;border-radius:16px;border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.55);margin:8px 0;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:900}.drawer a:hover{border-color:rgba(34,211,238,.55);background:rgba(15,23,42,.86)}@media (max-width:980px){.nav{display:none}.menuBtn{display:grid;place-items:center}}.chipRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.55);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)}.chip.live{border-color:rgba(16,185,129,.30)}.chip.pay{border-color:rgba(34,211,238,.28)}.chip.dj{border-color:rgba(168,85,247,.30)}.chip.fan{border-color:rgba(236,72,153,.28)}.chip.lock{border-color:rgba(236,72,153,.30)}.dot{width:10px;height:10px;border-radius:999px;background:#10b981;box-shadow:0 0 18px rgba(16,185,129,.26)}.grid{margin-top:14px;display:grid;grid-template-columns:1.2fr .8fr;gap:12px}@media (max-width:980px){.grid{grid-template-columns:1fr}}.subgrid{display:grid;grid-template-columns:1fr;gap:12px}.btnRow{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}.btn{padding:11px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.34);background:rgba(15,23,42,.72);color:rgba(226,232,240,.96);cursor:pointer;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap}.btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}.btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}.btnAlt{border-color:rgba(168,85,247,.62)}.btnSoft{border-color:rgba(148,163,184,.26)}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.small{font-size:12px;color:var(--m)}.vol{display:flex;gap:10px;align-items:center}input[type="range"]{width:160px}.status{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid rgba(16,185,129,.30);background:rgba(2,6,23,.55);font-size:10px;letter-spacing:.22em;text-transform:uppercase}.stage{position:relative;overflow:hidden;min-height:260px;display:grid;place-items:center;border-radius:24px;border:1px solid rgba(148,163,184,.16);background:linear-gradient(180deg,rgba(15,23,42,.55),rgba(2,6,23,.55))}.stage:before{content:"";position:absolute;inset:-2px;background:radial-gradient(520px 260px at 18% 18%,rgba(34,211,238,.13),transparent 60%),radial-gradient(520px 260px at 86% 20%,rgba(236,72,153,.11),transparent 60%),radial-gradient(520px 260px at 50% 88%,rgba(168,85,247,.10),transparent 60%);opacity:.95;pointer-events:none}.eq{position:absolute;inset:0;display:grid;place-items:center;opacity:.28;pointer-events:none}.eq svg{width:min(620px,92vw);height:190px}.eq rect{fill:rgba(34,211,238,.22);transform-origin:center bottom;animation:bar 1.05s ease-in-out infinite}.eq rect:nth-child(3n){fill:rgba(168,85,247,.20)}.eq rect:nth-child(4n){fill:rgba(236,72,153,.18)}.eq rect:nth-child(2){animation-duration:.85s}.eq rect:nth-child(3){animation-duration:1.12s}.eq rect:nth-child(4){animation-duration:.92s}.eq rect:nth-child(5){animation-duration:1.18s}.eq rect:nth-child(6){animation-duration:.78s}.eq rect:nth-child(7){animation-duration:1.10s}.eq rect:nth-child(8){animation-duration:.90s}.eq rect:nth-child(9){animation-duration:1.16s}.eq rect:nth-child(10){animation-duration:.84s}@keyframes bar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}.glowRing{position:absolute;width:min(560px,94vw);height:min(560px,94vw);border-radius:999px;background:radial-gradient(circle at 50% 50%,rgba(168,85,247,.16),transparent 55%),radial-gradient(circle at 35% 65%,rgba(236,72,153,.14),transparent 58%),radial-gradient(circle at 70% 35%,rgba(34,211,238,.12),transparent 60%);filter:blur(16px);opacity:.9;animation:pulse 4.8s ease-in-out infinite,hue2 9.5s linear infinite;pointer-events:none}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}@keyframes hue2{0%{filter:blur(16px) hue-rotate(0deg)}100%{filter:blur(16px) hue-rotate(360deg)}}.bigLogo{width:min(420px,78vw);filter:drop-shadow(0 0 22px rgba(34,211,238,.12)) drop-shadow(0 0 28px rgba(168,85,247,.10));animation:float3d 3.4s ease-in-out infinite;transform-style:preserve-3d;position:relative;z-index:2}@keyframes float3d{0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg)}50%{transform:translate3d(0,-6px,0) rotateX(8deg) rotateY(-10deg)}}.tileGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}@media (max-width:1120px){.tileGrid{grid-template-columns:repeat(2,1fr)}}@media (max-width:760px){.tileGrid{grid-template-columns:1fr}}.tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}.tile:before{content:"";position:absolute;inset:-2px;background:radial-gradient(560px 240px at 12% 12%,rgba(34,211,238,.12),transparent 60%),radial-gradient(560px 240px at 86% 16%,rgba(236,72,153,.10),transparent 60%),radial-gradient(560px 240px at 48% 90%,rgba(168,85,247,.08),transparent 60%);opacity:.95;pointer-events:none}.tile>*{position:relative}.tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}.tileH{margin-top:8px;font-size:18px;font-weight:950}.tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}.tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}.tag{padding:7px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.55);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)}.tag.pay{border-color:rgba(34,211,238,.28)}.tag.dj{border-color:rgba(168,85,247,.28)}.tag.fan{border-color:rgba(236,72,153,.28)}.tag.lock{border-color:rgba(236,72,153,.26)}.chatWrap{display:flex;flex-direction:column;gap:10px}.chatList{height:320px;overflow:auto;border-radius:18px;border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.55);padding:10px}.msg{padding:10px 10px;border-radius:16px;border:1px solid rgba(148,163,184,.12);background:rgba(15,23,42,.55);margin:8px 0}.meta{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}.who{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:900}.when{font-size:11px;color:rgba(148,163,184,.95)}.text{margin-top:6px;color:rgba(226,232,240,.95);line-height:1.55;font-size:13px;white-space:pre-wrap;word-break:break-word}.chatForm{display:grid;grid-template-columns:1fr;gap:10px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media (max-width:760px){.fields{grid-template-columns:1fr}}.inp{width:100%;padding:12px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.55);color:rgba(226,232,240,.95);outline:none}.inp:focus{border-color:rgba(34,211,238,.55);box-shadow:0 0 0 3px rgba(34,211,238,.10)}.hint{font-size:12px;color:rgba(148,163,184,.95);line-height:1.5}.footer{margin-top:80px;border-top:1px solid rgba(30,41,59,.7);background:rgba(0,0,0,.58);color:rgba(148,163,184,.95);font-size:12px;letter-spacing:.08em}.footer .wrap{padding:18px 22px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}</style></head><body><div class="bg"></div><header><div class="wrap"><a class="brand" href="index.html" aria-label="TKFM Home"><div class="logoWrap"><div class="logoGlow"></div><img src="/tkfm-radio-logo.png" alt="TKFM Radio"/></div><div><div class="k">They Krave For Me Radio</div><div class="title">Radio Hub • Live + Community</div></div></a><nav class="nav" aria-label="Primary"><a class="pill" href="index.html">Home</a><a class="pill" href="now-playing.html">Now Playing</a><a class="pill" href="dj-schedule.html">DJ Schedule</a><a class="pill" href="submit.html">Submit Music</a><a class="pill" href="pricing.html">Monthly Tiers</a><a class="pill hot" href="label-home.html">TKFM Records</a><a class="pill" href="login.html">Member Sign In</a><a class="pill" href="register.html">Create Account</a></nav><button class="menuBtn" id="menuBtn" aria-label="Menu">≡</button></div><div class="drawer" id="drawer" aria-label="Mobile Menu"><a href="index.html"><span>Home</span><span>→</span></a><a href="now-playing.html"><span>Now Playing</span><span>→</span></a><a href="dj-schedule.html"><span>DJ Schedule</span><span>→</span></a><a href="submit.html"><span>Submit Music</span><span>→</span></a><a href="pricing.html"><span>Monthly Tiers</span><span>→</span></a><a href="label-home.html"><span>TKFM Records</span><span>→</span></a><a href="login.html"><span>Member Sign In</span><span>→</span></a><a href="register.html"><span>Create Account</span><span>→</span></a></div></header><main class="wrap" style="padding-top:18px"><section class="glass card"><div class="k">Live stream • Station community • Paid lanes</div><div class="h1"><span class="grad">Radio Hub</span> — On Air + Chat</div><p class="p">Listen live, talk in the station community, and route into the paid lanes for Creator tools, DJ access tiers, and promotion engines.</p><div class="chipRow"><span class="chip live"><span class="dot"></span> LIVE</span><span class="chip" id="chipMember">MEMBER: FREE</span><span class="chip fan" id="chipFan">FAN PASS: LOCKED</span><span class="chip pay" id="chipCreator">CREATOR: LOCKED</span><span class="chip dj" id="chipDJ">DJ: LOCKED</span></div><div class="grid"><div class="glass card"><div class="stage"><div class="eq" aria-hidden="true"><svg viewBox="0 0 620 190" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="40" width="30" height="120" rx="10"/><rect x="90" y="18" width="30" height="142" rx="10"/><rect x="150" y="56" width="30" height="104" rx="10"/><rect x="210" y="28" width="30" height="132" rx="10"/><rect x="270" y="62" width="30" height="98" rx="10"/><rect x="330" y="18" width="30" height="142" rx="10"/><rect x="390" y="48" width="30" height="112" rx="10"/><rect x="450" y="26" width="30" height="134" rx="10"/><rect x="510" y="58" width="30" height="102" rx="10"/><rect x="570" y="34" width="30" height="126" rx="10"/></svg></div><div class="glowRing" aria-hidden="true"></div><img class="bigLogo" src="/tkfm-radio-logo.png" alt="They Krave For Me Radio"/></div><div class="divider"></div><div class="row"><div><div class="k">On Air</div><div style="margin-top:8px;font-size:20px;font-weight:950">TKFM Live Stream</div><div class="small" id="streamText">Stream URL: loading…</div></div><span class="status"><span class="dot"></span> LIVE</span></div><audio id="player" controls preload="none" style="width:100%"></audio><div class="row"><div class="small">Volume</div><div class="vol"><input id="vol" type="range" min="0" max="1" step="0.01" value="0.85"/><button class="btn btnSoft" id="playBtn" type="button">Play</button></div></div><div class="divider"></div><div class="k">Fast actions</div><div class="btnRow"><a class="btn btnHot" href="submit.html">Submit Music</a><a class="btn" href="now-playing.html">Now Playing</a><a class="btn" href="dj-schedule.html">DJ Schedule</a><a class="btn btnAlt" href="pricing.html">Monthly Tiers</a><a class="btn" href="label-home.html">Label Opportunities</a></div><div class="divider"></div><div class="tileGrid"><a class="glass tile" href="fan-pass.html"><div class="tileK">Community</div><div class="tileH">Fan Pass</div><div class="tileP">Support the station, unlock perks, and level up your community badge.</div><div class="tags"><span class="tag fan" id="tagFan">LOCKED</span><span class="tag">PERKS</span></div></a><a class="glass tile" href="creator-pass.html"><div class="tileK">Creator Lane</div><div class="tileH">Creator Pass</div><div class="tileP">Unlock creator tools, submissions lanes, and platform engines.</div><div class="tags"><span class="tag pay" id="tagCreator">LOCKED</span><span class="tag">TOOLS</span></div></a><a class="glass tile" href="dj-tools.html"><div class="tileK">DJ Lane</div><div class="tileH">DJ Toolkit</div><div class="tileP">DJ access tiers for station features and DJ operations.</div><div class="tags"><span class="tag dj" id="tagDJ">LOCKED</span><span class="tag">TIERS</span></div></a></div></div><div class="subgrid"><div class="glass card chatWrap"><div class="row"><div><div class="k">Station community</div><div style="margin-top:8px;font-size:20px;font-weight:950">TKFM Live Chat</div><div class="small" id="chatStatus">Chat: loading…</div></div><div class="btnRow" style="margin-top:0"><a class="btn btnSoft" href="register.html">Create Account</a><a class="btn btnSoft" href="login.html">Member Sign In</a></div></div><div class="chatList" id="chatList" aria-live="polite"></div><div class="chatForm"><div class="fields"><input class="inp" id="chatName" placeholder="Display name (required)" maxlength="28"/><input class="inp" id="chatTier" placeholder="Tier badge (auto)" disabled/></div><textarea class="inp" id="chatMsg" rows="3" placeholder="Message (keep it respectful)"></textarea><div class="row"><div class="hint">Community rules: no spam, no hate, no doxxing. Keep it music + motion.</div><div class="btnRow" style="margin-top:0"><button class="btn btnHot" id="sendBtn" type="button">Send</button><button class="btn btnSoft" id="clearBtn" type="button">Clear</button></div></div></div></div><div class="glass card"><div class="k">Paid engines</div><div style="margin-top:10px;font-size:20px;font-weight:950">Promotion + Features</div><p class="p" style="margin-top:6px">Paid lanes route into feature placements, rotation boosts, social campaigns, and mixtape hosting.</p><div class="btnRow"><a class="btn" href="feature-engine.html">Feature Engine</a><a class="btn" href="social-engine.html">Social Campaigns</a><a class="btn" href="dj-mixtape-hosting.html">Mixtape Hosting</a><a class="btn btnAlt" href="pricing.html">Pricing</a></div></div></div></div></section></main><footer class="footer"><div class="wrap"><div>© 2025 They Krave For Me Radio (TKFM)</div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="pill" href="index.html">Home</a><a class="pill" href="pricing.html">Monthly Tiers</a><a class="pill" href="submit.html">Submit</a><a class="pill" href="label-home.html">TKFM Records</a></div></div></footer><script type="module">(function(){function $(s){return document.querySelector(s)}function safeJson(str,fb){try{return JSON.parse(str)}catch(e){return fb}}const btn=$("#menuBtn"),drawer=$("#drawer");function close(){if(drawer)drawer.style.display="none"}function toggle(){if(!drawer)return;drawer.style.display=(drawer.style.display==="block")?"none":"block"}if(btn&&drawer&&!btn.__bound){btn.__bound=true;btn.addEventListener("click",toggle);document.addEventListener("click",function(e){if(e.target===btn)return;if(drawer.contains(e.target))return;close()});window.addEventListener("resize",function(){if(window.innerWidth>980)close()})}const stream=localStorage.getItem("RADIO_STREAM_URL")||localStorage.getItem("radio_stream_url")||localStorage.getItem("tkfm_radioStreamUrl")||localStorage.getItem("tkfm_streamUrl")||"";const streamText=$("#streamText");const player=$("#player");if(streamText)streamText.textContent="Stream URL: "+(stream?stream:"Not set");if(player&&stream)player.src=stream;const vol=$("#vol");if(player&&vol){player.volume=parseFloat(vol.value||"0.85");vol.addEventListener("input",function(){player.volume=parseFloat(vol.value||"0.85")})}const playBtn=$("#playBtn");if(playBtn&&player){playBtn.addEventListener("click",async function(){try{if(!stream&&!player.src){alert("Stream URL is not set yet.");");return}if(player.paused){await player.play();playBtn.textContent="Pause"}else{player.pause();playBtn.textContent="Play"}}catch(e){alert("Playback blocked by browser policy. Click Play on the audio controls.")}});player.addEventListener("pause",function(){playBtn.textContent="Play"});player.addEventListener("play",function(){playBtn.textContent="Pause"})}const features=safeJson(localStorage.getItem("tkfm_user_features")||"{}",{});const tierRaw=(localStorage.getItem("tkfm_memberTier")||localStorage.getItem("tkfm_creatorStatus")||"free").toString().toLowerCase();function pickTier(){if(tierRaw.includes("label"))return"LABEL";if(tierRaw.includes("dj"))return"DJ";if(tierRaw.includes("creator"))return"CREATOR";if(tierRaw.includes("fan"))return"FAN";return"FREE"}const memberTier=pickTier();const fanActive=!!features.fan_pass_monthly||!!features.fan_pass||memberTier==="FAN";const creatorActive=!!features.creator_pass_monthly||!!features.creator_pass_yearly||memberTier==="CREATOR";const djActive=!!features.dj_toolkit_monthly||memberTier==="DJ";const chipMember=$("#chipMember");const chipFan=$("#chipFan");const chipCreator=$("#chipCreator");const chipDJ=$("#chipDJ");const tagFan=$("#tagFan");const tagCreator=$("#tagCreator");const tagDJ=$("#tagDJ");const chatTier=$("#chatTier");if(chipMember)chipMember.textContent="MEMBER: "+memberTier;if(chipFan)chipFan.textContent="FAN PASS: "+(fanActive?"ACTIVE":"LOCKED");if(chipCreator)chipCreator.textContent="CREATOR: "+(creatorActive?"ACTIVE":"LOCKED");if(chipDJ)chipDJ.textContent="DJ: "+(djActive?"ACTIVE":"LOCKED");if(tagFan)tagFan.textContent=(fanActive?"ACTIVE":"LOCKED");if(tagCreator)tagCreator.textContent=(creatorActive?"ACTIVE":"LOCKED");if(tagDJ)tagDJ.textContent=(djActive?"ACTIVE":"LOCKED");if(chatTier)chatTier.value=memberTier;const nameEl=$("#chatName");const msgEl=$("#chatMsg");const listEl=$("#chatList");const statusEl=$("#chatStatus");const sendBtn=$("#sendBtn");const clearBtn=$("#clearBtn");function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]))}function timeFmt(iso){try{const d=new Date(iso);return d.toLocaleString()}catch(e){return""}}function addMsg(m,prepend){if(!listEl)return;const who=esc(m.display_name||"Listener");const tier=esc(m.tier||"FREE");const txt=esc(m.message||"");const when=esc(timeFmt(m.created_at||new Date().toISOString()));const el=document.createElement("div");el.className="msg";el.innerHTML='<div class="meta"><div class="who">'+who+' • '+tier+'</div><div class="when">'+when+'</div></div><div class="text">'+txt+'</div>';if(prepend)listEl.prepend(el);else listEl.appendChild(el);if(!prepend)listEl.scrollTop=listEl.scrollHeight}function setStatus(t){if(statusEl)statusEl.textContent=t}const savedName=localStorage.getItem("tkfm_chatName")||localStorage.getItem("tkfm_displayName")||"";if(nameEl&&savedName)nameEl.value=savedName;function saveName(){if(!nameEl)return;const v=nameEl.value.trim().slice(0,28);localStorage.setItem("tkfm_chatName",v)}if(nameEl)nameEl.addEventListener("change",saveName);if(clearBtn&&msgEl)clearBtn.addEventListener("click",function(){msgEl.value="";msgEl.focus()});let lastSend=0;async function send(){if(!nameEl||!msgEl)return;const displayName=nameEl.value.trim().slice(0,28);const message=msgEl.value.trim().slice(0,400);if(!displayName){alert("Enter a display name.");nameEl.focus();return}if(!message){msgEl.focus();return}const now=Date.now();if(now-lastSend<900)return;lastSend=now;saveName();if(!window.__tkfmSupabase){alert("Chat is not configured.");return}sendBtn&& (sendBtn.disabled=true);setStatus("Chat: sending…");const tier=memberTier;const { error } = await window.__tkfmSupabase.from("chat_messages").insert([{ display_name: displayName, tier, message }]);if(error){setStatus("Chat: error — "+(error.message||"insert failed"));sendBtn&&(sendBtn.disabled=false);return}msgEl.value="";msgEl.focus();setStatus("Chat: live");sendBtn&&(sendBtn.disabled=false)}if(sendBtn)sendBtn.addEventListener("click",send);if(msgEl)msgEl.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();send()}});async function bootChat(){try{const supabaseUrl=(import.meta.env && import.meta.env.VITE_SUPABASE_URL) ? import.meta.env.VITE_SUPABASE_URL : "";const supabaseAnon=(import.meta.env && import.meta.env.VITE_SUPABASE_ANON) ? import.meta.env.VITE_SUPABASE_ANON : "";if(!supabaseUrl||!supabaseAnon){setStatus("Chat: unavailable (missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON)");return}setStatus("Chat: connecting…");const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");const supabase=mod.createClient(supabaseUrl,supabaseAnon,{auth:{persistSession:false}});window.__tkfmSupabase=supabase;const { data, error } = await supabase.from("chat_messages").select("id,display_name,tier,message,created_at").order("created_at",{ascending:true}).limit(60);if(error){setStatus("Chat: error — "+(error.message||"load failed"));return}if(listEl)listEl.innerHTML="";(data||[]).forEach(m=>addMsg(m,false));setStatus("Chat: live");supabase.channel("tkfm-chat").on("postgres_changes",{event:"INSERT",schema:"public",table:"chat_messages"},(payload)=>{if(payload && payload.new) addMsg(payload.new,false)}).subscribe();}catch(e){setStatus("Chat: error — "+String(e&&e.message?e.message:e))}}bootChat();})();</script></body></html>
+    header{
+      position:sticky;top:0;z-index:80;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;min-width:260px}
+    .logo{
+      width:46px;height:46px;border-radius:14px;position:relative;overflow:hidden;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(2,6,23,.62);
+      box-shadow:0 0 0 1px rgba(255,255,255,.03),0 18px 60px rgba(0,0,0,.45);
+      transform-style:preserve-3d;
+      animation: float3d 3.2s ease-in-out infinite;
+    }
+    @keyframes float3d{
+      0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg)}
+      50%{transform:translate3d(0,-2px,0) rotateX(7deg) rotateY(-10deg)}
+    }
+    .logo:before{
+      content:"";position:absolute;inset:-12px;border-radius:16px;
+      background:
+        radial-gradient(closest-side at 50% 50%, rgba(168,85,247,.20), transparent 70%),
+        radial-gradient(closest-side at 35% 65%, rgba(236,72,153,.16), transparent 72%),
+        radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.14), transparent 72%);
+      filter:blur(10px);opacity:.95;animation:hue 7.2s linear infinite;pointer-events:none;
+    }
+    @keyframes hue{0%{filter:blur(10px) hue-rotate(0deg)}100%{filter:blur(10px) hue-rotate(360deg)}}
+    .logo img{position:absolute;inset:0;margin:auto;height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 18px rgba(34,211,238,.14))}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .title{font-weight:950;letter-spacing:.06em}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
 
+    main{max-width:1240px;margin:0 auto;padding:18px 22px 56px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:44px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:16px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+    .row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .chip{
+      padding:10px 12px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.26);
+      background:rgba(15,23,42,.60);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      margin-left:auto;
+      display:flex;gap:10px;align-items:center;
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:rgba(16,185,129,.95);box-shadow:0 0 0 4px rgba(16,185,129,.18)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+      display:inline-flex;align-items:center;justify-content:center;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
+
+    .layout{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+    @media (max-width:1100px){.layout{grid-template-columns:1fr}}
+
+    .player{
+      padding:18px;border-radius:28px;position:relative;overflow:hidden;
+    }
+    .player:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(680px 320px at 16% 20%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(680px 320px at 86% 18%, rgba(236,72,153,.12), transparent 60%),
+        radial-gradient(680px 320px at 50% 92%, rgba(168,85,247,.10), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .player>*{position:relative}
+
+    .now{
+      display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:12px
+    }
+    .badge{
+      padding:9px 12px;border-radius:999px;
+      border:1px solid rgba(34,211,238,.35);
+      background:rgba(2,6,23,.55);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase
+    }
+    .meter{
+      width:220px;height:10px;border-radius:999px;
+      background:rgba(148,163,184,.18);
+      overflow:hidden;border:1px solid rgba(148,163,184,.20)
+    }
+    .meter > span{
+      display:block;height:100%;width:58%;
+      background:linear-gradient(90deg, rgba(34,211,238,.85), rgba(236,72,153,.85));
+      animation:pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse{0%,100%{transform:translateX(-8%)}50%{transform:translateX(8%)}}
+
+    .chatWrap{padding:18px;border-radius:28px}
+    .chatHead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .chatTitle{font-weight:950}
+    .small{font-size:12px;color:rgba(148,163,184,.95);line-height:1.5}
+    .chatBox{
+      margin-top:12px;
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(2,6,23,.55);
+      border-radius:18px;
+      height:380px;
+      overflow:auto;
+      padding:12px;
+    }
+    .msg{padding:10px 10px;border-radius:14px;border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.45);margin-bottom:10px}
+    .msgTop{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+    .name{font-weight:950}
+    .time{font-size:11px;color:rgba(148,163,184,.95)}
+    .text{margin-top:6px;color:rgba(226,232,240,.92);line-height:1.55;font-size:13px;white-space:pre-wrap}
+    .chatForm{margin-top:10px;display:grid;grid-template-columns:1fr auto;gap:10px}
+    .input{
+      padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.22);
+      background:rgba(15,23,42,.60);
+      color:rgba(226,232,240,.95);
+      outline:none;
+    }
+    .input:focus{border-color:rgba(34,211,238,.65);box-shadow:0 0 0 4px rgba(34,211,238,.12)}
+    .toast{margin-top:10px}
+    .warn{
+      border:1px solid rgba(245,158,11,.22);
+      background:rgba(245,158,11,.06);
+      border-radius:16px;
+      padding:12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <div class="logo" aria-hidden="true"><img src="/tkfm-radio-logo.png" alt="TKFM"/></div>
+        <div>
+          <div class="k">They Krave For Me Radio</div>
+          <div class="title">Radio Hub</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Radio Nav">
+        <a class="pill hot" href="radio-hub.html">On Air</a>
+        <a class="pill" href="now-playing.html">Now Playing</a>
+        <a class="pill" href="submit.html">Submit Music</a>
+        <a class="pill" href="pricing.html">Monthly Tiers</a>
+        <a class="pill" href="login.html">Member Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="glass player">
+      <div class="row">
+        <div>
+          <div class="k">On Air</div>
+          <div class="h1"><span class="grad">TKFM Live Stream</span></div>
+          <p class="p">Independent Artist Power Station — live audio, community chat, and paid lanes that turn motion into momentum.</p>
+
+          <div class="btnRow">
+            <a class="btn btnHot" href="pricing.html">Join a Tier</a>
+            <a class="btn" href="feature-engine.html">Feature Engine</a>
+            <a class="btn" href="dj-portal.html">DJ Portal</a>
+          </div>
+
+          <div class="now">
+            <span class="badge">LIVE</span>
+            <div class="meter" aria-hidden="true"><span></span></div>
+            <span class="small" id="streamLabel">Stream URL: Not set</span>
+          </div>
+        </div>
+
+        <div class="chip" title="Public station hub">
+          <span class="dot"></span>
+          <span>Live • Community • Motion</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <audio id="player" controls style="width:100%; border-radius:16px; background:rgba(15,23,42,.55); border:1px solid rgba(148,163,184,.16)"></audio>
+
+      <script>
+        (function(){
+          try{
+            const url = localStorage.getItem('RADIO_STREAM_URL') || localStorage.getItem('tkfm_stream_url') || '';
+            const label = document.getElementById('streamLabel');
+            const player = document.getElementById('player');
+            if(label) label.textContent = 'Stream URL: ' + (url ? url : 'Not set');
+            if(player && url) player.src = url;
+          }catch(e){}
+        })();
+      </script>
+    </section>
+
+    <section class="layout" style="margin-top:14px">
+      <div class="glass card">
+        <div class="k">Station Chat</div>
+        <div class="h1" style="font-size:34px;margin-top:10px">Community energy in real time</div>
+        <p class="p">Chat is public read/write. Members can set a display name. Moderation tools can be added later without rebuilding the site.</p>
+
+        <div class="divider"></div>
+
+        <div class="warn" id="chatWarn" style="display:none">
+          <div style="font-weight:950">Chat is not configured yet.</div>
+          <div class="small" style="margin-top:6px">
+            Run the Supabase SQL included in this pack, then make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON are set.
+          </div>
+        </div>
+
+        <div class="chatBox" id="chatBox" aria-live="polite" aria-label="Station chat messages"></div>
+
+        <div class="chatForm">
+          <input class="input" id="chatInput" maxlength="420" placeholder="Type a message…"/>
+          <button class="btn btnHot" id="sendBtn" type="button">Send</button>
+        </div>
+
+        <div class="toast small" id="chatMeta"></div>
+      </div>
+
+      <aside class="glass chatWrap">
+        <div class="chatHead">
+          <div>
+            <div class="k">Quick Lanes</div>
+            <div class="chatTitle">Paid lanes that move the needle</div>
+            <div class="small">Use these when you’re ready to upgrade placement, promo, and workflow speed.</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="btnRow">
+          <a class="btn" href="feature-engine.html">AI Feature Store</a>
+          <a class="btn" href="social-engine.html">Social Campaigns</a>
+          <a class="btn" href="dj-mixtape-hosting.html">Mixtape Hosting</a>
+          <a class="btn" href="label-home.html">TKFM Records</a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="small">
+          <div style="font-weight:950; letter-spacing:.22em; text-transform:uppercase">Rooms</div>
+          <div style="margin-top:8px">
+            • Station Chat (global)<br/>
+            • DJ Room (optional)<br/>
+            • Label Room (optional)
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <script src="js/nav-sanitize.js"></script>
+    <script type="module" src="/src/station-chat.js"></script>
+  </main>
+</body>
+</html>

@@ -1,642 +1,234 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="tkfm-access" content="owner" />
-  <script src="/js/access-gates.js" defer></script>
-
-<meta charset="utf-8">
-<title>TKFM — Owner Ops Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-:root{
-  --bg:#050014;--bg2:#020013;
-  --neon:#c084fc;--hot:#ff3bd4;--blue:#38bdf8;--lime:#4ade80;--amber:#facc6b;--danger:#fb7185;
-  --text:#f9f5ff;--muted:#a1a1c5;
-  --card:rgba(15,23,42,.97);--border:rgba(148,163,184,.55);
-}
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;}
-body{
-  min-height:100vh;color:var(--text);
-  background:
-    radial-gradient(circle at 0% 0%,rgba(255,59,212,.26),transparent 60%),
-    radial-gradient(circle at 100% 100%,rgba(56,189,248,.25),transparent 60%),
-    linear-gradient(to bottom,var(--bg2),var(--bg));
-  display:flex;flex-direction:column;
-}
-a{text-decoration:none;color:inherit;}
-
-header{
-  position:sticky;top:0;z-index:20;
-  padding:.9rem 1.4rem;
-  display:flex;justify-content:space-between;align-items:center;gap:.8rem;
-  background:rgba(5,6,27,.96);
-  border-bottom:1px solid rgba(148,163,184,.6);
-  backdrop-filter:blur(18px);
-}
-.brand{display:flex;align-items:center;gap:.7rem;}
-.brand-logo{
-  width:34px;height:34px;border-radius:999px;
-  border:1px solid var(--neon);
-  background:
-    radial-gradient(circle at 25% 0%,#e879f9,#22d3ee 45%,#020617 100%);
-  box-shadow:0 0 28px rgba(192,132,252,.8),0 0 30px rgba(56,189,248,.7);
-}
-.brand-title{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
-.brand-subtitle{font-size:1rem;font-weight:650;}
-
-.header-right{display:flex;flex-wrap:wrap;gap:.45rem;}
-.chip{
-  font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;
-  padding:.36rem .7rem;border-radius:999px;
-  border:1px solid rgba(148,163,184,.7);
-  background:radial-gradient(circle at top,rgba(148,163,184,.22),transparent 60%);
-  color:var(--muted);
-}
-
-/* layout */
-main{
-  flex:1;
-  padding:1.3rem;
-  display:grid;
-  grid-template-columns:minmax(0,1.4fr) minmax(0,1.1fr);
-  gap:1rem;
-}
-@media(max-width:960px){
-  main{grid-template-columns:1fr;padding:1rem;}
-  header{flex-direction:column;align-items:flex-start;}
-}
-
-.panel{
-  background:var(--card);
-  border-radius:1rem;
-  border:1px solid var(--border);
-  padding:.9rem .9rem;
-  box-shadow:0 0 35px rgba(15,23,42,.9);
-}
-.panel-title{
-  font-size:.78rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);
-  margin-bottom:.2rem;
-}
-.panel-sub{font-size:.78rem;color:var(--muted);margin-bottom:.6rem;}
-
-/* top summary */
-.summary-row{
-  display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:.8rem;
-}
-.summary-card{
-  flex:1 1 140px;
-  background:rgba(15,23,42,.98);
-  border-radius:.8rem;
-  border:1px solid rgba(55,65,81,.9);
-  padding:.6rem .7rem;
-}
-.sum-label{
-  font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);
-}
-.sum-value{font-size:1.2rem;font-weight:650;}
-.sum-sub{font-size:.7rem;color:var(--muted);}
-
-/* nav buttons */
-.btn-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.4rem;}
-.btn{
-  font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;
-  padding:.32rem .75rem;border-radius:999px;
-  border:1px solid rgba(148,163,184,.7);
-  background:rgba(15,23,42,.95);
-  color:var(--text);cursor:pointer;
-}
-.btn.primary{border-color:var(--neon);box-shadow:0 0 14px rgba(192,132,252,.7);}
-.btn.green{border-color:var(--lime);color:var(--lime);}
-.btn.hot{border-color:var(--hot);color:var(--hot);}
-.btn.gold{border-color:var(--amber);color:var(--amber);}
-.btn:disabled{opacity:.4;cursor:not-allowed;}
-
-.notice{
-  font-size:.72rem;color:var(--muted);margin-top:.35rem;
-}
-.notice span.key{color:var(--blue);}
-.notice span.good{color:var(--lime);}
-.notice span.bad{color:var(--danger);}
-
-/* tables */
-.section-title{
-  font-size:.78rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);
-  margin-bottom:.2rem;
-}
-.table-wrap{
-  margin-top:.35rem;
-  border-radius:.8rem;
-  border:1px solid rgba(55,65,81,.9);
-  background:rgba(15,23,42,.98);
-  max-height:48vh;
-  overflow:auto;
-}
-table{width:100%;border-collapse:collapse;font-size:.78rem;}
-th,td{padding:.42rem .5rem;text-align:left;white-space:nowrap;}
-thead{background:rgba(15,23,42,.98);}
-th{
-  font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);
-  border-bottom:1px solid rgba(55,65,81,.9);
-}
-tbody tr:nth-child(even){background:rgba(15,23,42,.92);}
-td small{font-size:.7rem;color:var(--muted);}
-
-.badge{
-  display:inline-block;
-  font-size:.65rem;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  padding:.12rem .36rem;
-  border-radius:.7rem;
-  border:1px solid rgba(148,163,184,.7);
-}
-.badge.pending{border-color:var(--amber);color:var(--amber);}
-.badge.catalog{border-color:var(--lime);color:var(--lime);}
-.badge.mix{border-color:var(--neon);color:var(--neon);}
-.badge.delivered{border-color:var(--amber);color:var(--amber);}
-.badge.elite{border-color:var(--lime);color:var(--lime);}
-.badge.featured{border-color:var(--amber);color:var(--amber);}
-.badge.tier{border-color:var(--blue);color:var(--blue);}
-
-/* right panel blocks */
-.block{
-  margin-bottom:.9rem;
-  padding:.6rem .7rem;
-  border-radius:.8rem;
-  border:1px solid rgba(55,65,81,.9);
-  background:rgba(15,23,42,.98);
-}
-.block-title{
-  font-size:.75rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:.15rem;
-}
-.block-main{font-size:.86rem;}
-.block-sub{font-size:.74rem;color:var(--muted);}
-.block-rows{
-  margin-top:.4rem;
-  font-size:.76rem;
-}
-.block-row{display:flex;justify-content:space-between;margin-bottom:.18rem;}
-.block-row span.label{color:var(--muted);}
-.block-row span.value{font-weight:600;}
-
-.contract-body-preview{
-  margin-top:.4rem;
-  max-height:140px;
-  overflow:auto;
-  font-size:.74rem;
-  color:var(--muted);
-  border-radius:.6rem;
-  border:1px solid rgba(55,65,81,.9);
-  padding:.45rem .5rem;
-  white-space:pre-wrap;
-}
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Owner Ops Dashboard</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.84);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.95;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+    .wrap{max-width:1240px;margin:0 auto;padding:22px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{display:flex;align-items:center;gap:12px;padding:12px 22px}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+    }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
+    .tag.warn{border-color:rgba(245,158,11,.28)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .box{
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(2,6,23,.55);
+      border-radius:18px;
+      padding:12px;
+      overflow:auto;
+    }
 </style>
 </head>
-
 <body>
-<header>
-  <div class="brand">
-    <div class="brand-logo"></div>
-    <div>
-      <div class="brand-title">TKFM V2</div>
-      <div class="brand-subtitle">Owner Ops Dashboard</div>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="chip">Label · Radio · DJ · Contracts</div>
-    <div class="chip">Backed by tkfm-core.js</div>
-  </div>
-</header>
+  <div class="bg"></div>
 
-<main>
-  <!-- LEFT: PIPELINE & QUEUES -->
-  <section class="panel">
-    <div class="panel-title">Pipeline Snapshot</div>
-    <div class="panel-sub">From artist uploads to on-air rotation and mixtape hosting, in one view.</div>
-
-    <div class="summary-row">
-      <div class="summary-card">
-        <div class="sum-label">Artist Uploads</div>
-        <div id="sumUploads" class="sum-value">0</div>
-        <div class="sum-sub">Waiting in artistUploads.</div>
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">Operations</div>
+        <div style="font-weight:950;letter-spacing:.06em">TKFM • Owner</div>
       </div>
-      <div class="summary-card">
-        <div class="sum-label">Label Catalog</div>
-        <div id="sumCatalog" class="sum-value">0</div>
-        <div class="sum-sub">Tracks in tkfm_catalog.</div>
+      <nav class="nav" aria-label="Owner Nav">
+        <a class="pill" href="god-view.html">God View</a>
+        <a class="pill" href="owner-ops-dashboard.html">Ops</a>
+        <a class="pill" href="tkfm-dev-console.html">Dev</a>
+        <a class="pill" href="ai-dj-engine.html">AI DJ</a>
+        <a class="pill" href="autopilot-engine.html">Autopilot</a>
+        <a class="pill" href="label-home.html">Label Home</a>
+        <a class="pill hot" href="owner-login.html" id="logoutLink">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:18px">
+    <section class="glass card">
+      <div class="k">Operations</div>
+      <div class="h1"><span class="grad">Owner Ops Dashboard</span></div>
+      <p class="p">Owner-only. Central operations routing for intake, queues, and revenue monitoring.</p>
+      <div class="divider"></div>
+
+      <div class="grid">
+        <a class="glass tile" href="autopilot-engine.html">
+  <div class="tileK">Automation</div>
+  <div class="tileH">Autopilot Engine</div>
+  <div class="tileP">Scheduling, queues, and automated routing.</div>
+  <div class="tags"><span class="tag ok">ENGINE</span><span class="tag warn">OPS</span></div>
+</a>
+<a class="glass tile" href="artist-submissions-console.html">
+  <div class="tileK">Intake</div>
+  <div class="tileH">Submissions Console</div>
+  <div class="tileP">Review incoming submissions and tiers.</div>
+  <div class="tags"><span class="tag ok">OPS</span><span class="tag warn">QUEUE</span></div>
+</a>
+<a class="glass tile" href="dj-mixtape-orders.html">
+  <div class="tileK">Fulfillment</div>
+  <div class="tileH">Mixtape Orders</div>
+  <div class="tileP">Track hosting/mixing orders by tier.</div>
+  <div class="tags"><span class="tag ok">OPS</span><span class="tag warn">ORDERS</span></div>
+</a>
+<a class="glass tile" href="label-submissions.html">
+  <div class="tileK">Label</div>
+  <div class="tileH">Label Submissions</div>
+  <div class="tileP">Label-side applications and review lanes.</div>
+  <div class="tags"><span class="tag ok">LABEL</span><span class="tag lock">GATED</span></div>
+</a>
+<a class="glass tile" href="label-sponsor-engine.html">
+  <div class="tileK">Revenue</div>
+  <div class="tileH">Sponsor Engine</div>
+  <div class="tileP">Rotate sponsors and track performance.</div>
+  <div class="tags"><span class="tag ok">REVENUE</span><span class="tag warn">ENGINE</span></div>
+</a>
+<a class="glass tile" href="feature-revenue.html">
+  <div class="tileK">Analytics</div>
+  <div class="tileH">Feature Revenue</div>
+  <div class="tileP">Monitor paid feature lanes and totals.</div>
+  <div class="tags"><span class="tag ok">ANALYTICS</span><span class="tag warn">REVIEW</span></div>
+</a>
       </div>
-      <div class="summary-card">
-        <div class="sum-label">Current Pack</div>
-        <div id="sumPack" class="sum-value">0</div>
-        <div class="sum-sub">Tracks in tkfm_autopilot_last_pack.</div>
-      </div>
-      <div class="summary-card">
-        <div class="sum-label">Mixtape Orders</div>
-        <div id="sumOrders" class="sum-value">0</div>
-        <div class="sum-sub">Active + completed.</div>
-      </div>
-    </div>
 
-    <div class="btn-row">
-      <a href="label-hub.html" class="btn primary">Label Hub</a>
-      <a href="radio-hub.html" class="btn green">Radio Hub</a>
-      <a href="dj-mixtape-orders.html" class="btn hot">DJ Orders</a>
-      <a href="artist-upload.html" class="btn">Artist Uploads</a>
-      <a href="tkfm-dev-console.html" class="btn gold">Dev Console</a>
-    </div>
+      
+<div class="divider"></div>
+<div class="k">Ops Quick Notes</div>
+<div class="p" style="margin-top:6px">
+Use this dashboard as a routing layer. Public pages should never link here. If a public header links to any owner page,
+remove it in the next public-site sweep.
+</div>
 
-    <div class="notice">
-      Pulls from <span class="key">artistUploads</span>,
-      <span class="key">tkfm_catalog</span>,
-      <span class="key">tkfm_autopilot_last_pack</span>,
-      <span class="key">mixtapeOrders</span> and
-      <span class="key">tkfm_contract_latest</span>.
-      If counts look <span class="bad">0</span>, run your flows to repopulate.
-    </div>
+    </section>
+  </main>
 
-    <!-- Latest queues -->
-    <div style="margin-top:.8rem;">
-      <div class="section-title">Latest Artist Uploads (5)</div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Artist</th>
-              <th>Track</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="tableUploads"></tbody>
-        </table>
-      </div>
-    </div>
+  
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script>
+    (function(){
+      async function go(){
+        if(window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.requireOwner){
+          await window.TKFM_OWNER_GUARD.requireOwner();
+        } else {
+          location.href = 'owner-login.html?next=' + encodeURIComponent(location.pathname + location.search + location.hash);
+        }
+      }
+      go();
+    })();
+  </script>
 
-    <div style="margin-top:.8rem;">
-      <div class="section-title">Latest Mixtape Orders (5)</div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Client / Artist</th>
-              <th>Tier</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="tableOrders"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
 
-  <!-- RIGHT: RADIO + CONTRACTS + SPONSORS -->
-  <section class="panel">
-    <div class="panel-title">Radio + Deals Snapshot</div>
-    <div class="panel-sub">What’s in rotation, last AI DJ feel, latest contract, and basic stats.</div>
-
-    <div class="block">
-      <div class="block-title">Radio Rotation</div>
-      <div class="block-main" id="radioSummaryMain">No Autopilot pack found.</div>
-      <div class="block-sub" id="radioSummarySub">
-        Generate in Autopilot Engine to see weighted breakdown here.
-      </div>
-      <div class="block-rows" id="radioRows"></div>
-    </div>
-
-    <div class="block">
-      <div class="block-title">Latest Contract</div>
-      <div class="block-main" id="contractSummaryMain">No contract in tkfm_contract_latest.</div>
-      <div class="block-sub" id="contractSummarySub">Run a deal in Contract Lab to feed this.</div>
-      <div class="block-rows" id="contractRows"></div>
-      <div class="contract-body-preview" id="contractBodyPreview" style="display:none;"></div>
-    </div>
-
-    <div class="block">
-      <div class="block-title">Stats / Sponsors (Raw)</div>
-      <div class="block-sub">
-        Pulls <code>stats</code> and <code>sponsors</code> directly from localStorage via tkfm-core readKey().
-      </div>
-      <div class="block-rows" id="statsRows"></div>
-    </div>
-  </section>
-</main>
-
-<script type="module">
-  import {
-    getArtistUploads,
-    getCatalog,
-    getAutopilotPack,
-    getMixtapeOrders,
-    getLatestContract,
-    readKey
-  } from './js/tkfm-core.js';
-
-  const sumUploads = document.getElementById('sumUploads');
-  const sumCatalog = document.getElementById('sumCatalog');
-  const sumPack    = document.getElementById('sumPack');
-  const sumOrders  = document.getElementById('sumOrders');
-
-  const tableUploads = document.getElementById('tableUploads');
-  const tableOrders  = document.getElementById('tableOrders');
-
-  const radioSummaryMain = document.getElementById('radioSummaryMain');
-  const radioSummarySub  = document.getElementById('radioSummarySub');
-  const radioRows        = document.getElementById('radioRows');
-
-  const contractSummaryMain = document.getElementById('contractSummaryMain');
-  const contractSummarySub  = document.getElementById('contractSummarySub');
-  const contractRows        = document.getElementById('contractRows');
-  const contractBodyPreview = document.getElementById('contractBodyPreview');
-
-  const statsRows = document.getElementById('statsRows');
-
-  function normalizeUpload(u){
-    return {
-      artist: u.artistName || u.artist || 'Unknown Artist',
-      title: u.trackTitle || u.title || 'Untitled',
-      status: (u.status || 'pending').toLowerCase()
-    };
-  }
-
-  function normalizeOrder(o){
-    const tierRaw = (o.tier || o.planName || o.productName || '').toLowerCase();
-    let tier = 'starter';
-    if(tierRaw.includes('elite')) tier = 'elite';
-    else if(tierRaw.includes('pro')) tier = 'pro';
-    const status = (o.status || '').toLowerCase();
-    return {
-      client: o.clientName || o.customerName || o.name || 'Unknown Client',
-      artist: o.artistName || o.artist || o.clientName || 'Unknown Artist',
-      tier,
-      status
-    };
-  }
-
-  function badgeStatusUpload(status){
-    const span = document.createElement('span');
-    span.className = 'badge '+(status==='cataloged'?'catalog':'pending');
-    span.textContent = status.toUpperCase();
-    return span;
-  }
-
-  function badgeStatusOrder(status){
-    const span = document.createElement('span');
-    let cls = '';
-    if(status==='mixing') cls = 'mix';
-    else if(status==='delivered') cls = 'delivered';
-    else cls = 'pending';
-    span.className = 'badge '+cls;
-    span.textContent = status.toUpperCase();
-    return span;
-  }
-
-  function badgeTier(tier){
-    const span = document.createElement('span');
-    span.className = 'badge tier';
-    span.textContent = tier.toUpperCase();
-    return span;
-  }
-
-  function renderUploadsTable(list){
-    tableUploads.innerHTML = '';
-    if(!list.length){
-      const tr = document.createElement('tr');
-      const td = document.createElement('td');
-      td.colSpan = 3;
-      td.textContent = 'No uploads yet.';
-      td.style.fontSize = '.76rem';
-      td.style.color = 'var(--muted)';
-      tr.appendChild(td);
-      tableUploads.appendChild(tr);
-      return;
-    }
-    list.slice(0,5).map(normalizeUpload).forEach(u=>{
-      const tr = document.createElement('tr');
-
-      const tArtist = document.createElement('td');
-      tArtist.textContent = u.artist;
-
-      const tTitle = document.createElement('td');
-      tTitle.textContent = u.title;
-
-      const tStatus = document.createElement('td');
-      tStatus.appendChild(badgeStatusUpload(u.status));
-
-      tr.appendChild(tArtist);
-      tr.appendChild(tTitle);
-      tr.appendChild(tStatus);
-      tableUploads.appendChild(tr);
-    });
-  }
-
-  function renderOrdersTable(list){
-    tableOrders.innerHTML = '';
-    if(!list.length){
-      const tr = document.createElement('tr');
-      const td = document.createElement('td');
-      td.colSpan = 3;
-      td.textContent = 'No mixtape orders yet.';
-      td.style.fontSize = '.76rem';
-      td.style.color = 'var(--muted)';
-      tr.appendChild(td);
-      tableOrders.appendChild(tr);
-      return;
-    }
-    list.slice(0,5).map(normalizeOrder).forEach(o=>{
-      const tr = document.createElement('tr');
-
-      const tClient = document.createElement('td');
-      tClient.innerHTML = `<strong>${o.client}</strong><br><small>${o.artist}</small>`;
-
-      const tTier = document.createElement('td');
-      tTier.appendChild(badgeTier(o.tier));
-
-      const tStatus = document.createElement('td');
-      tStatus.appendChild(badgeStatusOrder(o.status));
-
-      tr.appendChild(tClient);
-      tr.appendChild(tTier);
-      tr.appendChild(tStatus);
-      tableOrders.appendChild(tr);
-    });
-  }
-
-  function renderRadioBlock(pack){
-    radioRows.innerHTML = '';
-    if(!pack.length){
-      radioSummaryMain.textContent = 'No Autopilot pack found.';
-      radioSummarySub.textContent  = 'Run generateAutopilotPack in Autopilot Engine.';
-      return;
-    }
-
-    const total = pack.length;
-    const featured = pack.filter(t => t.featured).length;
-    const elite = pack.filter(t => t.elite).length;
-
-    radioSummaryMain.textContent = `${total} tracks in current rotation pack.`;
-    radioSummarySub.textContent  = `${featured} featured · ${elite} elite in the mix.`;
-
-    const tiers = {};
-    pack.forEach(t=>{
-      const tier = (t.tier || 'standard').toLowerCase();
-      tiers[tier] = (tiers[tier] || 0) + 1;
-    });
-
-    Object.keys(tiers).forEach(tier=>{
-      const row = document.createElement('div');
-      row.className = 'block-row';
-
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = tier.toUpperCase();
-
-      const value = document.createElement('span');
-      value.className = 'value';
-      value.textContent = tiers[tier];
-
-      row.appendChild(label);
-      row.appendChild(value);
-      radioRows.appendChild(row);
-    });
-  }
-
-  function renderContractBlock(contract){
-    contractRows.innerHTML = '';
-    contractBodyPreview.style.display = 'none';
-    contractBodyPreview.textContent = '';
-
-    if(!contract){
-      contractSummaryMain.textContent = 'No contract in memory.';
-      contractSummarySub.textContent  = 'Generate in Contract Lab, then open label-contract-output.html.';
-      return;
-    }
-
-    const artist  = contract.artistName || contract.artist || 'Unknown Artist';
-    const project = contract.projectTitle || contract.mixtapeTitle || contract.releaseTitle || 'Untitled Project';
-    const deal    = contract.dealType || contract.offerType || 'Label / Mixtape Deal';
-
-    contractSummaryMain.textContent = `${artist} — ${project}`;
-    contractSummarySub.textContent  = deal;
-
-    const advance = contract.advance || contract.advanceAmount;
-    const royalty = contract.royalty || contract.royaltyRate || contract.split;
-
-    const rows = [
-      ['Advance', advance ? ('$'+Number(advance).toLocaleString()) : '—'],
-      ['Royalty / Split', royalty ? royalty+'%' : '—'],
-      ['Term', contract.term || contract.termLength || contract.termText || '—'],
-      ['Territory', contract.territory || 'Worldwide']
-    ];
-
-    rows.forEach(([label,value])=>{
-      const row = document.createElement('div');
-      row.className = 'block-row';
-
-      const l = document.createElement('span');
-      l.className = 'label';
-      l.textContent = label;
-
-      const v = document.createElement('span');
-      v.className = 'value';
-      v.textContent = value;
-
-      row.appendChild(l);
-      row.appendChild(v);
-      contractRows.appendChild(row);
-    });
-
-    const body =
-      contract.body ||
-      contract.contractBody ||
-      contract.fullText ||
-      '';
-
-    if(body){
-      contractBodyPreview.style.display = 'block';
-      contractBodyPreview.textContent = body.slice(0,1200);
-    }
-  }
-
-  function renderStatsBlock(){
-    statsRows.innerHTML = '';
-
-    const stats    = readKey('stats', null);
-    const sponsors = readKey('sponsors', null);
-
-    if(stats){
-      const row = document.createElement('div');
-      row.className = 'block-row';
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = 'Stats keys';
-      const value = document.createElement('span');
-      value.className = 'value';
-      value.textContent = Object.keys(stats).join(', ');
-      row.appendChild(label);
-      row.appendChild(value);
-      statsRows.appendChild(row);
-    }else{
-      const row = document.createElement('div');
-      row.className = 'block-row';
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = 'Stats';
-      const value = document.createElement('span');
-      value.className = 'value';
-      value.textContent = 'none';
-      row.appendChild(label);
-      row.appendChild(value);
-      statsRows.appendChild(row);
-    }
-
-    if(sponsors && Array.isArray(sponsors)){
-      const row = document.createElement('div');
-      row.className = 'block-row';
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = 'Sponsors';
-      const value = document.createElement('span');
-      value.className = 'value';
-      value.textContent = sponsors.length + ' active';
-      row.appendChild(label);
-      row.appendChild(value);
-      statsRows.appendChild(row);
-    }else{
-      const row = document.createElement('div');
-      row.className = 'block-row';
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = 'Sponsors';
-      const value = document.createElement('span');
-      value.className = 'value';
-      value.textContent = 'none';
-      row.appendChild(label);
-      row.appendChild(value);
-      statsRows.appendChild(row);
-    }
-  }
-
-  function init(){
-    const uploads = getArtistUploads();
-    const catalog = getCatalog();
-    const pack    = getAutopilotPack();
-    const orders  = getMixtapeOrders();
-    const contract= getLatestContract();
-
-    sumUploads.textContent = uploads.length;
-    sumCatalog.textContent = catalog.length;
-    sumPack.textContent    = pack.length;
-    sumOrders.textContent  = orders.length;
-
-    renderUploadsTable(uploads.slice().reverse());
-    renderOrdersTable(orders.slice().reverse());
-    renderRadioBlock(pack);
-    renderContractBlock(contract);
-    renderStatsBlock();
-  }
-
-  init();
-</script>
-  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
+  <script>
+    (function(){
+      var l = document.getElementById('logoutLink');
+      if(l){
+        l.addEventListener('click', function(e){
+          e.preventDefault();
+          try{ if(window.TKFM_OWNER_GUARD) window.TKFM_OWNER_GUARD.clearOwner(); }catch(_e){}
+          location.href = 'owner-login.html';
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

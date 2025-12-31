@@ -1,878 +1,276 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="tkfm-access" content="owner" />
-  <script src="/js/access-gates.js" defer></script>
-
-  <meta charset="utf-8" />
-  <title>TKFM Dev Console — Neon Control Room</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/js/logo-check.js" defer></script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Dev Console</title>
+  <meta name="robots" content="noindex,nofollow"/>
   <style>
-    body{
-      background:#020617;
-      background-image:
-        radial-gradient(circle at 10% 0,rgba(56,189,248,0.20),transparent 55%),
-        radial-gradient(circle at 90% 0,rgba(236,72,153,0.20),transparent 55%),
-        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.26),transparent 55%);
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.84);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
     }
-    ::-webkit-scrollbar{height:6px;width:6px;}
-    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
-  </style>
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.95;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+    .wrap{max-width:1240px;margin:0 auto;padding:22px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{display:flex;align-items:center;gap:12px;padding:12px 22px}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+    }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
+    .tag.warn{border-color:rgba(245,158,11,.28)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .box{
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(2,6,23,.55);
+      border-radius:18px;
+      padding:12px;
+      overflow:auto;
+    }
+</style>
 </head>
-<body class="text-slate-50 min-h-screen flex flex-col">
+<body>
+  <div class="bg"></div>
 
-  <!-- NAV -->
-  <header class="w-full border-b border-slate-800/80 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-      <a href="index.html" class="flex items-center gap-3">
-        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
-        <div class="leading-tight">
-          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
-            They Krave For Me Radio
-          </div>
-          <div class="text-sm font-semibold">
-            TKFM <span class="text-emerald-300">Dev Console</span>
-          </div>
-        </div>
-      </a>
-      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
-        <a href="god-view.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">👁 GOD VIEW</a>
-        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">📈 Momentum</a>
-        <a href="artist-upload.html" class="px-3 py-1 rounded-full border border-pink-500/80 bg-pink-500/10 text-pink-200">🎨 Artist Upload</a>
-        <a href="dj-mixtape-hosting.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🔥 Mixtape Hosting</a>
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">Dev Console</div>
+        <div style="font-weight:950;letter-spacing:.06em">TKFM • Owner</div>
+      </div>
+      <nav class="nav" aria-label="Owner Nav">
+        <a class="pill" href="god-view.html">God View</a>
+        <a class="pill" href="owner-ops-dashboard.html">Ops</a>
+        <a class="pill" href="tkfm-dev-console.html">Dev</a>
+        <a class="pill" href="ai-dj-engine.html">AI DJ</a>
+        <a class="pill" href="autopilot-engine.html">Autopilot</a>
+        <a class="pill" href="label-home.html">Label Home</a>
+        <a class="pill hot" href="owner-login.html" id="logoutLink">Logout</a>
       </nav>
     </div>
   </header>
 
-  <!-- MAIN -->
-  <main class="flex-1">
-    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
-      <!-- HERO -->
-      <div class="flex flex-col lg:flex-row gap-6 items-start">
-        <div class="flex-1 space-y-3">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-emerald-200">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            Dev • Local Storage Brain
-          </div>
-          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
-            Inspect, edit + reset the <span class="text-cyan-300 drop-shadow-[0_0_22px_rgba(56,189,248,0.9)]">TKFM brain</span> (this browser).
-          </h1>
-          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
-            This console lets you read and edit the keys that power TKFM v2:
-            uploads, mixtape orders, fan profiles, rotation packs, contracts, DJ schedule, news and more.
-          </p>
-          <p class="text-[0.75rem] text-slate-400 max-w-xl">
-            Dev-only: everything here is stored in <span class="font-mono text-cyan-300 text-[0.75rem]">localStorage</span>.
-            Production would point the same UI at a real database + auth.
-          </p>
-        </div>
+  <main class="wrap" style="padding-top:18px">
+    <section class="glass card">
+      <div class="k">Dev Console</div>
+      <div class="h1"><span class="grad">TKFM Dev Console</span></div>
+      <p class="p">Owner-only. Use this page for quick diagnostics: feature flags, tier signals, and routing to key engines.</p>
+      <div class="divider"></div>
 
-        <!-- SNAPSHOT -->
-        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
-          <div class="pointer-events-none absolute -inset-16 opacity-30 blur-2xl bg-[conic-gradient(from_140deg,_#22d3ee,_#a855f7,_#ec4899,_#22d3ee)]"></div>
-          <div class="relative space-y-3 text-sm">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
-                  Local Storage Snapshot
-                </p>
-                <p class="text-xs text-slate-300">
-                  TKFM-related keys discovered in this browser.
-                </p>
-              </div>
-              <button id="dev-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
-                Rescan
-              </button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 text-xs">
-              <div>
-                <div class="text-slate-400 mb-0.5">TKFM Keys</div>
-                <div id="dev-tkfm-count" class="text-lg font-bold">0</div>
-              </div>
-              <div>
-                <div class="text-slate-400 mb-0.5">All Keys</div>
-                <div id="dev-all-count" class="text-lg font-bold">0</div>
-              </div>
-            </div>
-
-            <p class="text-[0.7rem] text-slate-300">
-              Uses <span class="font-mono text-cyan-300">tkfm_*</span> prefix plus important keys like
-              <span class="font-mono text-cyan-300">mixtapeOrders</span>.
-            </p>
-          </div>
-        </aside>
+      <div class="grid">
+        <a class="glass tile" href="pricing.html">
+  <div class="tileK">Revenue</div>
+  <div class="tileH">Pricing / Plans</div>
+  <div class="tileP">Confirm Stripe wiring and tier text.</div>
+  <div class="tags"><span class="tag ok">PUBLIC</span><span class="tag warn">REVIEW</span></div>
+</a>
+<a class="glass tile" href="creator-pass.html">
+  <div class="tileK">Unlocks</div>
+  <div class="tileH">Creator Pass</div>
+  <div class="tileP">Test creator unlock flags and paid lanes.</div>
+  <div class="tags"><span class="tag ok">TEST</span><span class="tag warn">UNLOCKS</span></div>
+</a>
+<a class="glass tile" href="dj-tools.html">
+  <div class="tileK">DJ Lane</div>
+  <div class="tileH">DJ Toolkit</div>
+  <div class="tileP">Verify DJ paid tier access flows.</div>
+  <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">TIERS</span></div>
+</a>
+<a class="glass tile" href="label-hub.html">
+  <div class="tileK">Label</div>
+  <div class="tileH">Label Hub</div>
+  <div class="tileP">Member-only label workflows.</div>
+  <div class="tags"><span class="tag ok">LABEL</span><span class="tag lock">GATED</span></div>
+</a>
+<a class="glass tile" href="feature-engine.html">
+  <div class="tileK">Engines</div>
+  <div class="tileH">Feature Engine</div>
+  <div class="tileP">Paid placements + lanes.</div>
+  <div class="tags"><span class="tag ok">ENGINE</span><span class="tag warn">PAID</span></div>
+</a>
+<a class="glass tile" href="sponsors.html">
+  <div class="tileK">Sponsors</div>
+  <div class="tileH">Sponsor Pages</div>
+  <div class="tileP">Public sponsor inventory + rotation pages.</div>
+  <div class="tags"><span class="tag ok">PUBLIC</span><span class="tag warn">REVIEW</span></div>
+</a>
       </div>
 
-      <!-- GRID: LEFT = KEY LIST, RIGHT = EDITOR + NEWS -->
-      <section class="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)]">
-        <!-- LEFT COLUMN: KEY BROWSER -->
-        <div class="space-y-4">
-          <!-- Key List -->
-          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-                TKFM Keys
-              </h2>
-              <span class="text-[0.7rem] text-slate-400">
-                Click a key to inspect / edit
-              </span>
-            </div>
-            <div id="dev-key-empty" class="text-[0.8rem] text-slate-400">
-              No TKFM keys found yet. Use the other pages to create data, then rescan.
-            </div>
-            <div id="dev-key-list" class="space-y-1 text-[0.8rem] max-h-[260px] overflow-y-auto"></div>
-          </div>
+      
+<div class="divider"></div>
+<div class="k">Local Storage Snapshot</div>
+<div class="p" style="margin-top:6px">Quick view of feature flags and member tier stored on this device.</div>
+<div class="box mono" id="lsBox">Loading…</div>
+<div class="btnRow">
+  <button class="btn btnHot" id="copyBtn" type="button">Copy Snapshot</button>
+  <button class="btn" id="clearUnlocksBtn" type="button">Clear Unlocks</button>
+</div>
+<script>
+  (function(){
+    function safeJson(s){ try{return JSON.parse(s)}catch(e){return null} }
+    function snapshot(){
+      const keys = [
+        'tkfm_user_features','tkfm_memberTier','tkfm_creatorStatus','tkfm_chatName',
+        'tkfm_owner_token','tkfm_owner_token_exp'
+      ];
+      const out = {};
+      keys.forEach(k=>{ try{ out[k] = localStorage.getItem(k); }catch(e){ out[k]=null } });
+      const parsed = safeJson(out.tkfm_user_features);
+      if(parsed) out.tkfm_user_features = parsed;
+      return out;
+    }
+    function render(){
+      const box = document.getElementById('lsBox');
+      if(!box) return;
+      box.textContent = JSON.stringify(snapshot(), null, 2);
+    }
+    render();
+    const copyBtn = document.getElementById('copyBtn');
+    if(copyBtn){
+      copyBtn.addEventListener('click', async function(){
+        try{ await navigator.clipboard.writeText(document.getElementById('lsBox').textContent); }catch(e){}
+      });
+    }
+    const clr = document.getElementById('clearUnlocksBtn');
+    if(clr){
+      clr.addEventListener('click', function(){
+        try{
+          localStorage.removeItem('tkfm_user_features');
+          localStorage.removeItem('tkfm_memberTier');
+          localStorage.removeItem('tkfm_creatorStatus');
+        }catch(e){}
+        render();
+        alert('Cleared member unlocks on this device.');
+      });
+    }
+  })();
+</script>
 
-          <!-- Global TKFM Controls -->
-          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-xs space-y-2">
-            <p class="text-[0.7rem] uppercase tracking-[0.26em] text-slate-400">
-              Global Controls (This Browser Only)
-            </p>
-            <p class="text-[0.8rem] text-slate-300">
-              These actions affect only <strong>localStorage</strong> in this browser. Safe for dev.
-            </p>
-            <div class="flex flex-wrap gap-2">
-              <button id="dev-clear-tkfm" class="px-3 py-1.5 rounded-full border border-red-500/80 bg-red-500/10 text-red-200 uppercase tracking-[0.22em]">
-                Clear All TKFM Keys
-              </button>
-              <button id="dev-export-tkfm" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-200 uppercase tracking-[0.22em]">
-                Export TKFM → JSON
-              </button>
-              <button id="dev-seed-demo" class="px-3 py-1.5 rounded-full border border-emerald-500/80 bg-emerald-500/10 text-emerald-200 uppercase tracking-[0.22em]">
-                Load Demo Data
-              </button>
-            </div>
-            <p id="dev-status" class="text-[0.7rem] text-emerald-300"></p>
-          </div>
-        </div>
-
-        <!-- RIGHT COLUMN: EDITOR + NEWS TOOLS -->
-        <div class="space-y-4">
-          <!-- Key Editor -->
-          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <p class="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  Key Editor
-                </p>
-                <p id="dev-current-key-label" class="text-[0.8rem] text-slate-300">
-                  No key selected.
-                </p>
-              </div>
-              <div class="flex flex-wrap gap-2 text-[0.75rem]">
-                <button id="dev-format" class="px-2.5 py-1 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-200">
-                  Pretty Format
-                </button>
-                <button id="dev-save" class="px-2.5 py-1 rounded-full border border-emerald-500/80 bg-emerald-500/10 text-emerald-200">
-                  Save JSON
-                </button>
-                <button id="dev-clear-key" class="px-2.5 py-1 rounded-full border border-red-500/80 bg-red-500/10 text-red-200">
-                  Clear Key
-                </button>
-              </div>
-            </div>
-            <textarea
-              id="dev-editor"
-              class="w-full h-64 rounded-xl bg-slate-950/90 border border-slate-800 text-xs font-mono p-3 resize-vertical text-slate-100"
-              placeholder="// JSON for selected key will appear here. Edit, then click Save JSON."
-            ></textarea>
-            <p class="text-[0.7rem] text-slate-400">
-              If the value is not valid JSON, it will show raw text. When you hit Save, the console will try
-              <span class="font-mono text-cyan-300">JSON.parse</span> — if it fails, you’ll see an error.
-            </p>
-          </div>
-
-          <!-- Manual News Tools -->
-          <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
-            <div class="flex items-center justify-between gap-2">
-              <div>
-                <p class="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  Manual News Injector
-                </p>
-                <p class="text-[0.8rem] text-slate-300">
-                  Append a news card to <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_news_manual</span>.
-                </p>
-              </div>
-              <span class="text-[0.7rem] text-slate-400">
-                Feeds <span class="text-emerald-300">news.html</span>
-              </span>
-            </div>
-
-            <form id="dev-news-form" class="grid gap-2 text-[0.8rem]">
-              <div class="grid gap-2 sm:grid-cols-2">
-                <label class="space-y-1">
-                  <span class="text-slate-300">Title</span>
-                  <input id="dev-news-title" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
-                </label>
-                <label class="space-y-1">
-                  <span class="text-slate-300">Subtitle (optional)</span>
-                  <input id="dev-news-subtitle" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
-                </label>
-              </div>
-
-              <label class="space-y-1">
-                <span class="text-slate-300">Body</span>
-                <textarea id="dev-news-body" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5 h-16"></textarea>
-              </label>
-
-              <div class="grid gap-2 sm:grid-cols-3">
-                <label class="space-y-1">
-                  <span class="text-slate-300">Channel</span>
-                  <select id="dev-news-channel" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5">
-                    <option value="artist">Artist</option>
-                    <option value="label">Label</option>
-                    <option value="system">System</option>
-                  </select>
-                </label>
-                <label class="space-y-1">
-                  <span class="text-slate-300">City (optional)</span>
-                  <input id="dev-news-city" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
-                </label>
-                <label class="space-y-1">
-                  <span class="text-slate-300">Actor (optional)</span>
-                  <input id="dev-news-actor" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" />
-                </label>
-              </div>
-
-              <label class="space-y-1">
-                <span class="text-slate-300">Tags (comma separated)</span>
-                <input id="dev-news-tags" class="w-full rounded-lg bg-slate-950/90 border border-slate-700/80 px-2 py-1.5" placeholder="mixtape, spotlight, premiere" />
-              </label>
-
-              <div class="flex justify-end">
-                <button
-                  type="submit"
-                  class="px-3 py-1.5 rounded-full border border-emerald-500/80 bg-emerald-500/10 text-emerald-200 text-[0.8rem] uppercase tracking-[0.22em]"
-                >
-                  Add News Item
-                </button>
-              </div>
-            </form>
-
-            <p id="dev-news-status" class="text-[0.7rem] text-emerald-300"></p>
-          </div>
-        </div>
-      </section>
     </section>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-800/80 bg-black/50">
-    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
-      <span>© 2025 TKFM — Dev Console.</span>
-      <span class="opacity-80">
-        Inspects tkfm_* keys • mixtapeOrders • and more in localStorage. Includes demo seeding for fast TKFM v2 demos.
-      </span>
-    </div>
-  </footer>
+  
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script>
+    (function(){
+      async function go(){
+        if(window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.requireOwner){
+          await window.TKFM_OWNER_GUARD.requireOwner();
+        } else {
+          location.href = 'owner-login.html?next=' + encodeURIComponent(location.pathname + location.search + location.hash);
+        }
+      }
+      go();
+    })();
+  </script>
+
 
   <script>
-    const IMPORTANT_KEYS = [
-      'tkfm_artist_uploads',
-      'mixtapeOrders',
-      'tkfm_fan_profiles',
-      'tkfm_autopilot_last_pack',
-      'tkfm_contract_latest',
-      'tkfm_dj_schedule',
-      'tkfm_djs',
-      'tkfm_news_manual',
-      'tkfm_radio_state',
-      'tkfm_radio_now_playing'
-    ];
-
-    let currentKey = null;
-
-    function devEscape(str) {
-      return String(str || '')
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#039;');
-    }
-
-    function devGetAllKeys() {
-      const keys = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        keys.push(k);
-      }
-      return keys;
-    }
-
-    function devScanKeys() {
-      const allKeys = devGetAllKeys();
-      const tkfmKeys = [];
-      const lowerImportant = new Set(IMPORTANT_KEYS.map(k => k.toLowerCase()));
-
-      allKeys.forEach(k => {
-        if (k.toLowerCase().startsWith('tkfm_') || lowerImportant.has(k.toLowerCase())) {
-          tkfmKeys.push(k);
-        }
-      });
-
-      tkfmKeys.sort((a, b) => {
-        const ai = IMPORTANT_KEYS.indexOf(a);
-        const bi = IMPORTANT_KEYS.indexOf(b);
-        if (ai !== -1 && bi !== -1) return ai - bi;
-        if (ai !== -1) return -1;
-        if (bi !== -1) return 1;
-        return a.localeCompare(b);
-      });
-
-      return { allKeys, tkfmKeys };
-    }
-
-    function devPrettyJson(raw) {
-      if (raw === null || raw === undefined) return '';
-      if (typeof raw !== 'string') {
-        try {
-          return JSON.stringify(raw, null, 2);
-        } catch {
-          return String(raw);
-        }
-      }
-      try {
-        const parsed = JSON.parse(raw);
-        return JSON.stringify(parsed, null, 2);
-      } catch {
-        return raw;
-      }
-    }
-
-    function devLoadKey(k) {
-      currentKey = k;
-      const label = document.getElementById('dev-current-key-label');
-      const editor = document.getElementById('dev-editor');
-
-      const raw = localStorage.getItem(k);
-      if (raw === null) {
-        label.textContent = 'Key "' + k + '" (not set)';
-        editor.value = '';
-        return;
-      }
-
-      let summary = '';
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          summary = 'Array length: ' + parsed.length;
-        } else if (parsed && typeof parsed === 'object') {
-          const keysCount = Object.keys(parsed).length;
-          summary = 'Object keys: ' + keysCount;
-        } else {
-          summary = 'Primitive JSON value';
-        }
-      } catch {
-        summary = 'Non-JSON string value';
-      }
-
-      label.textContent = 'Key "' + k + '" — ' + summary;
-      editor.value = devPrettyJson(raw);
-    }
-
-    function devRenderKeyList() {
-      const { allKeys, tkfmKeys } = devScanKeys();
-      const list = document.getElementById('dev-key-list');
-      const empty = document.getElementById('dev-key-empty');
-      const tkfmCountEl = document.getElementById('dev-tkfm-count');
-      const allCountEl = document.getElementById('dev-all-count');
-
-      tkfmCountEl.textContent = tkfmKeys.length;
-      allCountEl.textContent = allKeys.length;
-
-      if (!tkfmKeys.length) {
-        list.innerHTML = '';
-        empty.classList.remove('hidden');
-        return;
-      }
-
-      empty.classList.add('hidden');
-
-      list.innerHTML = tkfmKeys.map(k => {
-        const raw = localStorage.getItem(k);
-        let summary = '';
-        let badge = '';
-
-        if (raw === null) {
-          summary = 'not set';
-        } else {
-          try {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) {
-              summary = 'Array[' + parsed.length + ']';
-            } else if (parsed && typeof parsed === 'object') {
-              const count = Object.keys(parsed).length;
-              summary = 'Object{' + count + '}';
-            } else {
-              summary = 'JSON value';
-            }
-
-            if (k === 'tkfm_artist_uploads' || k === 'mixtapeOrders' || k === 'tkfm_fan_profiles') {
-              if (Array.isArray(parsed)) {
-                badge = parsed.length + ' items';
-              }
-            }
-          } catch {
-            summary = 'String length ' + raw.length;
-          }
-        }
-
-        return (
-          '<button type="button" data-dev-key="' + devEscape(k) + '" ' +
-          'class="w-full text-left rounded-xl border border-slate-800 bg-slate-950/90 px-3 py-2 flex items-center justify-between gap-2 hover:border-cyan-400/80 hover:bg-cyan-400/10 transition">' +
-            '<div class="min-w-0">' +
-              '<p class="text-[0.8rem] font-semibold truncate">' + devEscape(k) + '</p>' +
-              '<p class="text-[0.7rem] text-slate-400 truncate">' + devEscape(summary) + '</p>' +
-            '</div>' +
-            (badge
-              ? '<span class="text-[0.7rem] px-2 py-0.5 rounded-full border border-slate-700/80 bg-slate-900/90 text-slate-200">' + devEscape(badge) + '</span>'
-              : ''
-            ) +
-          '</button>'
-        );
-      }).join('');
-
-      list.querySelectorAll('[data-dev-key]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const k = btn.getAttribute('data-dev-key');
-          if (k) devLoadKey(k);
+    (function(){
+      var l = document.getElementById('logoutLink');
+      if(l){
+        l.addEventListener('click', function(e){
+          e.preventDefault();
+          try{ if(window.TKFM_OWNER_GUARD) window.TKFM_OWNER_GUARD.clearOwner(); }catch(_e){}
+          location.href = 'owner-login.html';
         });
-      });
-    }
-
-    function devSetStatus(msg, isError) {
-      const el = document.getElementById('dev-status');
-      if (!msg) {
-        el.textContent = '';
-        return;
       }
-      el.textContent = msg;
-      el.style.color = isError ? '#fca5a5' : '#6ee7b7';
-    }
-
-    function devSetNewsStatus(msg, isError) {
-      const el = document.getElementById('dev-news-status');
-      if (!msg) {
-        el.textContent = '';
-        return;
-      }
-      el.textContent = msg;
-      el.style.color = isError ? '#fca5a5' : '#6ee7b7';
-    }
-
-    // Simple helper used for news + demo reads
-    function nSafeParse(key, fallback) {
-      try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return fallback;
-        const parsed = JSON.parse(raw);
-        return parsed ?? fallback;
-      } catch (e) {
-        console.warn('Dev console: failed to parse', key, e);
-        return fallback;
-      }
-    }
-
-    // ---- Demo Seeder ----
-    function devSeedDemoData() {
-      const now = new Date().toISOString();
-      const earlier = offsetDays => new Date(Date.now() - offsetDays * 86400000).toISOString();
-
-      // Artist uploads
-      const uploads = [
-        {
-          id: 'u1',
-          artistName: 'Lil Wave Runner',
-          trackTitle: 'City on My Back',
-          city: 'Detroit, MI',
-          notes: 'Street single, heavy bass, wants late night rotation.',
-          status: 'pending',
-          source: 'artist-upload',
-          createdAt: earlier(2)
-        },
-        {
-          id: 'u2',
-          artistName: 'Nova Rose',
-          trackTitle: 'Midnight Motions',
-          city: 'Atlanta, GA',
-          notes: 'R&B / melodic trap hybrid.',
-          status: 'featured',
-          source: 'artist-upload',
-          createdAt: earlier(5)
-        },
-        {
-          id: 'u3',
-          artistName: 'Block Poet',
-          trackTitle: 'Concrete Dreams',
-          city: 'Chicago, IL',
-          notes: 'Storytelling joint, wants interview + writeup.',
-          status: 'accepted',
-          source: 'artist-upload',
-          createdAt: earlier(9)
-        }
-      ];
-
-      // Mixtape orders
-      const orders = [
-        {
-          id: 'm1',
-          clientName: 'Big Motion ENT',
-          projectTitle: 'They Crave Volume 1',
-          city: 'Detroit, MI',
-          goals: 'Host the city, break 5 new artists, make a visual rollout.',
-          tier: 'Elite',
-          status: 'paid',
-          createdAt: earlier(3)
-        },
-        {
-          id: 'm2',
-          clientName: 'Skyline Sounds',
-          projectTitle: 'Rooftop Frequency',
-          city: 'New York, NY',
-          goals: 'Midnight vibe tape for influencers + playlisting.',
-          tier: 'Pro',
-          status: 'intake-complete',
-          createdAt: earlier(7)
-        },
-        {
-          id: 'm3',
-          clientName: 'Ground Floor Records',
-          projectTitle: 'Lobby Heat',
-          city: 'Atlanta, GA',
-          goals: 'Entry tape to test TKFM audience.',
-          tier: 'Starter',
-          status: 'draft',
-          createdAt: earlier(12)
-        }
-      ];
-
-      // Fan profiles
-      const fans = [
-        {
-          id: 'f1',
-          displayName: 'Tee from the D',
-          city: 'Detroit, MI',
-          joinedFrom: 'fan-pass',
-          createdAt: earlier(1)
-        },
-        {
-          id: 'f2',
-          displayName: 'LateNightLex',
-          city: 'Los Angeles, CA',
-          joinedFrom: 'fan-pass',
-          createdAt: earlier(4)
-        },
-        {
-          id: 'f3',
-          displayName: 'Southside J',
-          city: 'Atlanta, GA',
-          joinedFrom: 'fan-pass',
-          createdAt: earlier(8)
-        }
-      ];
-
-      // DJ schedule
-      const djSchedule = {
-        slots: [
-          { djId: 'dj-krave', djName: 'DJ KRAVE', day: 'Friday', time: '10PM–12AM' },
-          { djId: 'dj-krave', djName: 'DJ KRAVE', day: 'Saturday', time: '10PM–1AM' },
-          { djId: 'johnny-steelo', djName: 'Johnny Steelo', day: 'Thursday', time: '9PM–11PM' }
-        ],
-        updatedAt: now
-      };
-
-      // DJ roster override (optional)
-      const djs = [
-        {
-          id: 'dj-krave',
-          name: 'DJ KRAVE',
-          alias: 'They Krave For Me',
-          role: 'Founder • Mixtape Architect • Program Director',
-          city: 'Detroit / Midwest',
-          bio: 'Breaks independent artists, curates heavy rotation tapes, and runs the TKFM empire.',
-          styleTags: ['club energy', 'street heat', 'exclusive drops'],
-          links: {
-            ig: '@TheyKraveForMeRadio',
-            x: '@TheyKraveForMe'
-          },
-          avatarEmoji: '🔥'
-        },
-        {
-          id: 'johnny-steelo',
-          name: 'Johnny Steelo',
-          alias: 'The Smooth Operator',
-          role: 'On-Air DJ • Night Shift',
-          city: 'Late Night Frequency',
-          bio: 'Smooth blends, story-driven sets, and after-hours waves.',
-          styleTags: ['r&b', 'smooth trap', 'midnight rides'],
-          links: {
-            ig: '@JohnnySteelo'
-          },
-          avatarEmoji: '🌙'
-        }
-      ];
-
-      // Autopilot pack seeded from uploads
-      const packTracks = [
-        {
-          id: 'u1',
-          artistName: 'Lil Wave Runner',
-          trackTitle: 'City on My Back',
-          city: 'Detroit, MI',
-          tier: 'Elite',
-          tag: 'ELITE ROTATION',
-          source: 'artist-upload'
-        },
-        {
-          id: 'u2',
-          artistName: 'Nova Rose',
-          trackTitle: 'Midnight Motions',
-          city: 'Atlanta, GA',
-          tier: 'Featured',
-          tag: 'FEATURED NIGHT DRIVE',
-          source: 'artist-upload'
-        },
-        {
-          id: 'u3',
-          artistName: 'Block Poet',
-          trackTitle: 'Concrete Dreams',
-          city: 'Chicago, IL',
-          tier: 'Standard',
-          tag: 'STORYTELLER',
-          source: 'artist-upload'
-        }
-      ];
-
-      const autopilotPack = {
-        mode: 'demo-showcase',
-        profile: 'TKFM Demo',
-        createdAt: earlier(0.5),
-        tracks: packTracks
-      };
-
-      // Manual news
-      const manualNews = [
-        {
-          title: 'Big Motion ENT locks in Elite mixtape with DJ KRAVE',
-          subtitle: 'They Crave Volume 1 in production',
-          body: 'TKFM just locked in an Elite tier mixtape with Big Motion ENT — expect exclusives, city anthems and DJ KRAVE narration.',
-          channel: 'label',
-          city: 'Detroit, MI',
-          actor: 'Big Motion ENT',
-          tags: ['mixtape', 'elite', 'label'],
-          createdAt: earlier(1)
-        },
-        {
-          title: 'Nova Rose enters heavy night rotation',
-          subtitle: '“Midnight Motions” added to Autopilot pack',
-          body: 'Late night R&B / trap blend from Nova Rose just hit the Autopilot rotation for TKFM after strong feedback from early listeners.',
-          channel: 'artist',
-          city: 'Atlanta, GA',
-          actor: 'Nova Rose',
-          tags: ['upload', 'featured', 'night-drive'],
-          createdAt: earlier(2)
-        }
-      ];
-
-      // Seed keys
-      localStorage.setItem('tkfm_artist_uploads', JSON.stringify(uploads));
-      localStorage.setItem('mixtapeOrders', JSON.stringify(orders));
-      localStorage.setItem('tkfm_fan_profiles', JSON.stringify(fans));
-      localStorage.setItem('tkfm_dj_schedule', JSON.stringify(djSchedule));
-      localStorage.setItem('tkfm_djs', JSON.stringify(djs));
-      localStorage.setItem('tkfm_autopilot_last_pack', JSON.stringify(autopilotPack));
-
-      const existingManual = nSafeParse('tkfm_news_manual', []);
-      const mergedManual = Array.isArray(existingManual)
-        ? existingManual.concat(manualNews)
-        : manualNews;
-      localStorage.setItem('tkfm_news_manual', JSON.stringify(mergedManual));
-
-      // Optional: simple radio state / now playing pointing to first track
-      const radioState = {
-        index: 0,
-        updatedAt: now
-      };
-      const nowPlaying = {
-        index: 0,
-        track: packTracks[0],
-        updatedAt: now
-      };
-      localStorage.setItem('tkfm_radio_state', JSON.stringify(radioState));
-      localStorage.setItem('tkfm_radio_now_playing', JSON.stringify(nowPlaying));
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      const btnRefresh = document.getElementById('dev-refresh');
-      const btnClearTkfm = document.getElementById('dev-clear-tkfm');
-      const btnExport = document.getElementById('dev-export-tkfm');
-      const btnFormat = document.getElementById('dev-format');
-      const btnSave = document.getElementById('dev-save');
-      const btnClearKey = document.getElementById('dev-clear-key');
-      const btnSeedDemo = document.getElementById('dev-seed-demo');
-      const editor = document.getElementById('dev-editor');
-      const newsForm = document.getElementById('dev-news-form');
-
-      devRenderKeyList();
-
-      btnRefresh?.addEventListener('click', () => {
-        devSetStatus('', false);
-        devRenderKeyList();
-      });
-
-      btnClearTkfm?.addEventListener('click', () => {
-        const { tkfmKeys } = devScanKeys();
-        if (!tkfmKeys.length) {
-          devSetStatus('No TKFM keys to clear.', false);
-          return;
-        }
-        if (!confirm('Clear all TKFM-related keys on THIS DEVICE?')) return;
-        tkfmKeys.forEach(k => localStorage.removeItem(k));
-        devSetStatus('Cleared ' + tkfmKeys.length + ' TKFM keys.', false);
-        devRenderKeyList();
-        if (currentKey && tkfmKeys.includes(currentKey)) {
-          currentKey = null;
-          document.getElementById('dev-current-key-label').textContent = 'No key selected.';
-          editor.value = '';
-        }
-      });
-
-      btnExport?.addEventListener('click', () => {
-        const { tkfmKeys } = devScanKeys();
-        const exportObj = {};
-        tkfmKeys.forEach(k => {
-          const raw = localStorage.getItem(k);
-          exportObj[k] = raw;
-        });
-        const text = JSON.stringify(exportObj, null, 2);
-        editor.value = text;
-        currentKey = null;
-        document.getElementById('dev-current-key-label').textContent = 'Export snapshot (not a single key).';
-        devSetStatus('Exported TKFM keys into editor. Copy/paste as needed.', false);
-      });
-
-      btnFormat?.addEventListener('click', () => {
-        const raw = editor.value;
-        if (!raw.trim()) return;
-        try {
-          const parsed = JSON.parse(raw);
-          editor.value = JSON.stringify(parsed, null, 2);
-          devSetStatus('Formatted JSON.', false);
-        } catch (e) {
-          devSetStatus('Format failed: not valid JSON. ' + e.message, true);
-        }
-      });
-
-      btnSave?.addEventListener('click', () => {
-        if (!currentKey) {
-          devSetStatus('Select a key in the left list before saving.', true);
-          return;
-        }
-        const text = editor.value;
-        if (!text.trim()) {
-          if (!confirm('Empty value will remove the key "' + currentKey + '". Continue?')) return;
-          localStorage.removeItem(currentKey);
-          devSetStatus('Removed key "' + currentKey + '".', false);
-          devRenderKeyList();
-          currentKey = null;
-          document.getElementById('dev-current-key-label').textContent = 'No key selected.';
-          editor.value = '';
-          return;
-        }
-        try {
-          const parsed = JSON.parse(text);
-          localStorage.setItem(currentKey, JSON.stringify(parsed));
-          devSetStatus('Saved JSON to "' + currentKey + '".', false);
-          devRenderKeyList();
-        } catch (e) {
-          devSetStatus('Save failed: editor content is not valid JSON. ' + e.message, true);
-        }
-      });
-
-      btnClearKey?.addEventListener('click', () => {
-        if (!currentKey) {
-          devSetStatus('No key selected to clear.', true);
-          return;
-        }
-        if (!confirm('Clear key "' + currentKey + '" on THIS DEVICE?')) return;
-        localStorage.removeItem(currentKey);
-        devSetStatus('Cleared key "' + currentKey + '".', false);
-        devRenderKeyList();
-        currentKey = null;
-        document.getElementById('dev-current-key-label').textContent = 'No key selected.';
-        editor.value = '';
-      });
-
-      // Demo data seed button
-      btnSeedDemo?.addEventListener('click', () => {
-        if (!confirm('Load TKFM demo data on THIS DEVICE? This will overwrite demo-related keys like uploads, mixtapeOrders, fans, autopilot pack, news and DJ schedule.')) {
-          return;
-        }
-        try {
-          devSeedDemoData();
-          devSetStatus('Demo data loaded. Check Radio Hub, Momentum, DJs, News, and AI DJ Engine.', false);
-          devRenderKeyList();
-        } catch (err) {
-          devSetStatus('Failed to load demo data: ' + err.message, true);
-        }
-      });
-
-      newsForm?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const title = document.getElementById('dev-news-title').value.trim();
-        const subtitle = document.getElementById('dev-news-subtitle').value.trim();
-        const body = document.getElementById('dev-news-body').value.trim();
-        const channel = document.getElementById('dev-news-channel').value;
-        const city = document.getElementById('dev-news-city').value.trim();
-        const actor = document.getElementById('dev-news-actor').value.trim();
-        const tagsRaw = document.getElementById('dev-news-tags').value.trim();
-
-        if (!title) {
-          devSetNewsStatus('Title is required for a news item.', true);
-          return;
-        }
-
-        const tags = tagsRaw
-          ? tagsRaw.split(',').map(s => s.trim()).filter(Boolean)
-          : [];
-
-        let manual = nSafeParse('tkfm_news_manual', []);
-        if (!Array.isArray(manual)) manual = [];
-
-        const now = new Date().toISOString();
-
-        manual.push({
-          title,
-          subtitle,
-          body,
-          channel,
-          city,
-          actor,
-          tags,
-          createdAt: now
-        });
-
-        try {
-          localStorage.setItem('tkfm_news_manual', JSON.stringify(manual));
-          devSetNewsStatus('News item added. Check news.html to see it in the feed.', false);
-
-          document.getElementById('dev-news-title').value = '';
-          document.getElementById('dev-news-subtitle').value = '';
-          document.getElementById('dev-news-body').value = '';
-          document.getElementById('dev-news-city').value = '';
-          document.getElementById('dev-news-actor').value = '';
-          document.getElementById('dev-news-tags').value = '';
-        } catch (err) {
-          devSetNewsStatus('Failed to save news: ' + err.message, true);
-        }
-      });
-    });
+    })();
   </script>
-  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
 </body>
 </html>

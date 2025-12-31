@@ -1,567 +1,212 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="tkfm-access" content="owner" />
-  <script src="/js/access-gates.js" defer></script>
-
-  <meta charset="utf-8" />
-  <title>TKFM — GOD VIEW (Owner Master Dashboard)</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/js/logo-check.js" defer></script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM God View — Owner Command Center</title>
+  <meta name="robots" content="noindex,nofollow"/>
   <style>
-    body{
-      background:#020617;
-      background-image:
-        radial-gradient(circle at 10% 0,rgba(56,189,248,0.16),transparent 55%),
-        radial-gradient(circle at 90% 0,rgba(236,72,153,0.16),transparent 55%),
-        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.18),transparent 55%);
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.84);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
     }
-    ::-webkit-scrollbar{height:6px;width:6px;}
-    ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.95;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+
+    .wrap{max-width:1240px;margin:0 auto;padding:22px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{display:flex;align-items:center;gap:12px;padding:12px 22px}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+    }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
   </style>
+
+  <script>
+    (function(){
+      try{
+        var t = localStorage.getItem('tkfm_owner_token');
+        if(!t){
+          location.href = 'owner-login.html?next=' + encodeURIComponent(location.pathname + location.search + location.hash);
+        }
+      }catch(e){
+        location.href = 'owner-login.html';
+      }
+    })();
+  </script>
 </head>
-<body class="text-slate-50 min-h-screen flex flex-col">
+<body>
+  <div class="bg"></div>
 
-  <!-- TOP BAR -->
-  <header class="w-full border-b border-slate-800/80 bg-black/60 backdrop-blur-xl sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-      <a href="index.html" class="flex items-center gap-3">
-        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" class="h-9 w-auto object-contain" />
-        <div class="leading-tight">
-          <div class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
-            TKFM — The Independent Artist Power Station
-          </div>
-          <div class="text-sm font-semibold">
-            GOD VIEW <span class="text-emerald-300">Owner Master Dashboard</span>
-          </div>
-        </div>
-      </a>
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">Owner Command Center</div>
+        <div style="font-weight:950;letter-spacing:.06em">TKFM • God View</div>
+      </div>
 
-      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100">📻 Radio Hub</a>
-        <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-100">🏛 TKFM Records</a>
-        <a href="creator-pass.html" class="px-3 py-1 rounded-full border border-purple-500/80 bg-purple-500/10 text-purple-200">🎫 Creator Pass</a>
-        <a href="fan-pass.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-300">⭐ Fan Pass</a>
-        <a href="momentum-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-300">📈 Momentum Engine</a>
-        <a href="tkfm-dev-console.html" class="px-3 py-1 rounded-full border border-slate-500/80 bg-slate-900/90 text-slate-200">🛠 Dev Console</a>
-      </nav>
+      <div class="nav">
+        <a class="pill" href="index.html">Public Site</a>
+        <a class="pill" href="radio-hub.html">Radio Hub</a>
+        <a class="pill hot" href="owner-login.html">Owner Login</a>
+      </div>
     </div>
   </header>
 
-  <!-- MAIN -->
-  <main class="flex-1">
-    <section class="max-w-6xl mx-auto px-4 pt-8 pb-10 space-y-6">
-      <!-- HERO -->
-      <div class="flex flex-col lg:flex-row gap-6 items-start">
-        <div class="flex-1 space-y-3">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-[0.7rem] uppercase tracking-[0.3em] text-emerald-200">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            Owner • GOD VIEW
-          </div>
-          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
-            One screen that shows the whole <span class="text-emerald-300 drop-shadow-[0_0_22px_rgba(52,211,153,0.9)]">TKFM machine</span> (this browser).
-          </h1>
-          <p class="text-sm md:text-base text-slate-200/90 max-w-2xl">
-            GOD VIEW reads the same keys the engines use:
-            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>,
-            <span class="font-mono text-cyan-300 text-[0.75rem]">mixtapeOrders</span>,
-            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_fan_profiles</span>,
-            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_autopilot_last_pack</span>,
-            <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_contract_latest</span>.
-          </p>
-          <p class="text-[0.75rem] text-slate-400 max-w-xl">
-            This v2 dashboard is **local dev only** — production would use a shared database + auth. Right now it’s the fastest way
-            for you (DJ KRAVE) to see how uploads, orders, fans, contracts and autopilot packs line up.
-          </p>
-        </div>
+  <main class="wrap" style="padding-top:18px">
+    <section class="glass card">
+      <div class="k">Status • Controls • Engines</div>
+      <div class="h1"><span class="grad">God View</span> — Owner Control</div>
+      <p class="p">Owner-only command center. If the token is missing or invalid, this page sends the browser to owner-login.</p>
+      <div class="divider"></div>
 
-        <!-- SNAPSHOT CARD -->
-        <aside class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950/80 p-4 relative overflow-hidden">
-          <div class="pointer-events-none absolute -inset-16 opacity-35 blur-2xl bg-[conic-gradient(from_160deg,_#22d3ee,_#ec4899,_#a855f7,_#22d3ee)]"></div>
-          <div class="relative space-y-3 text-sm">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-400 mb-1">
-                  GOD VIEW Snapshot (This Device)
-                </p>
-                <p class="text-xs text-slate-300">
-                  Summarized from your local TKFM data.
-                </p>
-              </div>
-              <button id="gv-refresh" class="px-2.5 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-[0.65rem] uppercase tracking-[0.22em] text-cyan-200">
-                Refresh
-              </button>
-            </div>
+      <div class="grid">
+        <a class="glass tile" href="tkfm-dev-console.html">
+          <div class="tileK">Owner</div>
+          <div class="tileH">Dev Console</div>
+          <div class="tileP">Feature flags, unlock testing, and internal controls.</div>
+          <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
+        </a>
 
-            <div class="grid grid-cols-3 gap-3 text-xs">
-              <div>
-                <div class="text-slate-400 mb-0.5">Uploads</div>
-                <div id="gv-uploads-count" class="text-lg font-bold">0</div>
-              </div>
-              <div>
-                <div class="text-slate-400 mb-0.5">Mixtape Orders</div>
-                <div id="gv-orders-count" class="text-lg font-bold">0</div>
-              </div>
-              <div>
-                <div class="text-slate-400 mb-0.5">Fan Profiles</div>
-                <div id="gv-fans-count" class="text-lg font-bold">0</div>
-              </div>
-            </div>
+        <a class="glass tile" href="owner-ops-dashboard.html">
+          <div class="tileK">Owner</div>
+          <div class="tileH">Ops Dashboard</div>
+          <div class="tileP">Operational overview and admin lanes.</div>
+          <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
+        </a>
 
-            <div class="grid grid-cols-2 gap-3 text-xs">
-              <div>
-                <div class="text-slate-400 mb-0.5">Cities Seen</div>
-                <div id="gv-cities-count" class="text-lg font-bold">0</div>
-              </div>
-              <div>
-                <div class="text-slate-400 mb-0.5">Est. Mixtape Gross</div>
-                <div id="gv-gross" class="text-lg font-bold">$0</div>
-              </div>
-            </div>
+        <a class="glass tile" href="ai-dj-engine.html">
+          <div class="tileK">Owner</div>
+          <div class="tileH">AI DJ Engine</div>
+          <div class="tileP">Automation engine (owner-only).</div>
+          <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
+        </a>
 
-            <p class="text-[0.7rem] text-slate-300">
-              Tap the quick links below to drop into **Momentum Engine**, **Mixtape Orders**, or **Label Revenue Console** with the same data.
-            </p>
-          </div>
-        </aside>
+        <a class="glass tile" href="autopilot-engine.html">
+          <div class="tileK">Engines</div>
+          <div class="tileH">Autopilot Engine</div>
+          <div class="tileP">Scheduling + automation routing (monitor + control).</div>
+          <div class="tags"><span class="tag ok">ENGINE</span><span class="tag lock">CONTROL</span></div>
+        </a>
+
+        <a class="glass tile" href="label-home.html">
+          <div class="tileK">Label</div>
+          <div class="tileH">TKFM Records</div>
+          <div class="tileP">Label workflows (member gated + paid tiers).</div>
+          <div class="tags"><span class="tag ok">LABEL</span><span class="tag lock">GATED</span></div>
+        </a>
+
+        <a class="glass tile" href="owner-login.html" id="logout">
+          <div class="tileK">Security</div>
+          <div class="tileH">Clear Owner Session</div>
+          <div class="tileP">Logout / reset token on this device.</div>
+          <div class="tags"><span class="tag lock">RESET</span><span class="tag lock">TOKEN</span></div>
+        </a>
       </div>
-
-      <!-- ROW: PIPELINE + QUICK LINKS -->
-      <section class="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        <!-- PIPELINE OVERVIEW -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            TKFM Pipeline Overview (Local)
-          </h2>
-          <p class="text-[0.8rem] text-slate-200">
-            This summarizes the **system flow** you’ve been building:
-          </p>
-          <ol class="list-decimal list-inside text-[0.8rem] text-slate-200 space-y-1">
-            <li>Artists submit via <span class="text-pink-300 font-semibold">Artist Upload</span> → <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_artist_uploads</span>.</li>
-            <li>Label / owner review inside **Artist Submissions Console** and tag records.</li>
-            <li>Mixtape clients lock in hosted tapes via <span class="text-purple-300 font-semibold">DJ Mixtape Hosting</span> → <span class="font-mono text-cyan-300 text-[0.75rem]">mixtapeOrders</span>.</li>
-            <li>Fans activate **Fan Pass** → <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_fan_profiles</span>.</li>
-            <li>Autopilot Engine builds rotation packs → <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_autopilot_last_pack</span>.</li>
-            <li>Contracts from label side land in <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_contract_latest</span>.</li>
-          </ol>
-          <p class="text-[0.75rem] text-slate-400">
-            GOD VIEW doesn’t replace those pages — it just tells you at a glance **where the motion is** and where to click next.
-          </p>
-        </div>
-
-        <!-- QUICK LINKS -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-3">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Quick control room links
-          </h2>
-          <div class="flex flex-wrap gap-2 text-[0.8rem]">
-            <a href="artist-upload.html" class="px-3 py-1.5 rounded-full border border-pink-400/80 bg-pink-500/10 text-pink-100">
-              🎧 Artist Upload
-            </a>
-            <a href="artist-submissions-console.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100">
-              📂 Submissions Console
-            </a>
-            <a href="dj-mixtape-hosting.html" class="px-3 py-1.5 rounded-full border border-purple-400/80 bg-purple-500/10 text-purple-100">
-              🔥 DJ Mixtape Hosting
-            </a>
-            <a href="dj-mixtape-orders.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100">
-              📂 Mixtape Orders
-            </a>
-            <a href="label-revenue-console.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
-              💰 Label Revenue Console
-            </a>
-            <a href="fan-pass.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100">
-              ⭐ Fan Pass
-            </a>
-            <a href="momentum-engine.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
-              📈 Momentum Engine
-            </a>
-            <a href="label-contract-lab.html" class="px-3 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-500/10 text-yellow-100">
-              📜 Contract Lab
-            </a>
-            <a href="label-contract-output.html" class="px-3 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-500/10 text-yellow-100">
-              🖨 Latest Contract
-            </a>
-          </div>
-          <p class="text-[0.75rem] text-slate-400">
-            Use GOD VIEW to choose your **next move**, then jump straight into the page that needs your attention.
-          </p>
-        </div>
-      </section>
-
-      <!-- ROW: AUTOPILOT + CONTRACT -->
-      <section class="grid gap-4 md:grid-cols-2">
-        <!-- AUTOPILOT PACK -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Autopilot Engine — Last Rotation Pack
-          </h2>
-          <p class="text-[0.8rem] text-slate-200">
-            Reads <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_autopilot_last_pack</span>.
-          </p>
-          <div id="gv-pack-empty" class="text-[0.8rem] text-slate-400">
-            No Autopilot pack found yet. Once Autopilot Engine runs on this browser, the last pack summary will appear here.
-          </div>
-          <div id="gv-pack" class="hidden space-y-1 text-[0.8rem]"></div>
-          <a href="autopilot-engine.html" class="inline-flex items-center gap-2 text-[0.75rem] text-emerald-300 mt-2">
-            <span>⚙ Open Autopilot Engine</span>
-            <span class="text-xs">↗</span>
-          </a>
-        </div>
-
-        <!-- CONTRACT LAB SNAPSHOT -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm space-y-2">
-          <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-            Label Contract — Latest Draft
-          </h2>
-          <p class="text-[0.8rem] text-slate-200">
-            Reads <span class="font-mono text-cyan-300 text-[0.75rem]">tkfm_contract_latest</span> from Contract Lab.
-          </p>
-          <div id="gv-contract-empty" class="text-[0.8rem] text-slate-400">
-            No saved contract yet. Use Contract Lab to generate and save a deal, then GOD VIEW will show a preview.
-          </div>
-          <pre id="gv-contract" class="hidden text-[0.7rem] text-slate-200 bg-slate-900/80 border border-slate-800 rounded-xl p-3 max-h-48 overflow-y-auto whitespace-pre-wrap"></pre>
-          <a href="label-contract-lab.html" class="inline-flex items-center gap-2 text-[0.75rem] text-yellow-300 mt-2">
-            <span>📜 Open Contract Lab</span>
-            <span class="text-xs">↗</span>
-          </a>
-        </div>
-      </section>
-
-      <!-- ROW: RECENT ITEMS -->
-      <section class="grid gap-4 lg:grid-cols-3">
-        <!-- RECENT UPLOADS -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-              Recent Artist Uploads
-            </h2>
-            <a href="artist-submissions-console.html" class="text-[0.7rem] text-cyan-300">View all ↗</a>
-          </div>
-          <div id="gv-recent-uploads-empty" class="text-[0.8rem] text-slate-400">
-            No uploads yet on this device.
-          </div>
-          <div id="gv-recent-uploads" class="space-y-1 text-[0.8rem] max-h-64 overflow-y-auto"></div>
-        </div>
-
-        <!-- RECENT MIXTAPE ORDERS -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-              Recent Mixtape Orders
-            </h2>
-            <a href="dj-mixtape-orders.html" class="text-[0.7rem] text-cyan-300">View all ↗</a>
-          </div>
-          <div id="gv-recent-orders-empty" class="text-[0.8rem] text-slate-400">
-            No mixtape orders yet on this device.
-          </div>
-          <div id="gv-recent-orders" class="space-y-1 text-[0.8rem] max-h-64 overflow-y-auto"></div>
-        </div>
-
-        <!-- RECENT FAN PROFILES -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <h2 class="text-xs uppercase tracking-[0.3em] text-slate-400">
-              Recent Fan Pass Profiles
-            </h2>
-            <a href="fan-pass.html" class="text-[0.7rem] text-cyan-300">Manage ↗</a>
-          </div>
-          <div id="gv-recent-fans-empty" class="text-[0.8rem] text-slate-400">
-            No Fan Pass profiles yet on this device.
-          </div>
-          <div id="gv-recent-fans" class="space-y-1 text-[0.8rem] max-h-64 overflow-y-auto"></div>
-        </div>
-      </section>
-
-      <!-- BOTTOM BAR: UTILITIES -->
-      <section class="flex flex-wrap items-center justify-between gap-3 border border-slate-800 rounded-2xl bg-slate-950/80 px-3 py-3 text-xs">
-        <div class="space-y-1 text-[0.75rem] text-slate-300 max-w-md">
-          <p class="uppercase tracking-[0.24em] text-slate-400">Local Dev Controls</p>
-          <p>These buttons only affect your browser. Production TKFM would use real auth + shared storage.</p>
-        </div>
-        <div class="flex flex-wrap gap-2 items-center">
-          <button id="gv-clear-local" class="px-3 py-1.5 rounded-full border border-red-500/70 bg-red-500/10 text-red-300 uppercase tracking-[0.22em]">
-            Clear All TKFM Local Data
-          </button>
-        </div>
-      </section>
     </section>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-800/80 bg-black/50">
-    <div class="max-w-6xl mx-auto px-4 py-4 text-[0.7rem] text-slate-400 flex flex-wrap gap-3 items-center">
-      <span>© 2025 TKFM — GOD VIEW.</span>
-      <span class="opacity-80">
-        Owner snapshot over tkfm_artist_uploads • mixtapeOrders • tkfm_fan_profiles • tkfm_autopilot_last_pack • tkfm_contract_latest.
-      </span>
-    </div>
-  </footer>
-
+  <script src="/js/tkfm-owner-guard.js"></script>
   <script>
-    const GV_PRICE_TABLE = {
-      Starter: 500,
-      Pro: 1000,
-      Elite: 2500
-    };
-
-    function gvSafeParse(key, fallback) {
-      try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return fallback;
-        const parsed = JSON.parse(raw);
-        return parsed ?? fallback;
-      } catch (e) {
-        console.warn('GOD VIEW: failed to parse', key, e);
-        return fallback;
+    (function(){
+      async function hardVerify(){
+        if(!window.TKFM_OWNER_GUARD) return;
+        await window.TKFM_OWNER_GUARD.requireOwner();
       }
-    }
+      hardVerify();
 
-    function gvGetArray(key) {
-      const v = gvSafeParse(key, []);
-      return Array.isArray(v) ? v : [];
-    }
-
-    function gvFormatMoney(num) {
-      const n = Number(num) || 0;
-      return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
-    }
-
-    function gvPrettyDate(iso) {
-      if (!iso) return '';
-      try {
-        const d = new Date(iso);
-        if (Number.isNaN(d.getTime())) return '';
-        return d.toLocaleString();
-      } catch {
-        return '';
+      var logoutTile = document.getElementById('logout');
+      if(logoutTile){
+        logoutTile.addEventListener('click', function(e){
+          e.preventDefault();
+          if(window.TKFM_OWNER_GUARD) window.TKFM_OWNER_GUARD.clearOwner();
+          location.href = 'owner-login.html';
+        });
       }
-    }
-
-    function gvEscape(str) {
-      return String(str || '')
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#039;');
-    }
-
-    function gvSplitTags(str) {
-      if (!str) return [];
-      return String(str)
-        .split(',')
-        .map(s => s.trim())
-        .filter(Boolean);
-    }
-
-    function gvRender() {
-      const uploads = gvGetArray('tkfm_artist_uploads');
-      const orders = gvGetArray('mixtapeOrders');
-      const fans = gvGetArray('tkfm_fan_profiles');
-
-      // Snapshot counts
-      document.getElementById('gv-uploads-count').textContent = uploads.length;
-      document.getElementById('gv-orders-count').textContent = orders.length;
-      document.getElementById('gv-fans-count').textContent = fans.length;
-
-      // Cities
-      const citySet = new Set();
-      uploads.forEach(u => u.city && citySet.add(u.city.toLowerCase()));
-      orders.forEach(o => o.city && citySet.add(o.city.toLowerCase()));
-      fans.forEach(f => f.city && citySet.add(f.city.toLowerCase()));
-      document.getElementById('gv-cities-count').textContent = citySet.size;
-
-      // Gross estimate
-      let gross = 0;
-      orders.forEach(o => {
-        const tier = (o.tier || '').trim();
-        gross += GV_PRICE_TABLE[tier] || 0;
-      });
-      document.getElementById('gv-gross').textContent = gvFormatMoney(gross);
-
-      // Autopilot pack summary
-      const packRaw = gvSafeParse('tkfm_autopilot_last_pack', null);
-      const packContainer = document.getElementById('gv-pack');
-      const packEmpty = document.getElementById('gv-pack-empty');
-
-      if (!packRaw) {
-        packContainer.classList.add('hidden');
-        packEmpty.classList.remove('hidden');
-      } else {
-        packEmpty.classList.add('hidden');
-        packContainer.classList.remove('hidden');
-
-        let summaryLines = [];
-        try {
-          const pack = packRaw;
-          const created = pack.createdAt || pack.timestamp || null;
-          const size = Array.isArray(pack.tracks || pack.items) ? (pack.tracks || pack.items).length : (pack.size || 0);
-          const mode = pack.mode || pack.profile || 'default';
-          const sourceLabel = pack.source || 'Autopilot Engine';
-
-          if (created) summaryLines.push('Created: ' + gvPrettyDate(created));
-          summaryLines.push('Mode: ' + mode);
-          if (size) summaryLines.push('Items: ' + size);
-          summaryLines.push('Source: ' + sourceLabel);
-
-          packContainer.textContent = summaryLines.join('\\n');
-        } catch (e) {
-          console.warn('GOD VIEW: failed to summarize autopilot pack', e);
-          packContainer.textContent = JSON.stringify(packRaw, null, 2);
-        }
-      }
-
-      // Contract preview
-      const contractRaw = gvSafeParse('tkfm_contract_latest', null);
-      const contractEl = document.getElementById('gv-contract');
-      const contractEmpty = document.getElementById('gv-contract-empty');
-
-      if (!contractRaw) {
-        contractEl.classList.add('hidden');
-        contractEmpty.classList.remove('hidden');
-      } else {
-        contractEmpty.classList.add('hidden');
-        contractEl.classList.remove('hidden');
-        try {
-          if (typeof contractRaw === 'string') {
-            contractEl.textContent = contractRaw;
-          } else if (contractRaw.text) {
-            contractEl.textContent = contractRaw.text;
-          } else {
-            contractEl.textContent = JSON.stringify(contractRaw, null, 2);
-          }
-        } catch (e) {
-          console.warn('GOD VIEW: failed to render contract', e);
-          contractEl.textContent = String(contractRaw);
-        }
-      }
-
-      // Recent uploads
-      const uploadsWrap = document.getElementById('gv-recent-uploads');
-      const uploadsEmpty = document.getElementById('gv-recent-uploads-empty');
-
-      if (!uploads.length) {
-        uploadsWrap.innerHTML = '';
-        uploadsEmpty.classList.remove('hidden');
-      } else {
-        uploadsEmpty.classList.add('hidden');
-        const sorted = uploads
-          .slice()
-          .sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
-          .slice(0, 8);
-
-        uploadsWrap.innerHTML = sorted.map(u => {
-          return \`
-            <div class="flex items-start justify-between gap-2 border border-slate-800/80 rounded-xl px-3 py-1.5 bg-slate-950/90">
-              <div class="min-w-0">
-                <p class="truncate font-semibold text-[0.8rem]">
-                  \${gvEscape(u.artistName || 'Unknown Artist')}
-                </p>
-                <p class="truncate text-[0.75rem] text-slate-400">
-                  \${gvEscape(u.trackTitle || '')}
-                </p>
-                <p class="text-[0.65rem] text-slate-500">
-                  \${u.city ? gvEscape(u.city) + ' • ' : ''}\${u.status ? gvEscape(u.status) : 'new'}
-                </p>
-              </div>
-            </div>
-          \`;
-        }).join('');
-      }
-
-      // Recent orders
-      const ordersWrap = document.getElementById('gv-recent-orders');
-      const ordersEmpty = document.getElementById('gv-recent-orders-empty');
-
-      if (!orders.length) {
-        ordersWrap.innerHTML = '';
-        ordersEmpty.classList.remove('hidden');
-      } else {
-        ordersEmpty.classList.add('hidden');
-        const sorted = orders
-          .slice()
-          .sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
-          .slice(0, 8);
-
-        ordersWrap.innerHTML = sorted.map(o => {
-          const tier = o.tier || '—';
-          const price = GV_PRICE_TABLE[tier] || 0;
-          return \`
-            <div class="flex items-start justify-between gap-2 border border-slate-800/80 rounded-xl px-3 py-1.5 bg-slate-950/90">
-              <div class="min-w-0">
-                <p class="truncate font-semibold text-[0.8rem]">
-                  \${gvEscape(o.clientName || 'Unknown Client')}
-                </p>
-                <p class="truncate text-[0.75rem] text-slate-400">
-                  \${gvEscape(o.projectTitle || '')}
-                </p>
-                <p class="text-[0.65rem] text-slate-500">
-                  Tier: \${gvEscape(tier)}\${price ? ' • ' + gvFormatMoney(price) : ''} • \${gvEscape(o.status || 'new')}
-                </p>
-              </div>
-            </div>
-          \`;
-        }).join('');
-      }
-
-      // Recent fans
-      const fansWrap = document.getElementById('gv-recent-fans');
-      const fansEmpty = document.getElementById('gv-recent-fans-empty');
-
-      if (!fans.length) {
-        fansWrap.innerHTML = '';
-        fansEmpty.classList.remove('hidden');
-      } else {
-        fansEmpty.classList.add('hidden');
-        const sorted = fans
-          .slice()
-          .sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
-          .slice(0, 8);
-
-        fansWrap.innerHTML = sorted.map(f => {
-          const tags = Array.isArray(f.soundTags) ? f.soundTags.join(', ') : String(f.soundTags || '');
-          const points = Number.isFinite(f.points) ? f.points : 0;
-          return \`
-            <div class="flex items-start justify-between gap-2 border border-slate-800/80 rounded-xl px-3 py-1.5 bg-slate-950/90">
-              <div class="min-w-0">
-                <p class="truncate font-semibold text-[0.8rem]">
-                  \${gvEscape(f.displayName || 'Unknown Fan')}
-                </p>
-                <p class="truncate text-[0.75rem] text-slate-400">
-                  \${f.city ? gvEscape(f.city) : 'City: —'}
-                </p>
-                \${tags ? \`<p class="text-[0.65rem] text-slate-500 truncate">Tags: \${gvEscape(tags)}</p>\` : ''}
-              </div>
-              <div class="text-[0.7rem] text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-400/80 bg-emerald-400/10">
-                Pts: \${points}
-              </div>
-            </div>
-          \`;
-        }).join('');
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      const btnRefresh = document.getElementById('gv-refresh');
-      const btnClear = document.getElementById('gv-clear-local');
-
-      btnRefresh?.addEventListener('click', gvRender);
-
-      btnClear?.addEventListener('click', function () {
-        if (!confirm('Clear all TKFM local keys on THIS DEVICE? (uploads, orders, fans, autopilot pack, contract)')) return;
-        localStorage.removeItem('tkfm_artist_uploads');
-        localStorage.removeItem('mixtapeOrders');
-        localStorage.removeItem('tkfm_fan_profiles');
-        localStorage.removeItem('tkfm_autopilot_last_pack');
-        localStorage.removeItem('tkfm_contract_latest');
-        gvRender();
-      });
-
-      gvRender();
-    });
+    })();
   </script>
-  <script src="/js/owner-lock.js" data-owner-page="owner"></script>
 </body>
 </html>
