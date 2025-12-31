@@ -5,107 +5,80 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>TKFM — Payment Success</title>
   <style>
-    :root { --bg:#020617; --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6; }
-    html,body{height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;}
+    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;}
+    html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
     body{
       background:
-        radial-gradient(800px 400px at 20% 15%, rgba(168,85,247,.25), transparent 60%),
-        radial-gradient(700px 380px at 70% 25%, rgba(236,72,153,.20), transparent 60%),
-        radial-gradient(800px 420px at 60% 80%, rgba(34,211,238,.18), transparent 60%),
+        radial-gradient(900px 420px at 15% 12%, rgba(168,85,247,.22), transparent 60%),
+        radial-gradient(820px 420px at 70% 20%, rgba(236,72,153,.18), transparent 60%),
+        radial-gradient(900px 480px at 55% 85%, rgba(34,211,238,.14), transparent 60%),
         var(--bg);
       color:#e5e7eb;
-      display:flex; align-items:center; justify-content:center;
+      display:flex;align-items:center;justify-content:center;
+      padding:18px;
     }
-    .card{
-      width:min(740px, 92vw);
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(2,6,23,.75);
-      backdrop-filter: blur(10px);
-      border-radius:18px;
-      padding:26px;
-      box-shadow: 0 0 0 1px rgba(168,85,247,.12), 0 12px 50px rgba(0,0,0,.55);
-    }
-    .title{font-size:24px; font-weight:900; letter-spacing:.4px; margin:0 0 8px;}
-    .sub{opacity:.9; margin:0 0 18px;}
-    .bar{
-      height:10px; border-radius:999px;
-      background: linear-gradient(90deg, var(--p), var(--pk), var(--c), var(--b));
-      filter: drop-shadow(0 0 10px rgba(168,85,247,.25));
-      margin: 16px 0 14px;
-    }
-    .small{opacity:.85; font-size:13px; line-height:1.5;}
-    a{color: var(--c); text-decoration:none;}
+    .card{width:min(860px,96vw);border:1px solid rgba(255,255,255,.10);background:rgba(2,6,23,.78);
+      border-radius:18px;padding:18px;box-shadow:0 12px 50px rgba(0,0,0,.55);}
+    h1{margin:0;font-size:22px;font-weight:900}
+    p{margin:10px 0 0;opacity:.88;line-height:1.55}
+    .ok{color:#34d399;font-weight:900}
+    .bad{color:#fb7185;font-weight:900}
   </style>
-<script src="/js/tkfm-fx.js"></script>
 </head>
-<body data-tkfm-theme="radio">
-<script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
+<body>
   <div class="card">
-    <p class="title">Payment confirmed</p>
-    <p class="sub">Unlocking your TKFM features…</p>
-    <div class="bar"></div>
-    <p class="small" id="msg">Do not close this tab.</p>
-    <p class="small"><a href="/pricing.html">Back to Pricing</a></p>
+    <h1>Success <span class="ok">✓</span></h1>
+    <p id="msg">Finalizing your access…</p>
   </div>
 
-  <script type="module">
-    const FN_VERIFY = '/.netlify/functions/verify-checkout-session';
-
-    function qs(name){
-      const u = new URL(window.location.href);
-      return u.searchParams.get(name);
-    }
-
-    function setUnlock(unlock_id, unlock){
-      const feats = JSON.parse(localStorage.getItem('tkfm_user_features') || '{}');
-      const stamp = Date.now();
-
-      if (unlock_id) feats[unlock_id] = { ok:true, at: stamp };
-
-      if (unlock && Array.isArray(unlock.features)) {
-        unlock.features.forEach(f => { feats[f] = { ok:true, at: stamp }; });
-      }
-
-      localStorage.setItem('tkfm_user_features', JSON.stringify(feats));
-
-      if (unlock && unlock.tier) {
-        localStorage.setItem('tkfm_memberTier', unlock.tier);
-      }
-    }
+  <script>
+    const msg = document.getElementById('msg');
+    const params = new URLSearchParams(location.search);
+    const session_id = params.get('session_id');
 
     async function run(){
-      const el = document.getElementById('msg');
-      const session_id = qs('session_id');
-
-      if (!session_id) {
-        el.textContent = 'Missing session id. Returning…';
-        window.location.href = '/pricing.html';
+      if (!session_id){
+        msg.innerHTML = '<span class="bad">Missing session.</span> Returning to pricing…';
+        setTimeout(()=>location.href='/pricing.html', 900);
         return;
       }
 
-      const res = await fetch(FN_VERIFY, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ session_id })
-      });
+      try{
+        const res = await fetch('/.netlify/functions/verify-checkout-session', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ session_id })
+        });
+        const data = await res.json().catch(()=> ({}));
+        if (!res.ok || !data.paid){
+          msg.innerHTML = '<span class="bad">Could not verify payment.</span> Returning to pricing…';
+          setTimeout(()=>location.href='/pricing.html', 1200);
+          return;
+        }
 
-      const data = await res.json().catch(() => ({}));
+        // persist unlocks locally
+        const feats = JSON.parse(localStorage.getItem('tkfm_user_features') || '{}');
+        const stamp = Date.now();
 
-      if (!res.ok || !data.paid) {
-        el.textContent = 'Payment not confirmed yet. Returning…';
-        window.location.href = '/pricing.html';
-        return;
+        if (data.unlock_id) feats[data.unlock_id] = { ok:true, at: stamp };
+
+        const u = (data.unlock && Array.isArray(data.unlock.features)) ? data.unlock.features : [];
+        for (const f of u) feats[f] = { ok:true, at: stamp };
+
+        localStorage.setItem('tkfm_user_features', JSON.stringify(feats));
+
+        if (data.customer_email){
+          localStorage.setItem('tkfm_member_email', String(data.customer_email).toLowerCase());
+        }
+
+        msg.innerHTML = '<span class="ok">Access activated.</span> Sending you to your account…';
+        setTimeout(()=>location.href='/account.html', 900);
+
+      }catch(e){
+        msg.innerHTML = '<span class="bad">Network error.</span> Returning to pricing…';
+        setTimeout(()=>location.href='/pricing.html', 1200);
       }
-
-      setUnlock(data.unlock_id, data.unlock || {});
-      if (data.customer_email) localStorage.setItem('tkfm_member_email', String(data.customer_email).toLowerCase());
-      el.textContent = 'Unlocked. Redirecting…';
-
-      const ret = localStorage.getItem('tkfm_return_url') || '/pricing.html';
-      localStorage.removeItem('tkfm_return_url');
-      window.location.href = ret;
     }
-
     run();
   </script>
 </body>
