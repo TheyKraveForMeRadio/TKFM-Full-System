@@ -27,7 +27,7 @@
   </style>
 <script src="/js/tkfm-fx.js"></script>
 </head>
-<body class="text-slate-50 min-h-screen flex flex-col" data-tkfm-theme="radio">
+<body data-requires="creator_pass_monthly" data-gate-title="🔒 TKFM Creator Access Required" data-gate-message="Upgrade to Creator Pass to unlock this page." class="text-slate-50 min-h-screen flex flex-col" data-tkfm-theme="radio">
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
 
   <!-- NAV -->
@@ -838,5 +838,6 @@
       buildPool();
     });
   </script>
+  <script type="module" src="/js/tkfm-gate.js"></script>
 </body>
 </html>

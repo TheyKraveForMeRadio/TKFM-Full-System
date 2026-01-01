@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — Entitlements</title>
+  <style>
+    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--txt:#e5e7eb}
+    body{margin:0;background:radial-gradient(1200px 600px at 18% 0%,rgba(168,85,247,.22),transparent 55%),radial-gradient(900px 500px at 82% 10%,rgba(34,211,238,.16),transparent 60%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    .wrap{max-width:980px;margin:0 auto;padding:28px}
+    .card{border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:18px;background:rgba(2,6,23,.55);backdrop-filter: blur(10px)}
+    h1{margin:0 0 10px;font-size:26px}
+    p{margin:0 0 14px;opacity:.9}
+    .pill{display:inline-block;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);margin:6px 8px 0 0;background:rgba(255,255,255,.04)}
+    button,a.btn{padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--txt);cursor:pointer;text-decoration:none;display:inline-block}
+    button:hover,a.btn:hover{border-color:rgba(236,72,153,.45)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .muted{opacity:.75;font-size:13px}
+    code{background:rgba(0,0,0,.25);padding:2px 6px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🧠 Entitlements + Unlocks</h1>
+      <p>This page shows your <code>tkfm_stripe_customer_id</code>, server status, and current unlock list.</p>
+      <div class="row">
+        <button id="sync">Sync From Server</button>
+        <a class="btn" href="/pricing.html">Pricing</a>
+        <a class="btn" href="/radio-hub.html">Radio Hub</a>
+      </div>
+      <div class="muted" style="margin-top:12px">Customer: <code id="cid">—</code> • Status: <span class="pill" id="st">—</span></div>
+      <div id="list" style="margin-top:12px"></div>
+      <div class="muted" style="margin-top:12px">Tip: after checkout, <code>/success.html</code> should store your customer id automatically.</div>
+    </div>
+  </div>
+
+<script type="module">
+  import { syncEntitlements, getLocalUnlocks, getCustomerId, getEntitlementStatus } from '/js/tkfm-entitlements-sync.js';
+
+  const cidEl = document.getElementById('cid');
+  const stEl = document.getElementById('st');
+  const list = document.getElementById('list');
+
+  function render(){
+    cidEl.textContent = getCustomerId() || 'missing';
+    stEl.textContent = getEntitlementStatus() || 'unknown';
+    const u = getLocalUnlocks();
+    list.innerHTML = u.length ? u.map(x => '<span class="pill">'+x+'</span>').join('') : '<span class="pill">none</span>';
+  }
+
+  document.getElementById('sync').addEventListener('click', async () => {
+    await syncEntitlements();
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
