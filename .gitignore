@@ -14,3 +14,5 @@ dist/
 dist/
 .vite/
 >>>>>>> v2-clean-neon
+
+v2/.env
