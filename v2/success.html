@@ -22,12 +22,22 @@
   <div class="wrap">
     <div class="card">
       <h1 class="h">✅ You’re unlocked.</h1>
-      <p class="sub">We’re verifying your checkout and activating your TKFM features.</p>
+      <p class="sub">Verifying your checkout + activating TKFM features.</p>
+
       <div id="status">Verifying…</div>
       <div id="features" style="margin-top:12px"></div>
+
+      <div style="margin-top:14px">
+        <span class="pill" id="entStatus">Entitlements: —</span>
+      </div>
+
       <a class="btn" href="/pricing.html">Back to Pricing</a>
       <a class="btn" href="/radio-hub.html">Go to Radio Hub</a>
-      <div class="muted">If you don’t see unlocks, copy your session id and contact support. Session: <code id="sid">—</code></div>
+
+      <div class="muted">
+        Session: <code id="sid">—</code>
+        &nbsp;•&nbsp; Customer: <code id="cid">—</code>
+      </div>
     </div>
   </div>
 
@@ -35,10 +45,14 @@
 (function(){
   const params = new URLSearchParams(location.search);
   const sid = params.get('session_id');
-  document.getElementById('sid').textContent = sid || 'missing';
 
   const statusEl = document.getElementById('status');
   const featuresEl = document.getElementById('features');
+  const entEl = document.getElementById('entStatus');
+  const sidEl = document.getElementById('sid');
+  const cidEl = document.getElementById('cid');
+
+  sidEl.textContent = sid || 'missing';
 
   function getFeatures(){
     try { return JSON.parse(localStorage.getItem('tkfm_user_features') || '[]') || []; }
@@ -46,6 +60,26 @@
   }
   function setFeatures(arr){
     localStorage.setItem('tkfm_user_features', JSON.stringify(Array.from(new Set(arr || []))));
+  }
+  function setCustomerId(cid){
+    if (!cid) return;
+    localStorage.setItem('tkfm_stripe_customer_id', String(cid));
+  }
+
+  async function loadEntitlements(cid){
+    if (!cid) return;
+    cidEl.textContent = cid;
+    try{
+      const r = await fetch('/.netlify/functions/get-entitlements?customer_id=' + encodeURIComponent(cid));
+      const d = await r.json().catch(()=> ({}));
+      if (d && d.ok && d.enabled) {
+        entEl.textContent = 'Entitlements: ' + (d.status || 'unknown');
+      } else {
+        entEl.textContent = 'Entitlements: —';
+      }
+    } catch(e){
+      entEl.textContent = 'Entitlements: —';
+    }
   }
 
   if(!sid){
@@ -63,13 +97,17 @@
 
       const unlocked = data.unlocked || [];
       const current = getFeatures();
-      const merged = current.concat(unlocked);
-      setFeatures(merged);
+      setFeatures(current.concat(unlocked));
 
-      statusEl.textContent = 'Activated:';
+      statusEl.textContent = unlocked.length ? 'Activated:' : 'No mapped items found (check STRIPE_PRICE_* env).';
       featuresEl.innerHTML = unlocked.length
         ? unlocked.map(x => '<span class="pill">'+x+'</span>').join('')
-        : '<span class="pill">No mapped items found (check STRIPE_PRICE_* env)</span>';
+        : '<span class="pill">none</span>';
+
+      if (data.customer) {
+        setCustomerId(data.customer);
+        loadEntitlements(data.customer);
+      }
     })
     .catch(() => {
       statusEl.textContent = 'Verification error. Try refresh.';
