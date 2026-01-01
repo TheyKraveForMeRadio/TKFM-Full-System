@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — Unlock Control Panel</title>
+  <style>
+    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--b:#3b82f6;--txt:#e5e7eb}
+    body{margin:0;background:radial-gradient(1200px 600px at 20% 0%,rgba(168,85,247,.25),transparent 55%),radial-gradient(900px 500px at 80% 10%,rgba(34,211,238,.18),transparent 60%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    .wrap{max-width:980px;margin:0 auto;padding:28px}
+    .card{border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:18px;background:rgba(2,6,23,.55);backdrop-filter: blur(10px)}
+    h1{margin:0 0 10px;font-size:26px}
+    p{margin:0 0 14px;opacity:.9}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input{flex:1;min-width:240px;padding:12px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--txt);outline:none}
+    button,a.btn{padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--txt);cursor:pointer;text-decoration:none;display:inline-block}
+    button:hover,a.btn:hover{border-color:rgba(236,72,153,.45)}
+    .pill{display:inline-block;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);margin:6px 8px 0 0;background:rgba(255,255,255,.04)}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:14px 0}
+    .muted{opacity:.75;font-size:13px}
+    code{background:rgba(0,0,0,.25);padding:2px 6px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🔐 TKFM Unlock Control Panel</h1>
+      <p>Use this to verify that <code>tkfm_user_features</code> is being set after Stripe success. Add unlocks manually for testing, or clear all unlocks to retest checkout.</p>
+
+      <div class="row">
+        <input id="addId" placeholder="Add unlock id (example: creator_pass_monthly)"/>
+        <button id="btnAdd">Add Unlock</button>
+        <button id="btnClear">Clear All</button>
+        <a class="btn" href="/pricing.html">Pricing</a>
+        <a class="btn" href="/radio-hub.html">Radio Hub</a>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="muted">Current unlocks:</div>
+      <div id="list" style="margin-top:10px"></div>
+
+      <div class="hr"></div>
+      <div class="muted">Tip: after a real purchase, your success page should automatically add unlocks here.</div>
+    </div>
+  </div>
+
+<script type="module">
+  import { getUnlocks, addUnlock, clearUnlocks } from '/js/tkfm-unlocks.js';
+
+  const list = document.getElementById('list');
+  const addId = document.getElementById('addId');
+
+  function render() {
+    const u = getUnlocks();
+    list.innerHTML = u.length ? u.map(x => `<span class="pill">${x}</span>`).join('') : '<span class="pill">none</span>';
+  }
+
+  document.getElementById('btnAdd').addEventListener('click', () => {
+    const v = (addId.value || '').trim();
+    if (!v) return;
+    addUnlock(v);
+    addId.value = '';
+    render();
+  });
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    clearUnlocks();
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
