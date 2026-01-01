@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="card">
       <h1>🧾 Owner — Mixtape Orders</h1>
-      <p>Enter your <code>TKFM_OWNER_KEY</code> to load orders. This page is private — don’t link it publicly.</p>
+      <p>Enter your <code>TKFM_OWNER_KEY</code> to load orders. Works with Supabase + local dev store.</p>
 
       <div class="row">
         <div style="flex:1;min-width:260px">
@@ -50,6 +50,48 @@
 
   function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m]));}
 
+  function normalize(o){
+    // Supabase row shape
+    if (o && (o.artist_name || o.mixtape_title || o.created_at)) {
+      return {
+        id: o.id,
+        createdAt: o.created_at,
+        status: o.status || 'new',
+        tier: o.tier || '',
+        artistName: o.artist_name || '',
+        email: o.email || '',
+        phone: o.phone || '',
+        mixtapeTitle: o.mixtape_title || '',
+        download: o.download || '',
+        tracklist: o.tracklist || '',
+        socials: o.socials || '',
+        notes: o.notes || ''
+      };
+    }
+
+    // Local dev legacy shape
+    return {
+      id: o.id,
+      createdAt: o.createdAt || '',
+      status: o.status || 'new',
+      tier: o.tier || '',
+      artistName: o.artistName || '',
+      email: o.email || '',
+      phone: o.phone || '',
+      mixtapeTitle: o.mixtapeTitle || '',
+      download: (o.links && o.links.download) ? o.links.download : '',
+      tracklist: (o.links && o.links.tracklist) ? o.links.tracklist : '',
+      socials: (o.links && o.links.socials) ? o.links.socials : '',
+      notes: o.notes || ''
+    };
+  }
+
+  function linkOrDash(url){
+    const u = String(url||'').trim();
+    if (!u) return '—';
+    return `<a target="_blank" rel="noreferrer" href="${esc(u)}">${esc(u)}</a>`;
+  }
+
   document.getElementById('load').addEventListener('click', async () => {
     const key = (document.getElementById('k').value || '').trim();
     if (!key) { meta.textContent = 'Missing owner key.'; return; }
@@ -67,8 +109,9 @@
       return;
     }
 
-    meta.textContent = `Loaded ${data.count} order(s).`;
-    const orders = data.orders || [];
+    meta.textContent = `Loaded ${data.count} order(s). Storage: ${data.storage || 'unknown'}`;
+    const orders = (data.orders || []).map(normalize);
+
     if (!orders.length) {
       list.innerHTML = '<div class="order"><span class="pill">none</span></div>';
       return;
@@ -84,9 +127,9 @@
         </div>
         <div><b>${esc(o.artistName)}</b> — ${esc(o.email)} ${o.phone ? ('— '+esc(o.phone)) : ''}</div>
         <div class="muted" style="margin-top:6px"><b>Mixtape:</b> ${esc(o.mixtapeTitle)}</div>
-        <div class="muted" style="margin-top:6px"><b>Download:</b> ${o.links?.download ? `<a target="_blank" rel="noreferrer" href="${esc(o.links.download)}">${esc(o.links.download)}</a>` : '—'}</div>
-        <div class="muted" style="margin-top:6px"><b>Tracklist:</b> ${o.links?.tracklist ? `<a target="_blank" rel="noreferrer" href="${esc(o.links.tracklist)}">${esc(o.links.tracklist)}</a>` : '—'}</div>
-        <div class="muted" style="margin-top:6px"><b>Socials:</b> ${esc(o.links?.socials || '—')}</div>
+        <div class="muted" style="margin-top:6px"><b>Download:</b> ${linkOrDash(o.download)}</div>
+        <div class="muted" style="margin-top:6px"><b>Tracklist:</b> ${linkOrDash(o.tracklist)}</div>
+        <div class="muted" style="margin-top:6px"><b>Socials:</b> ${esc(o.socials || '—')}</div>
         <div class="muted" style="margin-top:6px"><b>Notes:</b> ${esc(o.notes || '—')}</div>
       </div>
     `).join('');
