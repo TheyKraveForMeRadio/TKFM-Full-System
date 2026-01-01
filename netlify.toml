@@ -1,15 +1,8 @@
-[build]
-command = "cd v2 && npm run build"
-publish = "v2/dist"
-functions = "v2/netlify/functions"
-
 [dev]
-framework = "#custom"
+command = ""
+publish = "v2"
 port = 8888
-command = "dev.cmd"
-targetPort = 5173
-functions = "v2/netlify/functions"
 
 [functions]
-node_bundler = "zisi"
-external_node_modules = ["stripe", "jsonwebtoken"]
+directory = "v2/netlify/functions"
+node_bundler = "esbuild"
