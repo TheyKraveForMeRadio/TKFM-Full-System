@@ -2,47 +2,77 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-function json(statusCode, body) {
-  return {
-    statusCode,
-    headers: {
-      'content-type': 'application/json',
-      'access-control-allow-origin': '*',
-      'access-control-allow-headers': 'content-type',
-      'access-control-allow-methods': 'POST, OPTIONS',
-    },
-    body: JSON.stringify(body),
-  };
+const PRICE_MAP = {
+  creator_pass_monthly: process.env.STRIPE_PRICE_CREATOR_PASS_MONTHLY,
+  motion_monthly: process.env.STRIPE_PRICE_MOTION_MONTHLY,
+  takeover_viral_monthly: process.env.STRIPE_PRICE_TAKEOVER_VIRAL_MONTHLY,
+  dj_toolkit_monthly: process.env.STRIPE_PRICE_DJ_TOOLKIT_MONTHLY,
+  label_core_monthly: process.env.STRIPE_PRICE_LABEL_CORE_MONTHLY,
+  label_pro_monthly: process.env.STRIPE_PRICE_LABEL_PRO_MONTHLY,
+
+  mixtape_hosting_starter: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_STARTER,
+  mixtape_hosting_pro: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_PRO,
+  mixtape_hosting_elite: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_ELITE,
+
+  social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
+  rotation_boost_campaign: process.env.STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN,
+  homepage_feature_artist: process.env.STRIPE_PRICE_HOMEPAGE_FEATURE_ARTIST,
+  radio_interview_slot: process.env.STRIPE_PRICE_RADIO_INTERVIEW_SLOT,
+
+  autopilot_lite_monthly: process.env.STRIPE_PRICE_AUTOPILOT_LITE_MONTHLY,
+  autopilot_pro_monthly: process.env.STRIPE_PRICE_AUTOPILOT_PRO_MONTHLY,
+  contract_lab_pro_monthly: process.env.STRIPE_PRICE_CONTRACT_LAB_PRO_MONTHLY,
+  label_autopilot_monthly: process.env.STRIPE_PRICE_LABEL_AUTOPILOT_MONTHLY,
+  sponsor_autopilot_monthly: process.env.STRIPE_PRICE_SPONSOR_AUTOPILOT_MONTHLY
+};
+
+function planIdForPrice(priceId) {
+  for (const [planId, pid] of Object.entries(PRICE_MAP)) {
+    if (pid && pid === priceId) return planId;
+  }
+  return null;
 }
 
 export async function handler(event) {
-  if (event.httpMethod === 'OPTIONS') return json(200, { ok: true });
-  if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
-
   try {
-    const body = event.body ? JSON.parse(event.body) : {};
-    const session_id = String(body.session_id || '').trim();
-    if (!session_id) return json(400, { error: 'Missing session_id' });
+    const { session_id } = event.queryStringParameters || {};
+    if (!session_id) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ ok: false, error: 'missing_session_id' })
+      };
+    }
 
-    const session = await stripe.checkout.sessions.retrieve(session_id);
-
-    const paid =
-      session?.payment_status === 'paid' ||
-      session?.status === 'complete';
-
-    const unlock_id =
-      session?.metadata?.tkfm_unlock_id ||
-      session?.metadata?.tkfm_unlock ||
-      null;
-
-    return json(200, {
-      paid,
-      unlock_id,
-      customer_email: session?.customer_details?.email || session?.customer_email || null,
-      customer_id: session?.customer || null,
-      mode: session?.mode || null,
+    const session = await stripe.checkout.sessions.retrieve(session_id, {
+      expand: ['line_items.data.price']
     });
+
+    const items = session?.line_items?.data || [];
+    const unlocked = [];
+
+    for (const li of items) {
+      const priceId = li?.price?.id;
+      const planId = planIdForPrice(priceId);
+      if (planId) unlocked.push(planId);
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        session_id,
+        customer: session?.customer || null,
+        unlocked: Array.from(new Set(unlocked))
+      })
+    };
   } catch (e) {
-    return json(500, { error: 'Verify session error', detail: String(e?.message || e) });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        ok: false,
+        error: 'verify_failed',
+        message: String(e?.message || e)
+      })
+    };
   }
 }

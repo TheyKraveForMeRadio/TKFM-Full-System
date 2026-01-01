@@ -3,88 +3,78 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TKFM — Payment Success</title>
+  <title>TKFM — Purchase Successful</title>
   <style>
-    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;}
-    html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
-    body{
-      background:
-        radial-gradient(900px 420px at 15% 12%, rgba(168,85,247,.22), transparent 60%),
-        radial-gradient(820px 420px at 70% 20%, rgba(236,72,153,.18), transparent 60%),
-        radial-gradient(900px 480px at 55% 85%, rgba(34,211,238,.14), transparent 60%),
-        var(--bg);
-      color:#e5e7eb;
-      display:flex;align-items:center;justify-content:center;
-      padding:18px;
-    }
-    .card{width:min(860px,96vw);border:1px solid rgba(255,255,255,.10);background:rgba(2,6,23,.78);
-      border-radius:18px;padding:18px;box-shadow:0 12px 50px rgba(0,0,0,.55);}
-    h1{margin:0;font-size:22px;font-weight:900}
-    p{margin:10px 0 0;opacity:.88;line-height:1.55}
-    .ok{color:#34d399;font-weight:900}
-    .bad{color:#fb7185;font-weight:900}
+    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--b:#3b82f6;--txt:#e5e7eb}
+    body{margin:0;background:radial-gradient(1200px 600px at 20% 0%,rgba(168,85,247,.25),transparent 55%),radial-gradient(900px 500px at 80% 10%,rgba(34,211,238,.18),transparent 60%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    .wrap{max-width:920px;margin:0 auto;padding:32px}
+    .card{border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:22px;background:rgba(2,6,23,.55);backdrop-filter: blur(10px)}
+    .h{font-size:28px;margin:0 0 8px}
+    .sub{opacity:.9;margin:0 0 18px}
+    .pill{display:inline-block;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);margin:6px 8px 0 0;background:rgba(255,255,255,.04)}
+    .btn{display:inline-block;margin-top:16px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);text-decoration:none;color:var(--txt);background:rgba(255,255,255,.06)}
+    .btn:hover{border-color:rgba(236,72,153,.45)}
+    .muted{opacity:.75;font-size:13px;margin-top:12px}
+    code{background:rgba(0,0,0,.25);padding:2px 6px;border-radius:8px}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Success <span class="ok">✓</span></h1>
-    <p id="msg">Finalizing your access…</p>
+  <div class="wrap">
+    <div class="card">
+      <h1 class="h">✅ You’re unlocked.</h1>
+      <p class="sub">We’re verifying your checkout and activating your TKFM features.</p>
+      <div id="status">Verifying…</div>
+      <div id="features" style="margin-top:12px"></div>
+      <a class="btn" href="/pricing.html">Back to Pricing</a>
+      <a class="btn" href="/radio-hub.html">Go to Radio Hub</a>
+      <div class="muted">If you don’t see unlocks, copy your session id and contact support. Session: <code id="sid">—</code></div>
+    </div>
   </div>
 
-  <script>
-    const msg = document.getElementById('msg');
-    const params = new URLSearchParams(location.search);
-    const session_id = params.get('session_id');
+<script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  const sid = params.get('session_id');
+  document.getElementById('sid').textContent = sid || 'missing';
 
-    async function run(){
-      if (!session_id){
-        msg.innerHTML = '<span class="bad">Missing session.</span> Returning to pricing…';
-        setTimeout(()=>location.href='/pricing.html', 900);
+  const statusEl = document.getElementById('status');
+  const featuresEl = document.getElementById('features');
+
+  function getFeatures(){
+    try { return JSON.parse(localStorage.getItem('tkfm_user_features') || '[]') || []; }
+    catch(e){ return []; }
+  }
+  function setFeatures(arr){
+    localStorage.setItem('tkfm_user_features', JSON.stringify(Array.from(new Set(arr || []))));
+  }
+
+  if(!sid){
+    statusEl.textContent = 'Missing session_id. Return to pricing and try again.';
+    return;
+  }
+
+  fetch('/.netlify/functions/verify-checkout-session?session_id=' + encodeURIComponent(sid))
+    .then(r => r.json())
+    .then(data => {
+      if(!data || !data.ok){
+        statusEl.textContent = 'Verification failed. Try refresh.';
         return;
       }
 
-      try{
-        const res = await fetch('/.netlify/functions/verify-checkout-session', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ session_id })
-        });
-        const data = await res.json().catch(()=> ({}));
-        if (!res.ok || !data.paid){
-          msg.innerHTML = '<span class="bad">Could not verify payment.</span> Returning to pricing…';
-          setTimeout(()=>location.href='/pricing.html', 1200);
-          return;
-        }
+      const unlocked = data.unlocked || [];
+      const current = getFeatures();
+      const merged = current.concat(unlocked);
+      setFeatures(merged);
 
-        // persist unlocks locally
-        const feats = JSON.parse(localStorage.getItem('tkfm_user_features') || '{}');
-        const stamp = Date.now();
-
-        if (data.unlock_id) feats[data.unlock_id] = { ok:true, at: stamp };
-
-        const u = (data.unlock && Array.isArray(data.unlock.features)) ? data.unlock.features : [];
-        for (const f of u) feats[f] = { ok:true, at: stamp };
-
-        localStorage.setItem('tkfm_user_features', JSON.stringify(feats));
-
-        if (data.customer_email){
-          localStorage.setItem('tkfm_member_email', String(data.customer_email).toLowerCase());
-        }
-
-        if (data.customer_id) {
-          localStorage.setItem("tkfm_stripe_customer_id", String(data.customer_id));
-        }
-
-
-        msg.innerHTML = '<span class="ok">Access activated.</span> Sending you to your account…';
-        setTimeout(()=>location.href='/account.html', 900);
-
-      }catch(e){
-        msg.innerHTML = '<span class="bad">Network error.</span> Returning to pricing…';
-        setTimeout(()=>location.href='/pricing.html', 1200);
-      }
-    }
-    run();
-  </script>
+      statusEl.textContent = 'Activated:';
+      featuresEl.innerHTML = unlocked.length
+        ? unlocked.map(x => '<span class="pill">'+x+'</span>').join('')
+        : '<span class="pill">No mapped items found (check STRIPE_PRICE_* env)</span>';
+    })
+    .catch(() => {
+      statusEl.textContent = 'Verification error. Try refresh.';
+    });
+})();
+</script>
 </body>
 </html>
