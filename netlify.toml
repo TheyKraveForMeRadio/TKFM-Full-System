@@ -1,8 +1,27 @@
-[dev]
-command = ""
-publish = "v2"
-port = 8888
+[build]
+  publish = "v2"
+  functions = "v2/netlify/functions"
 
-[functions]
-directory = "v2/netlify/functions"
-node_bundler = "esbuild"
+[dev]
+  framework = "#static"
+  publish = "v2"
+  functions = "v2/netlify/functions"
+  port = 8888
+  targetPort = 5173
+  autoLaunch = true
+
+# Always serve v2/index.html at the site root
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+# Optional: keep old deep links working if you ever linked /v2/...
+[[redirects]]
+  from = "/v2/*"
+  to = "/:splat"
+  status = 200
+
+# Stripe webhook MUST hit this function path:
+#   /.netlify/functions/stripe-webhook
+# Set STRIPE_WEBHOOK_SECRET in Netlify env to the signing secret from Stripe.
