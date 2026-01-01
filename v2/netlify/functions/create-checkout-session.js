@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// data-plan id  -> Stripe Price env var
+// data-plan id -> Stripe Price env var
 const PRICE_MAP = {
   // SUBSCRIPTIONS (monthly access)
   creator_pass_monthly: process.env.STRIPE_PRICE_CREATOR_PASS_MONTHLY,
@@ -19,6 +19,7 @@ const PRICE_MAP = {
   submissions_priority_monthly: process.env.STRIPE_PRICE_SUBMISSIONS_PRIORITY_MONTHLY,
   analytics_pro_monthly: process.env.STRIPE_PRICE_ANALYTICS_PRO_MONTHLY,
   social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
+  ai_dj_autopilot_monthly: process.env.STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY,
 
   // ONE-TIME (payments)
   mixtape_hosting_starter: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_STARTER,
@@ -32,8 +33,7 @@ const PRICE_MAP = {
   press_run_pack: process.env.STRIPE_PRICE_PRESS_RUN_PACK,
   playlist_pitch_pack: process.env.STRIPE_PRICE_PLAYLIST_PITCH_PACK,
 
-  // AI / add-ons (set to payment or subscription based on your Stripe prices)
-  ai_dj_autopilot_monthly: process.env.STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY,
+  // AI / add-ons
   ai_feature_verse_kit: process.env.STRIPE_PRICE_AI_FEATURE_VERSE_KIT,
   ai_imaging_pack: process.env.STRIPE_PRICE_AI_IMAGING_PACK,
   ai_label_brand_pack: process.env.STRIPE_PRICE_AI_LABEL_BRAND_PACK,
@@ -42,8 +42,7 @@ const PRICE_MAP = {
   ai_social_pack: process.env.STRIPE_PRICE_AI_SOCIAL_PACK
 };
 
-// Which plans are subscriptions vs one-time payments.
-// If a plan isn't listed here, we auto-detect: if it ends with _monthly => subscription else payment.
+// Explicit mode map. Fallback: *_monthly => subscription else payment.
 const MODE_MAP = {
   creator_pass_monthly: 'subscription',
   motion_monthly: 'subscription',
@@ -83,13 +82,16 @@ function json(statusCode, bodyObj) {
   return { statusCode, headers: { 'content-type': 'application/json' }, body: JSON.stringify(bodyObj) };
 }
 
-function getBaseUrl(event) {
-  const site = (process.env.SITE_URL || '').trim();
+function baseUrl(event) {
+  const site = String(process.env.SITE_URL || '').trim();
   if (site.startsWith('http://') || site.startsWith('https://')) return site.replace(/\/+$/, '');
-  const origin = (event?.headers?.origin || '').trim();
+
+  const origin = String(event?.headers?.origin || '').trim();
   if (origin.startsWith('http://') || origin.startsWith('https://')) return origin.replace(/\/+$/, '');
-  const host = (event?.headers?.host || '').trim();
+
+  const host = String(event?.headers?.host || '').trim();
   if (host) return 'http://' + host;
+
   return 'http://localhost:8888';
 }
 
@@ -112,22 +114,17 @@ export async function handler(event) {
     const price = PRICE_MAP[planId];
     if (!price) return json(400, { ok: false, error: 'unknown_plan', planId });
 
-    const base = getBaseUrl(event);
+    const base = baseUrl(event);
     const success_url = `${base}/success.html?session_id={CHECKOUT_SESSION_ID}`;
     const cancel_url = `${base}/pricing.html?canceled=1`;
 
-    const mode = modeFor(planId);
-
     const session = await stripe.checkout.sessions.create({
-      mode,
+      mode: modeFor(planId),
       line_items: [{ price, quantity }],
       allow_promotion_codes: true,
       success_url,
       cancel_url,
-      metadata: {
-        planId: String(planId),
-        source: 'tkfm_v2'
-      }
+      metadata: { planId: String(planId), source: 'tkfm_v2' }
     });
 
     return json(200, { ok: true, url: session.url, id: session.id });

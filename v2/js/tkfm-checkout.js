@@ -2,7 +2,6 @@
 // Binds any element with [data-plan] to Stripe Checkout via Netlify Function.
 // Optional attributes:
 //   data-qty="2"
-//   data-label="Mixtape Hosting Pro"
 
 function getPlanId(el) {
   return el.getAttribute('data-plan') || el.dataset.plan || null;
@@ -23,7 +22,7 @@ async function startCheckout(planId, quantity = 1) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok || !data || !data.url) {
     console.error('Checkout failed:', data);
-    alert('Checkout error. Please try again or contact support.');
+    alert('Checkout error. Please try again.');
     return;
   }
 
@@ -32,8 +31,8 @@ async function startCheckout(planId, quantity = 1) {
 
 function bind() {
   const els = Array.from(document.querySelectorAll('[data-plan]'));
-  els.forEach(el => {
-    if (el.__tkfmBound) return;
+  for (const el of els) {
+    if (el.__tkfmBound) continue;
     el.__tkfmBound = true;
 
     el.addEventListener('click', (e) => {
@@ -43,7 +42,7 @@ function bind() {
       e.stopPropagation();
       startCheckout(planId, getQty(el));
     });
-  });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
