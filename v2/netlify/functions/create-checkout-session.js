@@ -2,150 +2,136 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-function json(statusCode, body) {
-  return {
-    statusCode,
-    headers: {
-      'content-type': 'application/json',
-      'access-control-allow-origin': '*',
-      'access-control-allow-headers': 'content-type',
-      'access-control-allow-methods': 'POST, OPTIONS',
-    },
-    body: JSON.stringify(body),
-  };
-}
-
-function getSiteUrl(event) {
-  const envUrl =
-    (process.env.SITE_URL && String(process.env.SITE_URL).trim()) ||
-    (process.env.URL && String(process.env.URL).trim());
-
-  if (envUrl) return envUrl.replace(/\/+$/, '');
-
-  const origin =
-    event?.headers?.origin ||
-    event?.headers?.Origin ||
-    (event?.headers?.referer
-      ? String(event.headers.referer).split('/').slice(0, 3).join('/')
-      : '');
-
-  return String(origin || 'http://localhost:8888').replace(/\/+$/, '');
-}
-
-function looksLikeSubscription(id) {
-  return /_(monthly|yearly)$/.test(id);
-}
-
-// data-plan id -> Netlify ENV that holds Stripe price id (price_...)
+// data-plan id  -> Stripe Price env var
 const PRICE_MAP = {
-  // ACCESS
+  // SUBSCRIPTIONS (monthly access)
   creator_pass_monthly: process.env.STRIPE_PRICE_CREATOR_PASS_MONTHLY,
-  creator_pass_yearly: process.env.STRIPE_PRICE_CREATOR_PASS_YEARLY,
   motion_monthly: process.env.STRIPE_PRICE_MOTION_MONTHLY,
   takeover_viral_monthly: process.env.STRIPE_PRICE_TAKEOVER_VIRAL_MONTHLY,
   dj_toolkit_monthly: process.env.STRIPE_PRICE_DJ_TOOLKIT_MONTHLY,
-
-  // LABEL
   label_core_monthly: process.env.STRIPE_PRICE_LABEL_CORE_MONTHLY,
   label_pro_monthly: process.env.STRIPE_PRICE_LABEL_PRO_MONTHLY,
-  label_autopilot_monthly: process.env.STRIPE_PRICE_LABEL_AUTOPILOT_MONTHLY,
-
-  // AUTOPILOT / ANALYTICS / AI DJ AUTOPILOT
   autopilot_lite_monthly: process.env.STRIPE_PRICE_AUTOPILOT_LITE_MONTHLY,
   autopilot_pro_monthly: process.env.STRIPE_PRICE_AUTOPILOT_PRO_MONTHLY,
-  analytics_pro_monthly: process.env.STRIPE_PRICE_ANALYTICS_PRO_MONTHLY,
-  ai_dj_autopilot_monthly: process.env.STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY,
-
-  // CONTRACT / DISTRIBUTION
   contract_lab_pro_monthly: process.env.STRIPE_PRICE_CONTRACT_LAB_PRO_MONTHLY,
-  distribution_assist_monthly: process.env.STRIPE_PRICE_DISTRIBUTION_ASSIST_MONTHLY,
+  label_autopilot_monthly: process.env.STRIPE_PRICE_LABEL_AUTOPILOT_MONTHLY,
+  sponsor_autopilot_monthly: process.env.STRIPE_PRICE_SPONSOR_AUTOPILOT_MONTHLY,
+  submissions_priority_monthly: process.env.STRIPE_PRICE_SUBMISSIONS_PRIORITY_MONTHLY,
+  analytics_pro_monthly: process.env.STRIPE_PRICE_ANALYTICS_PRO_MONTHLY,
+  social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
 
-  // MIXTAPE HOSTING (one-time)
+  // ONE-TIME (payments)
   mixtape_hosting_starter: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_STARTER,
   mixtape_hosting_pro: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_PRO,
   mixtape_hosting_elite: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_ELITE,
-
-  // SOCIAL / ROTATION / HOMEPAGE
-  social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
   rotation_boost_campaign: process.env.STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN,
   homepage_feature_artist: process.env.STRIPE_PRICE_HOMEPAGE_FEATURE_ARTIST,
   homepage_takeover_day: process.env.STRIPE_PRICE_HOMEPAGE_TAKEOVER_DAY,
-
-  // SUBMISSIONS / PRIORITY
-  submissions_priority_monthly: process.env.STRIPE_PRICE_SUBMISSIONS_PRIORITY_MONTHLY,
+  radio_interview_slot: process.env.STRIPE_PRICE_RADIO_INTERVIEW_SLOT,
   priority_submission_pack: process.env.STRIPE_PRICE_PRIORITY_SUBMISSION_PACK,
-
-  // PRESS / PLAYLIST / INTERVIEW (one-time)
   press_run_pack: process.env.STRIPE_PRICE_PRESS_RUN_PACK,
   playlist_pitch_pack: process.env.STRIPE_PRICE_PLAYLIST_PITCH_PACK,
-  radio_interview_slot: process.env.STRIPE_PRICE_RADIO_INTERVIEW_SLOT,
 
-  // SPONSORS
-  starter_sponsor_monthly: process.env.STRIPE_PRICE_STARTER_SPONSOR_MONTHLY,
-  sponsor_city_monthly: process.env.STRIPE_PRICE_SPONSOR_CITY_MONTHLY,
-  sponsor_takeover_monthly: process.env.STRIPE_PRICE_SPONSOR_TAKEOVER_MONTHLY,
-  sponsor_autopilot_monthly: process.env.STRIPE_PRICE_SPONSOR_AUTOPILOT_MONTHLY,
-
-  // AI PRODUCTS (one-time unless your Stripe price is recurring)
-  ai_social_pack: process.env.STRIPE_PRICE_AI_SOCIAL_PACK,
-  ai_radio_intro: process.env.STRIPE_PRICE_AI_RADIO_INTRO,
-  ai_label_brand_pack: process.env.STRIPE_PRICE_AI_LABEL_BRAND_PACK,
-  ai_imaging_pack: process.env.STRIPE_PRICE_AI_IMAGING_PACK,
+  // AI / add-ons (set to payment or subscription based on your Stripe prices)
+  ai_dj_autopilot_monthly: process.env.STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY,
   ai_feature_verse_kit: process.env.STRIPE_PRICE_AI_FEATURE_VERSE_KIT,
+  ai_imaging_pack: process.env.STRIPE_PRICE_AI_IMAGING_PACK,
+  ai_label_brand_pack: process.env.STRIPE_PRICE_AI_LABEL_BRAND_PACK,
   ai_launch_campaign: process.env.STRIPE_PRICE_AI_LAUNCH_CAMPAIGN,
-
-  // OWNER (block Stripe checkout)
-  owner_founder_access: process.env.STRIPE_PRICE_OWNER_FOUNDER_ACCESS,
+  ai_radio_intro: process.env.STRIPE_PRICE_AI_RADIO_INTRO,
+  ai_social_pack: process.env.STRIPE_PRICE_AI_SOCIAL_PACK
 };
 
+// Which plans are subscriptions vs one-time payments.
+// If a plan isn't listed here, we auto-detect: if it ends with _monthly => subscription else payment.
+const MODE_MAP = {
+  creator_pass_monthly: 'subscription',
+  motion_monthly: 'subscription',
+  takeover_viral_monthly: 'subscription',
+  dj_toolkit_monthly: 'subscription',
+  label_core_monthly: 'subscription',
+  label_pro_monthly: 'subscription',
+  autopilot_lite_monthly: 'subscription',
+  autopilot_pro_monthly: 'subscription',
+  contract_lab_pro_monthly: 'subscription',
+  label_autopilot_monthly: 'subscription',
+  sponsor_autopilot_monthly: 'subscription',
+  submissions_priority_monthly: 'subscription',
+  analytics_pro_monthly: 'subscription',
+  social_starter_monthly: 'subscription',
+  ai_dj_autopilot_monthly: 'subscription',
+
+  mixtape_hosting_starter: 'payment',
+  mixtape_hosting_pro: 'payment',
+  mixtape_hosting_elite: 'payment',
+  rotation_boost_campaign: 'payment',
+  homepage_feature_artist: 'payment',
+  homepage_takeover_day: 'payment',
+  radio_interview_slot: 'payment',
+  priority_submission_pack: 'payment',
+  press_run_pack: 'payment',
+  playlist_pitch_pack: 'payment',
+  ai_feature_verse_kit: 'payment',
+  ai_imaging_pack: 'payment',
+  ai_label_brand_pack: 'payment',
+  ai_launch_campaign: 'payment',
+  ai_radio_intro: 'payment',
+  ai_social_pack: 'payment'
+};
+
+function json(statusCode, bodyObj) {
+  return { statusCode, headers: { 'content-type': 'application/json' }, body: JSON.stringify(bodyObj) };
+}
+
+function getBaseUrl(event) {
+  const site = (process.env.SITE_URL || '').trim();
+  if (site.startsWith('http://') || site.startsWith('https://')) return site.replace(/\/+$/, '');
+  const origin = (event?.headers?.origin || '').trim();
+  if (origin.startsWith('http://') || origin.startsWith('https://')) return origin.replace(/\/+$/, '');
+  const host = (event?.headers?.host || '').trim();
+  if (host) return 'http://' + host;
+  return 'http://localhost:8888';
+}
+
+function modeFor(planId) {
+  if (MODE_MAP[planId]) return MODE_MAP[planId];
+  if (String(planId || '').endsWith('_monthly')) return 'subscription';
+  return 'payment';
+}
+
 export async function handler(event) {
-  if (event.httpMethod === 'OPTIONS') return json(200, { ok: true });
-  if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
-
   try {
+    if (event.httpMethod !== 'POST') return json(405, { ok: false, error: 'method_not_allowed' });
+
     const body = event.body ? JSON.parse(event.body) : {};
-    const id = String(body.id || body.plan || '').trim();
-    if (!id) return json(400, { error: 'Missing id' });
+    const planId = body.planId || body.plan || body.id || body.sku || body.lookup_key || null;
+    const quantity = Math.max(1, Number(body.quantity || 1));
 
-    // Never allow public Stripe checkout for owner access
-    if (id === 'owner_founder_access') {
-      return json(400, { error: 'Owner access is not a public Stripe product.', id });
-    }
+    if (!planId) return json(400, { ok: false, error: 'missing_planId' });
 
-    const price = PRICE_MAP[id];
+    const price = PRICE_MAP[planId];
+    if (!price) return json(400, { ok: false, error: 'unknown_plan', planId });
 
-    // CLEAR ERROR WITH EXACT MISSING ID
-    if (!price || !String(price).startsWith('price_')) {
-      return json(400, {
-        error: 'Unknown id or missing Stripe price env var',
-        id,
-        expected_env: `STRIPE_PRICE_${id.toUpperCase()}`,
-        hint: 'Create a Stripe Price, paste the price_... into Netlify env, then redeploy.',
-      });
-    }
+    const base = getBaseUrl(event);
+    const success_url = `${base}/success.html?session_id={CHECKOUT_SESSION_ID}`;
+    const cancel_url = `${base}/pricing.html?canceled=1`;
 
-    const siteUrl = getSiteUrl(event);
-    const success_url = `${siteUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`;
-    const cancel_url = `${siteUrl}/pricing.html?canceled=1`;
-
-    const mode = looksLikeSubscription(id) ? 'subscription' : 'payment';
+    const mode = modeFor(planId);
 
     const session = await stripe.checkout.sessions.create({
       mode,
-      line_items: [{ price, quantity: 1 }],
+      line_items: [{ price, quantity }],
+      allow_promotion_codes: true,
       success_url,
       cancel_url,
-      allow_promotion_codes: true,
-      billing_address_collection: 'auto',
-      metadata: { tkfm_unlock_id: id },
+      metadata: {
+        planId: String(planId),
+        source: 'tkfm_v2'
+      }
     });
 
-    if (!session?.url) {
-      return json(500, { error: 'Stripe session created but no URL returned', id });
-    }
-
-    return json(200, { url: session.url });
+    return json(200, { ok: true, url: session.url, id: session.id });
   } catch (e) {
-    return json(500, { error: 'Stripe session error', detail: String(e?.message || e) });
+    return json(500, { ok: false, error: 'create_session_failed', message: String(e?.message || e) });
   }
 }

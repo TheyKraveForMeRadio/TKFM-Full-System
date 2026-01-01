@@ -1,46 +1,53 @@
-const FN_CREATE = '/.netlify/functions/create-checkout-session';
+// TKFM V2 universal checkout binder
+// Binds any element with [data-plan] to Stripe Checkout via Netlify Function.
+// Optional attributes:
+//   data-qty="2"
+//   data-label="Mixtape Hosting Pro"
 
-function pickId(el) {
-  return el.getAttribute('data-plan') || el.getAttribute('data-feature') || el.dataset.plan || el.dataset.feature;
+function getPlanId(el) {
+  return el.getAttribute('data-plan') || el.dataset.plan || null;
 }
 
-function saveReturnUrl() {
-  try { localStorage.setItem('tkfm_return_url', window.location.pathname + window.location.search + window.location.hash); } catch {}
+function getQty(el) {
+  const q = Number(el.getAttribute('data-qty') || el.dataset.qty || 1);
+  return Number.isFinite(q) && q > 0 ? Math.floor(q) : 1;
 }
 
-async function startCheckout(id) {
-  saveReturnUrl();
-
-  const res = await fetch(FN_CREATE, {
+async function startCheckout(planId, quantity = 1) {
+  const res = await fetch('/.netlify/functions/create-checkout-session', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id })
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ planId, quantity })
   });
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok || !data.url) {
-    const msg = data?.error ? String(data.error) : 'Checkout failed';
-    alert(msg);
+  if (!res.ok || !data || !data.url) {
+    console.error('Checkout failed:', data);
+    alert('Checkout error. Please try again or contact support.');
     return;
   }
 
   window.location.href = data.url;
 }
 
-function wire() {
-  const btns = Array.from(document.querySelectorAll('[data-plan],[data-feature]'));
-  btns.forEach((btn) => {
-    if (btn.__tkfmCheckoutWired) return;
-    const id = pickId(btn);
-    if (!id) return;
+function bind() {
+  const els = Array.from(document.querySelectorAll('[data-plan]'));
+  els.forEach(el => {
+    if (el.__tkfmBound) return;
+    el.__tkfmBound = true;
 
-    btn.__tkfmCheckoutWired = true;
-    btn.addEventListener('click', (e) => {
+    el.addEventListener('click', (e) => {
+      const planId = getPlanId(el);
+      if (!planId) return;
       e.preventDefault();
-      startCheckout(id);
+      e.stopPropagation();
+      startCheckout(planId, getQty(el));
     });
   });
 }
 
-wire();
-new MutationObserver(wire).observe(document.documentElement, { childList: true, subtree: true });
+document.addEventListener('DOMContentLoaded', () => {
+  bind();
+  const mo = new MutationObserver(() => bind());
+  mo.observe(document.documentElement, { childList: true, subtree: true });
+});
