@@ -21,10 +21,7 @@ const PRICE_MAP = {
   social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
   ai_dj_autopilot_monthly: process.env.STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY,
 
-  // ONE-TIME (payments)
-  mixtape_hosting_starter: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_STARTER,
-  mixtape_hosting_pro: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_PRO,
-  mixtape_hosting_elite: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_ELITE,
+  // ONE-TIME / SERVICE (if you configured them as one-time prices)
   rotation_boost_campaign: process.env.STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN,
   homepage_feature_artist: process.env.STRIPE_PRICE_HOMEPAGE_FEATURE_ARTIST,
   homepage_takeover_day: process.env.STRIPE_PRICE_HOMEPAGE_TAKEOVER_DAY,
@@ -33,7 +30,12 @@ const PRICE_MAP = {
   press_run_pack: process.env.STRIPE_PRICE_PRESS_RUN_PACK,
   playlist_pitch_pack: process.env.STRIPE_PRICE_PLAYLIST_PITCH_PACK,
 
-  // AI / add-ons
+  // MIXTAPE HOSTING (yours is currently recurring monthly in Stripe)
+  mixtape_hosting_starter: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_STARTER,
+  mixtape_hosting_pro: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_PRO,
+  mixtape_hosting_elite: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_ELITE,
+
+  // AI STORE (often one-time, depending how you set Stripe)
   ai_feature_verse_kit: process.env.STRIPE_PRICE_AI_FEATURE_VERSE_KIT,
   ai_imaging_pack: process.env.STRIPE_PRICE_AI_IMAGING_PACK,
   ai_label_brand_pack: process.env.STRIPE_PRICE_AI_LABEL_BRAND_PACK,
@@ -42,92 +44,81 @@ const PRICE_MAP = {
   ai_social_pack: process.env.STRIPE_PRICE_AI_SOCIAL_PACK
 };
 
-// Explicit mode map. Fallback: *_monthly => subscription else payment.
-const MODE_MAP = {
-  creator_pass_monthly: 'subscription',
-  motion_monthly: 'subscription',
-  takeover_viral_monthly: 'subscription',
-  dj_toolkit_monthly: 'subscription',
-  label_core_monthly: 'subscription',
-  label_pro_monthly: 'subscription',
-  autopilot_lite_monthly: 'subscription',
-  autopilot_pro_monthly: 'subscription',
-  contract_lab_pro_monthly: 'subscription',
-  label_autopilot_monthly: 'subscription',
-  sponsor_autopilot_monthly: 'subscription',
-  submissions_priority_monthly: 'subscription',
-  analytics_pro_monthly: 'subscription',
-  social_starter_monthly: 'subscription',
-  ai_dj_autopilot_monthly: 'subscription',
-
-  mixtape_hosting_starter: 'payment',
-  mixtape_hosting_pro: 'payment',
-  mixtape_hosting_elite: 'payment',
-  rotation_boost_campaign: 'payment',
-  homepage_feature_artist: 'payment',
-  homepage_takeover_day: 'payment',
-  radio_interview_slot: 'payment',
-  priority_submission_pack: 'payment',
-  press_run_pack: 'payment',
-  playlist_pitch_pack: 'payment',
-  ai_feature_verse_kit: 'payment',
-  ai_imaging_pack: 'payment',
-  ai_label_brand_pack: 'payment',
-  ai_launch_campaign: 'payment',
-  ai_radio_intro: 'payment',
-  ai_social_pack: 'payment'
-};
-
-function json(statusCode, bodyObj) {
-  return { statusCode, headers: { 'content-type': 'application/json' }, body: JSON.stringify(bodyObj) };
+function json(statusCode, obj) {
+  return { statusCode, headers: { 'content-type': 'application/json' }, body: JSON.stringify(obj) };
 }
 
-function baseUrl(event) {
-  const site = String(process.env.SITE_URL || '').trim();
-  if (site.startsWith('http://') || site.startsWith('https://')) return site.replace(/\/+$/, '');
-
-  const origin = String(event?.headers?.origin || '').trim();
-  if (origin.startsWith('http://') || origin.startsWith('https://')) return origin.replace(/\/+$/, '');
-
-  const host = String(event?.headers?.host || '').trim();
-  if (host) return 'http://' + host;
-
-  return 'http://localhost:8888';
+function getOrigin(event) {
+  const h = event.headers || {};
+  const proto = h['x-forwarded-proto'] || h['X-Forwarded-Proto'] || 'http';
+  const host = h['x-forwarded-host'] || h['X-Forwarded-Host'] || h['host'] || h['Host'] || 'localhost:8888';
+  return `${proto}://${host}`;
 }
 
-function modeFor(planId) {
-  if (MODE_MAP[planId]) return MODE_MAP[planId];
-  if (String(planId || '').endsWith('_monthly')) return 'subscription';
-  return 'payment';
+function parseBody(event) {
+  try {
+    if (!event.body) return {};
+    return JSON.parse(event.body);
+  } catch (_) {
+    return {};
+  }
+}
+
+// supports either: { planId, quantity } OR { items:[{planId,quantity}] }
+function normalizeItems(body) {
+  if (Array.isArray(body.items) && body.items.length) {
+    return body.items.map(it => ({
+      planId: String(it.planId || it.id || '').trim(),
+      quantity: Number(it.quantity || 1) || 1
+    })).filter(it => it.planId);
+  }
+  const planId = String(body.planId || body.id || '').trim();
+  const quantity = Number(body.quantity || 1) || 1;
+  return planId ? [{ planId, quantity }] : [];
 }
 
 export async function handler(event) {
   try {
-    if (event.httpMethod !== 'POST') return json(405, { ok: false, error: 'method_not_allowed' });
+    const body = parseBody(event);
+    const origin = getOrigin(event);
 
-    const body = event.body ? JSON.parse(event.body) : {};
-    const planId = body.planId || body.plan || body.id || body.sku || body.lookup_key || null;
-    const quantity = Math.max(1, Number(body.quantity || 1));
+    const items = normalizeItems(body);
+    if (!items.length) return json(400, { ok: false, error: 'missing_planId' });
 
-    if (!planId) return json(400, { ok: false, error: 'missing_planId' });
+    // This implementation supports ONE item at a time (clean + avoids mixed mode issues)
+    const { planId, quantity } = items[0];
 
-    const price = PRICE_MAP[planId];
-    if (!price) return json(400, { ok: false, error: 'unknown_plan', planId });
+    const priceId = PRICE_MAP[planId];
+    if (!priceId) return json(400, { ok: false, error: 'unknown_planId', planId });
 
-    const base = baseUrl(event);
-    const success_url = `${base}/success.html?session_id={CHECKOUT_SESSION_ID}`;
-    const cancel_url = `${base}/pricing.html?canceled=1`;
+    // Retrieve the Stripe Price to detect recurring vs one-time
+    const price = await stripe.prices.retrieve(priceId);
+
+    const isRecurring = !!price.recurring;
+    const mode = isRecurring ? 'subscription' : 'payment';
+
+    // Guard: do not allow mixed recurring/one-time in one session (future-proof)
+    if (items.length > 1) {
+      return json(400, {
+        ok: false,
+        error: 'multi_item_not_supported',
+        message: 'Use one planId at a time to avoid mixed recurring/payment checkout.'
+      });
+    }
 
     const session = await stripe.checkout.sessions.create({
-      mode: modeFor(planId),
-      line_items: [{ price, quantity }],
+      mode,
+      line_items: [{ price: priceId, quantity }],
       allow_promotion_codes: true,
-      success_url,
-      cancel_url,
-      metadata: { planId: String(planId), source: 'tkfm_v2' }
+      success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/pricing.html?canceled=1`,
+      // Optional: pass metadata for your audit trail
+      metadata: {
+        tkfm_plan_id: planId
+      }
     });
 
-    return json(200, { ok: true, url: session.url, id: session.id });
+    return json(200, { ok: true, mode, planId, url: session.url, session_id: session.id });
   } catch (e) {
     return json(500, { ok: false, error: 'create_session_failed', message: String(e?.message || e) });
   }
