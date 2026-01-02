@@ -1,119 +1,305 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TKFM — Purchase Successful</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM — Payment Success</title>
+  <meta name="color-scheme" content="dark" />
   <style>
-    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--b:#3b82f6;--txt:#e5e7eb}
-    body{margin:0;background:radial-gradient(1200px 600px at 20% 0%,rgba(168,85,247,.25),transparent 55%),radial-gradient(900px 500px at 80% 10%,rgba(34,211,238,.18),transparent 60%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
-    .wrap{max-width:920px;margin:0 auto;padding:32px}
-    .card{border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:22px;background:rgba(2,6,23,.55);backdrop-filter: blur(10px)}
-    .h{font-size:28px;margin:0 0 8px}
-    .sub{opacity:.9;margin:0 0 18px}
-    .pill{display:inline-block;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);margin:6px 8px 0 0;background:rgba(255,255,255,.04)}
-    .btn{display:inline-block;margin-top:16px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);text-decoration:none;color:var(--txt);background:rgba(255,255,255,.06)}
-    .btn:hover{border-color:rgba(236,72,153,.45)}
-    .muted{opacity:.75;font-size:13px;margin-top:12px}
-    code{background:rgba(0,0,0,.25);padding:2px 6px;border-radius:8px}
+    :root{
+      --bg:#020617;
+      --card:#0b1226;
+      --border:rgba(148,163,184,.18);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --purple:#a855f7;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(168,85,247,.22), transparent 55%),
+                  radial-gradient(900px 600px at 90% 10%, rgba(34,211,238,.18), transparent 55%),
+                  radial-gradient(800px 600px at 40% 120%, rgba(236,72,153,.16), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .wrap{width:min(920px,100%)}
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(168,85,247,.9), rgba(236,72,153,.9), rgba(34,211,238,.75));
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .title h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .title p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .card{
+      background: rgba(11,18,38,.78);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding:18px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.38);
+      backdrop-filter: blur(10px);
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 860px){ .row{grid-template-columns:1fr} }
+    .panel{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      background: rgba(2,6,23,.35);
+    }
+    .status{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.45);
+      margin-bottom:12px;
+    }
+    .dot{width:10px;height:10px;border-radius:999px;background:var(--warn);box-shadow:0 0 0 6px rgba(245,158,11,.12)}
+    .status strong{font-size:14px}
+    .status span{color:var(--muted);font-size:13px}
+    .kvs{display:grid;gap:8px;margin-top:8px}
+    .kv{display:flex;justify-content:space-between;gap:14px;color:var(--muted);font-size:13px}
+    .kv b{color:var(--text);font-weight:600}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.5);
+      color:#dbeafe;
+      font-size:12px;
+    }
+    .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    a.btn, button.btn{
+      appearance:none; border:1px solid var(--border);
+      background: rgba(2,6,23,.35);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      text-decoration:none;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      transition:.15s transform ease, .15s border-color ease;
+    }
+    a.btn:hover, button.btn:hover{transform: translateY(-1px); border-color: rgba(34,211,238,.35)}
+    a.primary{
+      background: linear-gradient(135deg, rgba(168,85,247,.95), rgba(236,72,153,.95));
+      border-color: rgba(236,72,153,.35);
+    }
+    .note{margin-top:10px;color:var(--muted);font-size:12.5px;line-height:1.4}
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-size:12px;
+      color:#cbd5e1;
+    }
+    .small{font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
-      <h1 class="h">✅ You’re unlocked.</h1>
-      <p class="sub">Verifying your checkout + activating TKFM features.</p>
-
-      <div id="status">Verifying…</div>
-      <div id="features" style="margin-top:12px"></div>
-
-      <div style="margin-top:14px">
-        <span class="pill" id="entStatus">Entitlements: —</span>
+    <div class="top">
+      <div class="brand">
+        <div class="logo">TK</div>
+        <div class="title">
+          <h1>Payment Confirmation</h1>
+          <p>Verifying purchase and unlocking your TKFM features…</p>
+        </div>
       </div>
+      <div class="small" id="baseUrl"></div>
+    </div>
 
-      <a class="btn" href="/pricing.html">Back to Pricing</a>
-      <a class="btn" href="/radio-hub.html">Go to Radio Hub</a>
+    <div class="card">
+      <div class="row">
+        <div class="panel">
+          <div class="status" id="status">
+            <div class="dot" id="dot"></div>
+            <div>
+              <strong id="statusTitle">Processing…</strong><br/>
+              <span id="statusMsg">Reading session_id and contacting TKFM unlock server.</span>
+            </div>
+          </div>
 
-      <div class="muted">
-        Session: <code id="sid">—</code>
-        &nbsp;•&nbsp; Customer: <code id="cid">—</code>
+          <div class="kvs">
+            <div class="kv"><span>Session</span><b id="sid">—</b></div>
+            <div class="kv"><span>Unlocked</span><b id="unlockedCount">—</b></div>
+            <div class="kv"><span>Saved to</span><b>localStorage: <code>tkfm_user_features</code></b></div>
+          </div>
+
+          <div class="chips" id="chips"></div>
+
+          <div class="btns">
+            <a class="btn primary" id="continueBtn" href="/pricing.html">Continue</a>
+            <a class="btn" id="openPricing" href="/pricing.html">View Pricing</a>
+            <button class="btn" id="copyBtn" type="button">Copy Receipt Link</button>
+          </div>
+
+          <div class="note" id="note">
+            If you don’t see unlocks, keep this tab open for 3 seconds — verification is instant after Stripe confirms the session.
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="small" style="margin-bottom:8px">Debug (for you):</div>
+          <pre id="debug">Waiting…</pre>
+          <div class="note">
+            Tip: You can bookmark this page with <code>?session_id=...</code> to re-run verification anytime.
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
 <script>
 (function(){
-  const params = new URLSearchParams(location.search);
-  const sid = params.get('session_id');
+  const $ = (id) => document.getElementById(id);
 
-  const statusEl = document.getElementById('status');
-  const featuresEl = document.getElementById('features');
-  const entEl = document.getElementById('entStatus');
-  const sidEl = document.getElementById('sid');
-  const cidEl = document.getElementById('cid');
+  function setDot(color){
+    const dot = $('dot');
+    dot.style.background = color;
+    dot.style.boxShadow =
+      color === 'var(--ok)' ? '0 0 0 6px rgba(34,197,94,.12)'
+    : color === 'var(--bad)' ? '0 0 0 6px rgba(239,68,68,.12)'
+    : '0 0 0 6px rgba(245,158,11,.12)';
+  }
 
-  sidEl.textContent = sid || 'missing';
+  function qs(name){
+    const u = new URL(window.location.href);
+    return u.searchParams.get(name);
+  }
+
+  function setChips(list){
+    const chips = $('chips');
+    chips.innerHTML = '';
+    (list || []).forEach(x => {
+      const d = document.createElement('div');
+      d.className = 'chip';
+      d.textContent = x;
+      chips.appendChild(d);
+    });
+  }
 
   function getFeatures(){
-    try { return JSON.parse(localStorage.getItem('tkfm_user_features') || '[]') || []; }
-    catch(e){ return []; }
-  }
-  function setFeatures(arr){
-    localStorage.setItem('tkfm_user_features', JSON.stringify(Array.from(new Set(arr || []))));
-  }
-  function setCustomerId(cid){
-    if (!cid) return;
-    localStorage.setItem('tkfm_stripe_customer_id', String(cid));
+    try { return JSON.parse(localStorage.getItem('tkfm_user_features') || '{}'); }
+    catch(e){ return {}; }
   }
 
-  async function loadEntitlements(cid){
-    if (!cid) return;
-    cidEl.textContent = cid;
-    try{
-      const r = await fetch('/.netlify/functions/get-entitlements?customer_id=' + encodeURIComponent(cid));
-      const d = await r.json().catch(()=> ({}));
-      if (d && d.ok && d.enabled) {
-        entEl.textContent = 'Entitlements: ' + (d.status || 'unknown');
-      } else {
-        entEl.textContent = 'Entitlements: —';
-      }
-    } catch(e){
-      entEl.textContent = 'Entitlements: —';
+  function setFeatures(obj){
+    localStorage.setItem('tkfm_user_features', JSON.stringify(obj));
+  }
+
+  function mergeUnlocks(unlocks){
+    const store = getFeatures();
+    store.unlocked = Array.from(new Set([...(store.unlocked||[]), ...(unlocks||[])]));
+    store.last_session_id = qs('session_id') || store.last_session_id || null;
+    store.last_verified_at = new Date().toISOString();
+    setFeatures(store);
+    return store;
+  }
+
+  function baseUrl(){
+    try { return new URL(window.location.href).origin; } catch(e){ return ''; }
+  }
+
+  async function verify(sessionId){
+    $('sid').textContent = sessionId || '—';
+    $('baseUrl').textContent = baseUrl();
+    if (!sessionId){
+      setDot('var(--bad)');
+      $('statusTitle').textContent = 'Missing session_id';
+      $('statusMsg').textContent = 'This page needs ?session_id=cs_... from Stripe success redirect.';
+      $('continueBtn').href = '/pricing.html';
+      $('debug').textContent = JSON.stringify({ ok:false, error:'missing_session_id' }, null, 2);
+      return;
     }
+
+    setDot('var(--warn)');
+    $('statusTitle').textContent = 'Verifying payment…';
+    $('statusMsg').textContent = 'Contacting TKFM server to confirm your Stripe session.';
+
+    const url = `/\.netlify\/functions\/verify-checkout-session?session_id=${encodeURIComponent(sessionId)}`;
+    let data = null;
+
+    try {
+      const r = await fetch(url, { headers: { 'accept':'application/json' } });
+      data = await r.json().catch(()=>null);
+      if (!r.ok) throw new Error((data && (data.message || data.error)) || ('HTTP_'+r.status));
+    } catch (e) {
+      setDot('var(--bad)');
+      $('statusTitle').textContent = 'Verification failed';
+      $('statusMsg').textContent = 'Could not confirm the session. If you just paid, wait 10 seconds and refresh.';
+      $('debug').textContent = JSON.stringify({ ok:false, error:String(e), data }, null, 2);
+      $('continueBtn').href = '/pricing.html';
+      return;
+    }
+
+    const unlocked = (data && data.unlocked) ? data.unlocked : [];
+    const store = mergeUnlocks(unlocked);
+
+    setDot('var(--ok)');
+    $('statusTitle').textContent = 'Unlocked';
+    $('statusMsg').textContent = 'Your TKFM features are now active on this device.';
+    $('unlockedCount').textContent = String(unlocked.length);
+    setChips(unlocked);
+
+    // Best "continue" path: if you came from checkout, send them to the mixtape hosting page;
+    // otherwise pricing is fine.
+    const preferred = unlocked.includes('mixtape_hosting_starter') || unlocked.includes('mixtape_hosting_pro') || unlocked.includes('mixtape_hosting_elite')
+      ? '/dj-mixtape-hosting.html'
+      : '/pricing.html';
+
+    $('continueBtn').href = preferred;
+
+    $('debug').textContent = JSON.stringify({
+      verify_response: data,
+      localStorage_tkfm_user_features: store
+    }, null, 2);
   }
 
-  if(!sid){
-    statusEl.textContent = 'Missing session_id. Return to pricing and try again.';
-    return;
-  }
+  $('copyBtn').addEventListener('click', async () => {
+    const sid = qs('session_id') || '';
+    const link = `${baseUrl()}/success.html?session_id=${encodeURIComponent(sid)}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      $('note').textContent = 'Copied receipt/verify link to clipboard.';
+    } catch(e){
+      $('note').textContent = 'Copy failed. You can manually copy the URL in the address bar.';
+    }
+  });
 
-  fetch('/.netlify/functions/verify-checkout-session?session_id=' + encodeURIComponent(sid))
-    .then(r => r.json())
-    .then(data => {
-      if(!data || !data.ok){
-        statusEl.textContent = 'Verification failed. Try refresh.';
-        return;
-      }
-
-      const unlocked = data.unlocked || [];
-      const current = getFeatures();
-      setFeatures(current.concat(unlocked));
-
-      statusEl.textContent = unlocked.length ? 'Activated:' : 'No mapped items found (check STRIPE_PRICE_* env).';
-      featuresEl.innerHTML = unlocked.length
-        ? unlocked.map(x => '<span class="pill">'+x+'</span>').join('')
-        : '<span class="pill">none</span>';
-
-      if (data.customer) {
-        setCustomerId(data.customer);
-        loadEntitlements(data.customer);
-      }
-    })
-    .catch(() => {
-      statusEl.textContent = 'Verification error. Try refresh.';
-    });
+  verify(qs('session_id'));
 })();
 </script>
-  <script type="module" src="/js/tkfm-logo-resolver.js"></script>
 </body>
 </html>
