@@ -2,9 +2,9 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// data-plan id -> Stripe Price env var
+// data-plan id -> Stripe price id (from env)
 const PRICE_MAP = {
-  // SUBSCRIPTIONS (monthly access)
+  // SUBSCRIPTIONS (recurring)
   creator_pass_monthly: process.env.STRIPE_PRICE_CREATOR_PASS_MONTHLY,
   motion_monthly: process.env.STRIPE_PRICE_MOTION_MONTHLY,
   takeover_viral_monthly: process.env.STRIPE_PRICE_TAKEOVER_VIRAL_MONTHLY,
@@ -17,109 +17,101 @@ const PRICE_MAP = {
   label_autopilot_monthly: process.env.STRIPE_PRICE_LABEL_AUTOPILOT_MONTHLY,
   sponsor_autopilot_monthly: process.env.STRIPE_PRICE_SPONSOR_AUTOPILOT_MONTHLY,
   submissions_priority_monthly: process.env.STRIPE_PRICE_SUBMISSIONS_PRIORITY_MONTHLY,
-  analytics_pro_monthly: process.env.STRIPE_PRICE_ANALYTICS_PRO_MONTHLY,
-  social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
-  ai_dj_autopilot_monthly: process.env.STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY,
 
-  // ONE-TIME / SERVICE (if you configured them as one-time prices)
-  rotation_boost_campaign: process.env.STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN,
-  homepage_feature_artist: process.env.STRIPE_PRICE_HOMEPAGE_FEATURE_ARTIST,
-  homepage_takeover_day: process.env.STRIPE_PRICE_HOMEPAGE_TAKEOVER_DAY,
-  radio_interview_slot: process.env.STRIPE_PRICE_RADIO_INTERVIEW_SLOT,
-  priority_submission_pack: process.env.STRIPE_PRICE_PRIORITY_SUBMISSION_PACK,
-  press_run_pack: process.env.STRIPE_PRICE_PRESS_RUN_PACK,
-  playlist_pitch_pack: process.env.STRIPE_PRICE_PLAYLIST_PITCH_PACK,
-
-  // MIXTAPE HOSTING (yours is currently recurring monthly in Stripe)
+  // MIXTAPE HOSTING (ONE-TIME)
   mixtape_hosting_starter: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_STARTER,
   mixtape_hosting_pro: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_PRO,
   mixtape_hosting_elite: process.env.STRIPE_PRICE_MIXTAPE_HOSTING_ELITE,
 
-  // AI STORE (often one-time, depending how you set Stripe)
-  ai_feature_verse_kit: process.env.STRIPE_PRICE_AI_FEATURE_VERSE_KIT,
-  ai_imaging_pack: process.env.STRIPE_PRICE_AI_IMAGING_PACK,
-  ai_label_brand_pack: process.env.STRIPE_PRICE_AI_LABEL_BRAND_PACK,
-  ai_launch_campaign: process.env.STRIPE_PRICE_AI_LAUNCH_CAMPAIGN,
-  ai_radio_intro: process.env.STRIPE_PRICE_AI_RADIO_INTRO,
-  ai_social_pack: process.env.STRIPE_PRICE_AI_SOCIAL_PACK
+  // SOCIAL / FEATURE LANES
+  social_starter_monthly: process.env.STRIPE_PRICE_SOCIAL_STARTER_MONTHLY,
+  rotation_boost_campaign: process.env.STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN,
+  homepage_feature_artist: process.env.STRIPE_PRICE_HOMEPAGE_FEATURE_ARTIST,
+  radio_interview_slot: process.env.STRIPE_PRICE_RADIO_INTERVIEW_SLOT,
 };
 
-function json(statusCode, obj) {
-  return { statusCode, headers: { 'content-type': 'application/json' }, body: JSON.stringify(obj) };
+function cleanUrl(u) {
+  return String(u || '').trim().replace(/\/+$/, '');
 }
 
-function getOrigin(event) {
-  const h = event.headers || {};
-  const proto = h['x-forwarded-proto'] || h['X-Forwarded-Proto'] || 'http';
-  const host = h['x-forwarded-host'] || h['X-Forwarded-Host'] || h['host'] || h['Host'] || 'localhost:8888';
-  return `${proto}://${host}`;
-}
+function inferBaseUrl(event) {
+  // Prefer explicit env in production.
+  const envSite = cleanUrl(process.env.SITE_URL);
+  const isDev = String(process.env.NETLIFY_DEV || '').toLowerCase() === 'true';
 
-function parseBody(event) {
-  try {
-    if (!event.body) return {};
-    return JSON.parse(event.body);
-  } catch (_) {
-    return {};
-  }
-}
+  // In dev: always prefer request Origin so localhost never breaks.
+  const hdrs = event.headers || {};
+  const origin = cleanUrl(hdrs.origin || hdrs.Origin);
+  if (isDev && origin && /^https?:\/\//i.test(origin)) return origin;
 
-// supports either: { planId, quantity } OR { items:[{planId,quantity}] }
-function normalizeItems(body) {
-  if (Array.isArray(body.items) && body.items.length) {
-    return body.items.map(it => ({
-      planId: String(it.planId || it.id || '').trim(),
-      quantity: Number(it.quantity || 1) || 1
-    })).filter(it => it.planId);
-  }
-  const planId = String(body.planId || body.id || '').trim();
-  const quantity = Number(body.quantity || 1) || 1;
-  return planId ? [{ planId, quantity }] : [];
+  // In prod: use SITE_URL if valid.
+  if (envSite && /^https?:\/\//i.test(envSite)) return envSite;
+
+  // Fallback: infer from host + proto.
+  const proto = cleanUrl(hdrs['x-forwarded-proto'] || hdrs['X-Forwarded-Proto'] || 'https');
+  const host = cleanUrl(hdrs.host || hdrs.Host);
+  if (host) return `${proto}://${host}`;
+
+  return '';
 }
 
 export async function handler(event) {
   try {
-    const body = parseBody(event);
-    const origin = getOrigin(event);
+    const body = event.body ? JSON.parse(event.body) : {};
+    const planId = String(body.planId || '').trim();
+    const quantity = Math.max(1, Number(body.quantity || 1));
 
-    const items = normalizeItems(body);
-    if (!items.length) return json(400, { ok: false, error: 'missing_planId' });
-
-    // This implementation supports ONE item at a time (clean + avoids mixed mode issues)
-    const { planId, quantity } = items[0];
+    if (!planId) {
+      return { statusCode: 400, body: JSON.stringify({ ok: false, error: 'missing_planId' }) };
+    }
 
     const priceId = PRICE_MAP[planId];
-    if (!priceId) return json(400, { ok: false, error: 'unknown_planId', planId });
+    if (!priceId) {
+      return { statusCode: 400, body: JSON.stringify({ ok: false, error: 'unknown_planId', planId }) };
+    }
 
-    // Retrieve the Stripe Price to detect recurring vs one-time
+    const baseUrl = inferBaseUrl(event);
+    if (!baseUrl || !/^https?:\/\//i.test(baseUrl)) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          ok: false,
+          error: 'bad_base_url',
+          message: 'Could not infer base URL. Set SITE_URL or ensure request has Origin/Host headers.'
+        })
+      };
+    }
+
+    // Pull the Price from Stripe so mode is always correct
     const price = await stripe.prices.retrieve(priceId);
-
     const isRecurring = !!price.recurring;
     const mode = isRecurring ? 'subscription' : 'payment';
 
-    // Guard: do not allow mixed recurring/one-time in one session (future-proof)
-    if (items.length > 1) {
-      return json(400, {
-        ok: false,
-        error: 'multi_item_not_supported',
-        message: 'Use one planId at a time to avoid mixed recurring/payment checkout.'
-      });
-    }
+    const success_url = `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`;
+    const cancel_url = `${baseUrl}/pricing.html?canceled=1`;
 
     const session = await stripe.checkout.sessions.create({
       mode,
-      line_items: [{ price: priceId, quantity }],
       allow_promotion_codes: true,
-      success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/pricing.html?canceled=1`,
-      // Optional: pass metadata for your audit trail
-      metadata: {
-        tkfm_plan_id: planId
-      }
+      line_items: [{ price: priceId, quantity }],
+      success_url,
+      cancel_url,
+      metadata: { planId },
     });
 
-    return json(200, { ok: true, mode, planId, url: session.url, session_id: session.id });
+    return {
+      statusCode: 200,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        ok: true,
+        mode,
+        planId,
+        url: session.url,
+        session_id: session.id,
+        base_url: baseUrl
+      }),
+    };
   } catch (e) {
-    return json(500, { ok: false, error: 'create_session_failed', message: String(e?.message || e) });
+    return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'create_session_failed', message: String(e?.message || e) }) };
   }
 }
