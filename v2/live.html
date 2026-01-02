@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Live — On Air Now</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+    .soft{color:rgba(226,232,240,.82)}
+    .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
+  </style>
+
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Live Now</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
+        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+        <a href="live.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🔴 Live</a>
+        <a href="podcaster-live.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcaster Live</a>
+        <a href="owner-live-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner Live</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-4xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 pill text-red-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
+      <span>Live Now</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">What’s live on TKFM right now.</h1>
+
+    <div class="card rounded-2xl p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">On Air</p>
+          <h2 id="t" class="text-2xl font-extrabold mt-2">Loading…</h2>
+          <p id="c" class="text-slate-400 text-sm mt-2"></p>
+          <p id="d" class="text-slate-300/85 text-sm mt-2"></p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">📺 Open TV</a>
+          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="schedule.html">🗓 Schedule</a>
+        </div>
+      </div>
+
+      <div class="frame mt-4">
+        <iframe id="f" class="w-full h-full" src="" title="TKFM Live" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        <a id="open" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="#" target="_blank" rel="noreferrer">▶ Open Link</a>
+        <button id="r" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
+      </div>
+
+      <p id="s" class="text-slate-400 text-sm mt-4"></p>
+    </div>
+  </main>
+
+  <script>
+    function youtubeEmbed(url){
+      url = String(url||'').trim();
+      if (!url) return '';
+      let m = url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      m = url.match(/[?&]v=([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      m = url.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      return '';
+    }
+    function normalizeToEmbed(url){
+      const u = String(url||'').trim();
+      if (!u) return '';
+      const yt = youtubeEmbed(u);
+      if (yt) return yt;
+      if (u.includes('player.twitch.tv')) return u;
+      if (u.includes('embed')) return u;
+      return u;
+    }
+
+    async function load(){
+      document.getElementById('s').textContent = 'Loading…';
+      try{
+        const res = await fetch('/.netlify/functions/live-get');
+        const data = await res.json();
+        const active = data && data.active ? data.active : null;
+        if (!active || !active.url) {
+          document.getElementById('t').textContent = 'No live show right now';
+          document.getElementById('c').textContent = '';
+          document.getElementById('d').textContent = 'Check the schedule or TV rotation.';
+          document.getElementById('f').src = '';
+          document.getElementById('open').href = '#';
+          document.getElementById('s').textContent = '';
+          return;
+        }
+        document.getElementById('t').textContent = active.title || 'Live Now';
+        document.getElementById('c').textContent = active.creator ? ('by ' + active.creator) : '';
+        document.getElementById('d').textContent = active.description || '';
+        document.getElementById('f').src = normalizeToEmbed(active.url);
+        document.getElementById('open').href = active.url;
+        document.getElementById('s').textContent = active.endsAt ? ('Ends: ' + new Date(active.endsAt).toLocaleString()) : '';
+      }catch(e){
+        document.getElementById('s').textContent = 'Load error.';
+      }
+    }
+    document.getElementById('r').addEventListener('click', load);
+    load();
+    setInterval(load, 60000);
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

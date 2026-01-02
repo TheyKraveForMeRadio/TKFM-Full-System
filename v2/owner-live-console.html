@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Owner Live Console — Approve + Go Live</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+    .soft{color:rgba(226,232,240,.82)}
+    .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
+  </style>
+
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Owner Live Console</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
+        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+        <a href="live.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🔴 Live</a>
+        <a href="podcaster-live.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcaster Live</a>
+        <a href="owner-live-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner Live</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 pill text-yellow-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
+      <span>Owner Only</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      Approve Live Cast requests + push them to Live Now.
+    </h1>
+
+    <div class="card rounded-2xl p-5 space-y-4">
+      <div class="grid md:grid-cols-3 gap-4 items-end">
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Owner Key</label>
+          <input id="k" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="paste TKFM_OWNER_KEY"/>
+        </div>
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Default Live Minutes</label>
+          <input id="mins" type="number" min="10" max="240" value="60" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50"/>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button id="refresh" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
+          <button id="stop" class="btn border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15">Stop Live</button>
+          <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">📺 TV</a>
+          <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="live.html">🔴 Live</a>
+        </div>
+      </div>
+      <p id="m" class="text-sm text-slate-300/85"></p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4">
+      <section class="lg:col-span-2 card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Pending Queue</p>
+        <h2 class="text-2xl font-extrabold mt-2">Live Requests</h2>
+        <div id="list" class="mt-4 grid md:grid-cols-2 gap-3"></div>
+        <p id="empty" class="text-slate-400 text-sm mt-4 hidden">No pending requests.</p>
+      </section>
+
+      <section class="card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Active</p>
+        <h2 class="text-2xl font-extrabold mt-2">Live Now</h2>
+        <div id="active" class="mt-4 text-slate-200/85 text-sm">Loading…</div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function safe(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    const m = document.getElementById('m');
+
+    function msg(t, ok){
+      m.textContent = t;
+      m.className = ok ? 'text-sm text-emerald-300 font-semibold' : 'text-sm text-red-300 font-semibold';
+    }
+
+    function card(it){
+      return `
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-4">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">ID: <span class="mono">${safe(it.id||'')}</span></p>
+          <h3 class="text-lg font-extrabold mt-2">${safe(it.title||'Untitled')}</h3>
+          <p class="text-slate-400 text-xs mt-2">${safe(it.creator||'')}</p>
+          <p class="text-slate-300/85 text-sm mt-2">${safe(it.description||'')}</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" data-approve="${safe(it.id||'')}">Approve</button>
+            <button class="btn border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15" data-deny="${safe(it.id||'')}">Deny</button>
+            <button class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" data-live="${safe(it.id||'')}">Go Live</button>
+            ${it.url ? `<a class="tab border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="${safe(it.url)}" target="_blank" rel="noreferrer">Open</a>` : ``}
+          </div>
+        </div>
+      `;
+    }
+
+    async function admin(action, id){
+      const key = (document.getElementById('k').value||'').trim();
+      if (!key){ msg('Missing owner key.', false); return false; }
+      const minutes = Math.max(10, parseInt(document.getElementById('mins').value||'60',10)||60);
+      msg('Saving…', true);
+      try{
+        const res = await fetch('/.netlify/functions/live-admin', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-TKFM-Owner-Key': key},
+          body: JSON.stringify({ action, id, minutes })
+        });
+        const out = await res.json().catch(()=>({}));
+        if (!res.ok || !out.ok) throw new Error(out.error||'admin failed');
+        msg('✅ Saved.', true);
+        return true;
+      }catch(e){
+        msg('❌ Failed. Check TKFM_OWNER_KEY + live-admin function.', false);
+        return false;
+      }
+    }
+
+    function activeHtml(a){
+      if (!a || !a.url) return '<p class="text-slate-400 text-sm">No active live show.</p>';
+      const ends = a.endsAt ? ('Ends: ' + new Date(a.endsAt).toLocaleString()) : '';
+      return `
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-4">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">🔴 Live</p>
+          <p class="text-slate-50 font-extrabold mt-2">${safe(a.title||'Live Now')}</p>
+          <p class="text-slate-400 text-xs mt-2">${safe(a.creator||'')}</p>
+          <p class="text-slate-300/85 text-sm mt-2">${safe(a.description||'')}</p>
+          <p class="text-slate-400 text-xs mt-3">${safe(ends)}</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="${safe(a.url)}" target="_blank" rel="noreferrer">▶ Open</a>
+            <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">📺 TV</a>
+          </div>
+        </div>
+      `;
+    }
+
+    async function load(){
+      document.getElementById('list').innerHTML = '';
+      document.getElementById('empty').classList.add('hidden');
+
+      // active
+      try{
+        const r = await fetch('/.netlify/functions/live-get');
+        const d = await r.json();
+        document.getElementById('active').innerHTML = activeHtml(d && d.active ? d.active : null);
+      }catch(e){
+        document.getElementById('active').textContent = 'Active load error.';
+      }
+
+      // queue
+      try{
+        const q = await fetch('/.netlify/functions/live-queue?status=pending&limit=50');
+        const data = await q.json();
+        const items = (data && data.items) ? data.items : [];
+        if (!items.length){
+          document.getElementById('empty').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('list').innerHTML = items.map(card).join('');
+        document.querySelectorAll('button[data-approve]').forEach(btn=>{
+          btn.addEventListener('click', async ()=>{
+            const id = btn.getAttribute('data-approve');
+            const ok = await admin('approve', id);
+            if (ok) load();
+          });
+        });
+        document.querySelectorAll('button[data-deny]').forEach(btn=>{
+          btn.addEventListener('click', async ()=>{
+            const id = btn.getAttribute('data-deny');
+            const ok = await admin('deny', id);
+            if (ok) load();
+          });
+        });
+        document.querySelectorAll('button[data-live]').forEach(btn=>{
+          btn.addEventListener('click', async ()=>{
+            const id = btn.getAttribute('data-live');
+            const ok = await admin('go_live', id);
+            if (ok) load();
+          });
+        });
+      }catch(e){
+        document.getElementById('empty').textContent = 'Queue load error.';
+        document.getElementById('empty').classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', load);
+    document.getElementById('stop').addEventListener('click', async ()=>{
+      const ok = await admin('stop', '');
+      if (ok) load();
+    });
+
+    load();
+    setInterval(load, 30000);
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

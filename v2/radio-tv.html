@@ -25,8 +25,8 @@
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
     input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
     input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
-    .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
     .soft{color:rgba(226,232,240,.82)}
+    .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
   </style>
 
 </head>
@@ -43,10 +43,11 @@
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
-        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
         <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
-        <a href="owner-tv-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner TV</a>
-        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 Video</a>
+        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+        <a href="live.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🔴 Live</a>
+        <a href="podcaster-live.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcaster Live</a>
+        <a href="owner-live-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner Live</a>
       </nav>
     </div>
   </header>
@@ -59,12 +60,15 @@
     </div>
 
     <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
-      TV mode for listeners — auto-rotates approved shows, owner can pin a featured show.
+      TV mode: Live Now → Schedule → Pinned → Rotation.
     </h1>
 
     <p class="soft max-w-4xl">
-      This page pulls from the approved <a class="text-emerald-200 font-semibold hover:underline" href="media-directory.html">Media Directory</a>.
-      If the owner pins a show, it plays first. Otherwise, it rotates automatically.
+      Priority order:
+      <span class="mono">Live Now</span> (approved live cast),
+      then <span class="mono">Schedule</span> (current slot),
+      then <span class="mono">Pinned</span>,
+      then playlist rotation.
     </p>
 
     <div class="grid lg:grid-cols-3 gap-4">
@@ -72,12 +76,18 @@
         <div class="flex flex-wrap items-center justify-between gap-2">
           <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Now Featuring</p>
           <div class="flex flex-wrap gap-2">
-            <a class="tab border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-directory.html">🎥 Directory</a>
-            <a class="tab border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15" href="owner-tv-console.html">🔑 Owner TV</a>
+            <a class="tab border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="live.html">🔴 Live</a>
+            <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="schedule.html">🗓 Schedule</a>
+            <a class="tab border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15" href="owner-live-console.html">🔑 Owner Live</a>
           </div>
         </div>
 
-        <h2 id="showTitle" class="text-2xl font-extrabold mt-2">Loading…</h2>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <span id="sourcePill" class="px-3 py-1 rounded-full border border-slate-500/40 bg-slate-500/10 text-slate-100 text-[0.65rem] uppercase tracking-[0.22em] font-extrabold">Loading</span>
+          <span id="timer" class="mono text-xs text-slate-400"></span>
+        </div>
+
+        <h2 id="showTitle" class="text-2xl font-extrabold mt-3">Loading…</h2>
         <p id="showMeta" class="text-slate-400 text-sm mt-2"></p>
         <p id="showDesc" class="text-slate-300/85 text-sm mt-2"></p>
 
@@ -91,25 +101,15 @@
           <a id="openLink" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="#" target="_blank" rel="noreferrer">▶ Open Link</a>
           <button id="nextBtn" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">⏭ Next</button>
           <button id="refreshBtn" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
-          <span id="timer" class="mono text-xs text-slate-400 self-center"></span>
         </div>
       </div>
 
       <div class="card rounded-2xl p-5">
         <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Up Next</p>
-        <h3 class="text-xl font-extrabold mt-2">Playlist (auto-rotation)</h3>
-        <p class="soft text-sm mt-2">Only approved video items appear here.</p>
+        <h3 class="text-xl font-extrabold mt-2">Rotation Playlist</h3>
+        <p class="soft text-sm mt-2">Only approved videos appear here.</p>
 
         <div class="mt-4 space-y-2" id="playlist"></div>
-
-        <div class="mt-5 rounded-xl border border-slate-700/50 bg-black/40 p-4 text-sm text-slate-200/85">
-          <p class="font-extrabold text-slate-50">Creators</p>
-          <p class="mt-2">Submit your show, get approved, then get rotated on TV.</p>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="video-engine.html">🎬 Video Lane</a>
-            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Submit</a>
-          </div>
-        </div>
       </div>
     </div>
   </main>
@@ -139,12 +139,24 @@
       return u;
     }
 
+    const pill = document.getElementById('sourcePill');
+
     let items = [];
     let idx = 0;
     let rotateSeconds = 120;
     let pinnedId = null;
+
     let timerInt = null;
     let remaining = 0;
+
+    function setPill(text, kind){
+      pill.textContent = text;
+      pill.className = 'px-3 py-1 rounded-full border text-[0.65rem] uppercase tracking-[0.22em] font-extrabold';
+      if (kind === 'live') pill.className += ' border-red-500/40 bg-red-500/10 text-red-100';
+      else if (kind === 'schedule') pill.className += ' border-sky-500/40 bg-sky-500/10 text-sky-100';
+      else if (kind === 'pinned') pill.className += ' border-yellow-500/40 bg-yellow-500/10 text-yellow-100';
+      else pill.className += ' border-purple-500/40 bg-purple-500/10 text-purple-100';
+    }
 
     function renderPlaylist(){
       const el = document.getElementById('playlist');
@@ -164,7 +176,7 @@
       el.querySelectorAll('button[data-i]').forEach(btn=>{
         btn.addEventListener('click', ()=>{
           idx = parseInt(btn.getAttribute('data-i'),10) || 0;
-          playCurrent(true);
+          playRotation(true);
         });
       });
     }
@@ -178,24 +190,20 @@
       timerInt = setInterval(()=>{
         remaining -= 1;
         if (remaining <= 0) {
-          next();
+          nextRotation();
         } else {
           t.textContent = `Auto next in ${remaining}s`;
         }
       }, 1000);
     }
 
-    function playItem(it){
-      const title = it.title || 'TKFM TV';
-      const desc = it.description || '';
-      const creator = it.creatorName || '';
-      const url = it.primaryUrl || '';
-      const embed = normalizeToEmbed(url);
-
-      document.getElementById('showTitle').textContent = title;
-      document.getElementById('showDesc').textContent = desc;
+    function playUrl(title, creator, desc, url, sourceText, sourceKind){
+      setPill(sourceText, sourceKind);
+      document.getElementById('showTitle').textContent = title || 'TKFM TV';
+      document.getElementById('showDesc').textContent = desc || '';
       document.getElementById('showMeta').textContent = creator ? ('by ' + creator) : '';
 
+      const embed = normalizeToEmbed(url);
       document.getElementById('tvFrame').src = embed || '';
 
       const open = document.getElementById('openLink');
@@ -207,23 +215,101 @@
         open.classList.remove('opacity-50');
         open.removeAttribute('aria-disabled');
       }
+    }
 
+    function playRotation(){
+      if (!items.length) return;
+      const it = items[idx] || items[0];
+      playUrl(it.title || 'TKFM TV', it.creatorName || '', it.description || '', it.primaryUrl || '', 'Rotation', 'rotation');
       renderPlaylist();
       setTimer(rotateSeconds);
     }
 
-    function playCurrent(){
-      if (!items.length) return;
-      playItem(items[idx] || items[0]);
-    }
-
-    function next(){
+    function nextRotation(){
       if (!items.length) return;
       idx = (idx + 1) % items.length;
-      playCurrent();
+      playRotation();
+    }
+
+    function minutesSinceWeekStart(d){
+      const day = d.getDay();
+      return day*24*60 + d.getHours()*60 + d.getMinutes();
+    }
+    function slotToMinutes(slot){
+      const [sh, sm] = String(slot.start||'00:00').split(':').map(x=>parseInt(x,10)||0);
+      const [eh, em] = String(slot.end||'00:00').split(':').map(x=>parseInt(x,10)||0);
+      const startM = (slot.day||0)*24*60 + sh*60 + sm;
+      const endM = (slot.day||0)*24*60 + eh*60 + em;
+      return { startM, endM };
+    }
+
+    async function pickSource(){
+      // 1) LIVE NOW
+      try {
+        const res = await fetch('/.netlify/functions/live-get');
+        const data = await res.json();
+        if (data && data.active && data.active.url) {
+          playUrl(
+            data.active.title || 'Live Now',
+            data.active.creator || '',
+            data.active.description || '',
+            data.active.url,
+            'Live Now',
+            'live'
+          );
+          setTimer(0);
+          return true;
+        }
+      } catch(e) {}
+
+      // 2) SCHEDULE NOW
+      try {
+        const res = await fetch('/.netlify/functions/schedule-get');
+        const data = await res.json();
+        const slots = (data && data.slots) ? data.slots : [];
+        if (slots && slots.length) {
+          const now = new Date();
+          const nowM = minutesSinceWeekStart(now);
+          let current = null;
+          for (const s of slots){
+            const {startM, endM} = slotToMinutes(s);
+            if (nowM >= startM && nowM < endM) { current = s; break; }
+          }
+          if (current && (current.type === 'podcast' || current.type === 'video') && current.url) {
+            playUrl(
+              current.title || 'Scheduled Show',
+              current.creator || '',
+              '',
+              current.url,
+              'Schedule',
+              'schedule'
+            );
+            setTimer(0);
+            return true;
+          }
+        }
+      } catch(e) {}
+
+      // 3) PINNED (from tv-get cfg)
+      if (pinnedId && items.length) {
+        const pinIndex = items.findIndex(x => x.id === pinnedId);
+        if (pinIndex >= 0) {
+          idx = pinIndex;
+          playUrl(items[idx].title||'Pinned', items[idx].creatorName||'', items[idx].description||'', items[idx].primaryUrl||'', 'Pinned', 'pinned');
+          renderPlaylist();
+          setTimer(rotateSeconds);
+          return true;
+        }
+      }
+
+      // 4) ROTATION
+      playRotation();
+      return true;
     }
 
     async function load(){
+      setPill('Loading', 'rotation');
+
       try {
         const cfgRes = await fetch('/.netlify/functions/tv-get');
         const cfg = await cfgRes.json();
@@ -238,34 +324,28 @@
       idx = 0;
 
       try {
-        const res = await fetch('/.netlify/functions/media-list?type=video&limit=30');
+        const res = await fetch('/.netlify/functions/media-list?type=video&limit=60');
         const data = await res.json();
         items = (data && data.items) ? data.items : [];
-
-        if (!items.length) {
-          document.getElementById('showTitle').textContent = 'No approved videos yet';
-          document.getElementById('showDesc').textContent = 'Owner: approve submissions in Owner Media Console.';
-          document.getElementById('tvFrame').src = '';
-          document.getElementById('playlist').innerHTML = '<p class="text-slate-400 text-sm">No approved videos yet.</p>';
-          return;
-        }
-
-        if (pinnedId) {
-          const pinIndex = items.findIndex(x => x.id === pinnedId);
-          if (pinIndex >= 0) idx = pinIndex;
-        }
-
-        playCurrent();
       } catch(e) {
-        document.getElementById('showTitle').textContent = 'Failed to load TV';
-        document.getElementById('showDesc').textContent = 'Check media-list function.';
-        document.getElementById('playlist').innerHTML = '<p class="text-slate-400 text-sm">Load error.</p>';
+        items = [];
+      }
+
+      renderPlaylist();
+
+      const ok = await pickSource();
+      if (!ok && items.length) playRotation();
+      if (!items.length && !document.getElementById('tvFrame').src) {
+        document.getElementById('showTitle').textContent = 'No approved videos yet';
+        document.getElementById('showDesc').textContent = 'Owner: approve submissions in Owner Media Console.';
       }
     }
 
-    document.getElementById('nextBtn').addEventListener('click', ()=>next());
+    document.getElementById('nextBtn').addEventListener('click', ()=>nextRotation());
     document.getElementById('refreshBtn').addEventListener('click', ()=>load());
     load();
+    // refresh source every 45s so Live/Schedule flips without reload
+    setInterval(()=>pickSource(), 45000);
   </script>
 
 

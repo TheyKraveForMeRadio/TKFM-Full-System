@@ -25,3 +25,8 @@
 /tv              /radio-tv.html              200
 /tv-config        /tv-config.html             200
 /owner-tv         /owner-tv-console.html      200
+/schedule         /schedule.html                 200
+/owner-schedule    /owner-schedule-console.html    200
+/live               /live.html                  200
+/podcaster-live      /podcaster-live.html         200
+/owner-live          /owner-live-console.html     200
