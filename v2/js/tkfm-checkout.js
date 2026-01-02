@@ -5,7 +5,7 @@
       qty = Math.max(1, Number(qty || 1));
 
       if (!planId) {
-        alert('Checkout error: missing planId (data-plan).');
+        alert('Checkout error: missing planId on button (data-plan).');
         return;
       }
 
@@ -24,13 +24,14 @@
         return;
       }
 
-      window.location.href = data.url;
+      window.location.href = data.url; // preserves #fid fragment
     } catch (e) {
       console.error(e);
       alert('Checkout crashed: ' + String(e && e.message ? e.message : e));
     }
   }
 
+  // EVENT DELEGATION: works for buttons, links, cards, nested spans, etc.
   document.addEventListener('click', function (e) {
     const el = e.target.closest('[data-plan],[data-feature],[data-planid],[data-checkout]');
     if (!el) return;
@@ -41,6 +42,7 @@
       el.getAttribute('data-planid') ||
       '';
 
+    // Only intercept clicks that look like pricing CTAs
     if (!planId) return;
 
     e.preventDefault();
