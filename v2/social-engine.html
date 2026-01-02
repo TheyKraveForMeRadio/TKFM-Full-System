@@ -7,27 +7,28 @@
   <script src="/js/tkfm-shell.js" defer></script>
 
   <meta charset="utf-8" />
-  <title>TKFM Social Motion Engine — They Krave For Me Radio</title>
+  <title>TKFM Social Motion Engine — Paid Campaigns</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Professional social marketing campaigns engineered to drive visibility, engagement and rotation momentum." />
+  <meta name="description" content="Paid social media campaigns for TKFM creators. Buy a Social Pack or Launch Campaign, then submit your brief — TKFM handles the motion." />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/logo-check.js" defer></script>
   <script src="/js/access-gates.js" defer></script>
   <script src="/js/tkfm-unlocks.js" defer></script>
+  <script src="/tkfm-ui.js" defer></script>
+
   <style>
     body{
       background:#020617;
       background-image:
         radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
-        radial-gradient(circle at 100% 0,rgba(236,72,153,0.3),transparent 55%),
-        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%);
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
     }
     ::-webkit-scrollbar{height:6px;width:6px;}
     ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
-    .glass{
-      background-color:rgba(15,23,42,0.96);
-      backdrop-filter:blur(22px);
-    }
+    .glass{ background-color:rgba(15,23,42,0.94); backdrop-filter:blur(22px); }
     .pill{font-size:0.7rem;letter-spacing:.3em;text-transform:uppercase;}
     .badge{font-size:0.65rem;text-transform:uppercase;letter-spacing:.2em;}
     .btn{
@@ -35,71 +36,404 @@
       font-size:.78rem;
       letter-spacing:.18em;
       text-transform:uppercase;
-      font-weight:600;
-      padding:.55rem 1rem;
+      font-weight:700;
+      padding:.6rem 1rem;
+      white-space:nowrap;
     }
     .btn-busy{opacity:.6;pointer-events:none;}
+    .glow{
+      box-shadow:
+        0 0 0 1px rgba(148,163,184,0.12) inset,
+        0 10px 40px rgba(2,6,23,0.55),
+        0 0 80px rgba(56,189,248,0.06);
+    }
+    .neonTitle{
+      text-shadow: 0 0 30px rgba(56,189,248,0.45), 0 0 60px rgba(236,72,153,0.18);
+    }
+    .card{
+      background: rgba(2,6,23,0.58);
+      border: 1px solid rgba(148,163,184,0.18);
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .card:hover{
+      border-color: rgba(56,189,248,0.35);
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.08) inset, 0 18px 60px rgba(2,6,23,0.6);
+      transform: translateY(-1px);
+    }
+    .price{ font-variant-numeric: tabular-nums; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; }
   </style>
-<script src="/js/tkfm-fx.js"></script>
 </head>
-<body data-requires="creator_pass_monthly" data-gate-title="🔒 TKFM Creator Access Required" data-gate-message="Upgrade to Creator Pass to unlock this page." class="text-slate-50 min-h-screen flex flex-col" data-tkfm-theme="radio">
+
+<body class="text-slate-50 min-h-screen flex flex-col" data-tkfm-theme="radio">
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
 
-<!-- NAV -->
 <header class="w-full border-b border-slate-800/80 bg-black/80 backdrop-blur-xl sticky top-0 z-40">
   <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
     <a href="index.html" class="flex items-center gap-3">
       <img src="/tkfm-radio-logo.png" alt="TKFM" class="h-9 w-auto object-contain" />
       <div class="leading-tight">
-        <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">
-          They Krave For Me Radio
-        </p>
-        <p class="text-sm font-semibold">
-          TKFM <span class="text-sky-300">Social Motion Engine</span>
-        </p>
+        <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+        <p class="text-sm font-semibold">TKFM <span class="text-sky-300">Social Motion</span></p>
       </div>
     </a>
 
     <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-      <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">📻 Radio Hub</a>
-      <a href="engines.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200 flex items-center gap-1">⚡ Engines</a>
+      <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200 flex items-center gap-1">📻 Radio Hub</a>
+      <a href="app-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200 flex items-center gap-1">⚡ Engines</a>
+      <a href="feature-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200 flex items-center gap-1">🤖 Feature Store</a>
+      <a href="label-social-engine.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200 flex items-center gap-1">🏛 Label Social</a>
       <a href="pricing.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200 flex items-center gap-1">💳 Pricing</a>
-      <a href="dj-mixtape-hosting.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200 flex items-center gap-1">🎧 Mixtape Hosting</a>
-      <a href="feature-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200 flex items-center gap-1">🤖 AI Feature Store</a>
-      <a href="label-home.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200 flex items-center gap-1">🏛 TKFM Records</a>
     </nav>
   </div>
 </header>
 
-<!-- MAIN -->
 <main class="flex-1">
-  <section class="max-w-6xl mx-auto px-4 pt-8 pb-12 space-y-8">
+  <section class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-10">
 
-    <!-- ⭐️⭐️⭐️ ONLY THIS SECTION IS CHANGED ⭐️⭐️⭐️ -->
+    <!-- UPDATED HERO COPY (PRO SCRIPT) -->
     <section class="space-y-4">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Professional Campaign Services</span>
+        <span>Paid Social Campaign Services</span>
       </div>
 
-      <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
-        Structured social campaigns engineered for
-        <span class="text-sky-300 drop-shadow-[0_0_32px_rgba(56,189,248,0.8)]">visibility, reach, and momentum</span>
-        across the TKFM ecosystem.
+      <h1 class="text-3xl md:text-5xl font-extrabold leading-tight neonTitle">
+        TKFM Social Motion Engine — Paid Campaigns That Create Real Momentum
       </h1>
 
-      <p class="text-sm md:text-base text-slate-100/90 max-w-2xl">
-        TKFM’s Social Motion Engine is a premium promotional lane for artists, DJs, and independent labels.
-        Every activation is performance-led and directly connected to our radio programming, social media visibility,
-        and label infrastructure to support real audience engagement and rotation impact.
+      <p class="text-sm md:text-base text-slate-100/90 max-w-4xl">
+        Social promo on TKFM is a <span class="text-sky-200 font-semibold">paid lane</span> built for artists, DJs,
+        producers, and labels who want results — not random likes. We run <span class="text-sky-200 font-semibold">campaign-ready copy</span>,
+        <span class="text-sky-200 font-semibold">visuals</span>, and <span class="text-sky-200 font-semibold">rollout structure</span> designed to move your audience
+        from social platforms into the TKFM ecosystem: station traffic, feature placements, rotation boosts, and label opportunities.
       </p>
 
-      <div id="social-status" class="text-[0.75rem] text-sky-200 bg-slate-900/80 border border-sky-500/40 rounded-lg px-3 py-2 inline-flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>All services activate instantly through unified Stripe checkout.</span>
+      <div class="grid md:grid-cols-2 gap-3 max-w-5xl">
+        <div class="glass glow rounded-2xl border border-slate-700/50 p-4">
+          <p class="badge text-slate-400">What you’re buying</p>
+          <ul class="mt-2 space-y-2 text-sm text-slate-200/90">
+            <li><span class="text-sky-200 font-semibold">Campaign Strategy:</span> clear goal + audience + rollout plan (so every post has a purpose)</li>
+            <li><span class="text-sky-200 font-semibold">High‑converting Copy:</span> hooks, captions, CTAs engineered to drive clicks + saves + shares</li>
+            <li><span class="text-sky-200 font-semibold">Visual Direction:</span> promo‑ready imaging guidance (or an Imaging Pack for full assets)</li>
+            <li><span class="text-sky-200 font-semibold">Release & Event Rollouts:</span> structured launch campaigns built for momentum</li>
+            <li><span class="text-sky-200 font-semibold">Ecosystem Conversion:</span> social traffic feeds radio spins, homepage features, and label visibility</li>
+          </ul>
+        </div>
+
+        <div class="glass glow rounded-2xl border border-slate-700/50 p-4 flex flex-col justify-between">
+          <div>
+            <p class="badge text-slate-400">Access + shortcuts</p>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <div id="accessBadge" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 text-[0.75rem] text-sky-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Checking access…</span>
+              </div>
+              <a href="unlocks.html" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-500/40 bg-slate-500/10 text-[0.75rem] text-slate-200 hover:bg-slate-500/15">
+                🔎 View Unlocks
+              </a>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a href="submit.html" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">📝 Submit Brief</a>
+            <a href="momentum-engine.html" class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15">📈 Momentum Engine</a>
+            <a href="pricing.html" class="btn border border-cyan-500/40 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/15">💳 Upgrade Plans</a>
+          </div>
+
+          <div class="mt-4 text-sm text-slate-100/90">
+            <span class="text-sky-200 font-semibold">CTA:</span>
+            Choose a Social Pack or Launch Campaign below, checkout in one click, then submit your brief — we handle the motion.
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 🚫 STOP — NOTHING BELOW THIS LINE WAS TOUCHED 🚫 -->
-    <!-- 💥 All Buy Buttons, Prices, Layout, Functionality Are EXACT 💥 -->
+    <!-- PRODUCTS -->
+    <section class="space-y-4">
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <p class="badge text-slate-400">Social Products</p>
+          <h2 class="text-2xl md:text-3xl font-extrabold">Social engines + prices (buy now)</h2>
+          <p class="text-sm text-slate-200/85 max-w-3xl mt-1">
+            Prices shown here are a display layer — Stripe is the source of truth. Edit the price table in this file if you want exact numbers on-page.
+          </p>
+        </div>
+      </div>
 
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card rounded-2xl p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="badge text-slate-400">Access Plan</p>
+              <h3 class="text-lg font-extrabold">Creator Pass Monthly</h3>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-400">Monthly</p>
+              <p class="text-xl font-extrabold text-cyan-200 price" data-price-for="creator_pass_monthly">$— / mo</p>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+            <li>• Creator access lane for premium tools + ongoing services</li>
+            <li>• Unlocks creator features on this device</li>
+            <li>• If you already have it, you’re good</li>
+          </ul>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button class="btn border border-cyan-500/40 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/15 tkfm-buy"
+              data-plan="creator_pass_monthly" data-btn-for="creator_pass_monthly">💳 Buy Creator Pass — $—/mo</button>
+            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="pricing.html">View all plans</a>
+          </div>
+          <p class="mt-3 text-xs text-slate-400">Plan id: <span class="mono">creator_pass_monthly</span></p>
+        </div>
+
+        <div class="card rounded-2xl p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="badge text-slate-400">One‑Time Product</p>
+              <h3 class="text-lg font-extrabold">AI Social Pack</h3>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-400">One‑time</p>
+              <p class="text-xl font-extrabold text-sky-200 price" data-price-for="ai_social_pack">$—</p>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+            <li>• Platform‑ready captions + hooks + CTA</li>
+            <li>• Post plan + content angles</li>
+            <li>• Built to convert into station traffic</li>
+          </ul>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy"
+              data-feature="ai_social_pack" data-btn-for="ai_social_pack">🧠 Buy Social Pack — $—</button>
+            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">Submit brief</a>
+          </div>
+          <p class="mt-3 text-xs text-slate-400">Product id: <span class="mono">ai_social_pack</span></p>
+        </div>
+
+        <div class="card rounded-2xl p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="badge text-slate-400">One‑Time Product</p>
+              <h3 class="text-lg font-extrabold">AI Launch Campaign</h3>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-400">One‑time</p>
+              <p class="text-xl font-extrabold text-pink-200 price" data-price-for="ai_launch_campaign">$—</p>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+            <li>• Release rollout plan (7–14 days)</li>
+            <li>• Story sequence + reels plan</li>
+            <li>• KPI targets + momentum checkpoints</li>
+          </ul>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button class="btn border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15 tkfm-buy"
+              data-feature="ai_launch_campaign" data-btn-for="ai_launch_campaign">🚀 Buy Launch Campaign — $—</button>
+            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="momentum-engine.html">Track momentum</a>
+          </div>
+          <p class="mt-3 text-xs text-slate-400">Product id: <span class="mono">ai_launch_campaign</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISIBILITY ADD-ONS -->
+    <section class="space-y-4">
+      <div>
+        <p class="badge text-slate-400">Visibility Add‑Ons</p>
+        <h2 class="text-2xl md:text-3xl font-extrabold">Homepage + takeover placements</h2>
+        <p class="text-sm text-slate-200/85 max-w-3xl mt-1">
+          Direct visibility hits — perfect after a social buy to turn attention into station traffic.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card rounded-2xl p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="badge text-slate-400">One‑Time Product</p>
+              <h3 class="text-lg font-extrabold">Homepage Feature Artist</h3>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-400">One‑time</p>
+              <p class="text-xl font-extrabold text-cyan-200 price" data-price-for="homepage_feature_artist">$—</p>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+            <li>• Front page feature placement</li>
+            <li>• Maximum eyes on your drop</li>
+            <li>• Works with radio + social push</li>
+          </ul>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button class="btn border border-cyan-500/40 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/15 tkfm-buy"
+              data-feature="homepage_feature_artist" data-btn-for="homepage_feature_artist">🏠 Buy Homepage Feature — $—</button>
+            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="feature-engine.html">Feature store</a>
+          </div>
+          <p class="mt-3 text-xs text-slate-400">Product id: <span class="mono">homepage_feature_artist</span></p>
+        </div>
+
+        <div class="card rounded-2xl p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="badge text-slate-400">One‑Time Product</p>
+              <h3 class="text-lg font-extrabold">Homepage Takeover Day</h3>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-400">One‑time</p>
+              <p class="text-xl font-extrabold text-yellow-200 price" data-price-for="homepage_takeover_day">$—</p>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+            <li>• Full‑day front page takeover</li>
+            <li>• Built for launches + events</li>
+            <li>• Combines perfectly with Social Motion</li>
+          </ul>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button class="btn border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15 tkfm-buy"
+              data-feature="homepage_takeover_day" data-btn-for="homepage_takeover_day">🔥 Buy Takeover Day — $—</button>
+            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-kit.html">Media kit</a>
+          </div>
+          <p class="mt-3 text-xs text-slate-400">Product id: <span class="mono">homepage_takeover_day</span></p>
+        </div>
+
+        <div class="card rounded-2xl p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="badge text-slate-400">One‑Time Product</p>
+              <h3 class="text-lg font-extrabold">AI Imaging Pack</h3>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-400">One‑time</p>
+              <p class="text-xl font-extrabold text-sky-200 price" data-price-for="ai_imaging_pack">$—</p>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+            <li>• Clean visuals for posts + stories</li>
+            <li>• Cover art variants + promo tiles</li>
+            <li>• Matches TKFM neon style</li>
+          </ul>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy"
+              data-feature="ai_imaging_pack" data-btn-for="ai_imaging_pack">🖼️ Buy Imaging Pack — $—</button>
+            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">Submit assets</a>
+          </div>
+          <p class="mt-3 text-xs text-slate-400">Product id: <span class="mono">ai_imaging_pack</span></p>
+        </div>
+      </div>
+    </section>
+
+  </section>
+</main>
+
+<footer class="w-full border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+  <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+    <p>© <span id="year"></span> They Krave For Me Radio — Social Motion Engine</p>
+    <div class="flex gap-2 flex-wrap">
+      <a class="hover:text-slate-200" href="contact.html">Contact</a>
+      <span>•</span>
+      <a class="hover:text-slate-200" href="pricing.html">Pricing</a>
+      <span>•</span>
+      <a class="hover:text-slate-200" href="success.html">Success</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // DISPLAY PRICE TABLE (EDIT THESE VALUES IF YOU WANT EXACT NUMBERS ON PAGE)
+  // Stripe checkout is still the source of truth.
+  const PRICE = {
+    creator_pass_monthly: { label: '$—/mo', amount: null },
+    ai_social_pack: { label: '$300', amount: null },
+    ai_launch_campaign: { label: '$1,000', amount: null },
+    homepage_feature_artist: { label: '$150', amount: null },
+    homepage_takeover_day: { label: '$500', amount: null },
+    ai_imaging_pack: { label: '$400', amount: null }
+  };
+
+  function applyPrices(){
+    document.querySelectorAll('[data-price-for]').forEach(el=>{
+      const id = el.getAttribute('data-price-for');
+      if (!id || !PRICE[id]) return;
+      el.textContent = PRICE[id].label || '$—';
+    });
+    document.querySelectorAll('[data-btn-for]').forEach(btn=>{
+      const id = btn.getAttribute('data-btn-for');
+      if (!id || !PRICE[id]) return;
+      const base = btn.textContent.split('—')[0].trim();
+      // Normalize: if button already has "—", keep consistent
+      const label = PRICE[id].label || '$—';
+      // Keep the left side as-is if it already includes an emoji + words
+      if (btn.textContent.includes('Buy')){
+        // replace everything after "—" or append
+        if (btn.textContent.includes('—')) btn.textContent = btn.textContent.split('—')[0].trim() + ' — ' + label;
+        else btn.textContent = btn.textContent.trim() + ' — ' + label;
+      }
+    });
+  }
+  applyPrices();
+
+  // Access badge: based on localStorage.tkfm_user_features
+  (function(){
+    function getFeatures(){
+      try{
+        const raw = localStorage.getItem('tkfm_user_features') || '[]';
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){ return []; }
+    }
+    const features = getFeatures();
+    const badge = document.getElementById('accessBadge');
+    const hasCreator = features.includes('creator_pass_monthly') || features.includes('creator_pass_yearly');
+    const hasAny = features.length > 0;
+
+    if (!badge) return;
+
+    if (hasCreator){
+      badge.className = 'inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-[0.75rem] text-emerald-200';
+      badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span><strong>Access active</strong> — you can purchase + submit social campaigns.</span>';
+    } else if (hasAny){
+      badge.className = 'inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-amber-500/40 bg-amber-500/10 text-[0.75rem] text-amber-200';
+      badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span><span><strong>Partial unlocks detected</strong> — add Creator Pass for full lane.</span>';
+    } else {
+      badge.className = 'inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 text-[0.75rem] text-sky-200';
+      badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span><span><strong>Explore mode</strong> — buy any product below to activate instantly.</span>';
+    }
+  })();
+
+  // Checkout wiring (works even if tkfm-ui.js isn't present)
+  (function(){
+    function wire(btn){
+      if (!btn) return;
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-plan') || btn.getAttribute('data-feature');
+        if (!id) return;
+
+        btn.classList.add('btn-busy');
+        const original = btn.textContent;
+        btn.textContent = 'Redirecting…';
+
+        try{
+          const res = await fetch('/.netlify/functions/create-checkout-session', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ id })
+          });
+          const data = await res.json().catch(()=> ({}));
+          const url = data.url || data.checkoutUrl || data.sessionUrl;
+          if (url) window.location.href = url;
+          else throw new Error('No checkout url returned');
+        }catch(err){
+          btn.classList.remove('btn-busy');
+          btn.textContent = original;
+          console.error(err);
+          alert('Checkout error. Confirm this id is mapped in create-checkout-session.js: ' + id);
+        }
+      });
+    }
+    document.querySelectorAll('button[data-plan],button[data-feature]').forEach(wire);
+  })();
+</script>
+
+</body>
+</html>
