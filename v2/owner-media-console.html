@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Owner Media Console — Approve Podcasts + Video</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+  </style>
+
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Owner Media Console</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcasters</a>
+        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 Video</a>
+        <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 pill text-yellow-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
+      <span>Owner Only</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      Approve & publish media submissions (podcasts + video).
+    </h1>
+
+    <div class="card rounded-2xl p-6 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Auth</p>
+          <p class="text-sm text-slate-200/85">Owner key is required if <span class="mono">TKFM_OWNER_KEY</span> exists in Netlify env.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <input id="key" class="rounded-xl px-3 py-2 text-slate-50 w-[18rem]" placeholder="TKFM_OWNER_KEY"/>
+          <button id="saveKey" class="btn border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15">Save Key</button>
+          <button id="refresh" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
+        </div>
+      </div>
+      <p id="msg" class="text-sm text-slate-300/85"></p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card rounded-2xl p-5">
+        <h2 class="text-xl font-extrabold">Pending</h2>
+        <div id="pending" class="mt-4 space-y-3"></div>
+        <p id="pendingEmpty" class="text-slate-400 text-sm hidden mt-4">No pending submissions.</p>
+      </div>
+
+      <div class="card rounded-2xl p-5">
+        <h2 class="text-xl font-extrabold">Approved</h2>
+        <div id="approved" class="mt-4 space-y-3"></div>
+        <p id="approvedEmpty" class="text-slate-400 text-sm hidden mt-4">No approved items.</p>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
+      <p class="font-extrabold text-slate-50">What this does</p>
+      <ul class="mt-2 space-y-2">
+        <li>• Approve → item goes live in <a class="text-emerald-200 font-semibold hover:underline" href="media-directory.html">Media Directory</a>.</li>
+        <li>• Unapprove → item disappears from directory.</li>
+        <li>• Delete → item removed (soft delete).</li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    const el=(id)=>document.getElementById(id);
+    const msg=el('msg');
+
+    function getKey(){ return (localStorage.getItem('tkfm_owner_key') || '').trim(); }
+    function setKey(v){ localStorage.setItem('tkfm_owner_key', (v||'').trim()); }
+
+    el('key').value = getKey();
+
+    el('saveKey').addEventListener('click', ()=>{
+      setKey(el('key').value);
+      msg.textContent = '✅ Saved owner key in this browser.';
+      msg.className = 'text-sm text-emerald-300 font-semibold';
+    });
+
+    async function api(path, opts={}){
+      const key = getKey();
+      const headers = Object.assign({}, opts.headers||{});
+      if (key) headers['X-TKFM-Owner-Key'] = key;
+      const res = await fetch(path, Object.assign({}, opts, { headers }));
+      const data = await res.json().catch(()=>({}));
+      return { res, data };
+    }
+
+    function row(x, pending=true){
+      const safe=(s)=>String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const links = `
+        <a class="text-sky-200 hover:underline text-xs" href="${safe(x.primaryUrl)}" target="_blank" rel="noreferrer">primary</a>
+        ${x.secondaryUrl ? ` • <a class="text-sky-200 hover:underline text-xs" href="${safe(x.secondaryUrl)}" target="_blank" rel="noreferrer">secondary</a>` : ''}
+      `;
+      return `
+        <div class="border border-slate-700/50 rounded-xl p-3 bg-black/30">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-[0.65rem] uppercase tracking-[0.22em] text-slate-400">${safe(x.type)} • ${pending?'pending':'approved'}</p>
+              <p class="font-extrabold">${safe(x.title)}</p>
+              <p class="text-slate-300/85 text-sm mt-1">${safe(x.description||'')}</p>
+              <p class="mt-2">${links}</p>
+              <p class="text-slate-400 text-xs mt-2">${x.creatorName?('by '+safe(x.creatorName)):'')}${x.createdAt?(' • '+safe(x.createdAt.slice(0,10))):''}</p>
+            </div>
+            <div class="flex flex-col gap-2">
+              ${pending ? `
+                <button class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" data-action="approve" data-id="${safe(x.id)}">Approve</button>
+              ` : `
+                <button class="btn border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15" data-action="unapprove" data-id="${safe(x.id)}">Unapprove</button>
+              `}
+              <button class="btn border border-rose-500/40 bg-rose-500/10 text-rose-100 hover:bg-rose-500/15" data-action="delete" data-id="${safe(x.id)}">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function load(){
+      msg.textContent = '';
+      const pendingBox = el('pending');
+      const approvedBox = el('approved');
+      pendingBox.innerHTML = '';
+      approvedBox.innerHTML = '';
+      el('pendingEmpty').classList.add('hidden');
+      el('approvedEmpty').classList.add('hidden');
+
+      try {
+        const { res, data } = await api('/.netlify/functions/media-admin', { method:'GET' });
+        if (!res.ok || !data.ok) throw new Error(data.error || 'auth failed');
+
+        const items = Array.isArray(data.items) ? data.items : [];
+        const pending = items.filter(x=>x && x.status==='pending' && x.approved!==true);
+        const approved = items.filter(x=>x && x.approved===true && x.status!=='deleted');
+
+        if (!pending.length) el('pendingEmpty').classList.remove('hidden');
+        if (!approved.length) el('approvedEmpty').classList.remove('hidden');
+
+        pendingBox.innerHTML = pending.map(x=>row(x,true)).join('');
+        approvedBox.innerHTML = approved.map(x=>row(x,false)).join('');
+
+        document.querySelectorAll('button[data-action]').forEach(btn=>{
+          btn.addEventListener('click', async ()=>{
+            const action = btn.getAttribute('data-action');
+            const id = btn.getAttribute('data-id');
+            btn.disabled = true;
+            try {
+              const { res: r2, data: d2 } = await api('/.netlify/functions/media-admin', {
+                method:'POST',
+                headers: { 'Content-Type':'application/json' },
+                body: JSON.stringify({ action, id })
+              });
+              if (!r2.ok || !d2.ok) throw new Error(d2.error || 'update failed');
+              msg.textContent = '✅ Updated: ' + action + ' (' + id + ')';
+              msg.className = 'text-sm text-emerald-300 font-semibold';
+              await load();
+            } catch(e) {
+              msg.textContent = '❌ ' + (e.message || 'error');
+              msg.className = 'text-sm text-rose-300 font-semibold';
+            } finally {
+              btn.disabled = false;
+            }
+          });
+        });
+      } catch(e) {
+        msg.textContent = '❌ ' + (e.message || 'Failed to load. Set TKFM_OWNER_KEY or provide key.');
+        msg.className = 'text-sm text-rose-300 font-semibold';
+      }
+    }
+
+    el('refresh').addEventListener('click', load);
+    load();
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

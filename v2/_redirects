@@ -16,3 +16,7 @@
 /podcast     /podcast-engine.html    200
 /podcasts    /radio-podcasts.html    200
 /media       /radio-podcasts.html    200
+/media           /radio-media-gateway.html   200
+/media-directory /media-directory.html       200
+/media-submit    /media-submit.html          200
+/owner-media     /owner-media-console.html   200

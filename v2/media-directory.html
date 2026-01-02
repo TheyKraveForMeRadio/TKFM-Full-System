@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Media Directory — Podcasts + Video</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+  </style>
+
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">TKFM Media Directory</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcasters</a>
+        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 Video</a>
+        <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 pill text-emerald-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Listener Page</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      Watch & listen to featured podcasts + video shows on TKFM.
+    </h1>
+
+    <p class="text-slate-100/90 max-w-4xl">
+      This directory is for <span class="text-emerald-200 font-semibold">listeners</span>.
+      Creators apply using Media Submit, then the owner approves to publish.
+    </p>
+
+    <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="font-extrabold text-slate-50">Creators: get listed + get featured</p>
+          <p class="mt-1">Podcasters can join the monthly lane, submit show links, and TKFM schedules features.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a class="tab border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Media Submit</a>
+          <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html">🎙 Podcaster Lane</a>
+          <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="video-engine.html">🎬 Video Lane</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="space-y-4">
+      <div class="flex items-end justify-between gap-3 flex-wrap">
+        <h2 class="text-2xl md:text-3xl font-extrabold">🎧 Featured Podcasts</h2>
+        <div class="flex gap-2 flex-wrap">
+          <button id="refreshPodcasts" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Submit</a>
+        </div>
+      </div>
+      <div id="podcastGrid" class="grid md:grid-cols-3 gap-4"></div>
+      <p id="podcastEmpty" class="text-slate-400 text-sm hidden">No podcasts published yet. Owner: approve in Owner Media Console.</p>
+    </section>
+
+    <section class="space-y-4">
+      <div class="flex items-end justify-between gap-3 flex-wrap">
+        <h2 class="text-2xl md:text-3xl font-extrabold">🎥 Featured Video Shows</h2>
+        <div class="flex gap-2 flex-wrap">
+          <button id="refreshVideos" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Submit</a>
+        </div>
+      </div>
+      <div id="videoGrid" class="grid md:grid-cols-3 gap-4"></div>
+      <p id="videoEmpty" class="text-slate-400 text-sm hidden">No videos published yet. Owner: approve in Owner Media Console.</p>
+    </section>
+
+    <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
+      <p class="font-extrabold text-slate-50">Owner workflow</p>
+      <ul class="mt-2 space-y-2">
+        <li>• Creators submit → status is <span class="mono">pending</span>.</li>
+        <li>• Owner approves in <a class="text-yellow-200 font-semibold hover:underline" href="owner-media-console.html">Owner Media Console</a>.</li>
+        <li>• Approved items show up here automatically.</li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    function card(item){
+      const safe = (s)=>String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const cover = item.coverUrl ? `<img src="${safe(item.coverUrl)}" class="w-full h-40 object-cover rounded-xl border border-slate-700/50" alt="cover">` : '';
+      const creator = item.creatorName ? `<p class="text-slate-400 text-xs mt-2">by ${safe(item.creatorName)}</p>` : '';
+      const desc = item.description ? `<p class="text-slate-300/85 text-sm mt-2">${safe(item.description)}</p>` : '';
+      const secondary = item.secondaryUrl ? `<a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="${safe(item.secondaryUrl)}" target="_blank" rel="noreferrer">🔗 More</a>` : '';
+      const tagLine = Array.isArray(item.tags) && item.tags.length ? `<p class="text-[0.65rem] uppercase tracking-[0.22em] text-slate-400 mt-3">${safe(item.tags.join(' • '))}</p>` : '';
+      return `
+        <div class="card rounded-2xl p-5">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">${item.type==='video'?'Featured Video':'Featured Podcast'}</p>
+          <h3 class="text-lg font-extrabold mt-1">${safe(item.title)}</h3>
+          ${cover}
+          ${creator}
+          ${desc}
+          ${tagLine}
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="${safe(item.primaryUrl)}" target="_blank" rel="noreferrer">▶ Watch / Listen</a>
+            ${secondary}
+          </div>
+        </div>
+      `;
+    }
+
+    async function load(type){
+      const grid = document.getElementById(type==='podcast' ? 'podcastGrid' : 'videoGrid');
+      const empty = document.getElementById(type==='podcast' ? 'podcastEmpty' : 'videoEmpty');
+      grid.innerHTML = '';
+      empty.classList.add('hidden');
+      try {
+        const res = await fetch(`/.netlify/functions/media-list?type=${encodeURIComponent(type)}&limit=18`);
+        const data = await res.json();
+        const items = (data && data.items) ? data.items : [];
+        if (!items.length) {
+          empty.classList.remove('hidden');
+          return;
+        }
+        grid.innerHTML = items.map(card).join('');
+      } catch(e) {
+        empty.textContent = 'Failed to load directory. Check function: media-list.js';
+        empty.classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('refreshPodcasts').addEventListener('click', ()=>load('podcast'));
+    document.getElementById('refreshVideos').addEventListener('click', ()=>load('video'));
+    load('podcast'); load('video');
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Media Submit — Podcast / Video</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+  </style>
+
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">TKFM Media Submit</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcasters</a>
+        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 Video</a>
+        <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-3xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Podcast / Video Application</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      Submit your show to be featured inside TKFM Radio.
+    </h1>
+
+    <p class="text-slate-100/90">
+      Submit your show links and assets. Your submission goes to <span class="mono">pending</span> until approved by the owner.
+      Podcasters can optionally join the monthly lane in <a class="text-sky-200 font-semibold hover:underline" href="podcast-engine.html">Podcast Engine</a>.
+    </p>
+
+    <div class="card rounded-2xl p-6 space-y-4">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Type</label>
+          <select id="type" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50">
+            <option value="podcast">Podcast</option>
+            <option value="video">Video Show</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Show Title</label>
+          <input id="title" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Your Podcast / Show Name"/>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Short Description</label>
+        <textarea id="description" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" rows="3" placeholder="What is the show about? Who is it for?"></textarea>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Primary Link (episode / playlist / channel)</label>
+          <input id="primaryUrl" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://youtube.com/... or https://open.spotify.com/..."/>
+        </div>
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Secondary Link (optional)</label>
+          <input id="secondaryUrl" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Website / top episode / channel link"/>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Cover Image URL (optional)</label>
+          <input id="coverUrl" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://.../cover.jpg"/>
+        </div>
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Creator Name</label>
+          <input id="creatorName" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Host / Brand"/>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Contact Email (optional)</label>
+          <input id="email" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="name@email.com"/>
+        </div>
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Tags (optional)</label>
+          <input id="tags" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="hiphop, culture, interviews, sports"/>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 pt-2">
+        <button id="submitBtn" class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15">🚀 Submit</button>
+        <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="media-directory.html">🎥 View Directory</a>
+      </div>
+
+      <p id="msg" class="text-sm text-slate-300/85"></p>
+    </div>
+  </main>
+
+  <script>
+    const el = (id)=>document.getElementById(id);
+
+    el('submitBtn').addEventListener('click', async ()=>{
+      const btn = el('submitBtn');
+      const msg = el('msg');
+      msg.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      const payload = {
+        type: el('type').value,
+        title: el('title').value.trim(),
+        description: el('description').value.trim(),
+        primaryUrl: el('primaryUrl').value.trim(),
+        secondaryUrl: el('secondaryUrl').value.trim(),
+        coverUrl: el('coverUrl').value.trim(),
+        creatorName: el('creatorName').value.trim(),
+        email: el('email').value.trim(),
+        tags: el('tags').value.split(',').map(s=>s.trim()).filter(Boolean).slice(0,10)
+      };
+
+      try {
+        const res = await fetch('/.netlify/functions/media-submit', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(()=>({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || 'submit failed');
+
+        msg.textContent = '✅ Submitted. Status: pending (owner approval required).';
+        msg.className = 'text-sm text-emerald-300 font-semibold';
+
+        ['title','description','primaryUrl','secondaryUrl','coverUrl','creatorName','email','tags'].forEach(id=>el(id).value='');
+      } catch(e) {
+        msg.textContent = '❌ ' + (e.message || 'Submit error');
+        msg.className = 'text-sm text-rose-300 font-semibold';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Submit';
+      }
+    });
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

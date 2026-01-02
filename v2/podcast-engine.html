@@ -21,8 +21,10 @@
     .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
     .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
     .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
-    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
   </style>
 
 </head>
@@ -39,9 +41,9 @@
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
-        <a href="radio-podcasts.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
-        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 For Podcasters</a>
-        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 For Video</a>
+        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcasters</a>
+        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 Video</a>
         <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
       </nav>
     </div>
@@ -83,7 +85,7 @@
         </ul>
         <div class="mt-5 flex flex-wrap gap-2">
           <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" data-plan="podcast_creator_pass_monthly">💳 Start Monthly</button>
-          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="radio-podcasts.html">🎥 View Directory</a>
+          <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="media-submit.html">📝 Media Submit</a>
         </div>
       </div>
 
@@ -106,7 +108,7 @@
         </ul>
         <div class="mt-5 flex flex-wrap gap-2">
           <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" data-feature="podcast_interview_30min">💳 Buy Now</button>
-          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Media Submit</a>
         </div>
       </div>
 
@@ -129,7 +131,7 @@
         </ul>
         <div class="mt-5 flex flex-wrap gap-2">
           <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" data-feature="podcast_launch_pack">💳 Buy Now</button>
-          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Media Submit</a>
         </div>
       </div>
     </div>
@@ -137,27 +139,18 @@
     <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
       <p class="font-extrabold text-slate-50">Where listeners see it</p>
       <ul class="mt-2 space-y-2">
-        <li>• Listeners browse the <a class="text-emerald-200 font-semibold hover:underline" href="radio-podcasts.html">Media Directory</a> from the Radio side.</li>
+        <li>• Listeners browse the <a class="text-emerald-200 font-semibold hover:underline" href="media-directory.html">Media Directory</a> from the Radio side.</li>
         <li>• Your show links out to YouTube/Spotify/Apple (or your website).</li>
         <li>• Clips can be promoted through Social Motion to drive extra plays.</li>
       </ul>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="media-directory.html">🎥 View Directory</a>
+        <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Media Submit</a>
+      </div>
     </div>
   </main>
 
-  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
-    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
-      <p>© <span id="year"></span> They Krave For Me Radio</p>
-      <div class="flex gap-2 flex-wrap">
-        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
-        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
-        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
-      </div>
-    </div>
-  </footer>
-
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-
     // Fallback checkout wiring
     (function(){
       document.querySelectorAll('button[data-feature],button[data-plan]').forEach(function(btn){
@@ -173,7 +166,7 @@
               headers:{'Content-Type':'application/json'},
               body: JSON.stringify({ id: id })
             });
-            const data = await res.json().catch(function(){ return {}; });
+            const data = await res.json().catch(()=>({}));
             const url = data.url || data.checkoutUrl || data.sessionUrl;
             if (url) window.location.href = url;
             else throw new Error('No checkout url returned');
@@ -186,6 +179,19 @@
       });
     })();
   </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
 
