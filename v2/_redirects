@@ -20,3 +20,8 @@
 /media-directory /media-directory.html       200
 /media-submit    /media-submit.html          200
 /owner-media     /owner-media-console.html   200
+/tv              /radio-tv.html         200
+/tv-config        /tv-config.html        200
+/tv              /radio-tv.html              200
+/tv-config        /tv-config.html             200
+/owner-tv         /owner-tv-console.html      200
