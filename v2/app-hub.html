@@ -7,22 +7,11 @@
   <meta name="description" content="Top Radio + Label engines for DJs, Artists, Producers — and Platform Ops."/>
   <style>
     :root{
-      --bg:#020617;
-      --stroke:rgba(255,255,255,.12);
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-
-      /* TKFM RADIO */
-      --purple:#a855f7;
-      --pink:#ec4899;
-      --cyan:#22d3ee;
-      --blue:#3b82f6;
-
-      /* TKFM RECORDS */
-      --gold:#facc15;
-      --amber:#f97316;
-
-      --red:#ef4444;
+      --bg:#020617; --stroke:rgba(255,255,255,.12);
+      --text:#e5e7eb; --muted:#94a3b8;
+      --purple:#a855f7; --pink:#ec4899; --cyan:#22d3ee; --blue:#3b82f6;
+      --gold:#facc15; --amber:#f97316;
+      --red:#ef4444; --green:#22c55e;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -38,30 +27,35 @@
         var(--bg);
     }
     a{color:inherit;text-decoration:none}
-    .wrap{max-width:1180px;margin:0 auto;padding:22px 16px 80px}
+    .wrap{max-width:1180px;margin:0 auto;padding:18px 16px 80px}
+
     .top{
       position:sticky;top:0;z-index:50;
       display:flex;align-items:center;justify-content:space-between;gap:14px;
       padding:14px 16px;border:1px solid var(--stroke);border-radius:18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.35));
       backdrop-filter: blur(12px);
     }
     .brand{display:flex;align-items:center;gap:14px}
     .logos{display:flex;align-items:center;gap:10px}
-    .logos img{width:46px;height:46px;object-fit:contain}
+    .logos img{width:44px;height:44px;object-fit:contain}
     .logos .radio{filter: drop-shadow(0 12px 30px rgba(168,85,247,.28))}
     .logos .records{filter: drop-shadow(0 12px 30px rgba(250,204,21,.22))}
     .t1{font-weight:950;letter-spacing:.02em}
     .t2{font-size:12px;color:var(--muted);margin-top:2px}
-    .pill{
-      display:flex;align-items:center;gap:10px;
-      font-size:12px;color:var(--muted);
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.04);
+
+    .nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+    .nav a{
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:900;
+      border:1px solid var(--stroke);background:rgba(255,255,255,.04);
       padding:8px 10px;border-radius:999px;
-      white-space:nowrap;
     }
-    .dot{width:10px;height:10px;border-radius:999px;background:var(--cyan);box-shadow:0 0 18px rgba(34,211,238,.55)}
+    .nav a:hover{background:rgba(255,255,255,.06)}
+    .nav .radio{border-color: rgba(168,85,247,.35)}
+    .nav .label{border-color: rgba(250,204,21,.35)}
+    .nav .blue{border-color: rgba(34,211,238,.30)}
+    .nav .owner{border-color: rgba(239,68,68,.35)}
+
     .hero{
       margin-top:14px;
       border:1px solid var(--stroke);
@@ -74,21 +68,7 @@
     @media (max-width: 980px){ .heroGrid{grid-template-columns:1fr} }
     .h1{margin:0 0 8px;font-size:32px;font-weight:950;line-height:1.05}
     .sub{margin:0;color:var(--muted);line-height:1.6}
-    .ctaRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-    .btn{
-      border-radius:14px;border:1px solid var(--stroke);
-      background: rgba(255,255,255,.05);
-      padding:10px 12px;
-      color:var(--text);
-      font-weight:900;
-      display:inline-flex;align-items:center;gap:10px;
-      transition: transform .12s ease, background .12s ease;
-      cursor:pointer;
-    }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.07)}
-    .btn.radio{border-color: rgba(168,85,247,.55);background: linear-gradient(90deg, rgba(168,85,247,.22), rgba(236,72,153,.16))}
-    .btn.label{border-color: rgba(250,204,21,.55);background: linear-gradient(90deg, rgba(250,204,21,.16), rgba(249,115,22,.10))}
-    .btn.blue{border-color: rgba(59,130,246,.55);background: linear-gradient(90deg, rgba(59,130,246,.20), rgba(34,211,238,.14))}
+
     .panel{
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.04);
@@ -101,6 +81,7 @@
     .k{font-size:12px;color:var(--muted)}
     .v{font-size:12px;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;word-break:break-word}
     .hr{height:1px;background: rgba(255,255,255,.10);margin:14px 0}
+
     .topGrid{margin-top:14px;display:grid;grid-template-columns: repeat(12,1fr);gap:12px}
     .tile{
       grid-column: span 3;
@@ -117,6 +98,7 @@
     .tileTitle{margin:0 0 6px;font-weight:950}
     .tileDesc{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
     .go{margin-top:10px;display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:12px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);padding:8px 10px;border-radius:999px}
+
     .rGlow::after{content:"";position:absolute;inset:-40px;background:
       radial-gradient(260px 190px at 20% 20%, rgba(168,85,247,.28), transparent 60%),
       radial-gradient(260px 190px at 80% 30%, rgba(236,72,153,.20), transparent 60%);pointer-events:none}
@@ -126,6 +108,10 @@
     .cGlow::after{content:"";position:absolute;inset:-40px;background:
       radial-gradient(260px 190px at 25% 25%, rgba(34,211,238,.16), transparent 60%),
       radial-gradient(260px 190px at 80% 35%, rgba(59,130,246,.14), transparent 60%);pointer-events:none}
+    .oGlow::after{content:"";position:absolute;inset:-40px;background:
+      radial-gradient(260px 190px at 25% 25%, rgba(239,68,68,.18), transparent 60%),
+      radial-gradient(260px 190px at 80% 35%, rgba(34,197,94,.10), transparent 60%);pointer-events:none}
+
     .toolbar{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
     .search{flex:1;min-width:240px;display:flex;align-items:center;gap:10px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);border-radius:14px;padding:10px 12px}
     .search input{width:100%;border:none;outline:none;background:transparent;color:var(--text);font-weight:700;font-size:13px}
@@ -133,6 +119,7 @@
     .chips{display:flex;flex-wrap:wrap;gap:8px}
     .chip{border:1px solid var(--stroke);background:rgba(255,255,255,.04);padding:8px 10px;border-radius:999px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
     .chip.active{color:var(--text);border-color: rgba(34,211,238,.40);background: rgba(34,211,238,.08)}
+
     .grid{margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
     .section{grid-column:span 12;border:1px solid var(--stroke);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));border-radius:18px;padding:16px;backdrop-filter: blur(12px)}
     .sectionHead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -147,10 +134,12 @@
     .tag{font-size:11px;padding:6px 8px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--muted)}
     .cardTitle{font-weight:950;margin:0 0 6px}
     .cardDesc{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+
     .accentRadio{border-color: rgba(168,85,247,.35)}
     .accentLabel{border-color: rgba(250,204,21,.35)}
     .accentBlue{border-color: rgba(34,211,238,.30)}
     .accentOwner{border-color: rgba(239,68,68,.35)}
+
     .footer{margin-top:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);border-radius:18px;padding:14px;color:var(--muted);font-size:12px;line-height:1.55}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
   </style>
@@ -161,36 +150,37 @@
     <div class="top">
       <div class="brand">
         <div class="logos">
-          <img class="radio" src="/public/tkfm-radio-logo.png" alt="TKFM Radio"/>
-          <img class="records" src="/public/tkfm-records-logo.png" alt="TKFM Records"/>
+          <img class="radio" src="/tkfm-radio-logo.png" alt="TKFM Radio"/>
+          <img class="records" src="/tkfm-records-logo.png" alt="TKFM Records"/>
         </div>
         <div>
           <div class="t1">TKFM ENGINES HUB</div>
           <div class="t2">Top engines for DJs / Artists / Producers — and Radio + Label Platform Ops</div>
         </div>
       </div>
-      <div class="pill"><span class="dot"></span><span>Neon Radio + Gold Records</span></div>
+
+      <div class="nav">
+        <a class="radio" href="radio-hub.html">📻 Radio</a>
+        <a class="label" href="label-hub.html">🏛 Label</a>
+        <a class="blue" href="pricing.html">💳 Pricing</a>
+        <a class="blue" href="dashboard.html">📊 Dashboard</a>
+        <a class="owner" href="owner-login.html">🔒 Owner</a>
+      </div>
     </div>
 
     <div class="hero">
       <div class="heroGrid">
         <div>
-          <div class="h1">Top Engines first.<br/>Directory next.</div>
+          <div class="h1">Top Engines first.<br/>Everything else organized.</div>
           <p class="sub">
-            You wanted the <strong>TOP Radio + Label engines</strong> for creators and for the platform.
-            The tiles below are the “main buttons” — then the full lanes are underneath.
+            This hub puts the <strong>main Radio + Label + Creator engines</strong> at the top,
+            then lists the full ecosystem by lane.
           </p>
-          <div class="ctaRow">
-            <a class="btn radio" href="/radio-hub.html">Radio Hub</a>
-            <a class="btn label" href="/label-hub.html">Label Hub</a>
-            <a class="btn blue" href="/pricing.html">Pricing / Checkout</a>
-            <a class="btn" href="/unlocks.html">Unlocks</a>
-          </div>
         </div>
 
         <div class="panel">
-          <div class="panelTitle">Platform Core</div>
-          <p class="panelSmall">Radio + Label engines that power the whole machine.</p>
+          <div class="panelTitle">Core machine</div>
+          <p class="panelSmall">Artist intake → Label ops → Radio ops → Revenue engines.</p>
           <div class="kv">
             <div class="k">Creator Intake</div><div class="v">artist-upload → submissions → label review</div>
             <div class="k">Label Ops</div><div class="v">contract lab → onboarding → accounts</div>
@@ -198,27 +188,26 @@
             <div class="k">Unlock key</div><div class="v mono">tkfm_user_features</div>
           </div>
           <div class="hr"></div>
-          <p class="panelSmall">Use search + filters to jump instantly.</p>
+          <p class="panelSmall">Search + filters jump instantly.</p>
         </div>
       </div>
 
-      <!-- TOP ENGINES -->
       <div class="topGrid">
-        <a class="tile rGlow accentRadio" href="/radio-hub.html" data-tags="top radio hub"><div class="tileTitle">Top Radio: Radio Hub</div><p class="tileDesc">Main radio control room + entry point.</p><span class="go">Open →</span></a>
-        <a class="tile rGlow accentRadio" href="/autopilot-engine.html" data-tags="top radio autopilot"><div class="tileTitle">Top Radio: Autopilot</div><p class="tileDesc">Submissions → spins → placement automation.</p><span class="go">Open →</span></a>
-        <a class="tile cGlow accentBlue" href="/feature-engine.html" data-tags="top money feature engine"><div class="tileTitle">Top Money: Feature Engine</div><p class="tileDesc">Homepage features + rotation boosts.</p><span class="go">Open →</span></a>
-        <a class="tile cGlow accentBlue" href="/social-engine.html" data-tags="top money social engine"><div class="tileTitle">Top Money: Social Engine</div><p class="tileDesc">Paid campaigns that create momentum.</p><span class="go">Open →</span></a>
+        <a class="tile rGlow accentRadio" href="radio-hub.html" data-tags="top radio hub"><div class="tileTitle">Top Radio: Radio Hub</div><p class="tileDesc">Main station hub + entry point.</p><span class="go">Open →</span></a>
+        <a class="tile rGlow accentRadio" href="autopilot-engine.html" data-tags="top radio autopilot"><div class="tileTitle">Top Radio: Autopilot</div><p class="tileDesc">Submissions → spins → placement automation.</p><span class="go">Open →</span></a>
+        <a class="tile cGlow accentBlue" href="feature-engine.html" data-tags="top promo feature engine store"><div class="tileTitle">Top Promo: AI Feature Store</div><p class="tileDesc">Homepage features + rotation boosts.</p><span class="go">Open →</span></a>
+        <a class="tile cGlow accentBlue" href="social-engine.html" data-tags="top promo social motion"><div class="tileTitle">Top Promo: Social Motion</div><p class="tileDesc">Paid campaigns → reach + momentum.</p><span class="go">Open →</span></a>
 
-        <a class="tile lGlow accentLabel" href="/label-hub.html" data-tags="top label hub"><div class="tileTitle">Top Label: Label Hub</div><p class="tileDesc">Records HQ — submissions, contracts, onboarding.</p><span class="go">Open →</span></a>
-        <a class="tile lGlow accentLabel" href="/label-contract-lab.html" data-tags="top label contract lab"><div class="tileTitle">Top Label: Contract Lab</div><p class="tileDesc">Generate terms, splits, deliverables fast.</p><span class="go">Open →</span></a>
-        <a class="tile cGlow accentBlue" href="/dj-mixtape-hosting.html" data-tags="top dj mixtape hosting"><div class="tileTitle">Top DJ: Mixtape Hosting</div><p class="tileDesc">Your signature service product tiers.</p><span class="go">Open →</span></a>
-        <a class="tile cGlow accentBlue" href="/pricing.html" data-tags="top pricing checkout"><div class="tileTitle">Top Checkout: Pricing</div><p class="tileDesc">Stripe unlock front door for everyone.</p><span class="go">Open →</span></a>
+        <a class="tile lGlow accentLabel" href="label-hub.html" data-tags="top label hub records"><div class="tileTitle">Top Label: Label Hub</div><p class="tileDesc">Records HQ — submissions, contracts, onboarding.</p><span class="go">Open →</span></a>
+        <a class="tile lGlow accentLabel" href="label-contract-lab.html" data-tags="top label contract lab"><div class="tileTitle">Top Label: Contract Lab</div><p class="tileDesc">Generate terms, splits, deliverables fast.</p><span class="go">Open →</span></a>
+        <a class="tile cGlow accentBlue" href="dj-mixtape-hosting.html" data-tags="top dj mixtape hosting"><div class="tileTitle">Top DJ: Mixtape Hosting</div><p class="tileDesc">Signature service tiers + intake.</p><span class="go">Open →</span></a>
+        <a class="tile oGlow accentOwner" href="owner-ops-dashboard.html" data-tags="top owner ops dashboard"><div class="tileTitle">Top Ops: Owner Ops</div><p class="tileDesc">Master ops console for the platform.</p><span class="go">Open →</span></a>
       </div>
 
       <div class="toolbar">
         <div class="search">
           <span style="color:var(--muted);font-weight:900;font-size:12px">SEARCH</span>
-          <input id="q" placeholder="type: mixtape, label, sponsor, autopilot, contract…" autocomplete="off"/>
+          <input id="q" placeholder="type: mixtape, label, sponsor, autopilot, contract, ai dj…" autocomplete="off"/>
         </div>
         <div class="chips">
           <div class="chip active" data-filter="all">All</div>
@@ -233,82 +222,111 @@
 
     <div class="grid">
 
-      <!-- CREATOR LANE -->
       <section class="section" data-section="creator">
         <div class="sectionHead">
           <h2 class="sTitle">Creator Lane — DJs / Artists / Producers</h2>
           <p class="sNote">Upload, promote, sell mixtapes, manage orders — the public-facing money lane.</p>
         </div>
         <div class="cards">
-          <a class="card accentBlue" href="/artist-upload.html" data-tags="creator artist upload submissions"><div class="cardTitle">Artist Upload</div><p class="cardDesc">Submit music to TKFM (feeds submissions + label review).</p><div class="tagRow"><span class="tag">Artist</span><span class="tag">Intake</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/submit.html" data-tags="creator submit"><div class="cardTitle">Quick Submit</div><p class="cardDesc">Fast submission lane for drops + intake.</p><div class="tagRow"><span class="tag">Fast</span><span class="tag">Intake</span></div><span class="go">Open →</span></a>
-          <a class="card accentRadio" href="/dj-portal.html" data-tags="creator dj portal"><div class="cardTitle">DJ Portal</div><p class="cardDesc">DJ home base: tools, schedule, orders, access.</p><div class="tagRow"><span class="tag">DJ</span><span class="tag">Ops</span></div><span class="go">Open →</span></a>
-          <a class="card accentRadio" href="/dj-mixtape-hosting.html" data-tags="creator dj mixtape hosting"><div class="cardTitle">Mixtape Hosting (DJ KRAVE)</div><p class="cardDesc">Sell mixtape tiers + intake workflow.</p><div class="tagRow"><span class="tag">Mixtape</span><span class="tag">Paid</span></div><span class="go">Open →</span></a>
-          <a class="card accentRadio" href="/mixtape-order.html" data-tags="creator mixtape order"><div class="cardTitle">Mixtape Order</div><p class="cardDesc">Order + checkout for mixtape services.</p><div class="tagRow"><span class="tag">Order</span><span class="tag">Checkout</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/feature-engine.html" data-tags="creator promo feature engine"><div class="cardTitle">Feature Engine</div><p class="cardDesc">Homepage features + rotation boosts.</p><div class="tagRow"><span class="tag">Promo</span><span class="tag">Spins</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/social-engine.html" data-tags="creator promo social engine"><div class="cardTitle">Social Engine</div><p class="cardDesc">Paid social campaigns that convert.</p><div class="tagRow"><span class="tag">Paid</span><span class="tag">Motion</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/pricing.html" data-tags="creator pricing checkout"><div class="cardTitle">Pricing / Plans</div><p class="cardDesc">Creator + DJ + Label plans (Stripe unlocks).</p><div class="tagRow"><span class="tag">Stripe</span><span class="tag">Unlocks</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="artist-upload.html" data-tags="creator artist upload submissions"><div class="cardTitle">Artist Upload</div><p class="cardDesc">Submit music to TKFM (feeds submissions + label review).</p><div class="tagRow"><span class="tag">Artist</span><span class="tag">Intake</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="artist-drop.html" data-tags="creator artist drop release"><div class="cardTitle">Artist Drop</div><p class="cardDesc">Drop-ready lane for releases and announcements.</p><div class="tagRow"><span class="tag">Drop</span><span class="tag">Release</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="artist-submissions-console.html" data-tags="creator submissions console"><div class="cardTitle">Submissions Console</div><p class="cardDesc">Track submitted songs + status movement.</p><div class="tagRow"><span class="tag">Status</span><span class="tag">Tracking</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentRadio" href="dj-portal.html" data-tags="creator dj portal"><div class="cardTitle">DJ Portal</div><p class="cardDesc">DJ home base: tools, schedule, orders, access.</p><div class="tagRow"><span class="tag">DJ</span><span class="tag">Ops</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="dj-tools.html" data-tags="creator dj tools"><div class="cardTitle">DJ Tools</div><p class="cardDesc">DJ toolkit pages and utilities.</p><div class="tagRow"><span class="tag">Tools</span><span class="tag">DJ</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="dj-schedule.html" data-tags="creator dj schedule"><div class="cardTitle">DJ Schedule</div><p class="cardDesc">Scheduling and rotation planning.</p><div class="tagRow"><span class="tag">Schedule</span><span class="tag">Radio</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentRadio" href="dj-mixtape-hosting.html" data-tags="creator dj mixtape hosting"><div class="cardTitle">Mixtape Hosting (DJ KRAVE)</div><p class="cardDesc">Sell mixtape tiers + intake workflow.</p><div class="tagRow"><span class="tag">Mixtape</span><span class="tag">Paid</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="mixtape-order.html" data-tags="creator mixtape order checkout"><div class="cardTitle">Mixtape Order</div><p class="cardDesc">Order + checkout flow for mixtape services.</p><div class="tagRow"><span class="tag">Order</span><span class="tag">Checkout</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="dj-mixtape-orders.html" data-tags="creator dj mixtape orders"><div class="cardTitle">Mixtape Orders</div><p class="cardDesc">Order tracking for DJ mixtape clients.</p><div class="tagRow"><span class="tag">Orders</span><span class="tag">DJ</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentBlue" href="mixtape-catalog.html" data-tags="creator mixtape catalog"><div class="cardTitle">Mixtape Catalog</div><p class="cardDesc">Catalog view for mixtapes and releases.</p><div class="tagRow"><span class="tag">Catalog</span><span class="tag">Mixtape</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="mixtape-intake-dashboard.html" data-tags="creator mixtape intake dashboard"><div class="cardTitle">Mixtape Intake Dashboard</div><p class="cardDesc">Central intake view for mixtape workflow.</p><div class="tagRow"><span class="tag">Intake</span><span class="tag">Dashboard</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="mixtape-label-console.html" data-tags="creator mixtape label console"><div class="cardTitle">Mixtape Label Console</div><p class="cardDesc">Label-side view for mixtape spotlight + placement.</p><div class="tagRow"><span class="tag">Label</span><span class="tag">Console</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentBlue" href="feature-engine.html" data-tags="creator promo feature engine"><div class="cardTitle">AI Feature Store</div><p class="cardDesc">Homepage features + rotation boosts.</p><div class="tagRow"><span class="tag">Promo</span><span class="tag">Spins</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="social-engine.html" data-tags="creator promo social motion engine"><div class="cardTitle">Social Motion Engine</div><p class="cardDesc">Paid campaigns that convert into momentum.</p><div class="tagRow"><span class="tag">Paid</span><span class="tag">Motion</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="pricing.html" data-tags="creator pricing checkout"><div class="cardTitle">Pricing / Plans</div><p class="cardDesc">Creator + DJ + Label plans (Stripe unlocks).</p><div class="tagRow"><span class="tag">Stripe</span><span class="tag">Unlocks</span></div><span class="go">Open →</span></a>
         </div>
       </section>
 
-      <!-- RADIO LANE -->
       <section class="section" data-section="radio">
         <div class="sectionHead">
           <h2 class="sTitle">Radio Lane — Station Engines</h2>
           <p class="sNote">On-air machine: hubs, autopilot, now playing, sponsors, momentum.</p>
         </div>
         <div class="cards">
-          <a class="card accentRadio" href="/radio-hub.html" data-tags="radio hub"><div class="cardTitle">Radio Hub</div><p class="cardDesc">Main radio hub for listeners + creators.</p><div class="tagRow"><span class="tag">Radio</span><span class="tag">Hub</span></div><span class="go">Open →</span></a>
-          <a class="card accentRadio" href="/autopilot-engine.html" data-tags="radio autopilot"><div class="cardTitle">Autopilot Engine</div><p class="cardDesc">Automation lane: submissions → spins → placements.</p><div class="tagRow"><span class="tag">Autopilot</span><span class="tag">Ops</span></div><span class="go">Open →</span></a>
-          <a class="card accentRadio" href="/now-playing.html" data-tags="radio now playing"><div class="cardTitle">Now Playing</div><p class="cardDesc">Live track status page (hype + transparency).</p><div class="tagRow"><span class="tag">Live</span><span class="tag">Metadata</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/sponsor-rotator.html" data-tags="radio sponsor rotator"><div class="cardTitle">Sponsor Rotator</div><p class="cardDesc">Paid sponsor exposure loop.</p><div class="tagRow"><span class="tag">Sponsor</span><span class="tag">Rotation</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/sponsors.html" data-tags="radio sponsor sales"><div class="cardTitle">Sponsor Sales</div><p class="cardDesc">Sell sponsor slots + packages.</p><div class="tagRow"><span class="tag">Sales</span><span class="tag">Sponsor</span></div><span class="go">Open →</span></a>
-          <a class="card accentRadio" href="/radio-stream-gateway.html" data-tags="radio stream gateway"><div class="cardTitle">Stream Gateway</div><p class="cardDesc">Stream entry point / access gate.</p><div class="tagRow"><span class="tag">Stream</span><span class="tag">Gate</span></div><span class="go">Open →</span></a>
-          <a class="card accentRadio" href="/momentum-engine.html" data-tags="radio momentum"><div class="cardTitle">Momentum Engine</div><p class="cardDesc">Track movement across promos/spins/placements.</p><div class="tagRow"><span class="tag">Momentum</span><span class="tag">Analytics</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="radio-hub.html" data-tags="radio hub"><div class="cardTitle">Radio Hub</div><p class="cardDesc">Main radio hub for listeners + creators.</p><div class="tagRow"><span class="tag">Radio</span><span class="tag">Hub</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="autopilot-engine.html" data-tags="radio autopilot engine"><div class="cardTitle">Autopilot Engine</div><p class="cardDesc">Automation lane: submissions → spins → placements.</p><div class="tagRow"><span class="tag">Autopilot</span><span class="tag">Ops</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="now-playing.html" data-tags="radio now playing"><div class="cardTitle">Now Playing</div><p class="cardDesc">Live track status page (hype + transparency).</p><div class="tagRow"><span class="tag">Live</span><span class="tag">Metadata</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentBlue" href="sponsor-rotator.html" data-tags="radio sponsor rotator"><div class="cardTitle">Sponsor Rotator</div><p class="cardDesc">Paid sponsor exposure loop.</p><div class="tagRow"><span class="tag">Sponsor</span><span class="tag">Rotation</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="sponsors.html" data-tags="radio sponsor sales packages"><div class="cardTitle">Sponsor Sales</div><p class="cardDesc">Sell sponsor slots + packages.</p><div class="tagRow"><span class="tag">Sales</span><span class="tag">Sponsor</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="radio-stream-gateway.html" data-tags="radio stream gateway"><div class="cardTitle">Stream Gateway</div><p class="cardDesc">Stream entry / access gate.</p><div class="tagRow"><span class="tag">Stream</span><span class="tag">Gate</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentRadio" href="momentum-engine.html" data-tags="radio momentum engine analytics"><div class="cardTitle">Momentum Engine</div><p class="cardDesc">Track movement across promos/spins/placements.</p><div class="tagRow"><span class="tag">Momentum</span><span class="tag">Analytics</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="feature-revenue.html" data-tags="radio revenue feature revenue"><div class="cardTitle">Feature Revenue</div><p class="cardDesc">Revenue view for feature products.</p><div class="tagRow"><span class="tag">Revenue</span><span class="tag">Promo</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="media-kit.html" data-tags="radio media kit sponsors"><div class="cardTitle">Media Kit</div><p class="cardDesc">Sell sponsorship packages with clean presentation.</p><div class="tagRow"><span class="tag">Media</span><span class="tag">Sponsors</span></div><span class="go">Open →</span></a>
         </div>
       </section>
 
-      <!-- LABEL LANE -->
       <section class="section" data-section="label">
         <div class="sectionHead">
           <h2 class="sTitle">Label Lane — TKFM Records Engines</h2>
           <p class="sNote">Submissions → review → contracts → onboarding → accounts.</p>
         </div>
         <div class="cards">
-          <a class="card accentLabel" href="/label-hub.html" data-tags="label hub"><div class="cardTitle">Label Hub</div><p class="cardDesc">Records HQ for label ops.</p><div class="tagRow"><span class="tag">Records</span><span class="tag">HQ</span></div><span class="go">Open →</span></a>
-          <a class="card accentLabel" href="/label-submissions.html" data-tags="label submissions review"><div class="cardTitle">Label Submissions</div><p class="cardDesc">Review queue for artist submissions.</p><div class="tagRow"><span class="tag">Review</span><span class="tag">Queue</span></div><span class="go">Open →</span></a>
-          <a class="card accentLabel" href="/label-contract-lab.html" data-tags="label contract lab"><div class="cardTitle">Contract Lab</div><p class="cardDesc">Generate label contracts + terms.</p><div class="tagRow"><span class="tag">Contracts</span><span class="tag">AI</span></div><span class="go">Open →</span></a>
-          <a class="card accentLabel" href="/label-onboarding.html" data-tags="label onboarding"><div class="cardTitle">Label Onboarding</div><p class="cardDesc">Bring artists into the label pipeline.</p><div class="tagRow"><span class="tag">Onboard</span><span class="tag">Artist</span></div><span class="go">Open →</span></a>
-          <a class="card accentLabel" href="/label-accounts.html" data-tags="label accounts"><div class="cardTitle">Label Accounts</div><p class="cardDesc">Accounts + access for label clients/partners.</p><div class="tagRow"><span class="tag">Accounts</span><span class="tag">Access</span></div><span class="go">Open →</span></a>
-          <a class="card accentLabel" href="/records-application.html" data-tags="label application"><div class="cardTitle">Records Application</div><p class="cardDesc">Application front door to TKFM Records.</p><div class="tagRow"><span class="tag">Apply</span><span class="tag">Records</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="label-hub.html" data-tags="label hub records"><div class="cardTitle">Label Hub</div><p class="cardDesc">Records HQ for label ops.</p><div class="tagRow"><span class="tag">Records</span><span class="tag">HQ</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="label-home.html" data-tags="label home records"><div class="cardTitle">Label Home</div><p class="cardDesc">Public label front door.</p><div class="tagRow"><span class="tag">Records</span><span class="tag">Front</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="label-submissions.html" data-tags="label submissions review queue"><div class="cardTitle">Label Submissions</div><p class="cardDesc">Review queue for artist submissions.</p><div class="tagRow"><span class="tag">Review</span><span class="tag">Queue</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentLabel" href="label-contract-lab.html" data-tags="label contract lab ai"><div class="cardTitle">Contract Lab</div><p class="cardDesc">Generate label contracts + terms.</p><div class="tagRow"><span class="tag">Contracts</span><span class="tag">AI</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="label-contract-output.html" data-tags="label contract output"><div class="cardTitle">Contract Output</div><p class="cardDesc">Generated contract preview/output page.</p><div class="tagRow"><span class="tag">Output</span><span class="tag">Docs</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="label-onboarding.html" data-tags="label onboarding"><div class="cardTitle">Label Onboarding</div><p class="cardDesc">Bring artists into the label pipeline.</p><div class="tagRow"><span class="tag">Onboard</span><span class="tag">Artist</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentLabel" href="label-accounts.html" data-tags="label accounts access"><div class="cardTitle">Label Accounts</div><p class="cardDesc">Accounts + access for label clients/partners.</p><div class="tagRow"><span class="tag">Accounts</span><span class="tag">Access</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="label-revenue-console.html" data-tags="label revenue console"><div class="cardTitle">Label Revenue Console</div><p class="cardDesc">Label-side revenue + products console.</p><div class="tagRow"><span class="tag">Revenue</span><span class="tag">Label</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="records-application.html" data-tags="label records application"><div class="cardTitle">Records Application</div><p class="cardDesc">Application front door to TKFM Records.</p><div class="tagRow"><span class="tag">Apply</span><span class="tag">Records</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentBlue" href="label-sponsor-engine.html" data-tags="label sponsor engine promo"><div class="cardTitle">Label Sponsor Engine</div><p class="cardDesc">Sponsor lane inside label (premium).</p><div class="tagRow"><span class="tag">Sponsor</span><span class="tag">Label</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="label-social-engine.html" data-tags="label social engine promo"><div class="cardTitle">Label Social Engine</div><p class="cardDesc">Paid social lane for label clients.</p><div class="tagRow"><span class="tag">Paid</span><span class="tag">Social</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="label-mixtape-spotlight.html" data-tags="label mixtape spotlight"><div class="cardTitle">Label Mixtape Spotlight</div><p class="cardDesc">Spotlight placements for mixtapes & releases.</p><div class="tagRow"><span class="tag">Spotlight</span><span class="tag">Mixtape</span></div><span class="go">Open →</span></a>
         </div>
       </section>
 
-      <!-- PROMO -->
       <section class="section" data-section="promo">
         <div class="sectionHead">
           <h2 class="sTitle">Promo + Revenue Lane</h2>
           <p class="sNote">Sell promo, features, sponsor slots, media kit — revenue engines.</p>
         </div>
         <div class="cards">
-          <a class="card accentBlue" href="/feature-revenue.html" data-tags="promo revenue"><div class="cardTitle">Feature Revenue</div><p class="cardDesc">Revenue dashboard for feature products.</p><div class="tagRow"><span class="tag">Revenue</span><span class="tag">Promo</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/media-kit.html" data-tags="promo media kit"><div class="cardTitle">Media Kit</div><p class="cardDesc">Sell sponsorship packages with clean presentation.</p><div class="tagRow"><span class="tag">Media</span><span class="tag">Sponsors</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/label-sponsor-engine.html" data-tags="promo label sponsor engine"><div class="cardTitle">Label Sponsor Engine</div><p class="cardDesc">Sponsor lane inside label (premium).</p><div class="tagRow"><span class="tag">Label</span><span class="tag">Sponsor</span></div><span class="go">Open →</span></a>
-          <a class="card accentBlue" href="/label-social-engine.html" data-tags="promo label social engine"><div class="cardTitle">Label Social Engine</div><p class="cardDesc">Paid social lane for label clients.</p><div class="tagRow"><span class="tag">Label</span><span class="tag">Social</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="feature-engine.html" data-tags="promo feature engine ai store"><div class="cardTitle">AI Feature Store</div><p class="cardDesc">Feature products wired to Stripe.</p><div class="tagRow"><span class="tag">Store</span><span class="tag">Stripe</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="social-engine.html" data-tags="promo social engine motion"><div class="cardTitle">Social Motion Engine</div><p class="cardDesc">Campaign lane that creates reach + momentum.</p><div class="tagRow"><span class="tag">Paid</span><span class="tag">Motion</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="feature-revenue.html" data-tags="promo revenue"><div class="cardTitle">Feature Revenue</div><p class="cardDesc">Revenue dashboard for feature products.</p><div class="tagRow"><span class="tag">Revenue</span><span class="tag">Promo</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentBlue" href="sponsors.html" data-tags="promo sponsors sales"><div class="cardTitle">Sponsor Sales</div><p class="cardDesc">Sponsor packages and slots.</p><div class="tagRow"><span class="tag">Sponsor</span><span class="tag">Sales</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="media-kit.html" data-tags="promo media kit"><div class="cardTitle">Media Kit</div><p class="cardDesc">Sponsor pitch + package presentation.</p><div class="tagRow"><span class="tag">Media</span><span class="tag">Pitch</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="pricing.html" data-tags="promo pricing checkout"><div class="cardTitle">Pricing / Checkout</div><p class="cardDesc">All plans + add-ons (unified checkout).</p><div class="tagRow"><span class="tag">Checkout</span><span class="tag">Stripe</span></div><span class="go">Open →</span></a>
         </div>
       </section>
 
-      <!-- OWNER -->
       <section class="section" data-section="owner">
         <div class="sectionHead">
           <h2 class="sTitle">Owner / Admin Lane (DJ KRAVE)</h2>
           <p class="sNote">Owner-only dashboards and ops controls.</p>
         </div>
         <div class="cards">
-          <a class="card accentOwner" href="/owner-login.html" data-tags="owner login"><div class="cardTitle">Owner Login</div><p class="cardDesc">Authenticate for owner-only pages.</p><div class="tagRow"><span class="tag">Owner</span><span class="tag">Auth</span></div><span class="go">Open →</span></a>
-          <a class="card accentOwner" href="/owner-dashboard.html" data-tags="owner dashboard"><div class="cardTitle">Owner Dashboard</div><p class="cardDesc">High-level controls across the TKFM machine.</p><div class="tagRow"><span class="tag">Owner</span><span class="tag">Controls</span></div><span class="go">Open →</span></a>
-          <a class="card accentOwner" href="/owner-ops-dashboard.html" data-tags="owner ops"><div class="cardTitle">Owner Ops Dashboard</div><p class="cardDesc">Ops console: submissions, sponsors, platform status.</p><div class="tagRow"><span class="tag">Ops</span><span class="tag">Console</span></div><span class="go">Open →</span></a>
-          <a class="card accentOwner" href="/god-view.html" data-tags="owner god view"><div class="cardTitle">God View</div><p class="cardDesc">Master view across all engines.</p><div class="tagRow"><span class="tag">Master</span><span class="tag">View</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="owner-login.html" data-tags="owner login"><div class="cardTitle">Owner Login</div><p class="cardDesc">Authenticate for owner-only pages.</p><div class="tagRow"><span class="tag">Owner</span><span class="tag">Auth</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="owner-dashboard.html" data-tags="owner dashboard"><div class="cardTitle">Owner Dashboard</div><p class="cardDesc">High-level controls across the TKFM machine.</p><div class="tagRow"><span class="tag">Owner</span><span class="tag">Controls</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="owner-ops-dashboard.html" data-tags="owner ops dashboard"><div class="cardTitle">Owner Ops Dashboard</div><p class="cardDesc">Ops console: submissions, sponsors, platform status.</p><div class="tagRow"><span class="tag">Ops</span><span class="tag">Console</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentOwner" href="ai-dj-engine.html" data-tags="owner ai dj engine"><div class="cardTitle">AI DJ Engine</div><p class="cardDesc">Owner-only AI DJ engine control room.</p><div class="tagRow"><span class="tag">AI</span><span class="tag">Owner</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="ai-dj-console.html" data-tags="owner ai dj console"><div class="cardTitle">AI DJ Console</div><p class="cardDesc">Console view for AI DJ controls.</p><div class="tagRow"><span class="tag">Console</span><span class="tag">AI</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="god-view.html" data-tags="owner god view"><div class="cardTitle">God View</div><p class="cardDesc">Master view across all engines.</p><div class="tagRow"><span class="tag">Master</span><span class="tag">View</span></div><span class="go">Open →</span></a>
+
+          <a class="card accentOwner" href="tkfm-dev-console.html" data-tags="owner dev console"><div class="cardTitle">TKFM Dev Console</div><p class="cardDesc">Developer/owner console utilities.</p><div class="tagRow"><span class="tag">Dev</span><span class="tag">Console</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="unlocks.html" data-tags="owner unlocks entitlements"><div class="cardTitle">Unlocks / Entitlements</div><p class="cardDesc">Inspect what’s unlocked on this device.</p><div class="tagRow"><span class="tag">Unlocks</span><span class="tag">Debug</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="success.html" data-tags="owner success verify"><div class="cardTitle">Success (Verify + Unlock)</div><p class="cardDesc">Verify Stripe session and apply unlocks.</p><div class="tagRow"><span class="tag">Stripe</span><span class="tag">Verify</span></div><span class="go">Open →</span></a>
         </div>
       </section>
 
@@ -316,7 +334,7 @@
 
     <div class="footer">
       <div style="font-weight:950;color:rgba(229,231,235,.95)">Shortcut</div>
-      <div style="margin-top:6px">Go to <span class="mono">/engines.html</span> anytime — it redirects here.</div>
+      <div style="margin-top:6px">Go to <span class="mono">/engines.html</span> or <span class="mono">/engines</span> anytime — it redirects here.</div>
     </div>
   </div>
 
