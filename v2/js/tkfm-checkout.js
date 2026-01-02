@@ -1,28 +1,16 @@
 (function () {
   const LS_KEY = 'tkfm_user_features';
 
-  // Title -> planId mapping (covers the exact items you listed)
+  // These are the ONLY ones you said still failing
   const TITLE_TO_PLAN = {
-    'priority submission pack': 'priority_submission_pack',
-    'playlist pitch pack': 'playlist_pitch_pack',
-    'press run pack': 'press_run_pack',
-    'homepage takeover day': 'homepage_takeover_day',
-
     'ai dj autopilot': 'ai_dj_autopilot_monthly',
     'analytics pro': 'analytics_pro_monthly',
-
-    'starter sponsor': 'starter_sponsor_monthly',
     'city sponsor': 'city_sponsor_monthly',
     'takeover sponsor': 'takeover_sponsor_monthly',
-
-    'ai radio intro': 'ai_radio_intro',
     'feature verse kit': 'feature_verse_kit',
     'imaging pack': 'imaging_pack',
-    'ai social pack': 'ai_social_pack',
     'launch campaign': 'launch_campaign',
-    'label brand pack': 'label_brand_pack',
-
-    'distribution assist': 'distribution_assist_monthly',
+    'label brand pack': 'label_brand_pack'
   };
 
   function norm(s) {
@@ -33,12 +21,13 @@
       .trim();
   }
 
+  function uniq(arr) { return Array.from(new Set((arr || []).filter(Boolean))); }
+
   function getStore() {
     try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
     catch (_) { return {}; }
   }
   function setStore(obj) { localStorage.setItem(LS_KEY, JSON.stringify(obj || {})); }
-  function uniq(arr) { return Array.from(new Set((arr || []).filter(Boolean))); }
 
   function mergeUnlocks(unlocked, sessionId) {
     const s = getStore();
@@ -83,81 +72,71 @@
     return unlocked;
   }
 
-  function closestTitle(el) {
-    let cur = el;
-    for (let i = 0; i < 8 && cur; i++) {
-      // Look for headings in this container
-      const h = cur.querySelector && cur.querySelector('h1,h2,h3,h4,[data-title],[data-name]');
-      const txt = h ? (h.getAttribute('data-title') || h.getAttribute('data-name') || h.textContent) : '';
-      const n = norm(txt);
-      if (n) return n;
-      cur = cur.parentElement;
-    }
-    return '';
+  function isClickable(el) {
+    const tag = (el && el.tagName ? el.tagName.toLowerCase() : '');
+    return tag === 'button' || tag === 'a';
   }
 
   function planFromElement(el) {
-    // Priority: explicit attributes
-    const dp = el.getAttribute && el.getAttribute('data-plan');
-    if (dp) return dp;
-
-    const df = el.getAttribute && el.getAttribute('data-feature');
-    if (df) return df; // allow data-feature as plan id
-
-    // Try infer from nearby title
-    const t = closestTitle(el);
-    if (t && TITLE_TO_PLAN[t]) return TITLE_TO_PLAN[t];
-
-    return '';
+    if (!el || !el.getAttribute) return '';
+    return el.getAttribute('data-plan') || el.getAttribute('data-feature') || '';
   }
 
-  function isClickable(el) {
-    if (!el) return false;
-    const tag = (el.tagName || '').toLowerCase();
-    if (tag === 'button') return true;
-    if (tag === 'a') return true;
-    return false;
-  }
-
-  // Auto-tag known cards so even plain buttons work
-  function autoTagKnownCards() {
+  // Finds ANY element that contains the title text (not just headings),
+  // then tags the nearest button/link in that “card”.
+  function autoTagByTextAnywhere() {
     const keys = Object.keys(TITLE_TO_PLAN);
+
+    // Search in common text elements
+    const pool = Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,p,span,strong,div,section,article,li'));
+    const poolText = pool.map(n => norm(n.textContent));
+
     keys.forEach((k) => {
       const planId = TITLE_TO_PLAN[k];
 
-      // find headings matching the title
-      const nodes = Array.from(document.querySelectorAll('h1,h2,h3,h4'));
-      nodes.forEach((h) => {
-        if (norm(h.textContent) !== k) return;
+      // Find first node whose text contains the title (handles formatting like line breaks)
+      let hit = null;
+      for (let i = 0; i < pool.length; i++) {
+        if (poolText[i] && poolText[i].includes(k)) { hit = pool[i]; break; }
+      }
+      if (!hit) return;
 
-        // find a button/link inside the same card/container
-        const root = h.closest('section,article,div') || h.parentElement;
-        if (!root) return;
+      // Walk up to a reasonable container/card
+      const card =
+        hit.closest('article,section,.card,.panel,.pricing-card,.tier,.plan,li,div') ||
+        hit.parentElement;
 
-        const btn = root.querySelector('button,a');
-        if (!btn) return;
+      if (!card) return;
 
-        if (!btn.getAttribute('data-plan') && !btn.getAttribute('data-feature')) {
-          btn.setAttribute('data-plan', planId);
-          btn.setAttribute('data-checkout', '1');
-        }
-      });
+      // Find a likely CTA inside this card
+      const ctas = Array.from(card.querySelectorAll('button,a'));
+      if (!ctas.length) return;
+
+      // Prefer explicit CTAs
+      let btn =
+        ctas.find(x => /checkout|buy|purchase|get|start|unlock|select/i.test(String(x.textContent || ''))) ||
+        ctas.find(x => x.classList && (x.classList.contains('btn') || x.classList.contains('button'))) ||
+        ctas[0];
+
+      if (!btn) return;
+
+      if (!btn.getAttribute('data-plan') && !btn.getAttribute('data-feature')) {
+        btn.setAttribute('data-plan', planId);
+      }
+      btn.setAttribute('data-checkout', '1');
     });
   }
 
   function bindButtons() {
-    // Bind anything explicitly marked OR any button/link inside pricing-like pages after autoTagKnownCards()
-    autoTagKnownCards();
+    autoTagByTextAnywhere();
 
     const candidates = Array.from(document.querySelectorAll('[data-plan],[data-feature],[data-checkout],button,a'));
-
     candidates.forEach((el) => {
       if (el.__tkfmBound) return;
       if (!isClickable(el)) return;
 
-      // Only intercept if we can resolve a planId OR it was explicitly marked data-checkout
-      const explicit = el.hasAttribute('data-checkout') || el.hasAttribute('data-plan') || el.hasAttribute('data-feature');
       const planId = planFromElement(el);
+      const explicit = el.hasAttribute('data-checkout') || el.hasAttribute('data-plan') || el.hasAttribute('data-feature');
 
       if (!explicit && !planId) return;
 
@@ -166,16 +145,12 @@
       el.addEventListener('click', async (e) => {
         const p = planFromElement(el);
         if (!p) return;
-
-        // If anchor, prevent default so we can redirect to Stripe
         e.preventDefault();
 
-        const qty = el.getAttribute('data-qty') || 1;
+        const qty = (el.getAttribute && (el.getAttribute('data-qty') || el.getAttribute('data-quantity'))) || 1;
 
         const old = el.textContent;
-        try {
-          el.setAttribute('disabled', 'disabled');
-        } catch (_) {}
+        try { el.setAttribute('disabled', 'disabled'); } catch (_) {}
         try { el.textContent = 'Redirecting…'; } catch (_) {}
 
         try {
@@ -194,10 +169,7 @@
     const sid = url.searchParams.get('session_id');
     if (!sid) return;
 
-    const setText = (id, v) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = v;
-    };
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
     try {
       setText('statusTitle', 'Verifying…');
