@@ -35,19 +35,15 @@ function cleanUrl(u) {
 }
 
 function inferBaseUrl(event) {
-  // Prefer explicit env in production.
   const envSite = cleanUrl(process.env.SITE_URL);
   const isDev = String(process.env.NETLIFY_DEV || '').toLowerCase() === 'true';
 
-  // In dev: always prefer request Origin so localhost never breaks.
   const hdrs = event.headers || {};
   const origin = cleanUrl(hdrs.origin || hdrs.Origin);
-  if (isDev && origin && /^https?:\/\//i.test(origin)) return origin;
 
-  // In prod: use SITE_URL if valid.
+  if (isDev && origin && /^https?:\/\//i.test(origin)) return origin;
   if (envSite && /^https?:\/\//i.test(envSite)) return envSite;
 
-  // Fallback: infer from host + proto.
   const proto = cleanUrl(hdrs['x-forwarded-proto'] || hdrs['X-Forwarded-Proto'] || 'https');
   const host = cleanUrl(hdrs.host || hdrs.Host);
   if (host) return `${proto}://${host}`;
@@ -60,29 +56,19 @@ export async function handler(event) {
     const body = event.body ? JSON.parse(event.body) : {};
     const planId = String(body.planId || '').trim();
     const quantity = Math.max(1, Number(body.quantity || 1));
+    const email = String(body.email || '').trim().toLowerCase();
 
-    if (!planId) {
-      return { statusCode: 400, body: JSON.stringify({ ok: false, error: 'missing_planId' }) };
-    }
+    if (!planId) return { statusCode: 400, body: JSON.stringify({ ok:false, error:'missing_planId' }) };
 
     const priceId = PRICE_MAP[planId];
-    if (!priceId) {
-      return { statusCode: 400, body: JSON.stringify({ ok: false, error: 'unknown_planId', planId }) };
-    }
+    if (!priceId) return { statusCode: 400, body: JSON.stringify({ ok:false, error:'unknown_planId', planId }) };
 
     const baseUrl = inferBaseUrl(event);
     if (!baseUrl || !/^https?:\/\//i.test(baseUrl)) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          ok: false,
-          error: 'bad_base_url',
-          message: 'Could not infer base URL. Set SITE_URL or ensure request has Origin/Host headers.'
-        })
-      };
+      return { statusCode: 500, body: JSON.stringify({ ok:false, error:'bad_base_url' }) };
     }
 
-    // Pull the Price from Stripe so mode is always correct
+    // Always pick correct mode based on Stripe Price object
     const price = await stripe.prices.retrieve(priceId);
     const isRecurring = !!price.recurring;
     const mode = isRecurring ? 'subscription' : 'payment';
@@ -90,14 +76,27 @@ export async function handler(event) {
     const success_url = `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`;
     const cancel_url = `${baseUrl}/pricing.html?canceled=1`;
 
-    const session = await stripe.checkout.sessions.create({
+    const params = {
       mode,
       allow_promotion_codes: true,
       line_items: [{ price: priceId, quantity }],
       success_url,
       cancel_url,
-      metadata: { planId },
-    });
+      metadata: { planId }
+    };
+
+    // If user provides email, attach it (Checkout also collects it if not provided)
+    if (email) {
+      params.customer_email = email;
+      params.metadata.email = email;
+    }
+
+    // CRITICAL: For one-time payments, always create a Stripe Customer so restore-by-email works forever
+    if (mode === 'payment') {
+      params.customer_creation = 'always';
+    }
+
+    const session = await stripe.checkout.sessions.create(params);
 
     return {
       statusCode: 200,
@@ -109,9 +108,9 @@ export async function handler(event) {
         url: session.url,
         session_id: session.id,
         base_url: baseUrl
-      }),
+      })
     };
   } catch (e) {
-    return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'create_session_failed', message: String(e?.message || e) }) };
+    return { statusCode: 500, body: JSON.stringify({ ok:false, error:'create_session_failed', message:String(e?.message || e) }) };
   }
 }
