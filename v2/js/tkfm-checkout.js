@@ -1,52 +1,126 @@
-// TKFM V2 universal checkout binder
-// Binds any element with [data-plan] to Stripe Checkout via Netlify Function.
-// Optional attributes:
-//   data-qty="2"
+(function () {
+  const LS_KEY = 'tkfm_user_features';
 
-function getPlanId(el) {
-  return el.getAttribute('data-plan') || el.dataset.plan || null;
-}
-
-function getQty(el) {
-  const q = Number(el.getAttribute('data-qty') || el.dataset.qty || 1);
-  return Number.isFinite(q) && q > 0 ? Math.floor(q) : 1;
-}
-
-async function startCheckout(planId, quantity = 1) {
-  const res = await fetch('/.netlify/functions/create-checkout-session', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ planId, quantity })
-  });
-
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok || !data || !data.url) {
-    console.error('Checkout failed:', data);
-    alert('Checkout error. Please try again.');
-    return;
+  function getStore() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
+    catch (_) { return {}; }
+  }
+  function setStore(obj) {
+    localStorage.setItem(LS_KEY, JSON.stringify(obj || {}));
+  }
+  function uniq(arr) {
+    return Array.from(new Set((arr || []).filter(Boolean)));
+  }
+  function mergeUnlocks(unlocked, sessionId) {
+    const s = getStore();
+    s.unlocked = uniq([...(s.unlocked || []), ...(unlocked || [])]);
+    if (sessionId) s.last_session_id = sessionId;
+    s.last_verified_at = new Date().toISOString();
+    setStore(s);
+    return s;
   }
 
-  window.location.href = data.url;
-}
+  async function postJSON(url, body) {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body || {})
+    });
+    const j = await r.json().catch(() => null);
+    if (!r.ok || !j || j.ok === false) {
+      const msg = (j && (j.message || j.error)) ? (j.message || j.error) : ('HTTP_' + r.status);
+      throw new Error(msg);
+    }
+    return j;
+  }
 
-function bind() {
-  const els = Array.from(document.querySelectorAll('[data-plan]'));
-  for (const el of els) {
-    if (el.__tkfmBound) continue;
-    el.__tkfmBound = true;
+  async function startCheckout(planId, quantity) {
+    const payload = { planId, quantity: Math.max(1, Number(quantity || 1)) };
+    const j = await postJSON('/.netlify/functions/create-checkout-session', payload);
+    if (!j.url) throw new Error('missing_checkout_url');
+    window.location.href = j.url;
+  }
 
-    el.addEventListener('click', (e) => {
-      const planId = getPlanId(el);
-      if (!planId) return;
-      e.preventDefault();
-      e.stopPropagation();
-      startCheckout(planId, getQty(el));
+  async function verifyAndUnlock(sessionId) {
+    const u = '/.netlify/functions/verify-checkout-session?session_id=' + encodeURIComponent(sessionId);
+    const r = await fetch(u, { headers: { accept: 'application/json' } });
+    const j = await r.json().catch(() => null);
+    if (!r.ok || !j || j.ok === false) {
+      const msg = (j && (j.message || j.error)) ? (j.message || j.error) : ('HTTP_' + r.status);
+      throw new Error(msg);
+    }
+    const unlocked = Array.isArray(j.unlocked) ? j.unlocked : [];
+    mergeUnlocks(unlocked, sessionId);
+    return unlocked;
+  }
+
+  function bindButtons() {
+    const btns = Array.from(document.querySelectorAll('[data-plan]'));
+    btns.forEach((btn) => {
+      if (btn.__tkfmBound) return;
+      btn.__tkfmBound = true;
+
+      btn.addEventListener('click', async (e) => {
+        const a = btn.closest('a');
+        if (a && a.getAttribute('href') && a.getAttribute('href') !== '#') {
+          // If it's a real link, let it navigate (unless explicitly marked checkout)
+          if (!btn.hasAttribute('data-checkout')) return;
+          e.preventDefault();
+        } else {
+          e.preventDefault();
+        }
+
+        const planId = btn.getAttribute('data-plan');
+        const qty = btn.getAttribute('data-qty') || 1;
+
+        // UI feedback
+        const old = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Redirecting…';
+
+        try {
+          await startCheckout(planId, qty);
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = old || 'Checkout';
+          alert('Checkout error: ' + String(err.message || err));
+        }
+      });
     });
   }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-  bind();
-  const mo = new MutationObserver(() => bind());
-  mo.observe(document.documentElement, { childList: true, subtree: true });
-});
+  // Auto-run on success page if session_id present
+  async function autoVerifyOnSuccess() {
+    const url = new URL(window.location.href);
+    const sid = url.searchParams.get('session_id');
+    if (!sid) return;
+
+    // Minimal UI hook if elements exist
+    const setText = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = v;
+    };
+
+    try {
+      setText('statusTitle', 'Verifying…');
+      setText('statusMsg', 'Unlocking your features now.');
+      const unlocked = await verifyAndUnlock(sid);
+      setText('statusTitle', 'Unlocked');
+      setText('statusMsg', 'Your TKFM features are active.');
+      setText('unlockedCount', String(unlocked.length));
+    } catch (e) {
+      setText('statusTitle', 'Verification failed');
+      setText('statusMsg', 'Refresh this page in 5 seconds or contact support.');
+    }
+  }
+
+  // Expose helpers
+  window.TKFMCheckout = { startCheckout, verifyAndUnlock };
+
+  // Bind and run
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { bindButtons(); autoVerifyOnSuccess(); });
+  } else {
+    bindButtons(); autoVerifyOnSuccess();
+  }
+})();
