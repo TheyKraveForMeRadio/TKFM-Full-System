@@ -1,562 +1,368 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TKFM App Hub — Owner + Creator Center</title>
-
-  <!-- Owner tools are internal, but hub itself can be reached by you. -->
-  <script src="./js/owner-status-chip.js" defer></script>
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — Engines Hub</title>
+  <meta name="description" content="Top Radio + Label engines for DJs, Artists, Producers — and Platform Ops."/>
   <style>
-    :root {
-      --bg-deep: #020617;
-      --bg-card: rgba(15,23,42,0.98);
-      --bg-soft: rgba(15,23,42,0.96);
-      --gold: #facc15;
-      --amber: #f97316;
-      --purple: #a855f7;
-      --pink: #ec4899;
-      --blue: #38bdf8;
-      --text-main: #f9fafb;
-      --text-muted: #94a3b8;
-      --text-soft: #64748b;
-      --border-subtle: rgba(148,163,184,0.35);
+    :root{
+      --bg:#020617;
+      --stroke:rgba(255,255,255,.12);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+
+      /* TKFM RADIO */
+      --purple:#a855f7;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+
+      /* TKFM RECORDS */
+      --gold:#facc15;
+      --amber:#f97316;
+
+      --red:#ef4444;
     }
-
-    * { box-sizing:border-box; margin:0; padding:0; }
-
-    body {
-      min-height:100vh;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
       background:
-        radial-gradient(circle at top,#111827 0,transparent 52%),
-        radial-gradient(circle at top right,rgba(250,204,21,0.45) 0,transparent 60%),
-        radial-gradient(circle at top left,rgba(236,72,153,0.5) 0,transparent 60%),
-        linear-gradient(to bottom,#020617,#020617 55%,#000 100%);
-      color:var(--text-main);
-      font-family:system-ui,-apple-system,"SF Pro Text","Segoe UI",sans-serif;
-      -webkit-font-smoothing:antialiased;
-      padding:1.6rem .9rem 2.3rem;
+        radial-gradient(1100px 700px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 650px at 88% 14%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(1200px 850px at 55% 100%, rgba(236,72,153,.10), transparent 55%),
+        radial-gradient(900px 700px at 50% 40%, rgba(250,204,21,.07), transparent 60%),
+        var(--bg);
     }
-
-    a { color:inherit; text-decoration:none; }
-
-    /* NAVBAR */
-    .nav-shell {
-      max-width:1180px;
-      margin:0 auto 1.7rem;
-      padding:.55rem .9rem .6rem;
-      border-radius:999px;
-      border:1px solid rgba(224,231,255,0.45);
-      background:
-        radial-gradient(circle at top,rgba(15,23,42,0.98) 0,rgba(15,23,42,0.95) 55%,rgba(15,23,42,0.93) 100%);
-      box-shadow:
-        0 26px 55px rgba(15,23,42,0.98),
-        0 0 40px rgba(250,204,21,0.45);
-      backdrop-filter:blur(18px);
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1180px;margin:0 auto;padding:22px 16px 80px}
+    .top{
+      position:sticky;top:0;z-index:50;
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      padding:14px 16px;border:1px solid var(--stroke);border-radius:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      backdrop-filter: blur(12px);
     }
-
-    .nav {
-      display:flex;
-      align-items:center;
-      gap:.9rem;
-    }
-
-    .nav-logo {
-      font-size:.95rem;
-      font-weight:800;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      background:linear-gradient(120deg,#a855f7,#ec4899,#facc15);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-      text-shadow:0 0 18px rgba(250,250,249,0.9);
+    .brand{display:flex;align-items:center;gap:14px}
+    .logos{display:flex;align-items:center;gap:10px}
+    .logos img{width:46px;height:46px;object-fit:contain}
+    .logos .radio{filter: drop-shadow(0 12px 30px rgba(168,85,247,.28))}
+    .logos .records{filter: drop-shadow(0 12px 30px rgba(250,204,21,.22))}
+    .t1{font-weight:950;letter-spacing:.02em}
+    .t2{font-size:12px;color:var(--muted);margin-top:2px}
+    .pill{
+      display:flex;align-items:center;gap:10px;
+      font-size:12px;color:var(--muted);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px;border-radius:999px;
       white-space:nowrap;
     }
-
-    .nav-tag {
-      font-size:.7rem;
-      text-transform:uppercase;
-      letter-spacing:.18em;
-      color:var(--text-muted);
-      white-space:nowrap;
-      display:none;
-    }
-
-    .nav-links {
-      margin-left:auto;
-      display:flex;
-      flex-wrap:wrap;
-      gap:.4rem;
-      font-size:.75rem;
-    }
-
-    .nav-link {
-      padding:.26rem .8rem;
-      border-radius:999px;
-      border:1px solid transparent;
-      background:rgba(15,23,42,0.96);
-      color:var(--text-soft);
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      cursor:pointer;
-    }
-    .nav-link:hover {
-      border-color:rgba(250,250,249,0.85);
-      color:#f9fafb;
-      background:rgba(15,23,42,1);
-    }
-
-    .nav-link-primary {
-      border-color:rgba(250,250,249,0.9);
-      background:radial-gradient(circle at top,#a855f7 0,#ec4899 45%,#facc15 100%);
-      color:#020617;
-      box-shadow:
-        0 0 20px rgba(250,250,249,0.9),
-        0 0 32px rgba(236,72,153,0.9);
-    }
-
-    .nav-link-radio {
-      border-color:rgba(56,189,248,0.85);
-      background:radial-gradient(circle at top,rgba(56,189,248,0.3) 0,rgba(15,23,42,0.98) 60%);
-      color:#e0f2fe;
-    }
-
-    @media (min-width:880px){ .nav-tag{display:block;} }
-    @media (max-width:840px){
-      .nav-shell{padding-inline:.8rem;}
-      .nav{flex-wrap:wrap;gap:.5rem;}
-      .nav-links{width:100%;justify-content:flex-start;}
-    }
-    @media (max-width:640px){
-      body{padding:1.3rem .7rem 2.1rem;}
-      .nav-shell{margin-bottom:1.4rem;}
-      .nav-links{font-size:.72rem;}
-    }
-
-    main{max-width:1180px;margin:0 auto;}
-
-    /* HERO */
+    .dot{width:10px;height:10px;border-radius:999px;background:var(--cyan);box-shadow:0 0 18px rgba(34,211,238,.55)}
     .hero{
-      border-radius:1.4rem;
-      border:1px solid rgba(148,163,184,0.6);
-      background:
-        radial-gradient(circle at top,rgba(15,23,42,0.98) 0,rgba(15,23,42,0.95) 55%,rgba(15,23,42,0.94) 100%);
-      box-shadow:
-        0 24px 55px rgba(15,23,42,0.97),
-        0 0 50px rgba(250,204,21,0.45);
-      padding:1.3rem 1.3rem 1.2rem;
-      margin-bottom:1.8rem;
-      position:relative;
-      overflow:hidden;
+      margin-top:14px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:18px;
+      padding:18px;
+      backdrop-filter: blur(12px);
     }
-    .hero::before{
-      content:"";
-      position:absolute;
-      inset:-110% -40%;
-      background:
-        radial-gradient(circle at 0 0,rgba(250,204,21,0.5) 0,transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(236,72,153,0.5) 0,transparent 55%);
-      opacity:.9;
-      mix-blend-mode:screen;
-      pointer-events:none;
-    }
-    .hero-inner{position:relative;z-index:1;}
-
-    .hero-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.6rem;
-      align-items:flex-start;
-      margin-bottom:.6rem;
-    }
-
-    .hero-kicker{
-      font-size:.7rem;
-      text-transform:uppercase;
-      letter-spacing:.24em;
-      color:#facc15;
-      margin-bottom:.55rem;
-    }
-    .hero-title{
-      font-size:clamp(2.1rem,2.6vw + 1.4rem,2.7rem);
-      line-height:1.05;
-      margin-bottom:.4rem;
-      text-shadow:
-        0 0 30px rgba(0,0,0,0.9),
-        0 0 40px rgba(250,204,21,0.85);
-    }
-
-    .hero-sub{
-      font-size:.86rem;
-      line-height:1.7;
-      color:#e5e7eb;
-      max-width:40rem;
-      margin-bottom:.6rem;
-    }
-    .hero-sub strong{color:var(--amber);}
-
-    .hero-strip{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.45rem .8rem;
-      align-items:center;
-      font-size:.78rem;
-      color:#e5e7eb;
-    }
-    .hero-pill{
-      border-radius:999px;
-      padding:.22rem .7rem;
-      border:1px solid rgba(148,163,184,0.9);
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      font-size:.72rem;
-      color:#e5e7eb;
-      background:rgba(15,23,42,0.96);
-    }
-
-    .creator-chip{
-      border-radius:999px;
-      padding:.25rem .8rem;
-      border:1px solid rgba(96,165,250,0.9);
-      color:#bfdbfe;
-      font-size:.74rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      display:inline-flex;
-      align-items:center;
-      gap:.35rem;
+    .heroGrid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
+    @media (max-width: 980px){ .heroGrid{grid-template-columns:1fr} }
+    .h1{margin:0 0 8px;font-size:32px;font-weight:950;line-height:1.05}
+    .sub{margin:0;color:var(--muted);line-height:1.6}
+    .ctaRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .btn{
+      border-radius:14px;border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      padding:10px 12px;
+      color:var(--text);
+      font-weight:900;
+      display:inline-flex;align-items:center;gap:10px;
+      transition: transform .12s ease, background .12s ease;
       cursor:pointer;
-      background:rgba(15,23,42,0.98);
     }
-    .creator-dot{
-      width:.44rem;height:.44rem;border-radius:999px;
-      background:radial-gradient(circle,#38bdf8 0,#1d4ed8 75%);
-      box-shadow:0 0 8px rgba(59,130,246,0.9);
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.07)}
+    .btn.radio{border-color: rgba(168,85,247,.55);background: linear-gradient(90deg, rgba(168,85,247,.22), rgba(236,72,153,.16))}
+    .btn.label{border-color: rgba(250,204,21,.55);background: linear-gradient(90deg, rgba(250,204,21,.16), rgba(249,115,22,.10))}
+    .btn.blue{border-color: rgba(59,130,246,.55);background: linear-gradient(90deg, rgba(59,130,246,.20), rgba(34,211,238,.14))}
+    .panel{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius:16px;
+      padding:14px;
     }
-    .creator-chip.creator{
-      border-color:rgba(250,204,21,0.9);
-      color:#fef9c3;
-    }
-    .creator-chip.elite{
-      border-color:rgba(236,72,153,0.9);
-      color:#fed7e2;
-    }
-
-    /* GRID */
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:1rem;
-      margin-bottom:1.4rem;
-    }
-    @media (max-width:1024px){
-      .grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-    }
-    @media (max-width:720px){
-      .grid{grid-template-columns:minmax(0,1fr);}
-    }
-
+    .panelTitle{font-weight:950;margin:0 0 8px}
+    .panelSmall{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+    .kv{display:grid;grid-template-columns: 130px 1fr;gap:8px;margin-top:10px}
+    .k{font-size:12px;color:var(--muted)}
+    .v{font-size:12px;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;word-break:break-word}
+    .hr{height:1px;background: rgba(255,255,255,.10);margin:14px 0}
+    .topGrid{margin-top:14px;display:grid;grid-template-columns: repeat(12,1fr);gap:12px}
     .tile{
-      border-radius:1.1rem;
-      border:1px solid var(--border-subtle);
-      background:var(--bg-card);
-      padding:.9rem .9rem .9rem;
-      position:relative;
-      overflow:hidden;
-      cursor:pointer;
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      grid-column: span 3;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius:18px;
+      padding:14px;
+      transition: transform .12s ease, background .12s ease;
+      position:relative; overflow:hidden;
     }
-    .tile::before{
-      content:"";
-      position:absolute;
-      inset:-60% -40%;
-      background:
-        radial-gradient(circle at 0 0,rgba(236,72,153,0.28) 0,transparent 60%),
-        radial-gradient(circle at 100% 0,rgba(56,189,248,0.25) 0,transparent 60%);
-      opacity:.75;
-      mix-blend-mode:screen;
-      pointer-events:none;
-    }
-    .tile-inner{position:relative;z-index:1;}
-
-    .tile:hover{
-      transform:translateY(-2px);
-      box-shadow:0 20px 45px rgba(0,0,0,0.9);
-      border-color:rgba(250,204,21,0.85);
-    }
-
-    .tile-title{
-      font-size:.95rem;
-      font-weight:600;
-      margin-bottom:.15rem;
-    }
-    .tile-sub{
-      font-size:.78rem;
-      color:#e5e7eb;
-      margin-bottom:.45rem;
-    }
-
-    .tile-tag-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.3rem .45rem;
-      font-size:.7rem;
-    }
-
-    .tile-tag{
-      border-radius:999px;
-      padding:.18rem .55rem;
-      border:1px solid rgba(148,163,184,0.9);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      font-size:.68rem;
-      color:#e5e7eb;
-      background:rgba(15,23,42,0.96);
-    }
-
-    .tile-tag.owner{border-color:rgba(250,204,21,0.9);color:#fef9c3;}
-    .tile-tag.creator{border-color:rgba(59,130,246,0.9);color:#bfdbfe;}
-    .tile-tag.elite{border-color:rgba(236,72,153,0.9);color:#fed7e2;}
-
-    .tile-creator-highlight{
-      border-color:rgba(59,130,246,0.9);
-      box-shadow:0 0 28px rgba(37,99,235,0.7);
-    }
-    .tile-elite-highlight{
-      border-color:rgba(236,72,153,0.95);
-      box-shadow:0 0 32px rgba(236,72,153,0.8);
-    }
-
-    .section-title{
-      font-size:.85rem;
-      text-transform:uppercase;
-      letter-spacing:.2em;
-      color:var(--text-muted);
-      margin-bottom:.5rem;
-    }
-
-    .footer-note{
-      font-size:.75rem;
-      color:var(--text-muted);
-      text-align:center;
-      margin-top:.6rem;
-    }
+    .tile:hover{transform:translateY(-1px);background:rgba(255,255,255,.06)}
+    @media (max-width: 980px){ .tile{grid-column: span 6} }
+    @media (max-width: 640px){ .tile{grid-column: span 12} }
+    .tileTitle{margin:0 0 6px;font-weight:950}
+    .tileDesc{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+    .go{margin-top:10px;display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:12px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);padding:8px 10px;border-radius:999px}
+    .rGlow::after{content:"";position:absolute;inset:-40px;background:
+      radial-gradient(260px 190px at 20% 20%, rgba(168,85,247,.28), transparent 60%),
+      radial-gradient(260px 190px at 80% 30%, rgba(236,72,153,.20), transparent 60%);pointer-events:none}
+    .lGlow::after{content:"";position:absolute;inset:-40px;background:
+      radial-gradient(260px 190px at 20% 20%, rgba(250,204,21,.22), transparent 60%),
+      radial-gradient(260px 190px at 80% 30%, rgba(249,115,22,.12), transparent 60%);pointer-events:none}
+    .cGlow::after{content:"";position:absolute;inset:-40px;background:
+      radial-gradient(260px 190px at 25% 25%, rgba(34,211,238,.16), transparent 60%),
+      radial-gradient(260px 190px at 80% 35%, rgba(59,130,246,.14), transparent 60%);pointer-events:none}
+    .toolbar{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+    .search{flex:1;min-width:240px;display:flex;align-items:center;gap:10px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);border-radius:14px;padding:10px 12px}
+    .search input{width:100%;border:none;outline:none;background:transparent;color:var(--text);font-weight:700;font-size:13px}
+    .search input::placeholder{color:rgba(148,163,184,.85)}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{border:1px solid var(--stroke);background:rgba(255,255,255,.04);padding:8px 10px;border-radius:999px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
+    .chip.active{color:var(--text);border-color: rgba(34,211,238,.40);background: rgba(34,211,238,.08)}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .section{grid-column:span 12;border:1px solid var(--stroke);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));border-radius:18px;padding:16px;backdrop-filter: blur(12px)}
+    .sectionHead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .sTitle{margin:0;font-weight:950;font-size:18px}
+    .sNote{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
+    .cards{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .card{grid-column:span 4;border:1px solid var(--stroke);background:rgba(255,255,255,.04);border-radius:16px;padding:14px;transition: transform .12s ease, background .12s ease}
+    .card:hover{transform:translateY(-1px);background:rgba(255,255,255,.06)}
+    @media (max-width: 980px){ .card{grid-column: span 6} }
+    @media (max-width: 640px){ .card{grid-column: span 12} }
+    .tagRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .tag{font-size:11px;padding:6px 8px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--muted)}
+    .cardTitle{font-weight:950;margin:0 0 6px}
+    .cardDesc{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+    .accentRadio{border-color: rgba(168,85,247,.35)}
+    .accentLabel{border-color: rgba(250,204,21,.35)}
+    .accentBlue{border-color: rgba(34,211,238,.30)}
+    .accentOwner{border-color: rgba(239,68,68,.35)}
+    .footer{margin-top:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);border-radius:18px;padding:14px;color:var(--muted);font-size:12px;line-height:1.55}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
   </style>
-<script src="/js/tkfm-fx.js"></script>
 </head>
-<body data-tkfm-theme="radio">
-<script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
 
-<div class="nav-shell">
-  <nav class="nav">
-    <div class="nav-logo">TKFM App Hub</div>
-    <div class="nav-tag">Radio • Label • DJ KRAVE</div>
-    <div class="nav-links">
-      <a href="index.html" class="nav-link nav-link-radio">TKFM Radio</a>
-      <a href="creator-pass.html" class="nav-link">Creator Pass</a>
-      <a href="owner-login.html" class="nav-link">Owner Login</a>
-      <a href="autopilot-engine.html" class="nav-link nav-link-primary">Autopilot</a>
-    </div>
-  </nav>
-</div>
-
-<main>
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-head">
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logos">
+          <img class="radio" src="/public/tkfm-radio-logo.png" alt="TKFM Radio"/>
+          <img class="records" src="/public/tkfm-records-logo.png" alt="TKFM Records"/>
+        </div>
         <div>
-          <div class="hero-kicker">Command center</div>
-          <h1 class="hero-title">Everything TKFM lives here now.</h1>
+          <div class="t1">TKFM ENGINES HUB</div>
+          <div class="t2">Top engines for DJs / Artists / Producers — and Radio + Label Platform Ops</div>
         </div>
-        <button class="creator-chip" id="creatorChip" type="button">
-          <span class="creator-dot"></span>
-          <span id="creatorChipText">Creator: FREE</span>
-        </button>
       </div>
-      <p class="hero-sub">
-        This hub splits in two lanes: <strong>Owner tools</strong> (Autopilot, AI DJ, Label Hub)
-        and the <strong>Creator side</strong> (uploads, hosting, passes). Your Creator status decides
-        how the artist tools treat you.
-      </p>
-      <div class="hero-strip">
-        <span class="hero-pill">Owner view + Creator status</span>
-        <span class="hero-pill">Mixtape hosting & uploads</span>
-        <span class="hero-pill">Label pipeline</span>
+      <div class="pill"><span class="dot"></span><span>Neon Radio + Gold Records</span></div>
+    </div>
+
+    <div class="hero">
+      <div class="heroGrid">
+        <div>
+          <div class="h1">Top Engines first.<br/>Directory next.</div>
+          <p class="sub">
+            You wanted the <strong>TOP Radio + Label engines</strong> for creators and for the platform.
+            The tiles below are the “main buttons” — then the full lanes are underneath.
+          </p>
+          <div class="ctaRow">
+            <a class="btn radio" href="/radio-hub.html">Radio Hub</a>
+            <a class="btn label" href="/label-hub.html">Label Hub</a>
+            <a class="btn blue" href="/pricing.html">Pricing / Checkout</a>
+            <a class="btn" href="/unlocks.html">Unlocks</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelTitle">Platform Core</div>
+          <p class="panelSmall">Radio + Label engines that power the whole machine.</p>
+          <div class="kv">
+            <div class="k">Creator Intake</div><div class="v">artist-upload → submissions → label review</div>
+            <div class="k">Label Ops</div><div class="v">contract lab → onboarding → accounts</div>
+            <div class="k">Radio Ops</div><div class="v">autopilot → now playing → sponsors</div>
+            <div class="k">Unlock key</div><div class="v mono">tkfm_user_features</div>
+          </div>
+          <div class="hr"></div>
+          <p class="panelSmall">Use search + filters to jump instantly.</p>
+        </div>
+      </div>
+
+      <!-- TOP ENGINES -->
+      <div class="topGrid">
+        <a class="tile rGlow accentRadio" href="/radio-hub.html" data-tags="top radio hub"><div class="tileTitle">Top Radio: Radio Hub</div><p class="tileDesc">Main radio control room + entry point.</p><span class="go">Open →</span></a>
+        <a class="tile rGlow accentRadio" href="/autopilot-engine.html" data-tags="top radio autopilot"><div class="tileTitle">Top Radio: Autopilot</div><p class="tileDesc">Submissions → spins → placement automation.</p><span class="go">Open →</span></a>
+        <a class="tile cGlow accentBlue" href="/feature-engine.html" data-tags="top money feature engine"><div class="tileTitle">Top Money: Feature Engine</div><p class="tileDesc">Homepage features + rotation boosts.</p><span class="go">Open →</span></a>
+        <a class="tile cGlow accentBlue" href="/social-engine.html" data-tags="top money social engine"><div class="tileTitle">Top Money: Social Engine</div><p class="tileDesc">Paid campaigns that create momentum.</p><span class="go">Open →</span></a>
+
+        <a class="tile lGlow accentLabel" href="/label-hub.html" data-tags="top label hub"><div class="tileTitle">Top Label: Label Hub</div><p class="tileDesc">Records HQ — submissions, contracts, onboarding.</p><span class="go">Open →</span></a>
+        <a class="tile lGlow accentLabel" href="/label-contract-lab.html" data-tags="top label contract lab"><div class="tileTitle">Top Label: Contract Lab</div><p class="tileDesc">Generate terms, splits, deliverables fast.</p><span class="go">Open →</span></a>
+        <a class="tile cGlow accentBlue" href="/dj-mixtape-hosting.html" data-tags="top dj mixtape hosting"><div class="tileTitle">Top DJ: Mixtape Hosting</div><p class="tileDesc">Your signature service product tiers.</p><span class="go">Open →</span></a>
+        <a class="tile cGlow accentBlue" href="/pricing.html" data-tags="top pricing checkout"><div class="tileTitle">Top Checkout: Pricing</div><p class="tileDesc">Stripe unlock front door for everyone.</p><span class="go">Open →</span></a>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <span style="color:var(--muted);font-weight:900;font-size:12px">SEARCH</span>
+          <input id="q" placeholder="type: mixtape, label, sponsor, autopilot, contract…" autocomplete="off"/>
+        </div>
+        <div class="chips">
+          <div class="chip active" data-filter="all">All</div>
+          <div class="chip" data-filter="creator">Creator</div>
+          <div class="chip" data-filter="radio">Radio</div>
+          <div class="chip" data-filter="label">Label</div>
+          <div class="chip" data-filter="promo">Promo</div>
+          <div class="chip" data-filter="owner">Owner</div>
+        </div>
       </div>
     </div>
-  </section>
 
-  <section style="margin-bottom:1.1rem;">
-    <div class="section-title">Creator tools</div>
     <div class="grid">
-      <article class="tile" data-link="dj-mixtape-hosting.html" data-creator-feature="true">
-        <div class="tile-inner">
-          <div class="tile-title">DJ KRAVE Mixtape Hosting</div>
-          <div class="tile-sub">
-            Sell $500+ hosted mixtapes. Artists book packages, Autopilot tracks the money.
-          </div>
-          <div class="tile-tag-row">
-            <span class="tile-tag creator">Creator</span>
-            <span class="tile-tag">Artists • DJs</span>
-          </div>
-        </div>
-      </article>
 
-      <article class="tile" data-link="artist-upload.html" data-creator-feature="true">
-        <div class="tile-inner">
-          <div class="tile-title">Artist / DJ / Producer Upload</div>
-          <div class="tile-sub">
-            Intake form that feeds Autopilot + Label. Creator Pass gets more love.
-          </div>
-          <div class="tile-tag-row">
-            <span class="tile-tag creator">Creator</span>
-            <span class="tile-tag">Intake</span>
-          </div>
+      <!-- CREATOR LANE -->
+      <section class="section" data-section="creator">
+        <div class="sectionHead">
+          <h2 class="sTitle">Creator Lane — DJs / Artists / Producers</h2>
+          <p class="sNote">Upload, promote, sell mixtapes, manage orders — the public-facing money lane.</p>
         </div>
-      </article>
+        <div class="cards">
+          <a class="card accentBlue" href="/artist-upload.html" data-tags="creator artist upload submissions"><div class="cardTitle">Artist Upload</div><p class="cardDesc">Submit music to TKFM (feeds submissions + label review).</p><div class="tagRow"><span class="tag">Artist</span><span class="tag">Intake</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/submit.html" data-tags="creator submit"><div class="cardTitle">Quick Submit</div><p class="cardDesc">Fast submission lane for drops + intake.</p><div class="tagRow"><span class="tag">Fast</span><span class="tag">Intake</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="/dj-portal.html" data-tags="creator dj portal"><div class="cardTitle">DJ Portal</div><p class="cardDesc">DJ home base: tools, schedule, orders, access.</p><div class="tagRow"><span class="tag">DJ</span><span class="tag">Ops</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="/dj-mixtape-hosting.html" data-tags="creator dj mixtape hosting"><div class="cardTitle">Mixtape Hosting (DJ KRAVE)</div><p class="cardDesc">Sell mixtape tiers + intake workflow.</p><div class="tagRow"><span class="tag">Mixtape</span><span class="tag">Paid</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="/mixtape-order.html" data-tags="creator mixtape order"><div class="cardTitle">Mixtape Order</div><p class="cardDesc">Order + checkout for mixtape services.</p><div class="tagRow"><span class="tag">Order</span><span class="tag">Checkout</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/feature-engine.html" data-tags="creator promo feature engine"><div class="cardTitle">Feature Engine</div><p class="cardDesc">Homepage features + rotation boosts.</p><div class="tagRow"><span class="tag">Promo</span><span class="tag">Spins</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/social-engine.html" data-tags="creator promo social engine"><div class="cardTitle">Social Engine</div><p class="cardDesc">Paid social campaigns that convert.</p><div class="tagRow"><span class="tag">Paid</span><span class="tag">Motion</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/pricing.html" data-tags="creator pricing checkout"><div class="cardTitle">Pricing / Plans</div><p class="cardDesc">Creator + DJ + Label plans (Stripe unlocks).</p><div class="tagRow"><span class="tag">Stripe</span><span class="tag">Unlocks</span></div><span class="go">Open →</span></a>
+        </div>
+      </section>
 
-      <article class="tile" data-link="creator-pass.html">
-        <div class="tile-inner">
-          <div class="tile-title">Creator Pass Levels</div>
-          <div class="tile-sub">
-            Flip between FREE, Creator Pass and Elite so the system knows how to treat you.
-          </div>
-          <div class="tile-tag-row">
-            <span class="tile-tag">Membership</span>
-          </div>
+      <!-- RADIO LANE -->
+      <section class="section" data-section="radio">
+        <div class="sectionHead">
+          <h2 class="sTitle">Radio Lane — Station Engines</h2>
+          <p class="sNote">On-air machine: hubs, autopilot, now playing, sponsors, momentum.</p>
         </div>
-      </article>
+        <div class="cards">
+          <a class="card accentRadio" href="/radio-hub.html" data-tags="radio hub"><div class="cardTitle">Radio Hub</div><p class="cardDesc">Main radio hub for listeners + creators.</p><div class="tagRow"><span class="tag">Radio</span><span class="tag">Hub</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="/autopilot-engine.html" data-tags="radio autopilot"><div class="cardTitle">Autopilot Engine</div><p class="cardDesc">Automation lane: submissions → spins → placements.</p><div class="tagRow"><span class="tag">Autopilot</span><span class="tag">Ops</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="/now-playing.html" data-tags="radio now playing"><div class="cardTitle">Now Playing</div><p class="cardDesc">Live track status page (hype + transparency).</p><div class="tagRow"><span class="tag">Live</span><span class="tag">Metadata</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/sponsor-rotator.html" data-tags="radio sponsor rotator"><div class="cardTitle">Sponsor Rotator</div><p class="cardDesc">Paid sponsor exposure loop.</p><div class="tagRow"><span class="tag">Sponsor</span><span class="tag">Rotation</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/sponsors.html" data-tags="radio sponsor sales"><div class="cardTitle">Sponsor Sales</div><p class="cardDesc">Sell sponsor slots + packages.</p><div class="tagRow"><span class="tag">Sales</span><span class="tag">Sponsor</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="/radio-stream-gateway.html" data-tags="radio stream gateway"><div class="cardTitle">Stream Gateway</div><p class="cardDesc">Stream entry point / access gate.</p><div class="tagRow"><span class="tag">Stream</span><span class="tag">Gate</span></div><span class="go">Open →</span></a>
+          <a class="card accentRadio" href="/momentum-engine.html" data-tags="radio momentum"><div class="cardTitle">Momentum Engine</div><p class="cardDesc">Track movement across promos/spins/placements.</p><div class="tagRow"><span class="tag">Momentum</span><span class="tag">Analytics</span></div><span class="go">Open →</span></a>
+        </div>
+      </section>
+
+      <!-- LABEL LANE -->
+      <section class="section" data-section="label">
+        <div class="sectionHead">
+          <h2 class="sTitle">Label Lane — TKFM Records Engines</h2>
+          <p class="sNote">Submissions → review → contracts → onboarding → accounts.</p>
+        </div>
+        <div class="cards">
+          <a class="card accentLabel" href="/label-hub.html" data-tags="label hub"><div class="cardTitle">Label Hub</div><p class="cardDesc">Records HQ for label ops.</p><div class="tagRow"><span class="tag">Records</span><span class="tag">HQ</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="/label-submissions.html" data-tags="label submissions review"><div class="cardTitle">Label Submissions</div><p class="cardDesc">Review queue for artist submissions.</p><div class="tagRow"><span class="tag">Review</span><span class="tag">Queue</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="/label-contract-lab.html" data-tags="label contract lab"><div class="cardTitle">Contract Lab</div><p class="cardDesc">Generate label contracts + terms.</p><div class="tagRow"><span class="tag">Contracts</span><span class="tag">AI</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="/label-onboarding.html" data-tags="label onboarding"><div class="cardTitle">Label Onboarding</div><p class="cardDesc">Bring artists into the label pipeline.</p><div class="tagRow"><span class="tag">Onboard</span><span class="tag">Artist</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="/label-accounts.html" data-tags="label accounts"><div class="cardTitle">Label Accounts</div><p class="cardDesc">Accounts + access for label clients/partners.</p><div class="tagRow"><span class="tag">Accounts</span><span class="tag">Access</span></div><span class="go">Open →</span></a>
+          <a class="card accentLabel" href="/records-application.html" data-tags="label application"><div class="cardTitle">Records Application</div><p class="cardDesc">Application front door to TKFM Records.</p><div class="tagRow"><span class="tag">Apply</span><span class="tag">Records</span></div><span class="go">Open →</span></a>
+        </div>
+      </section>
+
+      <!-- PROMO -->
+      <section class="section" data-section="promo">
+        <div class="sectionHead">
+          <h2 class="sTitle">Promo + Revenue Lane</h2>
+          <p class="sNote">Sell promo, features, sponsor slots, media kit — revenue engines.</p>
+        </div>
+        <div class="cards">
+          <a class="card accentBlue" href="/feature-revenue.html" data-tags="promo revenue"><div class="cardTitle">Feature Revenue</div><p class="cardDesc">Revenue dashboard for feature products.</p><div class="tagRow"><span class="tag">Revenue</span><span class="tag">Promo</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/media-kit.html" data-tags="promo media kit"><div class="cardTitle">Media Kit</div><p class="cardDesc">Sell sponsorship packages with clean presentation.</p><div class="tagRow"><span class="tag">Media</span><span class="tag">Sponsors</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/label-sponsor-engine.html" data-tags="promo label sponsor engine"><div class="cardTitle">Label Sponsor Engine</div><p class="cardDesc">Sponsor lane inside label (premium).</p><div class="tagRow"><span class="tag">Label</span><span class="tag">Sponsor</span></div><span class="go">Open →</span></a>
+          <a class="card accentBlue" href="/label-social-engine.html" data-tags="promo label social engine"><div class="cardTitle">Label Social Engine</div><p class="cardDesc">Paid social lane for label clients.</p><div class="tagRow"><span class="tag">Label</span><span class="tag">Social</span></div><span class="go">Open →</span></a>
+        </div>
+      </section>
+
+      <!-- OWNER -->
+      <section class="section" data-section="owner">
+        <div class="sectionHead">
+          <h2 class="sTitle">Owner / Admin Lane (DJ KRAVE)</h2>
+          <p class="sNote">Owner-only dashboards and ops controls.</p>
+        </div>
+        <div class="cards">
+          <a class="card accentOwner" href="/owner-login.html" data-tags="owner login"><div class="cardTitle">Owner Login</div><p class="cardDesc">Authenticate for owner-only pages.</p><div class="tagRow"><span class="tag">Owner</span><span class="tag">Auth</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="/owner-dashboard.html" data-tags="owner dashboard"><div class="cardTitle">Owner Dashboard</div><p class="cardDesc">High-level controls across the TKFM machine.</p><div class="tagRow"><span class="tag">Owner</span><span class="tag">Controls</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="/owner-ops-dashboard.html" data-tags="owner ops"><div class="cardTitle">Owner Ops Dashboard</div><p class="cardDesc">Ops console: submissions, sponsors, platform status.</p><div class="tagRow"><span class="tag">Ops</span><span class="tag">Console</span></div><span class="go">Open →</span></a>
+          <a class="card accentOwner" href="/god-view.html" data-tags="owner god view"><div class="cardTitle">God View</div><p class="cardDesc">Master view across all engines.</p><div class="tagRow"><span class="tag">Master</span><span class="tag">View</span></div><span class="go">Open →</span></a>
+        </div>
+      </section>
+
     </div>
-  </section>
 
-  <section>
-    <div class="section-title">Owner tools (internal)</div>
-    <div class="grid">
-      <article class="tile" data-link="autopilot-engine.html">
-        <div class="tile-inner">
-          <div class="tile-title">Autopilot Engine</div>
-          <div class="tile-sub">
-            Revenue + mixtape funnel. Reads Creator status to see where money is coming from.
-          </div>
-          <div class="tile-tag-row">
-            <span class="tile-tag owner">Owner</span>
-            <span class="tile-tag">Revenue</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="tile" data-link="ai-dj-engine.html">
-        <div class="tile-inner">
-          <div class="tile-title">AI DJ Engine</div>
-          <div class="tile-sub">
-            Internal-only AI DJ brain. Owner-gated with status chip.
-          </div>
-          <div class="tile-tag-row">
-            <span class="tile-tag owner">Owner</span>
-            <span class="tile-tag">AI</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="tile" data-link="label-hub.html">
-        <div class="tile-inner">
-          <div class="tile-title">Label Hub</div>
-          <div class="tile-sub">
-            Where mixtape leads and contracts land when someone flags “label eyes”.
-          </div>
-          <div class="tile-tag-row">
-            <span class="tile-tag owner">Owner</span>
-            <span class="tile-tag">Label</span>
-          </div>
-        </div>
-      </article>
+    <div class="footer">
+      <div style="font-weight:950;color:rgba(229,231,235,.95)">Shortcut</div>
+      <div style="margin-top:6px">Go to <span class="mono">/engines.html</span> anytime — it redirects here.</div>
     </div>
-  </section>
+  </div>
 
-  <p class="footer-note">
-    Creator status key: <code>tkfm_creatorStatus</code> — FREE • creator • elite.
-    Owner tools still respect Owner Mode keys on their own pages.
-  </p>
-</main>
+  <script>
+    (function(){
+      const q = document.getElementById('q');
+      const chips = Array.from(document.querySelectorAll('.chip'));
+      const cards = Array.from(document.querySelectorAll('.card, .tile'));
+      let mode = 'all';
 
-<script>
-  (function () {
-    const KEY = 'tkfm_creatorStatus';
-
-    function getStatus() {
-      try {
-        return localStorage.getItem(KEY) || 'free';
-      } catch (e) {
-        return 'free';
+      function setChipActive(filter){
+        chips.forEach(c => c.classList.toggle('active', c.dataset.filter === filter));
       }
-    }
-
-    function labelFor(level) {
-      switch (level) {
-        case 'creator': return 'CREATOR PASS';
-        case 'elite': return 'ELITE CREATOR';
-        default: return 'FREE';
+      function cardSection(card){
+        const sec = card.closest('section');
+        return sec ? (sec.getAttribute('data-section') || 'all') : 'top';
       }
-    }
-
-    function applyCreatorHighlight() {
-      const level = getStatus();
-      const tiles = document.querySelectorAll('[data-creator-feature="true"]');
-      tiles.forEach(tile => {
-        tile.classList.remove('tile-creator-highlight','tile-elite-highlight');
-        if (level === 'creator') {
-          tile.classList.add('tile-creator-highlight');
-        } else if (level === 'elite') {
-          tile.classList.add('tile-elite-highlight');
-        }
-      });
-
-      const chip = document.getElementById('creatorChip');
-      const chipText = document.getElementById('creatorChipText');
-      if (chip) {
-        chip.classList.remove('creator','elite');
-        if (level === 'creator') chip.classList.add('creator');
-        if (level === 'elite') chip.classList.add('elite');
+      function matches(card, query){
+        const t = (card.innerText || '').toLowerCase();
+        const tags = (card.getAttribute('data-tags') || '').toLowerCase();
+        const hay = t + ' ' + tags;
+        return hay.indexOf(query) !== -1;
       }
-      if (chipText) {
-        chipText.textContent = 'Creator: ' + labelFor(level);
+      function apply(){
+        const query = (q.value || '').trim().toLowerCase();
+        cards.forEach(card => {
+          const sec = cardSection(card);
+          const inMode = (mode === 'all') || (sec === mode);
+          const inQuery = !query || matches(card, query);
+          card.style.display = (inMode && inQuery) ? '' : 'none';
+        });
+        document.querySelectorAll('section.section').forEach(sec=>{
+          const visible = Array.from(sec.querySelectorAll('.card')).some(c => c.style.display !== 'none');
+          sec.style.display = visible ? '' : 'none';
+        });
       }
-    }
-
-    function init() {
-      applyCreatorHighlight();
-
-      document.querySelectorAll('.tile').forEach(tile => {
-        const link = tile.getAttribute('data-link');
-        if (!link) return;
-        tile.addEventListener('click', () => {
-          window.location.href = link;
+      chips.forEach(c=>{
+        c.addEventListener('click', ()=>{
+          mode = c.dataset.filter || 'all';
+          setChipActive(mode);
+          apply();
         });
       });
-
-      const chip = document.getElementById('creatorChip');
-      if (chip) {
-        chip.addEventListener('click', () => {
-          window.location.href = 'creator-pass.html';
-        });
-      }
-
-      window.addEventListener('storage', (e) => {
-        if (e.key === KEY) applyCreatorHighlight();
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  })();
-</script>
-
-  <script type="module" src="/js/tkfm-logo-resolver.js"></script>
-<script src="/js/tkfm-checkout.js"></script>
+      if (q) q.addEventListener('input', apply);
+      apply();
+    })();
+  </script>
 </body>
 </html>
