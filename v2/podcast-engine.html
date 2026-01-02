@@ -22,6 +22,7 @@
     .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
     .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem}
   </style>
 
 </head>
@@ -38,10 +39,10 @@
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
-        <a href="label-hub.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🏛 Label</a>
-        <a href="app-hub.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">⚡ Engines</a>
+        <a href="radio-podcasts.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 For Podcasters</a>
+        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 For Video</a>
         <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
-        <a href="pricing.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">💳 Pricing</a>
       </nav>
     </div>
   </header>
@@ -54,13 +55,12 @@
     </div>
 
     <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
-      Put your podcast on the station — not buried in the feed.
+      Get your podcast featured on the station — and listed for listeners to discover.
     </h1>
 
     <p class="text-slate-100/90 max-w-4xl">
-      TKFM sells <span class="text-sky-200 font-semibold">podcasters</span> a path to real exposure:
-      station features, on-site discovery, and a rollout system that drives listeners to episodes.
-      Membership is required to be listed and scheduled.
+      TKFM sells podcasters a clean path to exposure: featured listings, scheduled interviews, and rollout support.
+      <span class="text-sky-200 font-semibold">Monthly membership</span> is required to be listed + scheduled.
     </p>
 
     <div class="grid md:grid-cols-3 gap-4">
@@ -77,13 +77,13 @@
           </div>
         </div>
         <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
-          <li>• Eligibility to be listed in the TKFM Podcasts directory</li>
+          <li>• Eligible to be listed in the TKFM Media Directory</li>
           <li>• Scheduling lane for features / interviews</li>
-          <li>• Access to Submit workflow + content requirements</li>
+          <li>• Submit workflow + content requirements</li>
         </ul>
         <div class="mt-5 flex flex-wrap gap-2">
           <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" data-plan="podcast_creator_pass_monthly">💳 Start Monthly</button>
-          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Apply / Submit Podcast</a>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="radio-podcasts.html">🎥 View Directory</a>
         </div>
       </div>
 
@@ -135,16 +135,12 @@
     </div>
 
     <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
-      <p class="font-extrabold text-slate-50">How podcasts show up on the Radio side</p>
+      <p class="font-extrabold text-slate-50">Where listeners see it</p>
       <ul class="mt-2 space-y-2">
-        <li>• Podcasters subscribe (Creator Pass) → submit show link + episode links + cover image</li>
-        <li>• We feature them in the Podcasts directory that listeners browse from Radio Hub</li>
-        <li>• Episodes link out to YouTube/Spotify/Apple and clips push Social Motion</li>
+        <li>• Listeners browse the <a class="text-emerald-200 font-semibold hover:underline" href="radio-podcasts.html">Media Directory</a> from the Radio side.</li>
+        <li>• Your show links out to YouTube/Spotify/Apple (or your website).</li>
+        <li>• Clips can be promoted through Social Motion to drive extra plays.</li>
       </ul>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="radio-podcasts.html">🎧 View Podcasts Directory</a>
-        <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Podcast</a>
-      </div>
     </div>
   </main>
 
@@ -161,6 +157,8 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Fallback checkout wiring
     (function(){
       document.querySelectorAll('button[data-feature],button[data-plan]').forEach(function(btn){
         btn.addEventListener('click', async function(){

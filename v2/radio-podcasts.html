@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>TKFM Radio — Podcasts + Video</title>
+  <title>TKFM Radio Media Directory — Podcasts + Video</title>
 
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -22,6 +22,7 @@
     .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
     .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem}
   </style>
 
 </head>
@@ -33,89 +34,143 @@
         <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
         <div class="leading-tight">
           <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
-          <p class="text-sm font-semibold">TKFM Radio — Podcasts + Video</p>
+          <p class="text-sm font-semibold">TKFM Radio Media Directory</p>
         </div>
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
-        <a href="label-hub.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🏛 Label</a>
-        <a href="app-hub.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">⚡ Engines</a>
+        <a href="radio-podcasts.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 For Podcasters</a>
+        <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 For Video</a>
         <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
-        <a href="pricing.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">💳 Pricing</a>
       </nav>
     </div>
   </header>
 
 
   <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 pill text-emerald-200">
       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span>Listener Directory</span>
+      <span>Listener Page</span>
     </div>
 
     <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
-      Discover podcasts + video shows featured inside TKFM Radio.
+      Watch & listen to featured podcasts + video shows on TKFM.
     </h1>
 
     <p class="text-slate-100/90 max-w-4xl">
-      This page is for <span class="text-sky-200 font-semibold">listeners</span>.
-      Click a show to watch/listen. Podcasters who want to be listed buy the Podcast Creator Pass and submit their info.
+      This page is built for <span class="text-emerald-200 font-semibold">listeners</span>.
+      Click a show to watch/listen. Creators who want to be listed use the podcaster or video lanes below.
     </p>
 
     <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
-      <p class="font-extrabold text-slate-50">For Podcasters</p>
-      <ul class="mt-2 space-y-2">
-        <li>• Join the monthly lane → get listed + eligible for scheduled features</li>
-        <li>• Submit your show links, cover art, and top episode links</li>
-      </ul>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html">🎙 Podcast Opportunities</a>
-        <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Podcast</a>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="font-extrabold text-slate-50">Creators: get listed + get featured</p>
+          <p class="mt-1">Podcasters join the monthly lane, submit show links, and TKFM schedules features.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html">🎙 Podcaster Lane</a>
+          <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="video-engine.html">🎬 Video Lane</a>
+          <a class="tab border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit</a>
+        </div>
       </div>
+      <ul class="mt-4 space-y-2">
+        <li>• Listeners discover shows here → clicks go to YouTube/Spotify/Apple and grow the audience.</li>
+        <li>• Clips can be pushed with Social Motion for extra momentum.</li>
+      </ul>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-4">
+    <section class="space-y-4">
+      <div class="flex items-end justify-between gap-3 flex-wrap">
+        <h2 class="text-2xl md:text-3xl font-extrabold">🎧 Featured Podcasts</h2>
+        <p class="text-slate-400 text-sm">Replace the cards below with real shows as you onboard creators.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        
       <div class="card rounded-2xl p-5">
         <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Featured Podcast</p>
         <h3 class="text-lg font-extrabold mt-1">YOUR PODCAST NAME</h3>
-        <p class="text-slate-300/80 text-sm mt-2">Short description goes here. Replace with the podcaster's bio.</p>
+        <p class="text-slate-300/85 text-sm mt-2">Short description goes here. Replace with the podcaster bio.</p>
         <div class="mt-4 flex flex-wrap gap-2">
           <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="#" target="_blank" rel="noreferrer">▶ Watch / Listen</a>
           <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="#" target="_blank" rel="noreferrer">🎧 Top Episode</a>
         </div>
       </div>
 
+        
+      <div class="card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Featured Podcast</p>
+        <h3 class="text-lg font-extrabold mt-1">YOUR PODCAST NAME</h3>
+        <p class="text-slate-300/85 text-sm mt-2">Add Spotify/Apple/YouTube links. This is a listener-facing directory.</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="#" target="_blank" rel="noreferrer">▶ Watch / Listen</a>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="#" target="_blank" rel="noreferrer">🎧 Top Episode</a>
+        </div>
+      </div>
+
+        
+      <div class="card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Apply to be listed</p>
+        <h3 class="text-lg font-extrabold mt-1">Get on TKFM Radio</h3>
+        <p class="text-slate-300/85 text-sm mt-2">Podcasters: subscribe monthly → submit show links → get listed + eligible for features.</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html" target="_blank" rel="noreferrer">🎙 Join Monthly</a>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html" target="_blank" rel="noreferrer">📝 Submit</a>
+        </div>
+      </div>
+
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div class="flex items-end justify-between gap-3 flex-wrap">
+        <h2 class="text-2xl md:text-3xl font-extrabold">🎥 Featured Video Shows</h2>
+        <p class="text-slate-400 text-sm">Video podcasts, live shows, interviews, behind-the-scenes, performance content.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        
       <div class="card rounded-2xl p-5">
         <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Featured Video Show</p>
         <h3 class="text-lg font-extrabold mt-1">YOUR VIDEO SHOW</h3>
-        <p class="text-slate-300/80 text-sm mt-2">YouTube show / video podcast / live stream lane. Replace links.</p>
+        <p class="text-slate-300/85 text-sm mt-2">YouTube show / video podcast / livestream lane. Replace links.</p>
         <div class="mt-4 flex flex-wrap gap-2">
           <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="#" target="_blank" rel="noreferrer">▶ Watch</a>
           <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="#" target="_blank" rel="noreferrer">📺 Channel</a>
         </div>
       </div>
 
+        
       <div class="card rounded-2xl p-5">
-        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Apply to be listed</p>
-        <h3 class="text-lg font-extrabold mt-1">Get on TKFM Radio</h3>
-        <p class="text-slate-300/80 text-sm mt-2">Join the monthly lane, then submit your show details.</p>
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Featured Video Show</p>
+        <h3 class="text-lg font-extrabold mt-1">YOUR VIDEO SHOW</h3>
+        <p class="text-slate-300/85 text-sm mt-2">Put the best clip + full episode links here.</p>
         <div class="mt-4 flex flex-wrap gap-2">
-          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html">💳 Join Monthly</a>
-          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit</a>
+          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="#" target="_blank" rel="noreferrer">▶ Watch</a>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="#" target="_blank" rel="noreferrer">📺 Channel</a>
         </div>
       </div>
-    </div>
+
+        
+      <div class="card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Boost your visuals</p>
+        <h3 class="text-lg font-extrabold mt-1">Video Engine Packages</h3>
+        <p class="text-slate-300/85 text-sm mt-2">Creators: build clips + rollouts that feed radio, features, and label momentum.</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="video-engine.html" target="_blank" rel="noreferrer">🎬 View Video Offers</a>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="social-engine.html" target="_blank" rel="noreferrer">📣 Social Motion</a>
+        </div>
+      </div>
+
+      </div>
+    </section>
 
     <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
-      <p class="font-extrabold text-slate-50">Next step (optional upgrade)</p>
+      <p class="font-extrabold text-slate-50">Next power upgrades (optional)</p>
       <ul class="mt-2 space-y-2">
-        <li>• Add Social Motion packs to push episodes and clips into real momentum</li>
-        <li>• Add Homepage features or Takeover Day for maximum eyes</li>
+        <li>• Add an Owner-only “Media Console” so submissions automatically populate this directory (no manual edits).</li>
+        <li>• Add “Episode of the Day” rotation and a featured embed area.</li>
       </ul>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <a class="btn border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15" href="social-engine.html">📣 Social Motion</a>
-        <a class="btn border border-cyan-500/40 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/15" href="pricing.html">💳 Pricing</a>
-      </div>
     </div>
   </main>
 
@@ -132,6 +187,8 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Fallback checkout wiring
     (function(){
       document.querySelectorAll('button[data-feature],button[data-plan]').forEach(function(btn){
         btn.addEventListener('click', async function(){
