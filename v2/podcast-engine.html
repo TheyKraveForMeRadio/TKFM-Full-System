@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Podcast Engine — Get Featured on Radio</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+  </style>
+</head>
+
+<body class="text-slate-50 min-h-screen">
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">TKFM Podcast Engine</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="app-hub.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">⚡ Engines</a>
+        <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
+        <a href="pricing.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">💳 Pricing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Podcast Opportunities on TKFM Radio</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      Put your podcast on the station — not buried in the feed.
+    </h1>
+
+    <p class="text-slate-100/90 max-w-4xl">
+      This lane is built for <span class="text-sky-200 font-semibold">podcasters</span> who want real exposure.
+      TKFM gives creators a path to get featured, distributed, clipped into short‑form, and pushed through the ecosystem.
+      If you run a podcast, choose a package below → checkout → submit your brief. We handle the motion.
+    </p>
+
+    <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
+      <p class="font-extrabold text-slate-50">What podcasters get on TKFM</p>
+      <ul class="mt-2 space-y-2">
+        <li>• Hosted interview or show feature built for replay value + shareability</li>
+        <li>• Clip plan for Reels/TikTok/Shorts so episodes keep moving</li>
+        <li>• Optional cross‑promo into Social Motion + Homepage features</li>
+      </ul>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Apply / Submit Podcast</a>
+        <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="radio-hub.html">📻 Back to Radio Hub</a>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">One‑time</p>
+            <h3 class="text-lg font-extrabold mt-1">Podcast Interview (30 min) + Promo Push</h3>
+            <p class="text-slate-400 text-xs mt-2">Lookup key: <span class="mono">podcast_interview_30min</span></p>
+          </div>
+          <div class="text-right">
+            <p class="text-slate-400 text-xs">Price</p>
+            <p class="text-xl font-extrabold text-sky-200">$250</p>
+          </div>
+        </div>
+        <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+          <li>• 30‑minute hosted interview + publish</li>
+          <li>• Promo copy + clip plan to drive streams</li>
+          <li>• Best for: new drops, stories, announcements</li>
+        </ul>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy" data-feature="podcast_interview_30min">💳 Buy Now</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">One‑time</p>
+            <h3 class="text-lg font-extrabold mt-1">Podcast Launch Pack (7–14 days)</h3>
+            <p class="text-slate-400 text-xs mt-2">Lookup key: <span class="mono">podcast_launch_pack</span></p>
+          </div>
+          <div class="text-right">
+            <p class="text-slate-400 text-xs">Price</p>
+            <p class="text-xl font-extrabold text-sky-200">$750</p>
+          </div>
+        </div>
+        <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+          <li>• Launch rollout plan + posting calendar</li>
+          <li>• Hooks, captions, CTA sequencing</li>
+          <li>• Momentum checkpoints + growth targets</li>
+        </ul>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy" data-feature="podcast_launch_pack">💳 Buy Now</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Monthly</p>
+            <h3 class="text-lg font-extrabold mt-1">Podcast Monthly Boost</h3>
+            <p class="text-slate-400 text-xs mt-2">Lookup key: <span class="mono">podcast_monthly_boost</span></p>
+          </div>
+          <div class="text-right">
+            <p class="text-slate-400 text-xs">Price</p>
+            <p class="text-xl font-extrabold text-sky-200">$199 / mo</p>
+          </div>
+        </div>
+        <ul class="mt-4 space-y-2 text-sm text-slate-200/85">
+          <li>• Monthly promo cadence + clipping strategy</li>
+          <li>• Cross‑promo placement inside TKFM ecosystem</li>
+          <li>• Best for: consistent growth month to month</li>
+        </ul>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy" data-feature="podcast_monthly_boost">💳 Buy Now</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
+      <p class="font-extrabold text-slate-50">Workflow</p>
+      <ul class="mt-2 space-y-2">
+        <li>• Buy a product → Stripe checkout → instant unlock on this device.</li>
+        <li>• Submit your podcast info in <a class="text-sky-200 font-semibold hover:underline" href="submit.html">Submit</a> (links, topic, schedule, assets).</li>
+        <li>• We execute → you track momentum in <a class="text-sky-200 font-semibold hover:underline" href="momentum-engine.html">Momentum Engine</a>.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    (function(){
+      document.querySelectorAll('button[data-feature],button[data-plan]').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          const id = btn.getAttribute('data-plan') || btn.getAttribute('data-feature');
+          if (!id) return;
+          const original = btn.textContent;
+          btn.textContent = 'Redirecting…';
+          btn.disabled = true;
+          try{
+            const res = await fetch('/.netlify/functions/create-checkout-session', {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ id: id })
+            });
+            const data = await res.json().catch(function(){ return {}; });
+            const url = data.url || data.checkoutUrl || data.sessionUrl;
+            if (url) window.location.href = url;
+            else throw new Error('No checkout url returned');
+          }catch(e){
+            btn.textContent = original;
+            btn.disabled = false;
+            alert('Checkout error. Confirm create-checkout-session.js maps id: ' + id);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
