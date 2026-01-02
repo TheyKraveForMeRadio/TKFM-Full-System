@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Program Schedule — Radio + TV Lineup</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+    .soft{color:rgba(226,232,240,.82)}
+  </style>
+
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Program Schedule</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
+        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+        <a href="owner-schedule-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
+      <span>Radio + TV Lineup</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      What’s on TKFM — scheduled shows + featured podcast/video windows.
+    </h1>
+
+    <p class="soft max-w-4xl">
+      The lineup below is curated by the station. Creators submit in the Media Engine, then owner schedules approved shows into slots.
+      Watch on <a class="text-purple-200 font-semibold hover:underline" href="radio-tv.html">Radio TV</a>.
+    </p>
+
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 card rounded-2xl p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">This week</p>
+          <div class="flex flex-wrap gap-2">
+            <a class="tab border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">📺 Open TV</a>
+            <a class="tab border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="media-directory.html">🎥 Directory</a>
+          </div>
+        </div>
+
+        <div class="mt-4 grid md:grid-cols-2 gap-3" id="grid"></div>
+        <p id="empty" class="text-slate-400 text-sm mt-4 hidden">No schedule published yet.</p>
+      </div>
+
+      <div class="card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Now / Next</p>
+        <h2 class="text-xl font-extrabold mt-2">Live Window</h2>
+        <p id="now" class="soft text-sm mt-3">Loading…</p>
+        <p id="next" class="text-slate-400 text-sm mt-2"></p>
+
+        <div class="mt-5 rounded-xl border border-slate-700/50 bg-black/40 p-4 text-sm text-slate-200/85">
+          <p class="font-extrabold text-slate-50">Creators</p>
+          <p class="mt-2">Want a slot? Start in the paid lanes:</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html">🎙 Podcast Lane</a>
+            <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="video-engine.html">🎬 Video Lane</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function safe(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+    function slotLabel(slot){
+      const d = days[slot.day] || 'Day';
+      const st = String(slot.start||'').padStart(5,'0');
+      const en = String(slot.end||'').padStart(5,'0');
+      return `${d} • ${st}–${en}`;
+    }
+
+    function card(slot){
+      const label = slotLabel(slot);
+      const title = slot.title || 'TKFM Slot';
+      const type = slot.type || 'radio';
+      const color = type === 'video' ? 'border-purple-500/40 bg-purple-500/10 text-purple-100'
+                   : (type === 'podcast' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100'
+                   : 'border-sky-500/40 bg-sky-500/10 text-sky-100');
+      const link = slot.url || '';
+      const creator = slot.creator || '';
+      return `
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">${safe(label)}</p>
+              <h3 class="text-lg font-extrabold mt-2">${safe(title)}</h3>
+              <p class="text-slate-400 text-sm mt-1">${safe(creator)}</p>
+            </div>
+            <span class="px-3 py-1 rounded-full border ${color} text-[0.65rem] uppercase tracking-[0.22em] font-extrabold">${safe(type)}</span>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            ${link ? `<a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="${safe(link)}" target="_blank" rel="noreferrer">▶ Open</a>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function minutesSinceWeekStart(d){
+      const day = d.getDay();
+      return day*24*60 + d.getHours()*60 + d.getMinutes();
+    }
+
+    function slotToMinutes(slot){
+      const [sh, sm] = String(slot.start||'00:00').split(':').map(x=>parseInt(x,10)||0);
+      const [eh, em] = String(slot.end||'00:00').split(':').map(x=>parseInt(x,10)||0);
+      const startM = (slot.day||0)*24*60 + sh*60 + sm;
+      const endM = (slot.day||0)*24*60 + eh*60 + em;
+      return { startM, endM };
+    }
+
+    async function load(){
+      const grid = document.getElementById('grid');
+      const empty = document.getElementById('empty');
+      const nowEl = document.getElementById('now');
+      const nextEl = document.getElementById('next');
+
+      grid.innerHTML = '';
+      empty.classList.add('hidden');
+
+      let slots = [];
+      try {
+        const res = await fetch('/.netlify/functions/schedule-get');
+        const data = await res.json();
+        slots = (data && data.slots) ? data.slots : [];
+      } catch(e) {
+        slots = [];
+      }
+
+      if (!slots.length) {
+        empty.classList.remove('hidden');
+        nowEl.textContent = 'No schedule published yet.';
+        nextEl.textContent = '';
+        return;
+      }
+
+      slots.sort((a,b)=> slotToMinutes(a).startM - slotToMinutes(b).startM );
+      grid.innerHTML = slots.map(card).join('');
+
+      const now = new Date();
+      const nowM = minutesSinceWeekStart(now);
+
+      let current = null;
+      for (const s of slots){
+        const {startM, endM} = slotToMinutes(s);
+        if (nowM >= startM && nowM < endM) { current = s; break; }
+      }
+
+      let upcoming = null;
+      for (const s of slots){
+        const {startM} = slotToMinutes(s);
+        if (startM > nowM) { upcoming = s; break; }
+      }
+      if (!upcoming) upcoming = slots[0];
+
+      if (current) {
+        nowEl.innerHTML = `<span class="text-slate-400 text-xs uppercase tracking-[0.28em]">Now</span><br/><span class="text-slate-50 font-extrabold">${safe(current.title||'Live')}</span><br/><span class="text-slate-400 text-sm">${safe(slotLabel(current))}</span>`;
+      } else {
+        nowEl.innerHTML = `<span class="text-slate-400 text-xs uppercase tracking-[0.28em]">Now</span><br/><span class="text-slate-50 font-extrabold">Station Rotation</span><br/><span class="text-slate-400 text-sm">No scheduled slot at this moment</span>`;
+      }
+      nextEl.innerHTML = `<span class="text-slate-400 text-xs uppercase tracking-[0.28em]">Next</span><br/><span class="text-slate-200 font-semibold">${safe(upcoming.title||'')}</span><br/><span class="text-slate-400 text-sm">${safe(slotLabel(upcoming))}</span>`;
+    }
+
+    load();
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

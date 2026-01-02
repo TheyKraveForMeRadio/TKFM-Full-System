@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Owner Schedule Console — Build Lineup</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+    .soft{color:rgba(226,232,240,.82)}
+  </style>
+
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Owner Schedule Console</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
+        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+        <a href="owner-schedule-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 pill text-yellow-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
+      <span>Owner Only</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      Build the weekly lineup: pick approved shows + assign time windows.
+    </h1>
+
+    <div class="card rounded-2xl p-5 space-y-4">
+      <div class="grid md:grid-cols-3 gap-4 items-end">
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Owner Key</label>
+          <input id="k" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="paste TKFM_OWNER_KEY"/>
+        </div>
+
+        <div>
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Pull Approved Type</label>
+          <select id="type" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50">
+            <option value="podcast">podcast</option>
+            <option value="video">video</option>
+            <option value="radio">radio</option>
+          </select>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <button id="refresh" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Load Approved</button>
+          <button id="loadSchedule" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">🗓 Load Schedule</button>
+          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="schedule.html">Open Schedule</a>
+        </div>
+      </div>
+
+      <p id="m" class="text-sm text-slate-300/85"></p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-4">
+      <section class="card rounded-2xl p-5">
+        <div class="flex items-end justify-between gap-3 flex-wrap">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Approved items</p>
+            <h2 class="text-2xl font-extrabold mt-2">Pick a show</h2>
+          </div>
+          <p class="text-slate-400 text-sm">Click an item to fill the slot form.</p>
+        </div>
+        <div id="approved" class="mt-4 grid md:grid-cols-2 gap-3"></div>
+        <p id="approvedEmpty" class="text-slate-400 text-sm mt-4 hidden">No approved items found.</p>
+      </section>
+
+      <section class="card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Create slot</p>
+        <h2 class="text-2xl font-extrabold mt-2">Add to schedule</h2>
+
+        <div class="mt-4 grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Day</label>
+            <select id="day" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50">
+              <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
+              <option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option>
+              <option value="6">Saturday</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Type</label>
+            <select id="slotType" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50">
+              <option value="podcast">podcast</option><option value="video">video</option><option value="radio">radio</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Start (HH:MM)</label>
+            <input id="start" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="19:00"/>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">End (HH:MM)</label>
+            <input id="end" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="20:00"/>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Title</label>
+            <input id="title" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Show name"/>
+          </div>
+          <div class="md:col-span-2">
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Creator</label>
+            <input id="creator" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="@creator / brand"/>
+          </div>
+          <div class="md:col-span-2">
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">URL (video/podcast link)</label>
+            <input id="url" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://youtube.com/..."/>
+          </div>
+
+          <div class="md:col-span-2 flex flex-wrap gap-2 pt-1">
+            <button id="add" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15">Add Slot</button>
+            <button id="publish" class="btn border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15">Publish</button>
+            <button id="clearAll" class="btn border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15">Clear Local</button>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-xl border border-slate-700/50 bg-black/40 p-4">
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Draft slots (local)</p>
+            <button id="removeLast" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">Remove last</button>
+          </div>
+          <div id="draft" class="mt-3 space-y-2"></div>
+          <p id="draftEmpty" class="text-slate-400 text-sm mt-2">No draft slots yet.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function safe(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    const LS_KEY = 'tkfm_owner_schedule_draft_v1';
+    const m = document.getElementById('m');
+    const approvedWrap = document.getElementById('approved');
+    const approvedEmpty = document.getElementById('approvedEmpty');
+
+    const draftWrap = document.getElementById('draft');
+    const draftEmpty = document.getElementById('draftEmpty');
+
+    function loadDraft(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]') || []; } catch(e){ return []; } }
+    function saveDraft(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr||[])); }
+
+    function renderDraft(){
+      const arr = loadDraft();
+      if (!arr.length) {
+        draftEmpty.style.display = 'block';
+        draftWrap.innerHTML = '';
+        return;
+      }
+      draftEmpty.style.display = 'none';
+      draftWrap.innerHTML = arr.map((s,i)=>{
+        return `
+          <div class="rounded-xl border border-slate-700/50 bg-black/30 px-3 py-2 text-sm">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="text-slate-400 text-xs uppercase tracking-[0.22em]">#${i+1} • ${safe(['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][s.day]||'')} • ${safe(s.start)}–${safe(s.end)} • ${safe(s.type)}</p>
+                <p class="text-slate-50 font-extrabold mt-1">${safe(s.title)}</p>
+                <p class="text-slate-400 text-xs mt-1">${safe(s.creator||'')}</p>
+              </div>
+              ${s.url ? `<a class="tab border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="${safe(s.url)}" target="_blank" rel="noreferrer">Open</a>` : ``}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function fillForm(it){
+      document.getElementById('slotType').value = (document.getElementById('type').value || 'podcast');
+      document.getElementById('title').value = it.title || '';
+      document.getElementById('creator').value = it.creatorName || it.creator || '';
+      document.getElementById('url').value = it.primaryUrl || it.url || '';
+      m.textContent = '✅ Loaded item into slot form.';
+      m.className = 'text-sm text-emerald-300 font-semibold';
+    }
+
+    function approvedCard(it){
+      return `
+        <button class="text-left rounded-2xl border border-slate-700/50 bg-black/30 p-4 hover:border-sky-400/50" data-id="${safe(it.id||'')}">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">${safe(it.type||'')}</p>
+          <p class="text-slate-50 font-extrabold mt-2">${safe(it.title||'Untitled')}</p>
+          <p class="text-slate-400 text-xs mt-2">${safe(it.creatorName||'')}</p>
+        </button>
+      `;
+    }
+
+    async function loadApproved(){
+      approvedWrap.innerHTML = '';
+      approvedEmpty.classList.add('hidden');
+      m.textContent = 'Loading approved…';
+      m.className = 'text-sm text-slate-300/85';
+
+      const t = document.getElementById('type').value || 'podcast';
+
+      try {
+        const res = await fetch(`/.netlify/functions/media-list?type=${encodeURIComponent(t)}&limit=60`);
+        const data = await res.json();
+        const list = (data && data.items) ? data.items : [];
+
+        if (!list.length) {
+          approvedEmpty.classList.remove('hidden');
+          m.textContent = 'No approved items found.';
+          return;
+        }
+
+        approvedWrap.innerHTML = list.map(approvedCard).join('');
+        approvedWrap.querySelectorAll('button[data-id]').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            const id = btn.getAttribute('data-id');
+            const it = list.find(x => (x.id||'') === id);
+            if (it) fillForm(it);
+          });
+        });
+
+        m.textContent = '✅ Approved items loaded. Click one to fill the slot form.';
+        m.className = 'text-sm text-emerald-300 font-semibold';
+      } catch(e) {
+        approvedEmpty.classList.remove('hidden');
+        m.textContent = '❌ Failed to load approved. Check media-list function.';
+        m.className = 'text-sm text-red-300 font-semibold';
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', loadApproved);
+
+    document.getElementById('add').addEventListener('click', ()=>{
+      const s = {
+        day: parseInt(document.getElementById('day').value||'0',10)||0,
+        type: (document.getElementById('slotType').value||'podcast').trim(),
+        start: (document.getElementById('start').value||'').trim(),
+        end: (document.getElementById('end').value||'').trim(),
+        title: (document.getElementById('title').value||'').trim(),
+        creator: (document.getElementById('creator').value||'').trim(),
+        url: (document.getElementById('url').value||'').trim(),
+      };
+      if (!s.start || !s.end || !s.title) {
+        m.textContent = '❌ Need start, end, and title.';
+        m.className = 'text-sm text-red-300 font-semibold';
+        return;
+      }
+      const arr = loadDraft();
+      arr.push(s);
+      saveDraft(arr);
+      renderDraft();
+      m.textContent = '✅ Added draft slot (local). Publish when ready.';
+      m.className = 'text-sm text-emerald-300 font-semibold';
+    });
+
+    document.getElementById('removeLast').addEventListener('click', ()=>{
+      const arr = loadDraft();
+      arr.pop();
+      saveDraft(arr);
+      renderDraft();
+    });
+
+    document.getElementById('clearAll').addEventListener('click', ()=>{
+      saveDraft([]);
+      renderDraft();
+      m.textContent = 'Draft cleared.';
+      m.className = 'text-sm text-slate-300/85';
+    });
+
+    document.getElementById('publish').addEventListener('click', async ()=>{
+      const key = (document.getElementById('k').value||'').trim();
+      if (!key) {
+        m.textContent = '❌ Missing owner key.';
+        m.className = 'text-sm text-red-300 font-semibold';
+        return;
+      }
+      const slots = loadDraft();
+      if (!slots.length) {
+        m.textContent = '❌ No draft slots to publish.';
+        m.className = 'text-sm text-red-300 font-semibold';
+        return;
+      }
+      m.textContent = 'Publishing…';
+      m.className = 'text-sm text-slate-300/85';
+      try {
+        const res = await fetch('/.netlify/functions/schedule-admin', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-TKFM-Owner-Key': key},
+          body: JSON.stringify({ slots })
+        });
+        const out = await res.json().catch(()=>({}));
+        if (!res.ok || !out.ok) throw new Error(out.error || 'publish failed');
+        m.textContent = '✅ Published schedule. Open /schedule to verify.';
+        m.className = 'text-sm text-emerald-300 font-semibold';
+      } catch(e) {
+        m.textContent = '❌ Publish failed. Check TKFM_OWNER_KEY + schedule-admin function.';
+        m.className = 'text-sm text-red-300 font-semibold';
+      }
+    });
+
+    document.getElementById('loadSchedule').addEventListener('click', async ()=>{
+      m.textContent = 'Loading published schedule…';
+      m.className = 'text-sm text-slate-300/85';
+      try {
+        const res = await fetch('/.netlify/functions/schedule-get');
+        const data = await res.json();
+        const slots = (data && data.slots) ? data.slots : [];
+        saveDraft(slots);
+        renderDraft();
+        m.textContent = '✅ Loaded published schedule into draft.';
+        m.className = 'text-sm text-emerald-300 font-semibold';
+      } catch(e) {
+        m.textContent = '❌ Failed to load schedule.';
+        m.className = 'text-sm text-red-300 font-semibold';
+      }
+    });
+
+    renderDraft();
+    loadApproved();
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+
