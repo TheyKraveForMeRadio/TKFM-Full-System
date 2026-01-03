@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <title>Podcaster Live Dashboard — TKFM</title>
-
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/tkfm-ui.js" defer></script>
   <script src="/js/tkfm-unlocks.js" defer></script>
+  <script src="/js/tkfm-checkout.js" defer></script>
+  <script src="/js/tkfm-subscription-guard.js" defer></script>
   <style>
     body{
       background:#020617;
@@ -17,21 +18,15 @@
         radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
         radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
     }
-    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
-    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18)}
     .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
     .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
-    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
     input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
-    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
-    .soft{color:rgba(226,232,240,.82)}
-    .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:9999;max-width:92vw}
   </style>
-
 </head>
 <body class="text-slate-50 min-h-screen">
-
   <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
       <a href="index.html" class="flex items-center gap-3">
@@ -42,16 +37,12 @@
         </div>
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎙 Podcast</a>
         <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
-        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
-        <a href="live.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🔴 Live</a>
-        <a href="podcaster-live.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcaster Live</a>
-        <a href="owner-live-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner Live</a>
+        <a href="live.html" class="px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 text-red-200">🔴 Live</a>
       </nav>
     </div>
   </header>
-
 
   <main class="max-w-4xl mx-auto px-4 pt-8 pb-14 space-y-8">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
@@ -60,22 +51,23 @@
     </div>
 
     <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
-      Request a Live Cast — owner approves, then you go on Radio TV.
+      Request a Live Cast — server verified monthly access.
     </h1>
 
-    <p class="soft max-w-4xl">
-      This is a <span class="mono">monthly</span> lane for podcasters. Paid creators can request Live Now.
-      Owner controls approval to keep the station clean.
+    <p class="text-slate-200/85 max-w-4xl">
+      This page checks Stripe subscriptions (active/trialing) using your checkout email before allowing Live requests.
+      No fake localStorage unlocks.
     </p>
 
     <div id="locked" class="card rounded-2xl p-6 hidden">
       <h2 class="text-2xl font-extrabold">Locked</h2>
-      <p class="soft mt-2">This page is for active podcaster members only.</p>
+      <p id="lockMsg" class="text-slate-200/85 mt-2">Checking subscription…</p>
       <div class="mt-4 flex flex-wrap gap-2">
-        <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html">🎙 Get Podcaster Monthly</a>
-        <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">📺 View TV</a>
+        <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="podcast-engine.html">Get Monthly</a>
+        <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">View TV</a>
       </div>
-      <p class="text-slate-400 text-xs mt-4">Unlock key expected: <span class="mono">podcast_creator_pass_monthly</span> (or legacy podcaster keys).</p>
+      <p class="text-slate-400 text-xs mt-4">Required plan: <span class="mono">video_creator_pass_monthly</span></p>
+      <p class="text-slate-500 text-xs mt-1">Email key: <span class="mono">tkfm_customer_email</span></p>
     </div>
 
     <div id="unlocked" class="grid gap-4 hidden">
@@ -86,7 +78,7 @@
         <div class="mt-4 grid md:grid-cols-2 gap-4">
           <div class="md:col-span-2">
             <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Show Title</label>
-            <input id="title" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Your podcast / episode title"/>
+            <input id="title" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Your show title"/>
           </div>
 
           <div>
@@ -105,7 +97,6 @@
           <div class="md:col-span-2">
             <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Live URL (YouTube Live / Twitch / Embed)</label>
             <input id="url" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://youtube.com/watch?v=..."/>
-            <p class="text-slate-400 text-xs mt-2">Tip: YouTube links auto-convert to embed on TV.</p>
           </div>
 
           <div class="md:col-span-2">
@@ -120,7 +111,7 @@
 
           <div class="flex items-end gap-2">
             <button id="submit" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15">Submit Request</button>
-            <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="live.html">🔴 Live Page</a>
+            <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="live.html">Live Page</a>
           </div>
         </div>
 
@@ -133,43 +124,14 @@
         <div id="status" class="mt-4 text-slate-200/85 text-sm">No requests yet.</div>
         <div class="mt-4 flex flex-wrap gap-2">
           <button id="refresh" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
-          <a class="btn border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15" href="owner-live-console.html">🔑 Owner Live</a>
+          <a class="btn border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15" href="owner-live-console.html">Owner Live</a>
         </div>
       </div>
     </div>
   </main>
 
   <script>
-    const FEATURE_KEYS = [
-      'podcast_creator_pass_monthly',
-      'podcaster_pass_monthly',
-      'podcast_pass_monthly',
-      'podcast_monthly',
-      'podcast_creator_monthly',
-      'podcast_engine_monthly'
-    ];
-
-    function getFeatures(){
-      try { return JSON.parse(localStorage.getItem('tkfm_user_features')||'[]')||[]; } catch(e){ return []; }
-    }
-    function hasAccess(){
-      const feats = getFeatures();
-      return FEATURE_KEYS.some(k => feats.includes(k));
-    }
-
-    const locked = document.getElementById('locked');
-    const unlocked = document.getElementById('unlocked');
-
-    function showGate(){
-      if (hasAccess()){
-        locked.classList.add('hidden');
-        unlocked.classList.remove('hidden');
-      } else {
-        unlocked.classList.add('hidden');
-        locked.classList.remove('hidden');
-      }
-    }
-
+    const REQUIRED = ['video_creator_pass_monthly'];
     const LS_LAST = 'tkfm_last_live_request_id';
 
     function setMsg(text, ok){
@@ -178,11 +140,27 @@
       m.className = ok ? 'text-sm text-emerald-300 font-semibold mt-4' : 'text-sm text-red-300 font-semibold mt-4';
     }
 
+    async function gate() {
+      const locked = document.getElementById('locked');
+      const unlocked = document.getElementById('unlocked');
+      const msgEl = document.getElementById('lockMsg');
+      if (window.TKFM_REQUIRE_ANY_SUB) {
+        await window.TKFM_REQUIRE_ANY_SUB(REQUIRED, { lockedEl: locked, unlockedEl: unlocked, msgEl });
+      } else {
+        locked.classList.remove('hidden');
+        unlocked.classList.add('hidden');
+        msgEl.textContent = 'Subscription guard missing.';
+      }
+    }
+
     async function submit(){
-      if (!hasAccess()){
-        showGate();
+      // Always re-check gate before submit
+      await gate();
+      if (!document.getElementById('unlocked') || document.getElementById('unlocked').classList.contains('hidden')) {
+        setMsg('Locked. Complete the monthly checkout first.', false);
         return;
       }
+
       const title = (document.getElementById('title').value||'').trim();
       const creator = (document.getElementById('creator').value||'').trim();
       const type = (document.getElementById('type').value||'podcast').trim();
@@ -212,6 +190,7 @@
       }
     }
 
+    function safe(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function statusHtml(st){
       if (!st) return 'No requests yet.';
       const badge = st.status === 'approved' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100'
@@ -221,13 +200,13 @@
         <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-4">
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Request ID: <span class="mono">${st.id||''}</span></p>
-              <p class="text-slate-50 font-extrabold mt-2">${st.title||''}</p>
-              <p class="text-slate-400 text-xs mt-2">${st.creator||''}</p>
+              <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Request ID: <span class="mono">${safe(st.id||'')}</span></p>
+              <p class="text-slate-50 font-extrabold mt-2">${safe(st.title||'')}</p>
+              <p class="text-slate-400 text-xs mt-2">${safe(st.creator||'')}</p>
             </div>
-            <span class="px-3 py-1 rounded-full border ${badge} text-[0.65rem] uppercase tracking-[0.22em] font-extrabold">${st.status||'pending'}</span>
+            <span class="px-3 py-1 rounded-full border ${badge} text-[0.65rem] uppercase tracking-[0.22em] font-extrabold">${safe(st.status||'pending')}</span>
           </div>
-          <p class="text-slate-300/85 text-sm mt-3">${st.description||''}</p>
+          <p class="text-slate-300/85 text-sm mt-3">${safe(st.description||'')}</p>
           ${st.active ? '<p class="text-emerald-300 font-semibold text-sm mt-3">🔴 You are LIVE now. Open /live or /tv.</p>' : ''}
         </div>
       `;
@@ -251,11 +230,10 @@
     document.getElementById('submit').addEventListener('click', submit);
     document.getElementById('refresh').addEventListener('click', refresh);
 
-    showGate();
+    gate();
     refresh();
     setInterval(refresh, 30000);
   </script>
-
 
   <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
@@ -270,4 +248,3 @@
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
-
