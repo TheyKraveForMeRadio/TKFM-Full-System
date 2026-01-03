@@ -53,32 +53,32 @@ export async function handler(event) {
   }
 
   try {
-    // IMPORTANT FIX:
-    // Stripe throws: "You specified payment mode but passed a recurring price"
-    // So we detect if the price is recurring and switch mode accordingly.
+    // Detect recurring vs one-time
     const price = await stripe.prices.retrieve(priceId);
-
     const isRecurring = !!price.recurring;
     const mode = isRecurring ? 'subscription' : 'payment';
 
-    const successUrl = `${SITE_URL.replace(/\/$/, '')}/success.html?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${SITE_URL.replace(/\/$/, '')}/cancel.html`;
+    const baseUrl = SITE_URL.replace(/\/$/, '');
+    const successUrl = `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${baseUrl}/cancel.html`;
 
-    const session = await stripe.checkout.sessions.create({
+    const params = {
       mode,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl,
       cancel_url: cancelUrl,
       allow_promotion_codes: true,
-      metadata: {
-        planId,
-        envKey,
-        priceId,
-        mode
-      },
-      // Helps your ops later
       client_reference_id: planId,
-    });
+      metadata: { planId, envKey, priceId, mode },
+    };
+
+    // IMPORTANT: for subscriptions, also attach planId to the subscription metadata
+    // so we can later verify entitlements by listing active subscriptions.
+    if (mode === 'subscription') {
+      params.subscription_data = { metadata: { planId } };
+    }
+
+    const session = await stripe.checkout.sessions.create(params);
 
     return json(200, { ok: true, url: session.url, mode });
   } catch (e) {

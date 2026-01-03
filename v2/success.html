@@ -4,138 +4,139 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>TKFM — Success</title>
-  <meta name="description" content="TKFM purchase verification + instant unlock."/>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root{
-      --bg:#020617; --stroke:rgba(255,255,255,.12);
-      --text:#e5e7eb; --muted:#94a3b8;
-      --purple:#a855f7; --pink:#ec4899; --cyan:#22d3ee; --blue:#3b82f6;
-      --good:#22c55e; --bad:#ef4444; --warn:#f59e0b;
-    }
-    *{box-sizing:border-box} html,body{height:100%}
     body{
-      margin:0; color:var(--text);
-      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background:
-        radial-gradient(1200px 700px at 15% 10%, rgba(168,85,247,.18), transparent 60%),
-        radial-gradient(900px 650px at 85% 18%, rgba(34,211,238,.14), transparent 60%),
-        radial-gradient(1100px 800px at 55% 95%, rgba(236,72,153,.10), transparent 55%),
-        var(--bg);
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
     }
-    .wrap{max-width:980px;margin:0 auto;padding:26px 16px 60px}
-    .top{
-      display:flex;align-items:center;justify-content:space-between;gap:14px;
-      padding:14px 16px;border:1px solid var(--stroke);border-radius:18px;
-      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      backdrop-filter:blur(12px);
-    }
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(168,85,247,.25))}
-    .t1{font-weight:950;letter-spacing:.02em}
-    .t2{font-size:12px;color:var(--muted);margin-top:2px}
-    .pill{
-      font-size:12px;color:var(--muted);
-      border:1px solid var(--stroke);background:rgba(255,255,255,.04);
-      padding:8px 10px;border-radius:999px;white-space:nowrap;
-    }
-    .card{
-      margin-top:14px;
-      border:1px solid var(--stroke);border-radius:18px;
-      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      padding:18px;backdrop-filter:blur(12px);
-    }
-    h1{margin:0 0 6px;font-size:26px;font-weight:950}
-    p{margin:0;color:var(--muted);line-height:1.55}
-    .kv{
-      margin-top:12px;border:1px solid var(--stroke);border-radius:14px;
-      background:rgba(255,255,255,.04);padding:12px;
-      display:grid;grid-template-columns:140px 1fr;gap:10px;
-    }
-    .k{font-size:12px;color:var(--muted)}
-    .v{font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;word-break:break-all}
-    .status{
-      margin-top:12px;border-radius:14px;border:1px solid var(--stroke);
-      background:rgba(255,255,255,.04);padding:12px 14px;
-      display:flex;flex-direction:column;gap:6px;
-    }
-    .status.good{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08)}
-    .status.bad{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.08)}
-    .status.wait{border-color:rgba(34,211,238,.30);background:rgba(34,211,238,.07)}
-    .status.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.08)}
-    .st{font-weight:950} .sm{color:var(--muted);line-height:1.45}
-    .list{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
-    .list li{
-      border:1px solid var(--stroke);background:rgba(255,255,255,.04);
-      border-radius:14px;padding:10px 12px;font-size:12px;
-      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-    }
-    .btnRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-    .btn{
-      border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);
-      color:var(--text);font-weight:900;padding:10px 12px;text-decoration:none;cursor:pointer;
-      display:inline-flex;align-items:center;gap:10px;transition:transform .12s ease, background .12s ease;
-    }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.07)}
-    .btn.primary{border-color:rgba(168,85,247,.55);background:linear-gradient(90deg, rgba(168,85,247,.24), rgba(236,72,153,.18))}
-    .btn.blue{border-color:rgba(59,130,246,.55);background:linear-gradient(90deg, rgba(59,130,246,.22), rgba(34,211,238,.16))}
-    .btn.danger{border-color:rgba(239,68,68,.55);background:rgba(239,68,68,.10)}
-    .raw{display:none;margin-top:12px;border:1px solid rgba(245,158,11,.35);background:rgba(245,158,11,.08);border-radius:14px;padding:12px}
-    pre{margin:10px 0 0;white-space:pre-wrap;word-break:break-word;font-size:12px;color:rgba(229,231,235,.95)}
-    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18)}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <img src="/public/tkfm-radio-logo.png" alt="TKFM Radio"/>
-        <div>
-          <div class="t1">THEY KRAVE FOR ME RADIO</div>
-          <div class="t2">Stripe Success → Verify → Unlock</div>
-        </div>
-      </div>
-      <div class="pill">Netlify + Stripe</div>
+<body class="text-slate-50 min-h-screen">
+  <main class="max-w-2xl mx-auto px-4 pt-14 pb-14">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 pill text-emerald-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Payment Success</span>
     </div>
 
-    <div class="card">
-      <h1>Payment received. Unlocking now…</h1>
-      <p>This page verifies your Stripe session, then writes purchased plan IDs into <strong>localStorage: tkfm_user_features</strong>.</p>
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mt-5">
+      You’re locked in.
+    </h1>
 
-      <div class="kv">
-        <div class="k">Stripe session_id</div>
-        <div class="v" id="sessionId">(loading)</div>
-        <div class="k">Unlock key</div>
-        <div class="v">tkfm_user_features</div>
-      </div>
+    <p class="text-slate-200/85 mt-4">
+      We’re confirming your purchase with Stripe, then unlocking your TKFM features.
+    </p>
 
-      <div class="status wait" id="statusBox">
-        <div class="st" id="statusTitle">Verifying purchase…</div>
-        <div class="sm" id="statusMsg">Calling verify-checkout-session and applying your unlocks.</div>
-      </div>
-
-      <div style="margin-top:14px;font-weight:950">Unlocked plan IDs</div>
-      <ul class="list" id="unlockedList">
-        <li>Waiting for verification…</li>
-      </ul>
-
-      <div class="btnRow">
-        <a class="btn primary" href="/dashboard.html">Go to Dashboard</a>
-        <a class="btn blue" href="/pricing.html">Back to Pricing</a>
-        <button class="btn" id="copyBtn" type="button">Copy session_id</button>
-        <button class="btn danger" id="clearBtn" type="button">Clear unlocks (debug)</button>
-      </div>
-
-      <div class="raw" id="rawBox">
-        <div style="font-weight:950">Raw verify response (debug)</div>
-        <pre id="rawJson">(none)</pre>
-      </div>
-
-      <p style="margin-top:12px;color:var(--muted);font-size:12px">
-        If unlocks don’t show: copy session_id and check Netlify function logs for <code>verify-checkout-session</code>.
-      </p>
+    <div class="card rounded-2xl p-6 mt-8 space-y-3">
+      <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Status</p>
+      <div id="status" class="text-lg font-extrabold">Checking…</div>
+      <div id="details" class="text-sm text-slate-200/85"></div>
     </div>
-  </div>
 
-  <script src="/js/tkfm-success-unlock.js"></script>
+    <div class="mt-6 flex flex-wrap gap-2">
+      <a href="radio-hub.html" class="px-4 py-2 rounded-full border border-sky-400/60 bg-sky-400/10 text-sky-100 font-extrabold text-xs uppercase tracking-[0.22em]">Go to Radio</a>
+      <a href="engines.html" class="px-4 py-2 rounded-full border border-purple-400/60 bg-purple-400/10 text-purple-100 font-extrabold text-xs uppercase tracking-[0.22em]">Open Engines</a>
+      <a href="unlocks.html" class="px-4 py-2 rounded-full border border-yellow-400/60 bg-yellow-400/10 text-yellow-100 font-extrabold text-xs uppercase tracking-[0.22em]">Manage Unlocks</a>
+    </div>
+
+    <p class="text-xs text-slate-500 mt-8">
+      If you don’t see your unlock in 10 seconds, refresh this page.
+    </p>
+  </main>
+
+  <script>
+    const qs = new URLSearchParams(location.search);
+    const session_id = qs.get('session_id');
+
+    const LS_FEATURES = 'tkfm_user_features';
+    const LS_EMAIL = 'tkfm_customer_email';
+
+    function getFeatures(){
+      try { return JSON.parse(localStorage.getItem(LS_FEATURES) || '[]') || []; } catch(e){ return []; }
+    }
+    function setFeatures(arr){
+      localStorage.setItem(LS_FEATURES, JSON.stringify(Array.from(new Set(arr))));
+    }
+
+    function setStatus(title, details){
+      document.getElementById('status').textContent = title;
+      document.getElementById('details').innerHTML = details || '';
+    }
+
+    function esc(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    async function run(){
+      if (!session_id){
+        setStatus('Missing session_id', 'No Stripe session_id found in the URL.');
+        return;
+      }
+
+      setStatus('Confirming with Stripe…', 'Session: <span class="mono">' + esc(session_id) + '</span>');
+
+      try{
+        const res = await fetch('/.netlify/functions/session-info?session_id=' + encodeURIComponent(session_id));
+        const data = await res.json().catch(()=>({}));
+
+        if (!data || !data.ok){
+          setStatus('Could not confirm purchase', esc(data && data.error ? data.error : 'Unknown error'));
+          return;
+        }
+
+        if (data.email) localStorage.setItem(LS_EMAIL, data.email);
+
+        const planId = data.planId;
+        const mode = data.mode;
+
+        if (!planId){
+          setStatus('Confirmed — but missing planId', 'Session confirmed. PlanId missing from metadata.');
+          return;
+        }
+
+        // Subscription must be active/trialing to count as unlocked
+        if (mode === 'subscription') {
+          const st = String(data.subscription_status || '');
+          const ok = (st === 'active' || st === 'trialing');
+          if (!ok){
+            setStatus('Subscription pending', 'We see your subscription, but status is: <span class="mono">' + esc(st || 'unknown') + '</span>. Refresh in a moment.');
+            return;
+          }
+        } else {
+          // payment: require paid
+          const ps = String(data.payment_status || '');
+          if (ps && ps !== 'paid'){
+            setStatus('Payment pending', 'Payment status: <span class="mono">' + esc(ps) + '</span>. Refresh in a moment.');
+            return;
+          }
+        }
+
+        // Unlock locally
+        const feats = getFeatures();
+        if (!feats.includes(planId)) feats.push(planId);
+        setFeatures(feats);
+
+        setStatus('✅ Unlocked: ' + planId, 
+          'Mode: <span class="mono">' + esc(mode) + '</span>' + 
+          (data.email ? (' • Email: <span class="mono">' + esc(data.email) + '</span>') : '')
+        );
+
+        // Fast redirect back
+        setTimeout(() => {
+          location.href = 'unlocks.html';
+        }, 1400);
+
+      }catch(e){
+        setStatus('Network error', 'Could not reach Stripe verification function.');
+      }
+    }
+
+    run();
+  </script>
 </body>
 </html>
