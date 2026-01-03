@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Owner Media Features — TKFM</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="robots" content="noindex,nofollow"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.62);border:1px solid rgba(148,163,184,.18)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;padding:.6rem 1rem;white-space:nowrap}
+    input,select,textarea{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen">
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
+      <a href="god-view.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Owner • Media Features</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-tv-featured.html" class="px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 text-red-200">Featured TV</a>
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">Radio Hub</a>
+        <a href="owner-login.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">Owner Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-10 pb-16 space-y-6">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 pill text-purple-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Owner Only</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Approve + Feature: Podcasts • Video • Press • Artist</h1>
+    <p class="text-slate-200/85 max-w-4xl">
+      Create guaranteed placement for paid customers by pinning items to your Featured TV lane.
+      This is owner-controlled, ranked, and can expire automatically.
+    </p>
+
+    <div id="locked" class="card rounded-2xl p-6 hidden">
+      <h2 class="text-2xl font-extrabold">Access Locked</h2>
+      <p class="text-slate-200/85 mt-2">Login as owner, then return here.</p>
+      <a class="btn inline-block mt-4 border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15"
+         id="goLogin" href="owner-login.html">Owner Login</a>
+    </div>
+
+    <div id="app" class="grid gap-4 hidden">
+      <div class="card rounded-2xl p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Featured Store</p>
+            <h2 class="text-2xl font-extrabold mt-2">Pinned Media Queue</h2>
+            <p class="text-slate-200/85 mt-2 text-sm">Higher rank appears first. “Until” is optional (ISO string).</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" id="refresh">Refresh</button>
+            <button class="btn border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15" id="clearOwner">Clear Owner Session</button>
+          </div>
+        </div>
+
+        <p id="msg" class="text-sm font-semibold text-slate-300 mt-4"></p>
+
+        <div class="mt-6 grid md:grid-cols-2 gap-4">
+          <div class="card rounded-2xl p-5">
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Create / Update</p>
+            <h3 class="text-xl font-extrabold mt-2">Add a Featured Item</h3>
+
+            <div class="mt-4 grid gap-3">
+              <div>
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Type</label>
+                <select id="kind" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50">
+                  <option value="podcast">Podcast</option>
+                  <option value="video" selected>Video</option>
+                  <option value="press">Press</option>
+                  <option value="artist">Artist</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">ID (leave blank to auto-create)</label>
+                <input id="id" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" placeholder="feat_..."/>
+              </div>
+
+              <div>
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Title</label>
+                <input id="title" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Show / Video / Feature title"/>
+              </div>
+
+              <div>
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Subtitle</label>
+                <input id="subtitle" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Short promo line (optional)"/>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Rank</label>
+                  <input id="rank" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" value="0"/>
+                </div>
+                <div>
+                  <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Until (ISO or blank)</label>
+                  <input id="until" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" placeholder="2026-02-01T00:00:00Z"/>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Embed URL (YouTube, Vimeo, Spotify, etc.)</label>
+                <input id="embedUrl" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" placeholder="https://..."/>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs uppercase tracking-[0.22em] text-slate-400">CTA Text</label>
+                  <input id="ctaText" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" value="Open"/>
+                </div>
+                <div>
+                  <label class="text-xs uppercase tracking-[0.22em] text-slate-400">CTA URL</label>
+                  <input id="ctaUrl" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" placeholder="/podcaster-show.html?slug=..."/>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Thumbnail URL (optional)</label>
+                <input id="thumbUrl" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" placeholder="https://..."/>
+              </div>
+
+              <div class="flex gap-2 flex-wrap mt-2">
+                <button class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" id="save">
+                  Save / Upsert
+                </button>
+                <button class="btn border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15" id="disable">
+                  Disable
+                </button>
+                <button class="btn border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15" id="del">
+                  Delete
+                </button>
+              </div>
+
+              <p class="text-xs text-slate-500 mt-2">
+                Owner key is sent via header <span class="mono">x-tkfm-owner-key</span> from localStorage.
+              </p>
+            </div>
+          </div>
+
+          <div class="card rounded-2xl p-5">
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Live Preview</p>
+            <h3 class="text-xl font-extrabold mt-2">Featured TV Lane</h3>
+            <p class="text-slate-200/85 mt-2 text-sm">What listeners see: featured items sorted by rank.</p>
+            <a class="btn inline-block mt-4 border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15"
+               href="radio-tv-featured.html" target="_blank" rel="noopener">Open Featured TV</a>
+            <div class="mt-5 text-xs text-slate-500">
+              Tip: use rank 100 for “pinned top”, rank 10 for standard, rank 0 for normal.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-6">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Queue</p>
+            <h2 class="text-2xl font-extrabold mt-2">Current Featured Items</h2>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <select id="filter" class="rounded-xl px-3 py-2 text-slate-50">
+              <option value="all" selected>All</option>
+              <option value="podcast">Podcast</option>
+              <option value="video">Video</option>
+              <option value="press">Press</option>
+              <option value="artist">Artist</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="list" class="mt-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const $ = (id) => document.getElementById(id);
+
+      function showMsg(t, ok){
+        $('msg').textContent = t || '';
+        $('msg').className = ok ? 'text-sm font-semibold text-emerald-300 mt-4' : 'text-sm font-semibold text-red-300 mt-4';
+      }
+
+      function ownerKey(){
+        try{
+          return (localStorage.getItem('TKFM_OWNER_KEY') || localStorage.getItem('tkfm_owner_key') || '').trim();
+        }catch(e){
+          return '';
+        }
+      }
+
+      function isOwner(){
+        return (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.isOwnerLocal && window.TKFM_OWNER_GUARD.isOwnerLocal());
+      }
+
+      function setLoginHref(){
+        const next = location.pathname.replace(/^\//,'') + location.search + location.hash;
+        $('goLogin').href = 'owner-login.html?next=' + encodeURIComponent(next);
+      }
+
+      function esc(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+      function card(x){
+        const until = x.until ? ('<span class="text-slate-400">until</span> <span class="mono text-slate-200">' + esc(x.until) + '</span>') : '<span class="text-slate-400">no expiry</span>';
+        const cta = x.ctaUrl ? ('<a class="btn inline-block mt-3 border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="'+esc(x.ctaUrl)+'" target="_blank" rel="noopener">' + esc(x.ctaText || 'Open') + '</a>') : '';
+        return `
+          <div class="card rounded-2xl p-5">
+            <div class="text-xs uppercase tracking-[0.28em] text-slate-400">${esc(x.kind||'')}</div>
+            <div class="text-xs text-slate-500 mt-1">ID: <span class="mono">${esc(x.id||'')}</span></div>
+            <h3 class="text-xl font-extrabold mt-2">${esc(x.title||'')}</h3>
+            <p class="text-slate-200/85 text-sm mt-2">${esc(x.subtitle||'')}</p>
+            <div class="text-xs text-slate-500 mt-3">Rank: <span class="mono text-slate-200">${esc(x.rank||0)}</span> • ${until}</div>
+            <div class="text-xs text-slate-500 mt-2">Embed: <span class="mono">${esc(x.embedUrl||'')}</span></div>
+            ${cta}
+            <button class="btn mt-3 border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" data-fill="${esc(x.id||'')}">Load Into Form</button>
+          </div>
+        `;
+      }
+
+      async function fetchList(){
+        const f = $('filter').value || 'all';
+        const url = '/.netlify/functions/media-feature-get?kind=' + encodeURIComponent(f) + '&limit=60';
+        const res = await fetch(url);
+        const out = await res.json().catch(()=>({}));
+        return (out && out.items) ? out.items : [];
+      }
+
+      async function render(){
+        showMsg('Loading…', true);
+        const items = await fetchList();
+        const el = $('list');
+        el.innerHTML = '';
+        if (!items.length){
+          showMsg('No featured items yet.', true);
+          return;
+        }
+        items.forEach(x => el.insertAdjacentHTML('beforeend', card(x)));
+        showMsg('Loaded ' + items.length + ' items.', true);
+      }
+
+      function readForm(){
+        return {
+          id: $('id').value.trim(),
+          kind: $('kind').value,
+          title: $('title').value.trim(),
+          subtitle: $('subtitle').value.trim(),
+          rank: parseInt($('rank').value || '0', 10) || 0,
+          until: $('until').value.trim(),
+          embedUrl: $('embedUrl').value.trim(),
+          ctaText: $('ctaText').value.trim(),
+          ctaUrl: $('ctaUrl').value.trim(),
+          thumbUrl: $('thumbUrl').value.trim()
+        };
+      }
+
+      async function post(action){
+        const okKey = ownerKey();
+        if (!okKey){
+          showMsg('Missing TKFM_OWNER_KEY on this device. Login as owner first.', false);
+          return;
+        }
+        const payload = { ...readForm(), action };
+        showMsg('Saving…', true);
+        const res = await fetch('/.netlify/functions/media-feature-set', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-tkfm-owner-key': okKey },
+          body: JSON.stringify(payload)
+        });
+        const out = await res.json().catch(()=>({}));
+        if (!res.ok || !out.ok){
+          showMsg('❌ ' + (out.error || 'Failed'), false);
+          return;
+        }
+        if (out.item && out.item.id){
+          $('id').value = out.item.id; // keep id for quick edits
+        }
+        showMsg('✅ ' + action.toUpperCase() + ' saved.', true);
+        await render();
+      }
+
+      function fillFrom(items, id){
+        const x = items.find(i => i.id === id);
+        if (!x) return;
+        $('kind').value = x.kind || 'video';
+        $('id').value = x.id || '';
+        $('title').value = x.title || '';
+        $('subtitle').value = x.subtitle || '';
+        $('rank').value = String(x.rank || 0);
+        $('until').value = x.until || '';
+        $('embedUrl').value = x.embedUrl || '';
+        $('ctaText').value = x.ctaText || 'Open';
+        $('ctaUrl').value = x.ctaUrl || '';
+        $('thumbUrl').value = x.thumbUrl || '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function wire(){
+        $('refresh').addEventListener('click', render);
+        $('filter').addEventListener('change', render);
+        $('save').addEventListener('click', ()=>post('upsert'));
+        $('disable').addEventListener('click', ()=>post('disable'));
+        $('del').addEventListener('click', ()=>post('delete'));
+
+        $('clearOwner').addEventListener('click', ()=>{
+          if (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.clearOwner) window.TKFM_OWNER_GUARD.clearOwner();
+          location.replace('owner-login.html?next=' + encodeURIComponent(location.pathname.replace(/^\//,'')));
+        });
+
+        document.body.addEventListener('click', async (e)=>{
+          const b = e.target && e.target.closest ? e.target.closest('[data-fill]') : null;
+          if (!b) return;
+          const id = b.getAttribute('data-fill');
+          const f = $('filter').value || 'all';
+          const url = '/.netlify/functions/media-feature-get?kind=' + encodeURIComponent(f) + '&limit=60';
+          const res = await fetch(url);
+          const out = await res.json().catch(()=>({}));
+          const items = (out && out.items) ? out.items : [];
+          fillFrom(items, id);
+        });
+      }
+
+      setLoginHref();
+      wire();
+
+      if (!isOwner()){
+        $('locked').classList.remove('hidden');
+        $('app').classList.add('hidden');
+        return;
+      }
+      $('locked').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      render();
+    })();
+  </script>
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Featured TV</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.18),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.26),transparent 60%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.22),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.62);border:1px solid rgba(148,163,184,.18)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;padding:.6rem 1rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    iframe{background:rgba(0,0,0,.25)}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen">
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
+      <a href="radio-tv.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Featured TV</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="podcaster-directory.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">Podcasts</a>
+        <a href="video.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">Video</a>
+        <a href="press.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">Press</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 pill text-red-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Featured Lane</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mt-4">Pinned Media (Owner Featured)</h1>
+    <p class="text-slate-200/85 max-w-4xl mt-3">
+      These are owner-featured placements. Highest rank appears first.
+    </p>
+
+    <div class="grid lg:grid-cols-3 gap-4 mt-8">
+      <div class="lg:col-span-2 card rounded-2xl p-3">
+        <iframe id="player" class="w-full rounded-xl" style="height:68vh" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-center justify-between gap-2">
+          <h2 class="text-xl font-extrabold">Queue</h2>
+          <button id="refresh" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">Refresh</button>
+        </div>
+        <p id="msg" class="text-sm font-semibold text-slate-300 mt-3"></p>
+        <div id="list" class="mt-4 grid gap-3"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const $ = (id) => document.getElementById(id);
+      let items = [];
+
+      function esc(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+      function showMsg(t, ok){
+        $('msg').textContent = t || '';
+        $('msg').className = ok ? 'text-sm font-semibold text-emerald-300 mt-3' : 'text-sm font-semibold text-red-300 mt-3';
+      }
+
+      function row(x, i){
+        return `
+          <button class="text-left w-full card rounded-xl p-3 hover:bg-slate-800/40" data-i="${i}">
+            <div class="text-xs uppercase tracking-[0.28em] text-slate-400">${esc(x.kind||'')}</div>
+            <div class="text-sm font-extrabold mt-1">${esc(x.title||'')}</div>
+            <div class="text-xs text-slate-400 mt-1">${esc(x.subtitle||'')}</div>
+            <div class="text-xs text-slate-500 mt-2">Rank <span class="mono">${esc(x.rank||0)}</span></div>
+          </button>
+        `;
+      }
+
+      function setPlayer(x){
+        const p = $('player');
+        const url = (x && x.embedUrl) ? x.embedUrl : '';
+        p.src = url ? url : 'about:blank';
+      }
+
+      async function load(){
+        showMsg('Loading…', true);
+        const res = await fetch('/.netlify/functions/media-feature-get?kind=all&limit=30');
+        const out = await res.json().catch(()=>({}));
+        items = (out && out.items) ? out.items : [];
+        $('list').innerHTML = '';
+        if (!items.length){
+          showMsg('No featured items yet.', true);
+          setPlayer(null);
+          return;
+        }
+        items.forEach((x,i)=> $('list').insertAdjacentHTML('beforeend', row(x,i)));
+        setPlayer(items[0]);
+        showMsg('Loaded ' + items.length + ' featured items.', true);
+      }
+
+      document.body.addEventListener('click', (e)=>{
+        const b = e.target && e.target.closest ? e.target.closest('[data-i]') : null;
+        if (!b) return;
+        const i = parseInt(b.getAttribute('data-i') || '0', 10) || 0;
+        const x = items[i];
+        if (x) setPlayer(x);
+      });
+
+      $('refresh').addEventListener('click', load);
+      load();
+    })();
+  </script>
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
