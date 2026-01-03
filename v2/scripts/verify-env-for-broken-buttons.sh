@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "== TKFM: Verify Stripe env vars exist in production for key plans =="
+
+REQ_VARS=(
+  STRIPE_SECRET_KEY
+  STRIPE_PRICE_AI_LABEL_BRAND_PACK
+  STRIPE_PRICE_AI_FEATURE_VERSE_KIT
+  STRIPE_PRICE_AI_RADIO_INTRO
+  STRIPE_PRICE_TAKEOVER_SPONSOR_MONTHLY
+  STRIPE_PRICE_CITY_SPONSOR_MONTHLY
+  STRIPE_PRICE_STARTER_SPONSOR_MONTHLY
+  STRIPE_PRICE_RADIO_INTERVIEW_SLOT
+  STRIPE_PRICE_PRESS_RUN_PACK
+  STRIPE_PRICE_PLAYLIST_PITCH_PACK
+  STRIPE_PRICE_PRIORITY_SUBMISSION_PACK
+  STRIPE_PRICE_SOCIAL_STARTER_MONTHLY
+  STRIPE_PRICE_SUBMISSIONS_PRIORITY_MONTHLY
+  STRIPE_PRICE_SPONSOR_AUTOPILOT_MONTHLY
+  STRIPE_PRICE_AI_DJ_AUTOPILOT_MONTHLY
+)
+
+for V in "${REQ_VARS[@]}"; do
+  VAL="$(netlify env:get "$V" --context production 2>/dev/null || true)"
+  if [ -z "$VAL" ]; then
+    echo "MISSING: $V"
+  else
+    if [ "$V" = "STRIPE_SECRET_KEY" ]; then
+      echo "OK: $V -> $(echo "$VAL" | cut -c1-8)"
+    else
+      echo "OK: $V"
+    fi
+  fi
+done

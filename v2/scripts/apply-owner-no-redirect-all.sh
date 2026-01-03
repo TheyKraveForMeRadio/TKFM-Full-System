@@ -1,70 +1,99 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BKDIR="_HOLD/owner-no-redirect-backups"
-mkdir -p "$BKDIR" scripts js
+ROOT="$(pwd)"
 
-TS="$(date +%Y%m%d-%H%M%S)"
+mkdir -p backups
 
-# Edit this list anytime
+stamp="$(date +%Y%m%d_%H%M%S)"
+backup_file() {
+  local f="$1"
+  if [ -f "$f" ]; then
+    cp -f "$f" "backups/$(basename "$f").bak_owner_gate_${stamp}"
+  fi
+}
+
+inject_head_scripts() {
+  local f="$1"
+  # ensure head exists
+  grep -qi "<head" "$f" || return 0
+
+  # insert scripts right after <head ...>
+  if ! grep -q "/js/tkfm-owner-guard.js" "$f"; then
+    perl -0777 -i -pe 's|<head([^>]*)>|<head$1>\n  <script src="/js/tkfm-owner-guard.js"></script>\n  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>|i' "$f"
+  fi
+  if ! grep -q "/js/tkfm-owner-gate-no-redirect.js" "$f"; then
+    # if guard exists but gate doesn't
+    perl -0777 -i -pe 's|(<script src="/js/tkfm-owner-guard\.js"></script>)|$1\n  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>|i' "$f"
+  fi
+}
+
+inject_body_mount() {
+  local f="$1"
+  # add lock mount near top of body
+  if ! grep -q 'id="tkfmOwnerLock"' "$f"; then
+    perl -0777 -i -pe 's|<body([^>]*)>|<body$1>\n  <div id="tkfmOwnerLock"></div>|i' "$f"
+  fi
+}
+
+strip_owner_login_redirects() {
+  local f="$1"
+  # remove lines that hard-redirect to owner-login
+  # (conservative: only lines containing owner-login and a location/redirect pattern)
+  perl -i -ne '
+    if ($_ =~ /(owner-login\.html)/i && $_ =~ /(location\.href|location\.replace|window\.location|document\.location|location\s*=)/i) { next; }
+    print;
+  ' "$f"
+}
+
+patch_file() {
+  local f="$1"
+  [ -f "$f" ] || return 0
+  echo "PATCH -> $f"
+  backup_file "$f"
+  inject_head_scripts "$f"
+  inject_body_mount "$f"
+  strip_owner_login_redirects "$f"
+}
+
+echo "== TKFM OWNER NO-REDIRECT GATE: patching owner-only engines =="
+
+# Include common owner-only pages; if a file doesn't exist it will be skipped.
 TARGETS=(
   "autopilot-engine.html"
   "ai-dj-engine.html"
+  "ai-dj-console.html"
   "god-view.html"
-  "tkfm-dev-console.html"
-  "owner-ops-dashboard.html"
   "owner-dashboard.html"
-  "owner-mixtape-orders.html"
-  "label-contract-lab.html"
-  "label-contract-output.html"
+  "owner-ops-dashboard.html"
+  "tkfm-dev-console.html"
+  "feature-revenue.html"
+  "sponsor-rotator.html"
+  "sponsors.html"
+  "label-revenue-console.html"
+  "label-sponsor-engine.html"
+  "label-social-engine.html"
 )
 
-patch_file () {
-  local f="$1"
-  if [ ! -f "$f" ]; then
-    echo "SKIP (missing): $f"
-    return 0
-  fi
-
-  cp -f "$f" "$BKDIR/$(basename "$f").BACKUP.$TS.html"
-
-  perl -0777 -pe '
-    my $s = $_;
-
-    # Remove external redirect gate scripts if present
-    $s =~ s{<script\b[^>]*\bsrc=["'\''][^"'\'']*(auth-gateway|access-gates)[^"'\'']*["'\''][^>]*>\s*</script>}{}gis;
-
-    # Ensure owner guard + no-redirect gate in <head> (before other scripts)
-    if ($s !~ m{/js/tkfm-owner-gate-no-redirect\.js}i) {
-      $s =~ s{(<head\b[^>]*>)}{$1\n  <script src=\"/js/tkfm-owner-guard.js\"></script>\n  <script src=\"/js/tkfm-owner-gate-no-redirect.js\"></script>\n}i;
-    } else {
-      if ($s !~ m{/js/tkfm-owner-guard\.js}i) {
-        $s =~ s{(<script\b[^>]*\bsrc=["'\'']/js/tkfm-owner-gate-no-redirect\.js["'\''][^>]*>\s*</script>)}{<script src=\"/js/tkfm-owner-guard.js\"></script>\n$1}i;
-      }
-    }
-
-    # Add tkfmOwnerLock div after <body ...> if missing
-    if ($s !~ m{id=["'\'']tkfmOwnerLock["'\'']}i) {
-      $s =~ s{(<body\b[^>]*>)}{$1\n<div id=\"tkfmOwnerLock\"></div>\n}i;
-    }
-
-    # Neutralize redirect statements to owner-login
-    $s =~ s{window\.location\s*=\s*["'\''][^"'\'']*owner-login[^"'\'']*["'\'']}/* stripped owner-login redirect */}gis;
-    $s =~ s{location\.href\s*=\s*["'\''][^"'\'']*owner-login[^"'\'']*["'\'']}/* stripped owner-login redirect */}gis;
-    $s =~ s{document\.location\s*=\s*["'\''][^"'\'']*owner-login[^"'\'']*["'\'']}/* stripped owner-login redirect */}gis;
-    $s =~ s{location\.replace\(\s*["'\''][^"'\'']*owner-login[^"'\'']*["'\'']\s*\)}/* stripped owner-login redirect */}gis;
-    $s =~ s{location\.assign\(\s*["'\''][^"'\'']*owner-login[^"'\'']*["'\'']\s*\)}/* stripped owner-login redirect */}gis;
-
-    $_ = $s;
-  ' "$f" > "$f.tmp"
-
-  mv -f "$f.tmp" "$f"
-  echo "PATCHED: $f"
-}
-
-echo "== TKFM OWNER NO-REDIRECT PATCH ALL =="
 for f in "${TARGETS[@]}"; do
   patch_file "$f"
 done
 
-echo "DONE. Backups in: $BKDIR"
+# Also patch originals if present
+if [ -d "originals" ]; then
+  for f in "originals/"*.html; do
+    [ -f "$f" ] || continue
+    case "$f" in
+      *owner-login* ) continue ;;
+      *register* ) continue ;;
+    esac
+    patch_file "$f"
+  done
+fi
+
+echo "== DONE =="
+echo "Backups saved in: backups/"
+echo "Verify a page contains:"
+echo "  /js/tkfm-owner-guard.js"
+echo "  /js/tkfm-owner-gate-no-redirect.js"
+echo "  <div id=\"tkfmOwnerLock\"></div>"

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — Checkout Complete</title>
+
+  <!-- TKFM Neon base -->
+  <style>
+    :root{
+      --bg:#020617;
+      --purple:#a855f7;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+
+      --gold:#facc15;
+      --gold2:#eab308;
+      --amber:#f97316;
+
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.10);
+      --line: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(168,85,247,0.20), transparent 55%),
+        radial-gradient(900px 500px at 85% 15%, rgba(34,211,238,0.16), transparent 55%),
+        radial-gradient(900px 500px at 50% 95%, rgba(249,115,22,0.12), transparent 50%),
+        var(--bg);
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 70px}
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:14px 16px;border:1px solid var(--line);border-radius:16px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(34,211,238,0.10));
+      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:34px;width:auto;filter: drop-shadow(0 0 12px rgba(168,85,247,0.45))}
+    .pill{
+      font-size:12px;letter-spacing:.10em;text-transform:uppercase;
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(0,0,0,0.25);
+    }
+    .pill.gold{
+      border-color: rgba(250,204,21,0.35);
+      background: rgba(250,204,21,0.10);
+      color: rgba(255,255,255,0.92);
+    }
+    h1{margin:20px 0 8px;font-size:34px;line-height:1.08}
+    .sub{color:var(--muted);max-width:860px;line-height:1.5}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:18px}
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      border-radius:18px;
+      padding:16px;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.38);
+    }
+    .card h2{margin:0 0 10px;font-size:18px;letter-spacing:.02em}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      appearance:none;border:1px solid var(--line);
+      background: rgba(0,0,0,0.32);
+      color:var(--text);
+      padding:10px 12px;border-radius:14px;
+      cursor:pointer;
+      font-weight:700;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+      text-decoration:none;
+      display:inline-flex;align-items:center;gap:8px;
+    }
+    .btn:hover{transform: translateY(-1px);border-color: rgba(34,211,238,0.45);background: rgba(34,211,238,0.10)}
+    .btn.primary{
+      border-color: rgba(168,85,247,0.45);
+      background: linear-gradient(135deg, rgba(168,85,247,0.28), rgba(34,211,238,0.12));
+    }
+    .btn.gold{
+      border-color: rgba(250,204,21,0.50);
+      background: linear-gradient(135deg, rgba(250,204,21,0.22), rgba(249,115,22,0.10));
+    }
+    .mini{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+    .kv{display:grid;grid-template-columns: 120px 1fr;gap:8px;margin-top:10px}
+    .k{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+    .v{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px;opacity:.95}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(0,0,0,0.20);
+      color: var(--muted);
+      font-size:12px;
+    }
+    .tag b{color:var(--text);font-weight:800}
+    .ok{color: rgba(34,211,238,0.92)}
+    .warn{color: rgba(250,204,21,0.92)}
+    .err{color: rgba(248,113,113,0.92)}
+  </style>
+
+  <!-- Checkout wiring -->
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script defer src="/js/tkfm-post-checkout.js"></script>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <img src="/tkfm-radio-logo.png" alt="TKFM Radio"/>
+        <div>
+          <div style="font-weight:900;letter-spacing:.02em">TKFM</div>
+          <div style="font-size:12px;color:var(--muted)">They Krave For Me Radio • TKFM Records</div>
+        </div>
+      </div>
+      <div class="pill gold">PAID LANES ACTIVE</div>
+    </div>
+
+    <h1>Checkout complete. Now feed the machine.</h1>
+    <div class="sub">
+      Your purchase is locked in. Next step: submit your content so it can be reviewed and featured.
+      This page auto-detects what you bought and routes you to the right engine.
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Next steps (auto)</h2>
+        <div id="tkfmNextSteps" class="row"></div>
+
+        <div class="hr"></div>
+
+        <h2>Boost placement (optional upgrades)</h2>
+        <div class="row">
+          <button class="btn gold" data-plan="homepage_feature_artist">Homepage Feature Artist ($150)</button>
+          <button class="btn gold" data-plan="homepage_takeover_day">Homepage Takeover Day ($500)</button>
+          <button class="btn gold" data-plan="rotation_boost_campaign">Rotation Boost Campaign ($200)</button>
+        </div>
+        <div class="mini">
+          These are paid lanes that push you higher in rotation + visibility.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Receipt + diagnostics</h2>
+        <div id="tkfmStatus" class="tag"><b class="warn">Waiting</b> <span>Detecting plan…</span></div>
+
+        <div class="kv">
+          <div class="k">planId</div><div class="v" id="tkfmPlanId">—</div>
+          <div class="k">session</div><div class="v" id="tkfmSessionId">—</div>
+          <div class="k">source</div><div class="v" id="tkfmPlanSource">—</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>Go back</h2>
+        <div class="row">
+          <a class="btn primary" href="/pricing.html">Pricing</a>
+          <a class="btn" href="/engines.html">Engines Hub</a>
+          <a class="btn" href="/radio-hub.html">Radio Hub</a>
+          <a class="btn" href="/label-home.html">Label Home</a>
+        </div>
+
+        <div class="mini">
+          If you don’t see the right route, you can still jump to engines manually.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
