@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Owner Podcast Approvals — TKFM</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="robots" content="noindex,nofollow"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.62);border:1px solid rgba(148,163,184,.18)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;padding:.6rem 1rem;white-space:nowrap}
+    input,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen">
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
+      <a href="god-view.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Owner • Podcast Approvals</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="podcaster-directory.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">Public Directory</a>
+        <a href="radio-tv-podcasts.html" class="px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 text-red-200">Featured TV Lane</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-slate-400/60 bg-slate-400/10 text-slate-200">Radio TV</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-10 pb-16 space-y-6">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 pill text-purple-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Owner Only</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Approve + Feature Podcasts</h1>
+    <p class="text-slate-200/85 max-w-4xl">
+      Approve shows for the public directory and pin featured shows to the TV rotation. Featured shows appear first (ranked).
+    </p>
+
+    <div id="locked" class="card rounded-2xl p-6 hidden">
+      <h2 class="text-2xl font-extrabold">Access Locked</h2>
+      <p class="text-slate-200/85 mt-2">Login as owner, then return here.</p>
+      <a class="btn inline-block mt-4 border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15" id="goLogin" href="owner-login.html">Owner Login</a>
+    </div>
+
+    <div id="app" class="grid gap-4 hidden">
+      <div class="card rounded-2xl p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Queue</p>
+            <h2 class="text-2xl font-extrabold mt-2">All Podcaster Profiles</h2>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" id="refresh">Refresh</button>
+            <button class="btn border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15" id="clearOwner">Clear Owner Session</button>
+          </div>
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-2 items-end">
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Show Filter</label>
+            <input id="q" class="mt-2 rounded-xl px-3 py-2 text-slate-50 w-72" placeholder="search show / host / slug"/>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">View</label>
+            <select id="view" class="mt-2 rounded-xl px-3 py-2 text-slate-50">
+              <option value="all">All</option>
+              <option value="pending">Pending (not approved)</option>
+              <option value="approved">Approved</option>
+              <option value="featured">Featured (active)</option>
+            </select>
+          </div>
+        </div>
+
+        <p id="msg" class="text-sm font-semibold text-slate-300 mt-4"></p>
+        <p class="text-xs text-slate-500 mt-2">Owner key is sent to the server using header <span class="mono">x-tkfm-owner-key</span> (pulled from localStorage).</p>
+      </div>
+
+      <div id="list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const $ = (id) => document.getElementById(id);
+
+      function showMsg(t, ok){
+        $('msg').textContent = t || '';
+        $('msg').className = ok ? 'text-sm font-semibold text-emerald-300 mt-4' : 'text-sm font-semibold text-red-300 mt-4';
+      }
+
+      function ownerKey(){
+        try{
+          return (localStorage.getItem('TKFM_OWNER_KEY') || localStorage.getItem('tkfm_owner_key') || '').trim();
+        }catch(e){
+          return '';
+        }
+      }
+
+      function isOwner(){
+        return (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.isOwnerLocal && window.TKFM_OWNER_GUARD.isOwnerLocal());
+      }
+
+      function setLoginHref(){
+        const next = location.pathname + location.search + location.hash;
+        $('goLogin').href = 'owner-login.html?next=' + encodeURIComponent(next);
+      }
+
+      function isFeaturedActive(p){
+        if (!p || !p.featured) return false;
+        if (!p.featuredUntil) return true;
+        const t = Date.parse(p.featuredUntil);
+        if (!Number.isFinite(t)) return true;
+        return t > Date.now();
+      }
+
+      function safe(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+      function card(p){
+        const cover = p.coverUrl ? p.coverUrl : 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="#020617"/><text x="50%" y="50%" font-family="Arial" font-size="18" fill="#94a3b8" text-anchor="middle" dominant-baseline="middle">TKFM Podcast</text></svg>');
+        const featuredActive = isFeaturedActive(p);
+        return `
+          <div class="card rounded-2xl overflow-hidden">
+            <img src="${cover}" class="w-full h-40 object-cover border-b border-slate-700/50 bg-black/30" alt="cover"/>
+            <div class="p-5">
+              <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Slug: <span class="mono">${safe(p.slug||'')}</span></p>
+              <h3 class="text-xl font-extrabold mt-2">${safe(p.showName||'')}</h3>
+              <p class="text-slate-200/85 text-sm mt-2">${p.hostName ? 'Hosted by ' + safe(p.hostName) : ''}</p>
+              <p class="text-slate-400 text-sm mt-1">${safe(p.category||'')}</p>
+
+              <div class="mt-4 grid gap-2">
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Approved</label>
+                <select class="rounded-xl px-3 py-2 text-slate-50" data-field="approved" data-slug="${safe(p.slug)}">
+                  <option value="false" ${p.approved ? '' : 'selected'}>No (Pending)</option>
+                  <option value="true" ${p.approved ? 'selected' : ''}>Yes</option>
+                </select>
+
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Featured (pin to TV)</label>
+                <select class="rounded-xl px-3 py-2 text-slate-50" data-field="featured" data-slug="${safe(p.slug)}">
+                  <option value="false" ${p.featured ? '' : 'selected'}>No</option>
+                  <option value="true" ${p.featured ? 'selected' : ''}>Yes</option>
+                </select>
+
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Featured Rank (higher = first)</label>
+                <input class="rounded-xl px-3 py-2 text-slate-50" data-field="featuredRank" data-slug="${safe(p.slug)}" value="${p.featuredRank || 0}" />
+
+                <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Featured Until (ISO or blank)</label>
+                <input class="rounded-xl px-3 py-2 text-slate-50 mono" data-field="featuredUntil" data-slug="${safe(p.slug)}" value="${p.featuredUntil || ''}" placeholder="2026-02-01T00:00:00Z"/>
+
+                <button class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15 mt-2"
+                  data-action="save" data-slug="${safe(p.slug)}">
+                  Save
+                </button>
+
+                <div class="text-xs text-slate-500 mt-1">
+                  Status:
+                  ${p.approved ? '<span class="text-emerald-300 font-semibold">APPROVED</span>' : '<span class="text-pink-300 font-semibold">PENDING</span>'}
+                  •
+                  ${featuredActive ? '<span class="text-sky-300 font-semibold">FEATURED</span>' : '<span class="text-slate-400 font-semibold">NOT FEATURED</span>'}
+                </div>
+
+                <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15"
+                  href="podcaster-show.html?slug=${encodeURIComponent(p.slug||'')}" target="_blank" rel="noopener">
+                  Open Public Page
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      async function fetchAll(){
+        const res = await fetch('/.netlify/functions/podcaster-profile-get?approved=0&limit=80');
+        const out = await res.json().catch(()=>({}));
+        return (out && out.profiles) ? out.profiles : [];
+      }
+
+      function filterList(list){
+        const q = ($('q').value || '').trim().toLowerCase();
+        const view = $('view').value || 'all';
+
+        return list.filter(p=>{
+          const hay = (p.slug+' '+(p.showName||'')+' '+(p.hostName||'')+' '+(p.category||'')).toLowerCase();
+          if (q && !hay.includes(q)) return false;
+
+          if (view === 'pending') return p.approved !== true;
+          if (view === 'approved') return p.approved === true;
+          if (view === 'featured') return isFeaturedActive(p);
+          return true;
+        });
+      }
+
+      async function render(){
+        showMsg('Loading…', true);
+        const all = await fetchAll();
+
+        const list = filterList(all);
+        const el = $('list');
+        el.innerHTML = '';
+        if (!list.length){
+          showMsg('No profiles match your filter.', true);
+          return;
+        }
+
+        for (const p of list){
+          el.insertAdjacentHTML('beforeend', card(p));
+        }
+        showMsg('Loaded ' + list.length + ' profiles.', true);
+      }
+
+      function readField(slug, field){
+        const sel = document.querySelector('[data-field="'+field+'"][data-slug="'+slug+'"]');
+        if (!sel) return '';
+        return sel.value;
+      }
+
+      async function save(slug){
+        showMsg('Saving ' + slug + '…', true);
+
+        const okKey = ownerKey();
+        if (!okKey){
+          showMsg('❌ Missing owner key on this device. Login again (owner key is required).', false);
+          return;
+        }
+
+        const payload = {
+          slug,
+          approved: readField(slug, 'approved') === 'true',
+          featured: readField(slug, 'featured') === 'true',
+          featuredRank: parseInt(readField(slug,'featuredRank') || '0', 10) || 0,
+          featuredUntil: (readField(slug,'featuredUntil') || '').trim()
+        };
+
+        const res = await fetch('/.netlify/functions/podcaster-approve', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-tkfm-owner-key': okKey
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const out = await res.json().catch(()=>({}));
+        if (!res.ok || !out.ok){
+          showMsg('❌ ' + (out.error || 'Save failed'), false);
+          return;
+        }
+        showMsg('✅ Saved ' + slug + ' (approve/feature updated).', true);
+        await render();
+      }
+
+      function wireEvents(){
+        document.body.addEventListener('click', async (e)=>{
+          const b = e.target && e.target.closest ? e.target.closest('[data-action="save"]') : null;
+          if (!b) return;
+          const slug = b.getAttribute('data-slug');
+          if (slug) await save(slug);
+        });
+
+        $('refresh').addEventListener('click', render);
+        $('q').addEventListener('input', render);
+        $('view').addEventListener('change', render);
+
+        $('clearOwner').addEventListener('click', ()=>{
+          if (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.clearOwner) window.TKFM_OWNER_GUARD.clearOwner();
+          location.replace('owner-login.html?next=' + encodeURIComponent(location.pathname));
+        });
+      }
+
+      function gate(){
+        setLoginHref();
+        if (!isOwner()){
+          $('locked').classList.remove('hidden');
+          $('app').classList.add('hidden');
+          return false;
+        }
+        $('locked').classList.add('hidden');
+        $('app').classList.remove('hidden');
+        return true;
+      }
+
+      wireEvents();
+      if (gate()) render();
+    })();
+  </script>
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="god-view.html">God View</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
