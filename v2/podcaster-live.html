@@ -8,7 +8,6 @@
   <script src="/tkfm-ui.js" defer></script>
   <script src="/js/tkfm-unlocks.js" defer></script>
   <script src="/js/tkfm-checkout.js" defer></script>
-  <script src="/js/tkfm-subscription-guard.js" defer></script>
   <style>
     body{
       background:#020617;
@@ -51,16 +50,74 @@
     </div>
 
     <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
-      Request a Live Cast — server verified monthly access.
+      Request a Live Cast on TKFM Radio + TV — Monthly Members Only
     </h1>
 
     <p class="text-slate-200/85 max-w-4xl">
-      This page checks Stripe subscriptions (active/trialing) using your checkout email before allowing Live requests.
-      No fake localStorage unlocks.
+      Your monthly Podcaster Pass gives you access to submit live shows for TKFM approval and placement on our Radio/TV screen.
+      We verify your membership through Stripe (active/trialing). If you’re on a new device, enter the email you used at checkout to verify and unlock.
     </p>
 
+    <!-- PODCASTER PROMO SCRIPT BLOCK -->
+    <div class="card rounded-2xl p-6">
+      <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Podcaster Offer</p>
+      <h2 class="text-2xl font-extrabold mt-2">TKFM Podcaster Pass — Get Your Show Seen + Heard on Radio + TV</h2>
+      <p class="text-slate-200/85 mt-3">
+        This isn’t “post and hope.” TKFM gives podcasters a real lane: submit your live show, get approved, and we feature it inside the TKFM ecosystem —
+        Radio listeners, TV viewers, station pages, and promo lanes that turn episodes into momentum.
+      </p>
+
+      <div class="mt-4 grid gap-3">
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-4">
+          <p class="text-slate-50 font-extrabold">What you get</p>
+          <ul class="mt-2 list-disc list-inside text-slate-200/85 text-sm space-y-1">
+            <li><b>Radio + TV Exposure:</b> your show featured on the TKFM TV screen + linked inside the Radio side</li>
+            <li><b>Live Casting Lane:</b> submit YouTube Live / Twitch / stream link for approval + placement</li>
+            <li><b>Station Placement:</b> your episode becomes a “Now Featuring” item inside TKFM</li>
+            <li><b>Promo Path:</b> optional add-ons for imaging, interview clips, and launch campaigns</li>
+            <li><b>Professional Gate:</b> monthly membership keeps the lane clean and curated</li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-4">
+          <p class="text-slate-50 font-extrabold">Who it’s for</p>
+          <p class="text-slate-200/85 text-sm mt-2">
+            Podcasters who want real reach — artists, DJs, producers, labels, and culture voices with something to say.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+          <p class="text-emerald-100 font-extrabold">CTA</p>
+          <p class="text-emerald-100/90 text-sm mt-2">
+            Activate the <b>Podcaster Pass (Monthly)</b>, verify your email, then submit your Live Cast request — TKFM will handle the placement and motion.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMAIL CAPTURE (shown only if missing email) -->
+    <div id="emailGate" class="card rounded-2xl p-6 hidden">
+      <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Verify Monthly Access</p>
+      <h2 class="text-2xl font-extrabold mt-2">Enter your checkout email</h2>
+      <p class="text-slate-200/85 mt-2">We use this email only to verify your Stripe subscription for access.</p>
+
+      <div class="mt-4 grid md:grid-cols-3 gap-3">
+        <div class="md:col-span-2">
+          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Email used at checkout</label>
+          <input id="emailInput" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="name@email.com"/>
+          <p class="text-xs text-slate-500 mt-2">Stored locally as <span class="mono">tkfm_customer_email</span>.</p>
+        </div>
+        <div class="flex items-end gap-2">
+          <button id="saveEmail" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15">Save & Verify</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="podcast-engine.html">Checkout</a>
+        </div>
+      </div>
+
+      <p id="emailMsg" class="text-sm text-slate-300/85 mt-4"></p>
+    </div>
+
     <div id="locked" class="card rounded-2xl p-6 hidden">
-      <h2 class="text-2xl font-extrabold">Locked</h2>
+      <h2 class="text-2xl font-extrabold">Access Locked</h2>
       <p id="lockMsg" class="text-slate-200/85 mt-2">Checking subscription…</p>
       <div class="mt-4 flex flex-wrap gap-2">
         <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="podcast-engine.html">Get Monthly</a>
@@ -130,9 +187,12 @@
     </div>
   </main>
 
+  <script src="/js/tkfm-subscription-guard.js"></script>
+
   <script>
     const REQUIRED = ['video_creator_pass_monthly'];
     const LS_LAST = 'tkfm_last_live_request_id';
+    const LS_EMAIL = 'tkfm_customer_email';
 
     function setMsg(text, ok){
       const m = document.getElementById('m');
@@ -140,24 +200,61 @@
       m.className = ok ? 'text-sm text-emerald-300 font-semibold mt-4' : 'text-sm text-red-300 font-semibold mt-4';
     }
 
+    function emailMsg(text, ok){
+      const el = document.getElementById('emailMsg');
+      el.textContent = text;
+      el.className = ok ? 'text-sm text-emerald-300 font-semibold mt-4' : 'text-sm text-red-300 font-semibold mt-4';
+    }
+
     async function gate() {
+      const email = String(localStorage.getItem(LS_EMAIL) || '').trim();
+
+      const emailGate = document.getElementById('emailGate');
+      if (!email) {
+        emailGate.classList.remove('hidden');
+        document.getElementById('locked').classList.add('hidden');
+        document.getElementById('unlocked').classList.add('hidden');
+        document.getElementById('emailInput').value = '';
+        emailMsg('Enter the email you used at checkout, then click Save & Verify.', true);
+        return;
+      } else {
+        emailGate.classList.add('hidden');
+      }
+
       const locked = document.getElementById('locked');
       const unlocked = document.getElementById('unlocked');
       const msgEl = document.getElementById('lockMsg');
+
       if (window.TKFM_REQUIRE_ANY_SUB) {
         await window.TKFM_REQUIRE_ANY_SUB(REQUIRED, { lockedEl: locked, unlockedEl: unlocked, msgEl });
       } else {
         locked.classList.remove('hidden');
         unlocked.classList.add('hidden');
-        msgEl.textContent = 'Subscription guard missing.';
+        msgEl.textContent = 'Subscription guard missing (js/tkfm-subscription-guard.js not loaded).';
       }
     }
 
-    async function submit(){
-      // Always re-check gate before submit
+    async function verifyEmailNow() {
+      const v = String(document.getElementById('emailInput').value || '').trim().toLowerCase();
+      if (!v || !v.includes('@')) {
+        emailMsg('Enter a valid email.', false);
+        return;
+      }
+      localStorage.setItem(LS_EMAIL, v);
+      emailMsg('Saved. Verifying subscription…', true);
       await gate();
-      if (!document.getElementById('unlocked') || document.getElementById('unlocked').classList.contains('hidden')) {
-        setMsg('Locked. Complete the monthly checkout first.', false);
+    }
+
+    async function submit(){
+      await gate();
+      if (document.getElementById('unlocked').classList.contains('hidden')) {
+        setMsg('Locked. Activate the monthly pass first.', false);
+        return;
+      }
+
+      const email = String(localStorage.getItem(LS_EMAIL) || '').trim();
+      if (!email) {
+        setMsg('Missing email. Enter your checkout email above.', false);
         return;
       }
 
@@ -178,7 +275,7 @@
         const res = await fetch('/.netlify/functions/live-submit', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ title, creator, type, url, description, minutes })
+          body: JSON.stringify({ email, title, creator, type, url, description, minutes })
         });
         const out = await res.json().catch(()=>({}));
         if (!res.ok || !out.ok) throw new Error(out.error||'submit failed');
@@ -186,7 +283,7 @@
         setMsg('✅ Request sent. Owner will approve you for Live Now.', true);
         await refresh();
       }catch(e){
-        setMsg('❌ Submit failed. Try again later.', false);
+        setMsg('❌ ' + (e && e.message ? e.message : 'Submit failed.'), false);
       }
     }
 
@@ -229,6 +326,7 @@
 
     document.getElementById('submit').addEventListener('click', submit);
     document.getElementById('refresh').addEventListener('click', refresh);
+    document.getElementById('saveEmail').addEventListener('click', verifyEmailNow);
 
     gate();
     refresh();
