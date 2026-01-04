@@ -1,3 +1,4 @@
+// TKFM: NOTE Featured tracking requires attaching an id attribute to rendered items.
 (() => {
   // TKFM: Radio-TV Featured Loader (store-backed)
   // Reads from: /.netlify/functions/featured-media-get
@@ -84,6 +85,10 @@
         const a = $('a', node);
         if (a) {
           a.href = url;
+          
+
+          if (it && it.id) a.setAttribute('data-featured-id', String(it.id));
+
           a.target = '_blank';
           a.rel = 'noreferrer';
         }
@@ -110,6 +115,10 @@
       const boosted = isBoostActive(it);
 
       const row = document.createElement('button');
+      
+
+      if (it && it.id) row.setAttribute('data-featured-id', String(it.id));
+
       row.type = 'button';
       row.style.cssText = [
         'text-align:left',
