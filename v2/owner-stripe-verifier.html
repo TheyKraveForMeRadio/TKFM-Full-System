@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Owner — Stripe Lookup Verifier</title>
+
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7;
+      --pink:#ec4899;
+      --c:#22d3ee;
+      --w: rgba(255,255,255,.92);
+      --w2: rgba(255,255,255,.70);
+      --card: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.12);
+    }
+    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--w); }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .h{ font-size: 20px; font-weight: 900; letter-spacing:.2px; }
+    .sub{ margin-top:4px; font-size: 12px; color: var(--w2); max-width: 80ch; line-height:1.5; }
+    .pill{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(168,85,247,.35); background: rgba(168,85,247,.12); padding:8px 10px; border-radius:999px; font-size:12px; color: var(--w); }
+    .btn{ cursor:pointer; border-radius:12px; padding:10px 12px; border:1px solid var(--line); background: rgba(255,255,255,.04); color: var(--w); font-weight: 900; }
+    .btnPrimary{ border:none; background: linear-gradient(90deg, var(--p), var(--pink), var(--c)); }
+    .btn:hover{ border-color: rgba(34,211,238,.35); }
+    .card{ margin-top:14px; border:1px solid rgba(168,85,247,.25); background: var(--card); border-radius: 16px; padding: 14px; }
+    textarea{ width:100%; min-height:120px; resize:vertical; border-radius:14px; border:1px solid rgba(255,255,255,.10); background: rgba(2,6,23,.65); color: rgba(255,255,255,.92); padding:12px; font-size:13px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; color: rgba(255,255,255,.75); }
+    .grid{ display:grid; gap:12px; grid-template-columns: 1fr; }
+    @media(min-width: 880px){ .grid{ grid-template-columns: 1.1fr .9fr; } }
+    .ok{ border-color: rgba(34,211,238,.35); }
+    .bad{ border-color: rgba(236,72,153,.45); }
+    .tag{ display:inline-block; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); font-size: 12px; }
+    .tagOk{ border-color: rgba(34,211,238,.40); background: rgba(34,211,238,.10); }
+    .tagBad{ border-color: rgba(236,72,153,.45); background: rgba(236,72,153,.12); }
+    a{ color: rgba(34,211,238,.95); text-decoration:none; }
+    a:hover{ text-decoration: underline; }
+    pre{ margin:0; white-space:pre-wrap; word-break:break-word; }
+  </style>
+</head>
+<body>
+  <div id="tkfmOwnerLock"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="h">Stripe Lookup Key Verifier</div>
+        <div class="sub">
+          Owner-only. Paste lookup keys (one per line) and verify Stripe has active prices.
+          This confirms your <span class="mono">data-plan</span> ids will resolve (Rotation Boost, paid lanes, etc).
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <span class="pill">TKFM Neon (#a855f7 / #ec4899 / #22d3ee)</span>
+        <a href="/owner-paid-lane-inbox.html"><button class="btn" type="button">Paid Lane Inbox</button></a>
+        <a href="/owner-featured-manager.html"><button class="btn" type="button">Featured Manager</button></a>
+        <button class="btn btnPrimary" id="verifyBtn" type="button">Verify Keys</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div style="font-weight:900;margin-bottom:8px">Lookup Keys</div>
+        <div class="mono" style="margin-bottom:10px">Examples: rotation_boost_7d, rotation_boost_30d</div>
+        <textarea id="keys" placeholder="rotation_boost_7d&#10;rotation_boost_30d"></textarea>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <div style="font-weight:900">Results</div>
+          <div id="status" class="tag">Idle</div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="font-weight:900;margin-bottom:6px">Found</div>
+          <pre id="found" class="mono">—</pre>
+        </div>
+        <div style="margin-top:12px">
+          <div style="font-weight:900;margin-bottom:6px">Missing</div>
+          <pre id="missing" class="mono">—</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (s, r=document) => r.querySelector(s);
+
+    function ownerKey() {
+      return (
+        localStorage.getItem('TKFM_OWNER_KEY') ||
+        localStorage.getItem('tkfm_owner_key') ||
+        localStorage.getItem('tkfmOwnerKey') ||
+        ''
+      ).trim();
+    }
+
+    function setStatus(text, ok=null) {
+      const el = $('#status');
+      el.textContent = text;
+      el.className = 'tag ' + (ok === true ? 'tagOk' : ok === false ? 'tagBad' : '');
+    }
+
+    function parseKeys() {
+      return ($('#keys').value || '')
+        .split(/\r?\n/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .slice(0, 200);
+    }
+
+    function pretty(obj) {
+      try { return JSON.stringify(obj, null, 2); } catch(e){ return String(obj); }
+    }
+
+    async function verify() {
+      const k = ownerKey();
+      if (!k) { setStatus('Missing owner key (login owner first)', false); return; }
+
+      const keys = parseKeys();
+      if (!keys.length) { setStatus('Paste at least one lookup key', false); return; }
+
+      setStatus('Verifying...', null);
+      $('#found').textContent = '...';
+      $('#missing').textContent = '...';
+
+      const res = await fetch('/.netlify/functions/stripe-lookup-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-tkfm-owner-key': k },
+        body: JSON.stringify({ lookupKeys: keys })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        setStatus(data.error || 'Verify failed', false);
+        $('#found').textContent = '—';
+        $('#missing').textContent = '—';
+        return;
+      }
+
+      const found = data.found || {};
+      const missing = data.missing || [];
+      const foundCount = Object.keys(found).length;
+      const missingCount = missing.length;
+
+      setStatus(`Found ${foundCount} / Missing ${missingCount}`, missingCount ? false : true);
+      $('#found').textContent = foundCount ? pretty(found) : '—';
+      $('#missing').textContent = missingCount ? missing.join('\n') : '—';
+    }
+
+    $('#verifyBtn').addEventListener('click', verify);
+
+    // Prefill Rotation Boost keys
+    $('#keys').value = 'rotation_boost_7d\nrotation_boost_30d\n';
+  </script>
+</body>
+</html>
