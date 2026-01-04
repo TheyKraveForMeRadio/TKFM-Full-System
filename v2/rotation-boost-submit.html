@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Rotation Boost — Submit</title>
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7;
+      --pink:#ec4899;
+      --c:#22d3ee;
+      --w: rgba(255,255,255,.92);
+      --w2: rgba(255,255,255,.70);
+      --card: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.12);
+    }
+    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--w); }
+    .wrap{ max-width: 900px; margin: 0 auto; padding: 18px; }
+    .h{ font-size: 26px; font-weight: 1000; letter-spacing:.2px; }
+    .sub{ margin-top:6px; font-size: 13px; color: var(--w2); line-height:1.5; }
+    .card{ margin-top:14px; border:1px solid rgba(168,85,247,.25); background: var(--card); border-radius: 18px; padding: 16px; }
+    label{ display:block; font-size: 12px; color: var(--w2); font-weight: 900; margin-top: 12px; }
+    input{ width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.10); background: rgba(2,6,23,.65); color: rgba(255,255,255,.92); padding:12px; font-size:14px; }
+    .btn{ cursor:pointer; border-radius:14px; padding:12px 14px; border:1px solid var(--line); background: rgba(255,255,255,.04); color: var(--w); font-weight: 1000; width: 100%; margin-top: 14px; }
+    .btnPrimary{ border:none; background: linear-gradient(90deg, var(--p), var(--pink), var(--c)); }
+    .tag{ display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); font-size: 12px; }
+    .tagOk{ border-color: rgba(34,211,238,.40); background: rgba(34,211,238,.10); }
+    .tagBad{ border-color: rgba(236,72,153,.45); background: rgba(236,72,153,.12); }
+    a{ color: rgba(34,211,238,.95); text-decoration:none; }
+    a:hover{ text-decoration: underline; }
+    #done{ display:none; margin-top:12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="h">Submit Your Boost</div>
+    <div class="sub">
+      Your payment is verified, then this link goes into the <b>Radio‑TV Featured</b> rail with an active boost timer.
+    </div>
+
+    <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <span class="tag" id="status">Idle</span>
+      <span class="tag">Plan: <span id="plan">—</span></span>
+      <a href="/rotation-boost.html" class="tag">Back</a>
+      <a href="/radio-hub.html" class="tag">Radio</a>
+    </div>
+
+    <div class="card">
+      <label>Title</label>
+      <input id="title" placeholder="Artist — Track / Video Title"/>
+
+      <label>URL to Boost (YouTube / Spotify / Link)</label>
+      <input id="url" placeholder="https://"/>
+
+      <button class="btn btnPrimary" id="submitBtn" type="button">Submit to Radio‑TV Featured</button>
+
+      <div id="done" class="sub">
+        LIVE ✅ You’re boosted. Open the radio to see your placement:
+        <a href="/radio-hub.html">radio-hub.html</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/tkfm-rotation-boost-submit.js"></script>
+</body>
+</html>
