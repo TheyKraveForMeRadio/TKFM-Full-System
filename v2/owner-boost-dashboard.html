@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Owner — Boost Dashboard</title>
+
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7;
+      --pink:#ec4899;
+      --c:#22d3ee;
+      --w: rgba(255,255,255,.92);
+      --w2: rgba(255,255,255,.70);
+      --card: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.10);
+    }
+    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--w); }
+    .wrap{ max-width: 1200px; margin: 0 auto; padding: 18px; }
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .h{ font-size: 20px; font-weight: 1000; letter-spacing:.2px; }
+    .sub{ margin-top:4px; font-size: 12px; color: var(--w2); max-width: 90ch; line-height:1.5; }
+    .pill{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(168,85,247,.35); background: rgba(168,85,247,.12); padding:8px 10px; border-radius:999px; font-size:12px; color: var(--w); }
+    .btn{ cursor:pointer; border-radius:12px; padding:10px 12px; border:1px solid var(--line); background: rgba(255,255,255,.04); color: var(--w); font-weight: 1000; }
+    .btnPrimary{ border:none; background: linear-gradient(90deg, var(--p), var(--pink), var(--c)); }
+    .btnDanger{ border-color: rgba(236,72,153,.45); }
+    .btn:hover{ border-color: rgba(34,211,238,.35); }
+    .grid{ display:grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
+    @media(min-width: 980px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    .card{ border:1px solid rgba(168,85,247,.25); background: var(--card); border-radius: 16px; padding: 14px; }
+    table{ width:100%; border-collapse: collapse; margin-top: 10px; }
+    th, td{ text-align:left; padding:10px 8px; border-bottom: 1px solid rgba(255,255,255,.08); vertical-align: top; }
+    th{ font-size: 12px; color: var(--w2); font-weight: 1000; }
+    td{ font-size: 13px; color: var(--w); }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; color: rgba(255,255,255,.72); }
+    .tag{ display:inline-block; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); font-size: 12px; }
+    .tagOk{ border-color: rgba(34,211,238,.40); background: rgba(34,211,238,.10); }
+    .tagWarn{ border-color: rgba(236,72,153,.45); background: rgba(236,72,153,.12); }
+    a{ color: rgba(34,211,238,.95); text-decoration:none; }
+    a:hover{ text-decoration: underline; }
+    #msg{ margin-top:10px; display:none; padding:10px; border-radius:12px; border:1px solid rgba(34,211,238,.35); }
+  </style>
+</head>
+<body>
+  <div id="tkfmOwnerLock"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="h">Boost Dashboard</div>
+        <div class="sub">Owner-only analytics for the Featured rail: active boosts + impressions/clicks per item (from tracking).</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <span class="pill">TKFM Neon (#a855f7 / #ec4899 / #22d3ee)</span>
+        <a href="/owner-paid-lane-inbox.html"><button class="btn" type="button">Paid Lane Inbox</button></a>
+        <a href="/owner-featured-manager.html"><button class="btn" type="button">Featured Manager</button></a>
+        <a href="/owner-stripe-verifier.html"><button class="btn" type="button">Stripe Verifier</button></a>
+        <button class="btn" id="refreshBtn" type="button">Refresh</button>
+        <button class="btn" id="exportBtn" type="button">Export CSV</button>
+        <button class="btn btnDanger" id="resetBtn" type="button">Reset Stats</button>
+      
+        <button class="btn" id="cleanupBtn" type="button">Run Cleanup</button>
+</div>
+    </div>
+
+    <div id="msg"></div>
+
+    <div class="grid">
+      <div class="card">
+        <div style="font-weight:1000">Active Boosts</div>
+        <div class="mono" style="margin-top:6px">Sorted by boostUntil (soonest first).</div>
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Boost Until</th>
+                <th>Impr</th>
+                <th>Clicks</th>
+                <th>CTR</th>
+                <th>ID</th>
+              </tr>
+            </thead>
+            <tbody id="activeRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:1000">Top Performers</div>
+        <div class="mono" style="margin-top:6px">Sorted by clicks (desc).</div>
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Impr</th>
+                <th>Clicks</th>
+                <th>CTR</th>
+                <th>ID</th>
+              </tr>
+            </thead>
+            <tbody id="topRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:1000">All Featured Items</div>
+      <div class="mono" style="margin-top:6px">Includes non-boosted items.</div>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Boost</th>
+              <th>Impr</th>
+              <th>Clicks</th>
+              <th>CTR</th>
+              <th>URL</th>
+              <th>ID</th>
+            </tr>
+          </thead>
+          <tbody id="allRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (s, r=document) => r.querySelector(s);
+
+    function ownerKey() {
+      return (
+        localStorage.getItem('TKFM_OWNER_KEY') ||
+        localStorage.getItem('tkfm_owner_key') ||
+        localStorage.getItem('tkfmOwnerKey') ||
+        ''
+      ).trim();
+    }
+
+    function showMsg(text, mode='info') {
+      const box = $('#msg');
+      box.style.display = 'block';
+      box.textContent = text;
+      box.style.borderColor = mode==='err' ? 'rgba(236,72,153,.55)' : 'rgba(34,211,238,.35)';
+    }
+
+    function esc(s) {
+      return String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    function fmtWhen(v) {
+      const s = String(v||'').trim();
+      if (!s) return '';
+      return s.replace('T',' ').replace('Z','');
+    }
+
+    function parseMs(v) {
+      const ms = Date.parse(String(v||''));
+      return Number.isFinite(ms) ? ms : 0;
+    }
+
+    function isActiveBoost(item) {
+      const ms = parseMs(item.boostUntil);
+      return ms && ms > Date.now();
+    }
+
+    function ctr(impr, clicks) {
+      const i = Number(impr)||0;
+      const c = Number(clicks)||0;
+      if (!i) return '0%';
+      return ((c / i) * 100).toFixed(1) + '%';
+    }
+
+    async function apiFeaturedList() {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key. Login owner first.', 'err'); return []; }
+
+      const res = await fetch('/.netlify/functions/featured-media-admin', {
+        method: 'GET',
+        headers: { 'x-tkfm-owner-key': k }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) { showMsg(data.error || 'Failed to load featured list', 'err'); return []; }
+      return data.items || [];
+    }
+
+    async function apiStats() {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key. Login owner first.', 'err'); return []; }
+
+      const res = await fetch('/.netlify/functions/featured-media-stats-admin', {
+        method: 'GET',
+        headers: { 'x-tkfm-owner-key': k }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) { showMsg(data.error || 'Failed to load stats', 'err'); return []; }
+      return data.stats || [];
+    }
+
+    async function apiResetStats() {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key. Login owner first.', 'err'); return false; }
+
+      const res = await fetch('/.netlify/functions/featured-media-stats-admin', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'x-tkfm-owner-key': k },
+        body: JSON.stringify({ action: 'reset_all' })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) { showMsg(data.error || 'Reset failed', 'err'); return false; }
+      return true;
+    }
+
+    function join(items, stats) {
+      const map = new Map(stats.map(s => [String(s.id||''), s]));
+      return items.map(it => {
+        const id = String(it.id||'');
+        const st = map.get(id) || {};
+        const impressions = Number(st.impressions)||0;
+        const clicks = Number(st.clicks)||0;
+        return { ...it, impressions, clicks };
+      });
+    }
+
+    function renderActive(rows) {
+      const tbody = $('#activeRows');
+      tbody.innerHTML = '';
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="mono">No active boosts.</td></tr>';
+        return;
+      }
+      rows.forEach(r => {
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td><div style="font-weight:1000">${esc(r.title||'Featured')}</div></td>
+            <td class="mono">${esc(fmtWhen(r.boostUntil))}</td>
+            <td class="mono">${r.impressions||0}</td>
+            <td class="mono">${r.clicks||0}</td>
+            <td class="mono">${ctr(r.impressions, r.clicks)}</td>
+            <td class="mono">${esc(r.id||'')}</td>
+          </tr>
+        `);
+      });
+    }
+
+    function renderTop(rows) {
+      const tbody = $('#topRows');
+      tbody.innerHTML = '';
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="mono">No stats yet (tracking not wired / no traffic).</td></tr>';
+        return;
+      }
+      rows.forEach(r => {
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td><div style="font-weight:1000">${esc(r.title||'Featured')}</div></td>
+            <td class="mono">${r.impressions||0}</td>
+            <td class="mono">${r.clicks||0}</td>
+            <td class="mono">${ctr(r.impressions, r.clicks)}</td>
+            <td class="mono">${esc(r.id||'')}</td>
+          </tr>
+        `);
+      });
+    }
+
+    function renderAll(rows) {
+      const tbody = $('#allRows');
+      tbody.innerHTML = '';
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="mono">No featured items.</td></tr>';
+        return;
+      }
+      rows.forEach(r => {
+        const active = isActiveBoost(r);
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td><div style="font-weight:1000">${esc(r.title||'Featured')}</div></td>
+            <td>${active ? '<span class="tag tagOk">BOOST</span><div class="mono">'+esc(fmtWhen(r.boostUntil))+'</div>' : '<span class="tag">—</span>'}</td>
+            <td class="mono">${r.impressions||0}</td>
+            <td class="mono">${r.clicks||0}</td>
+            <td class="mono">${ctr(r.impressions, r.clicks)}</td>
+            <td>${r.url ? '<a href="'+esc(r.url)+'" target="_blank" rel="noreferrer">Open</a><div class="mono">'+esc(r.url)+'</div>' : ''}</td>
+            <td class="mono">${esc(r.id||'')}</td>
+          </tr>
+        `);
+      });
+    }
+
+    function exportCsv(rows) {
+      const head = ['id','title','url','boostUntil','impressions','clicks','ctr'];
+      const lines = [head.join(',')];
+
+      rows.forEach(r => {
+        const row = [
+          String(r.id||'').replaceAll('"','""'),
+          String(r.title||'').replaceAll('"','""'),
+          String(r.url||'').replaceAll('"','""'),
+          String(r.boostUntil||'').replaceAll('"','""'),
+          String(r.impressions||0),
+          String(r.clicks||0),
+          ctr(r.impressions, r.clicks)
+        ].map(v => `"${v}"`);
+        lines.push(row.join(','));
+      });
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'tkfm_featured_stats.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    
+    async function runCleanup() {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key. Login owner first.', 'err'); return; }
+      showMsg('Running cleanup…', 'info');
+      const res = await fetch('/.netlify/functions/featured-media-maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'x-tkfm-owner-key': k },
+        body: JSON.stringify({ keepMax: 250 })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) { showMsg(data.error || 'Cleanup failed', 'err'); return; }
+      showMsg('Cleanup complete: ' + data.before + ' → ' + data.after, 'info');
+      refresh();
+    }
+
+    async function refresh() {
+      showMsg('Loading…', 'info');
+      const [items, stats] = await Promise.all([apiFeaturedList(), apiStats()]);
+      const rows = join(items, stats);
+
+      const active = rows.filter(isActiveBoost).sort((a,b) => parseMs(a.boostUntil) - parseMs(b.boostUntil));
+      const top = rows.slice().sort((a,b) => (b.clicks||0) - (a.clicks||0)).slice(0, 30);
+
+      renderActive(active);
+      renderTop(top);
+      renderAll(rows);
+
+      window.__tkfm_rows = rows;
+      showMsg('Loaded.', 'info');
+    }
+
+    $('#refreshBtn').addEventListener('click', refresh);
+    $('#exportBtn').addEventListener('click', () => exportCsv(window.__tkfm_rows || []));
+    $('#resetBtn').addEventListener('click', async () => {
+      if (!confirm('Reset ALL featured tracking stats?')) return;
+      $('#resetBtn').disabled = true;
+      const ok = await apiResetStats();
+      
+    const cb = document.getElementById('cleanupBtn');
+    if (cb) cb.addEventListener('click', runCleanup);
+$('#resetBtn').disabled = false;
+      if (ok) refresh();
+    });
+
+    refresh();
+  </script>
+</body>
+</html>
