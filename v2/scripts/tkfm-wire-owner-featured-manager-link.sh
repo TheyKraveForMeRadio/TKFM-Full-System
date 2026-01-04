@@ -15,23 +15,33 @@ if grep -q "owner-featured-manager.html" "$F"; then
   exit 0
 fi
 
-# Insert a small button link near Refresh/Export (search for exportBtn or refreshBtn)
+INS=$(cat <<'HTML'
+<a href="/owner-featured-manager.html" style="text-decoration:none">
+  <button class="btn" type="button">Featured Manager</button>
+</a>
+HTML
+)
+
+# Preferred: insert right after Export button (if present), else after Refresh, else before close of top controls.
 perl -0777 -i -pe '
-  my $ins = qq{\n        <a href="/owner-featured-manager.html" style="text-decoration:none">\n          <button class="btn" type="button">Featured Manager</button>\n        </a>\n};
+  my $ins = $ENV{TKFM_INS};
 
-  if ($_ =~ /id="exportBtn"/) {
-    $_ =~ s/(<button[^>]*id="exportBtn"[^>]*>[^<]*<\/button>)/$1$ins/s;
-    return $_;
+  if (index($_, "owner-featured-manager.html") != -1) { next; }
+
+  if ($_ =~ /(id="exportBtn"[^>]*>.*?<\/button>)/s) {
+    $_ =~ s/(<button[^>]*id="exportBtn"[^>]*>.*?<\/button>)/$1\n$ins/s;
+    next;
   }
 
-  if ($_ =~ /id="refreshBtn"/) {
-    $_ =~ s/(<button[^>]*id="refreshBtn"[^>]*>[^<]*<\/button>)/$1$ins/s;
-    return $_;
+  if ($_ =~ /(id="refreshBtn"[^>]*>.*?<\/button>)/s) {
+    $_ =~ s/(<button[^>]*id="refreshBtn"[^>]*>.*?<\/button>)/$1\n$ins/s;
+    next;
   }
 
-  # fallback: put before closing of the top right controls div
-  $_ =~ s#(<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">)#${1}#s;
-  $_;
+  if ($_ =~ /(<div\s+style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">)/s) {
+    $_ =~ s/(<div\s+style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">)/$1\n$ins/s;
+    next;
+  }
 ' "$F"
 
 echo "OK: wired Featured Manager link into $F"
