@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# TKFM: Stripe lookup_key fallback (V4 ESM)
+# TKFM: Stripe lookup_key fallback (FINAL)
 # Works with package.json "type":"module"
 
 ROOT="${1:-.}"

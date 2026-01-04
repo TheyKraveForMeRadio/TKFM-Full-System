@@ -1,0 +1,14 @@
+STRIPE: ROTATION BOOST (LOOKUP KEY)
+
+Product: Rotation Boost (TKFM Radio)
+Type: One-time
+
+Price 1:
+Name: Rotation Boost — 7 Days
+Amount: $99.00
+Lookup key: rotation_boost_7d
+
+Price 2:
+Name: Rotation Boost — 30 Days
+Amount: $299.00
+Lookup key: rotation_boost_30d

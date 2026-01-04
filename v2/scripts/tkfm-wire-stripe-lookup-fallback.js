@@ -1,8 +1,18 @@
-/* TKFM: Stripe lookup_key fallback injector (V4 ESM)
+/* TKFM: Stripe lookup_key fallback injector (FINAL ESM)
    Works with package.json "type":"module"
+
+   What it does:
+   - Injects tkfmResolvePriceId(planId) helper into create-checkout-session.js
+   - Attempts to replace common PRICE_MAP[planId] assignments with:
+       await tkfmResolvePriceId(planId)
+   - Leaves a hint comment if your file uses a different pattern
 
    Usage:
      node scripts/tkfm-wire-stripe-lookup-fallback.js netlify/functions/create-checkout-session.js
+
+   Stripe requirement:
+     Set each Stripe Price "Lookup key" = the planId used on-site (data-plan).
+     Example: rotation_boost_7d, rotation_boost_30d
 */
 import fs from 'node:fs';
 
@@ -15,7 +25,7 @@ if (s.includes(MARK)) {
   process.exit(0);
 }
 
-const resolverLines = [
+const resolver = [
   '',
   `// ${MARK}`,
   'async function tkfmResolvePriceId(planId) {',
@@ -37,36 +47,43 @@ const resolverLines = [
   '  return null;',
   '}',
   ''
-];
-const resolver = resolverLines.join('\n');
+].join('\n');
 
 function insertResolver(src) {
+  // Insert after Stripe init
   const reStripeInit = /(const\s+stripe\s*=\s*new\s+Stripe\([^;]*\);\s*\r?\n)/m;
   if (reStripeInit.test(src)) return src.replace(reStripeInit, `$1${resolver}\n`);
 
+  // Insert after Stripe import
   const reStripeImport = /(import\s+Stripe\s+from\s+['"]stripe['"];\s*\r?\n)/m;
   if (reStripeImport.test(src)) return src.replace(reStripeImport, `$1${resolver}\n`);
 
+  // Fallback: top
   return resolver + '\n' + src;
 }
 
 s = insertResolver(s);
 
-let replaced = false;
-const patterns = [
+// Replace a few common patterns inside handler
+let replacedAny = false;
+
+// 1) const priceId = PRICE_MAP[planId];
+const pats = [
   [/const\s+priceId\s*=\s*PRICE_MAP\s*\[\s*planId\s*\]\s*;\s*/g, "const priceId = await tkfmResolvePriceId(planId);\n"],
   [/let\s+priceId\s*=\s*PRICE_MAP\s*\[\s*planId\s*\]\s*;\s*/g,   "let priceId = await tkfmResolvePriceId(planId);\n"],
-  [/priceId\s*=\s*PRICE_MAP\s*\[\s*planId\s*\]\s*;\s*/g,         "priceId = await tkfmResolvePriceId(planId);\n"]
+  [/priceId\s*=\s*PRICE_MAP\s*\[\s*planId\s*\]\s*;\s*/g,         "priceId = await tkfmResolvePriceId(planId);\n"],
+  // 2) const price = PRICE_MAP[planId];
+  [/const\s+price\s*=\s*PRICE_MAP\s*\[\s*planId\s*\]\s*;\s*/g,   "const price = await tkfmResolvePriceId(planId);\n"],
 ];
 
-for (const [re, rep] of patterns) {
+for (const [re, rep] of pats) {
   if (re.test(s)) {
     s = s.replace(re, rep);
-    replaced = true;
+    replacedAny = true;
   }
 }
 
-// Add guard if missing and if we can locate resolver usage
+// Add guard if we see resolver usage and guard missing
 if (!/if\s*\(\s*!\s*priceId\s*\)/.test(s) && /await\s+tkfmResolvePriceId\(planId\)/.test(s)) {
   const guard = [
     '',
@@ -83,16 +100,19 @@ if (!/if\s*\(\s*!\s*priceId\s*\)/.test(s) && /await\s+tkfmResolvePriceId\(planId
   s = s.replace(/await\s+tkfmResolvePriceId\(planId\)\s*;\s*/m, (m) => m + guard);
 }
 
-if (!replaced) {
+// If we didn't auto-replace, leave a BIG hint so you can one-line patch manually
+if (!replacedAny) {
   const hint = [
     '',
-    '// TKFM: If your checkout handler assigns priceId via PRICE_MAP[planId], replace with:',
-    '// const priceId = await tkfmResolvePriceId(planId);',
+    '// TKFM: LOOKUP KEY FALLBACK INSTALLED.',
+    '// If your handler uses PRICE_MAP[planId] (or similar) to set priceId, replace that assignment with:',
+    '//   const priceId = await tkfmResolvePriceId(planId);',
     ''
   ].join('\n');
 
+  // Put hint near PRICE_MAP if present; else at top
   if (s.includes('PRICE_MAP')) {
-    s = s.replace(/(PRICE_MAP[^\n]*\r?\n)/, `$1${hint}`);
+    s = s.replace(/(PRICE_MAP\s*=\s*\{[\s\S]*?\}\s*;)/m, `$1\n${hint}`);
   } else {
     s = hint + s;
   }
