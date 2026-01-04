@@ -6,7 +6,6 @@
   const NEON_BLUE = '#3b82f6';
 
   function qs(sel, root = document) { return root.querySelector(sel); }
-  function qsa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
 
   function safeText(s) {
     return (s == null ? '' : String(s)).replace(/[<>]/g, '').trim();
@@ -136,11 +135,9 @@
 
     wrap.style.display = 'flex';
 
-    // reset message each open
     const msg = qs('#tkfmPaidLaneMsg');
     if (msg) msg.style.display = 'none';
 
-    // prefill from storage
     const name = localStorage.getItem('tkfm_name') || '';
     const email = localStorage.getItem('tkfm_email') || '';
     const n = qs('#tkfmPLName'); if (n && !n.value) n.value = name;
@@ -166,7 +163,6 @@
     if (!laneId) return showMsg('Missing lane id — refresh and try again after purchase.', 'err');
     if (!name && !email) return showMsg('Add name or email.', 'err');
 
-    // keep quick data for future autofill
     if (name) localStorage.setItem('tkfm_name', name);
     if (email) localStorage.setItem('tkfm_email', email);
 
@@ -225,6 +221,10 @@
   }
 
   function boot() {
+    // public API for other scripts/pages
+    window.TKFM_OPEN_PAID_LANE = (laneId = '') => show(laneId);
+    window.TKFM_CLOSE_PAID_LANE = () => hide();
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
         bindTriggers();
