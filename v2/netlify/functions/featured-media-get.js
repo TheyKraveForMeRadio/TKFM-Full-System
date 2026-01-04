@@ -18,20 +18,16 @@ export async function handler(event) {
     const list = (await getStore('featured_media')) || [];
     const items = Array.isArray(list) ? list : [];
 
-    // Normalize items for radio-tv consumers
     const normalized = items.map((x) => ({
       id: x.id || '',
       title: x.title || x.name || 'Featured',
       url: x.url || x.link || '',
       kind: x.kind || 'link',
-      addedAt: x.addedAt || x.createdAt || ''
+      addedAt: x.addedAt || x.createdAt || '',
+      boostUntil: x.boostUntil || ''
     })).filter(x => x.url);
 
-    return json(200, {
-      ok: true,
-      items: normalized,
-      featured: normalized
-    });
+    return json(200, { ok: true, items: normalized, featured: normalized });
   } catch (e) {
     return json(500, { ok: false, error: 'Server error' });
   }
