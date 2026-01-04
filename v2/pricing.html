@@ -13,7 +13,61 @@
 TKFM Pricing paid access tiers, promo campaigns, mixtape hosting, and label workflows for artists, DJs, labels, and sponsors.
   <style>
     :root{
+  <!-- TKFM Paid Lane Submit Modal -->
+    <div id="tkfmPaidLaneModalCard" role="dialog" aria-modal="true" aria-label="Paid Lane Submission">
+      <div id="tkfmPaidLaneModalTop">
+  <!-- TKFM_PAID_LANE_MODAL_STYLES_START -->
+  <!-- TKFM_PAID_LANE_MODAL_STYLES_END -->
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div id="tkfmPaidLaneBadge">TKFM</div>
+          <div>
+            <div style="font-weight:900; font-size:16px; letter-spacing:.3px;">Paid Lane Submission</div>
+            <div style="font-size:12px; opacity:.8;">Submit instantly after purchase — feeds Featured + Autopilot.</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div id="tkfmPaidLanePlanPill">Lane: (not set)</div>
+          <button class="tkfmBtn" type="button" data-tkfm-modal-close="1" aria-label="Close">Close</button>
+        </div>
+      </div>
+
+      <div id="tkfmPaidLaneBody">
+        <input id="tkfmPaidLane_planId" type="hidden" value="" />
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_title">Title</label>
+          <input id="tkfmPaidLane_title" type="text" placeholder="Project / Track / Campaign title" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_link">Link</label>
+          <input id="tkfmPaidLane_link" type="url" placeholder="https:// (YouTube, SoundCloud, Drive, Dropbox, Press link...)" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_contact">Contact</label>
+          <input id="tkfmPaidLane_contact" type="text" placeholder="Email / IG / Phone (so we can follow up)" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_notes">Notes</label>
+          <textarea id="tkfmPaidLane_notes" rows="4" placeholder="Any details you want TKFM to follow..."></textarea>
+        </div>
+
+        <div id="tkfmPaidLane_status"></div>
+
+        <div id="tkfmPaidLane_next">
+          Next step: <a id="tkfmPaidLane_go" href="/pricing.html">Go to your lane</a>
+        </div>
+      </div>
+
+      <div id="tkfmPaidLaneActions">
+        <button class="tkfmBtnGold tkfmBtn" type="button" id="tkfmPaidLane_submit">Submit Now</button>
+      </div>
+    </div>
+  </div>
       --bg:#020617;
+  <div id="tkfmPaidLaneSubmitHost" style="padding:12px 16px; max-width:1100px; margin:0 auto;"></div>
       --purple:#a855f7;
       --pink:#ec4899;
       --cyan:#22d3ee;
@@ -176,6 +230,9 @@ TKFM Pricing paid access tiers, promo campaigns, mixtape hosting, and label work
     footer .wrap{ padding: 18px 24px; }
   </style>
 <script src="/js/tkfm-fx.js"></script>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+    <script src="/js/tkfm-paid-lane-modal.js" defer></script>
+  <script src="/js/tkfm-paid-lane-submit.js" defer></script>
 </head>
 
 <body data-tkfm-theme="radio">
@@ -716,5 +773,6 @@ TKFM Pricing paid access tiers, promo campaigns, mixtape hosting, and label work
   <script type="module" src="/js/tkfm-logo-resolver.js"></script>
 <script src="/js/tkfm-checkout.js"></script>
 <script src="/js/tkfm-checkout.js"></script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>

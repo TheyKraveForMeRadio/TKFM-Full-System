@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>TKFM God View — Owner Command Center</title>
@@ -116,6 +118,7 @@
 </head>
 
 <body>
+  <div id="tkfmOwnerLock"></div>
   <div class="bg"></div>
 
   <header>
@@ -274,11 +277,11 @@
       document.getElementById('logoutTile').addEventListener('click', function(){
         clearOwner();
         render();
-        location.href = document.getElementById('goLogin').getAttribute('href') || 'owner-login.html';
       });
 
       render();
     })();
   </script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>

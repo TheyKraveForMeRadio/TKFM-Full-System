@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Podcaster Dashboard — TKFM</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <script src="/js/tkfm-checkout.js" defer></script>
+  <script src="/js/tkfm-subscription-guard.js"></script>
+  <script src="/js/podcaster-dashboard.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script src="/js/tkfm-paid-lane-modal.js" defer></script>
+  <script src="/js/tkfm-paid-lane-submit.js" defer></script>
+</head>
+<body class="text-slate-50 min-h-screen">
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Podcaster Creator Dashboard</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎙 Podcast</a>
+        <a href="podcaster-live.html" class="px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 text-red-200">🔴 Live</a>
+        <a href="podcaster-directory.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📚 Directory</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Monthly Members Only</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Build your TKFM Show Page</h1>
+    <p class="text-slate-200/85 max-w-4xl">
+      This dashboard creates a public show page for listeners and viewers. It’s a clean lane for podcasters on the Radio + TV side.
+      Save your profile once, then share the public link everywhere.
+    </p>
+
+    <div id="locked" class="card rounded-2xl p-6 hidden">
+      <h2 class="text-2xl font-extrabold">Access Locked</h2>
+      <p id="lockMsg" class="text-slate-200/85 mt-2">Checking subscription…</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="podcast-engine.html">Get Monthly</a>
+        <a class="btn border border-red-500/40 bg-red-500/10 text-red-100 hover:bg-red-500/15" href="podcaster-live.html">Request Live</a>
+      </div>
+      <p class="text-slate-500 text-xs mt-4">Requires active monthly subscription (Stripe active/trialing).</p>
+    </div>
+
+    <div id="unlocked" class="grid gap-4 hidden">
+      <div class="card rounded-2xl p-6">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Show Profile</p>
+
+        <div class="mt-4 grid md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Slug (auto from show name)</label>
+            <input id="slug" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="my-show" />
+          </div>
+
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Show Name *</label>
+            <input id="showName" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Show name" />
+          </div>
+
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Host Name *</label>
+            <input id="hostName" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Host / brand" />
+          </div>
+
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Category</label>
+            <input id="category" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Hip hop / culture / business" />
+          </div>
+
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Cover Image URL</label>
+            <input id="coverUrl" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://..." />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Show Bio</label>
+            <textarea id="bio" rows="4" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="Describe your show"></textarea>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Website</label>
+            <input id="website" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://..." />
+          </div>
+
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">YouTube</label>
+            <input id="youtube" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://youtube.com/..." />
+          </div>
+
+          <div>
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Spotify</label>
+            <input id="spotify" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="https://open.spotify.com/..." />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Public Show Page URL</label>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <input id="publicUrl" class="flex-1 rounded-xl px-3 py-2 text-slate-50 mono" readonly />
+              <button id="copyBtn" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">Copy</button>
+              <button id="previewBtn" class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15">Preview</button>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 flex flex-wrap gap-2">
+            <button id="saveBtn" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15">Save Profile</button>
+            <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcaster-directory.html">View Directory</a>
+          </div>
+        </div>
+
+        <p id="msg" class="mt-4 text-sm font-semibold text-slate-300"></p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
+</body>
+</html>

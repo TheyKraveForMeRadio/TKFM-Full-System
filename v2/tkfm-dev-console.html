@@ -124,8 +124,12 @@
     }
 </style>
 <script src="/js/tkfm-fx.js"></script>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script src="/js/tkfm-paid-lane-modal.js" defer></script>
+  <script src="/js/tkfm-paid-lane-submit.js" defer></script>
 </head>
 <body data-tkfm-theme="radio">
+  <div id="tkfmOwnerLock"></div>
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
   <div class="bg"></div>
 
@@ -248,13 +252,13 @@
 
   
   <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
   <script>
     (function(){
       async function go(){
         if(window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.requireOwner){
           await window.TKFM_OWNER_GUARD.requireOwner();
         } else {
-          location.href = 'owner-login.html?next=' + encodeURIComponent(location.pathname + location.search + location.hash);
         }
       }
       go();
@@ -269,12 +273,19 @@
         l.addEventListener('click', function(e){
           e.preventDefault();
           try{ if(window.TKFM_OWNER_GUARD) window.TKFM_OWNER_GUARD.clearOwner(); }catch(_e){}
-          location.href = 'owner-login.html';
         });
       }
     })();
   </script>
   <script type="module" src="/js/tkfm-logo-resolver.js"></script>
 <script src="/js/tkfm-checkout.js"></script>
+  <!-- TKFM Owner Tools: Paid Lane Inbox Link -->
+  <div style="max-width:1100px;margin:18px auto 0;padding:0 14px;">
+    <a href="/owner-paid-lane-inbox.html" style="display:block;border:1px solid rgba(250,204,21,.30);background:rgba(2,6,23,.55);padding:14px 16px;border-radius:18px;color:#fff7ed;text-decoration:none;font-weight:900;letter-spacing:.10em;text-transform:uppercase;">
+      Owner Inbox — Paid Lane Submissions
+      <span style="display:block;margin-top:6px;color:rgba(226,232,240,.78);font-weight:600;letter-spacing:0;text-transform:none;">Approve/reject and route submissions into Featured + scheduling.</span>
+    </a>
+  </div>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>

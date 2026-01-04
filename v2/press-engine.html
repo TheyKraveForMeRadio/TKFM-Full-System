@@ -1,14 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>TKFM Podcast Engine — Radio Opportunities</title>
+  <title>TKFM Press + PR Engine — Make Your Release Official</title>
 
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/tkfm-ui.js" defer></script>
   <script src="/js/tkfm-unlocks.js" defer></script>
-  <script src="/js/tkfm-checkout.js" defer></script>
   <style>
     body{
   <!-- TKFM Paid Lane Submit Modal -->
@@ -124,9 +123,7 @@
     .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
     .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
     .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
-    .soft{color:rgba(226,232,240,.82)}
-    .price{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:9999;max-width:92vw}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
   </style>
 
   <script src="/js/tkfm-quick-checkout.js"></script>
@@ -144,7 +141,6 @@
   .tkfmCtaBtnHot{background:linear-gradient(90deg, rgba(168,85,247,.35), rgba(236,72,153,.25));border-color:rgba(168,85,247,.35)}
   .tkfmCtaBtnGold{background:linear-gradient(90deg, rgba(250,204,21,.18), rgba(249,115,22,.10));border-color:rgba(250,204,21,.30);color:#fff7ed}
   .tkfmCtaMini{margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;color:rgba(226,232,240,.68);font-size:.85rem}
-  .tkfmCtaLink{color:rgba(147,197,253,.95);font-weight:900;text-decoration:none}
   </style>
 </head>
 <body class="text-slate-50 min-h-screen">
@@ -152,22 +148,22 @@
 <section class="tkfmCtaWrap" role="region" aria-label="TKFM Paid Lane">
   <div class="tkfmCtaTop">
     <div>
-      <div class="tkfmCtaPill">TKFM PODCAST ENGINE • PAID FEATURED LANE</div>
-      <div class="tkfmCtaH">Get your episode featured — not buried.</div>
-      <div class="tkfmCtaCopy">Checkout, submit your episode link, and we slot it into TKFM’s Featured rail + rotation. Clean, simple, effective.</div>
+      <div class="tkfmCtaPill">TKFM PRESS ENGINE • PAID PRESS RUN</div>
+      <div class="tkfmCtaH">Press that looks official — and gets seen.</div>
+      <div class="tkfmCtaCopy">Buy the pack, submit your materials, and we run the press pipeline: review → formatting → placement plan → delivery.</div>
       <ul class="tkfmCtaList">
-        <li><strong>Submit:</strong> episode link + show name + guest + release date</li>
-        <li><strong>Placement:</strong> Featured player on TKFM TV + promo windows</li>
-        <li><strong>Optional:</strong> short intro clip for maximum clicks</li>
+        <li><strong>Submit:</strong> press link / EPK / one-sheet + socials</li>
+        <li><strong>We deliver:</strong> a structured press run plan + assets</li>
+        <li><strong>Goal:</strong> credibility + exposure that converts</li>
       </ul>
     </div>
     <div class="tkfmCtaBtns">
-      <button class="tkfmCtaBtn tkfmCtaBtnHot js-checkout" data-plan="podcast_monthly_boost">Buy This Lane</button>
-      <a class="tkfmCtaBtn tkfmCtaBtnGold" href="/podcast-engine.html?submit=1&lane=podcast_monthly_boost">Submit Now</a>
+      <button class="tkfmCtaBtn tkfmCtaBtnHot js-checkout" data-plan="press_run_pack">Buy This Lane</button>
+      <a class="tkfmCtaBtn tkfmCtaBtnGold" href="/press-engine.html?submit=1&lane=press_run_pack">Submit Now</a>
       <a class="tkfmCtaBtn" href="/pricing.html">See All Pricing</a>
     </div>
   </div>
-  <div class="tkfmCtaMini"><span>Lane ID:</span> <code style="opacity:.9">podcast_monthly_boost</code> <span>• Submit routes into Featured + Autopilot</span></div>
+  <div class="tkfmCtaMini"><span>Lane ID:</span> <code style="opacity:.9">press_run_pack</code> <span>• Submit routes into Featured + Autopilot</span></div>
 </section>
 <!-- TKFM: ENGINE CTA BAR END (safe) -->
 
@@ -177,90 +173,123 @@
         <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
         <div class="leading-tight">
           <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
-          <p class="text-sm font-semibold">Podcast Engine</p>
+          <p class="text-sm font-semibold">TKFM Press + PR Engine</p>
         </div>
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
-        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
-        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
-        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+        <a href="label-hub.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🏛 Label</a>
+        <a href="app-hub.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">⚡ Engines</a>
+        <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
+        <a href="pricing.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-200">💳 Pricing</a>
       </nav>
     </div>
   </header>
 
 
-<main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
-  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 pill text-emerald-200">
-    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-    <span>Podcast Engine</span>
-  </div>
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 pill text-sky-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Press + PR Opportunities</span>
+    </div>
 
-  <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
-    Podcast opportunities on TKFM — radio + TV placement lanes.
-  </h1>
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      Build credibility fast — press, PR, and assets that make your release look official.
+    </h1>
 
-  <p class="soft max-w-4xl">
-    Podcasters can run episodes inside the TKFM radio ecosystem and appear on TV mode. Monthly creators can request Live casts (owner-approved),
-    plus scheduled slots and directory placement.
-  </p>
+    <p class="text-slate-100/90 max-w-4xl">
+      This lane is for <span class="text-sky-200 font-semibold">artists, managers, and labels</span>
+      who want real presentation: press releases, pitching angles, and placement campaigns that create leverage for radio,
+      features, and label-readiness.
+    </p>
 
-  <div class="grid lg:grid-cols-3 gap-4">
-    <section class="lg:col-span-2 card rounded-2xl p-6">
-      <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Offers</p>
-      <h2 class="text-2xl font-extrabold mt-2">Podcast Lanes</h2>
+    <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
+      <p class="font-extrabold text-slate-50">What you get</p>
+      <ul class="mt-2 space-y-2">
+        <li>• Professional press release + clean story framing</li>
+        <li>• Pitch angles + target list structure</li>
+        <li>• Optional upsells: Social Motion + Homepage features + rotation boosts</li>
+      </ul>
+    </div>
 
-      <div class="mt-4 grid md:grid-cols-2 gap-3">
-        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-5">
-          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Monthly</p>
-          <h3 class="text-xl font-extrabold mt-2">Podcast Creator Pass (Monthly)</h3>
-          <p class="soft text-sm mt-2">Schedule eligibility + directory placement + request Live Now (owner approval).</p>
-          <p class="price text-2xl font-extrabold mt-4"><span data-price-for="video_creator_pass_monthly">…</span></p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <button class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15"
-              data-plan="video_creator_pass_monthly">Checkout — <span data-price-for="video_creator_pass_monthly">…</span></button>
-            <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="podcaster-live.html">Go Live</a>
+    <div class="grid md:grid-cols-3 gap-4">
+      
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">One‑time</p>
+            <h3 class="text-lg font-extrabold mt-1">Press Release + Distribution Pack</h3>
+            <p class="text-slate-400 text-xs mt-2">Lookup key: <span class="mono">press_release_pack</span></p>
           </div>
-          <p class="text-slate-500 text-xs mt-3">Lookup key: <span class="price">video_creator_pass_monthly</span></p>
-        </div>
-
-        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-5">
-          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">One-time</p>
-          <h3 class="text-xl font-extrabold mt-2">Podcast Interview (30 min) + Promo Push</h3>
-          <p class="soft text-sm mt-2">Station-hosted interview + promo push across TKFM lanes.</p>
-          <p class="price text-2xl font-extrabold mt-4"><span data-price-for="podcast_interview">…</span></p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15"
-              data-plan="podcast_interview">Checkout — <span data-price-for="podcast_interview">…</span></button>
-            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">Submit Brief</a>
+          <div class="text-right">
+            <p class="text-slate-400 text-xs">Price</p>
+            <p class="text-xl font-extrabold text-sky-200">$200</p>
           </div>
-          <p class="text-slate-500 text-xs mt-3">Lookup key: <span class="price">podcast_interview</span></p>
+        </div>
+        <ul class="mt-4 space-y-2 text-sm text-slate-200/85"><li>• Professional press release (publish‑ready)</li>
+<li>• Distribution checklist + pitching angles</li>
+<li>• Pairs with Launch Campaign</li></ul>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy" data-feature="press_release_pack">💳 Buy Now</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
         </div>
       </div>
 
-      <div class="mt-5 rounded-2xl border border-slate-700/50 bg-black/30 p-5">
-        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">How it plugs into Radio + TV</p>
-        <ul class="mt-3 space-y-2 text-sm text-slate-200/85">
-          <li>• Monthly creators can request Live Now → Owner approves in <a class="text-yellow-200 font-semibold hover:underline" href="owner-live-console.html">Owner Live</a>.</li>
-          <li>• Owner schedules episodes into <a class="text-sky-200 font-semibold hover:underline" href="schedule.html">Schedule</a>.</li>
-          <li>• <a class="text-purple-200 font-semibold hover:underline" href="radio-tv.html">Radio TV</a> auto-switches to Live/Schedule when active.</li>
-        </ul>
+      
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">One‑time</p>
+            <h3 class="text-lg font-extrabold mt-1">Press Placement Campaign</h3>
+            <p class="text-slate-400 text-xs mt-2">Lookup key: <span class="mono">press_placement_campaign</span></p>
+          </div>
+          <div class="text-right">
+            <p class="text-slate-400 text-xs">Price</p>
+            <p class="text-xl font-extrabold text-sky-200">$600</p>
+          </div>
+        </div>
+        <ul class="mt-4 space-y-2 text-sm text-slate-200/85"><li>• Pitch plan + outreach targets</li>
+<li>• Story angles tailored to your lane</li>
+<li>• Builds credibility → label readiness</li></ul>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy" data-feature="press_placement_campaign">💳 Buy Now</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
+        </div>
       </div>
-    </section>
 
-    <aside class="card rounded-2xl p-6">
-      <h3 class="text-xl font-extrabold mt-2">Prices are back on buttons (pulled from Stripe)</h3>
-      <p class="soft text-sm mt-2">
-        This page loads price + monthly/one-time from Stripe using your existing env vars (no guessing).
-      </p>
-      <div class="mt-4 rounded-2xl border border-slate-700/50 bg-black/30 p-4 text-xs text-slate-200/85 space-y-2">
-        <p><span class="price">video_creator_pass_monthly</span> → <span class="price">STRIPE_PRICE_VIDEO_CREATOR_PASS_MONTHLY</span></p>
-        <p><span class="price">podcast_interview</span> → <span class="price">STRIPE_PRICE_PODCAST_INTERVIEW</span></p>
+      
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Monthly</p>
+            <h3 class="text-lg font-extrabold mt-1">Monthly PR Lane</h3>
+            <p class="text-slate-400 text-xs mt-2">Lookup key: <span class="mono">press_monthly_pr</span></p>
+          </div>
+          <div class="text-right">
+            <p class="text-slate-400 text-xs">Price</p>
+            <p class="text-xl font-extrabold text-sky-200">$299 / mo</p>
+          </div>
+        </div>
+        <ul class="mt-4 space-y-2 text-sm text-slate-200/85"><li>• Ongoing pitching cadence + narrative building</li>
+<li>• Monthly strategy adjustments</li>
+<li>• Feeds features + label momentum</li></ul>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15 tkfm-buy" data-feature="press_monthly_pr">💳 Buy Now</button>
+          <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">📝 Submit Brief</a>
+        </div>
       </div>
-    </aside>
-  </div>
-</main>
 
+    </div>
+
+    <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
+      <p class="font-extrabold text-slate-50">Workflow</p>
+      <ul class="mt-2 space-y-2">
+        <li>• Buy a product → Stripe checkout → instant unlock on this device.</li>
+        <li>• Submit assets + details in <a class="text-sky-200 font-semibold hover:underline" href="submit.html">Submit</a>.</li>
+        <li>• We execute → you track momentum in <a class="text-sky-200 font-semibold hover:underline" href="momentum-engine.html">Momentum Engine</a>.</li>
+      </ul>
+    </div>
+  </main>
 
   <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
@@ -272,7 +301,37 @@
       </div>
     </div>
   </footer>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    (function(){
+      document.querySelectorAll('button[data-feature],button[data-plan]').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          const id = btn.getAttribute('data-plan') || btn.getAttribute('data-feature');
+          if (!id) return;
+          const original = btn.textContent;
+          btn.textContent = 'Redirecting…';
+          btn.disabled = true;
+          try{
+            const res = await fetch('/.netlify/functions/create-checkout-session', {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ id: id })
+            });
+            const data = await res.json().catch(function(){ return {}; });
+            const url = data.url || data.checkoutUrl || data.sessionUrl;
+            if (url) window.location.href = url;
+            else throw new Error('No checkout url returned');
+          }catch(e){
+            btn.textContent = original;
+            btn.disabled = false;
+            alert('Checkout error. Confirm create-checkout-session.js maps id: ' + id);
+          }
+        });
+      });
+    })();
+  </script>
 <script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>

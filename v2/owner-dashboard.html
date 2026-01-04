@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="robots" content="noindex,nofollow"/>
@@ -105,8 +107,12 @@
       opacity:.95;
     }
   </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script src="/js/tkfm-paid-lane-modal.js" defer></script>
+  <script src="/js/tkfm-paid-lane-submit.js" defer></script>
 </head>
 <body>
+  <div id="tkfmOwnerLock"></div>
   <div class="card">
     <div class="top">
       <div>
@@ -204,5 +210,6 @@
   </script>
   <script type="module" src="/js/tkfm-logo-resolver.js"></script>
 <script src="/js/tkfm-checkout.js"></script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>

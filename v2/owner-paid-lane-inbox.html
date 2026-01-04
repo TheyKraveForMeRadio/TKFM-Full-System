@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Owner — Paid Lane Inbox</title>
+
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7;
+      --pink:#ec4899;
+      --c:#22d3ee;
+      --b:#3b82f6;
+      --w: rgba(255,255,255,.92);
+      --w2: rgba(255,255,255,.70);
+      --card: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.10);
+    }
+    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--w); }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .h{ font-size: 20px; font-weight: 900; letter-spacing:.2px; }
+    .sub{ margin-top:4px; font-size: 12px; color: var(--w2); }
+    .pill{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(168,85,247,.35); background: rgba(168,85,247,.12); padding:8px 10px; border-radius:999px; font-size:12px; color: var(--w); }
+    .btn{ cursor:pointer; border-radius:12px; padding:10px 12px; border:1px solid var(--line); background: rgba(255,255,255,.04); color: var(--w); font-weight: 800; }
+    .btn:hover{ border-color: rgba(34,211,238,.35); }
+    .btnPrimary{ border:none; background: linear-gradient(90deg, var(--p), var(--pink), var(--c)); }
+    .card{ margin-top:14px; border:1px solid rgba(168,85,247,.25); background: var(--card); border-radius: 16px; padding: 12px; }
+    .row{ display:flex; gap:10px; flex-wrap: wrap; align-items:center; justify-content:space-between; }
+    table{ width:100%; border-collapse: collapse; margin-top: 10px; }
+    th, td{ text-align:left; padding:10px 8px; border-bottom: 1px solid rgba(255,255,255,.08); vertical-align: top; }
+    th{ font-size: 12px; color: var(--w2); font-weight: 800; }
+    td{ font-size: 13px; color: var(--w); }
+    .tag{ display:inline-block; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); font-size: 12px; }
+    .tagNew{ border-color: rgba(34,211,238,.35); background: rgba(34,211,238,.10); }
+    .tagApproved{ border-color: rgba(59,130,246,.35); background: rgba(59,130,246,.12); }
+    .tagRejected{ border-color: rgba(236,72,153,.45); background: rgba(236,72,153,.12); }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; color: rgba(255,255,255,.72); }
+    .small{ font-size:12px; color: var(--w2); }
+    a{ color: rgba(34,211,238,.95); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+    #msg{ margin-top:10px; display:none; padding:10px; border-radius:12px; border:1px solid rgba(34,211,238,.35); }
+  </style>
+</head>
+<body>
+  <div id="tkfmOwnerLock"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="h">Paid Lane Inbox</div>
+        <div class="sub">Owner-only queue: approve submissions + (optional) promote to featured_media store.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <span class="pill">TKFM Radio Neon + Label Gold</span>
+        <button class="btn" id="refreshBtn" type="button">Refresh</button>
+        <button class="btn btnPrimary" id="exportBtn" type="button">Export JSON</button>
+      </div>
+    </div>
+
+    <div id="msg"></div>
+
+    <div class="card">
+      <div class="row">
+        <div class="small">Auth: uses TKFM_OWNER_KEY from localStorage (TKFM_OWNER_KEY or tkfm_owner_key).</div>
+        <div class="small">Endpoint: /.netlify/functions/paid-lane-list</div>
+      </div>
+
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Lane</th>
+              <th>Artist</th>
+              <th>Links</th>
+              <th>Notes</th>
+              <th>When</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (s, r=document) => r.querySelector(s);
+
+    function ownerKey() {
+      return (
+        localStorage.getItem('TKFM_OWNER_KEY') ||
+        localStorage.getItem('tkfm_owner_key') ||
+        localStorage.getItem('tkfmOwnerKey') ||
+        ''
+      ).trim();
+    }
+
+    function showMsg(text, mode='info') {
+      const box = $('#msg');
+      box.style.display = 'block';
+      box.textContent = text;
+      box.style.borderColor = mode==='err' ? 'rgba(236,72,153,.55)' : 'rgba(34,211,238,.35)';
+    }
+
+    function tag(status) {
+      const s = String(status || 'new').toLowerCase();
+      const cls = s==='approved' ? 'tag tagApproved' : s==='rejected' ? 'tag tagRejected' : 'tag tagNew';
+      return '<span class="'+cls+'">'+s+'</span>';
+    }
+
+    function esc(s) {
+      return String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    async function apiList() {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key in localStorage. Login owner first.', 'err'); return { ok:false, items:[] }; }
+
+      const res = await fetch('/.netlify/functions/paid-lane-list', {
+        method: 'GET',
+        headers: { 'x-tkfm-owner-key': k }
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        showMsg(data.error || 'List failed', 'err');
+        return { ok:false, items:[] };
+      }
+      return data;
+    }
+
+    async function apiStatus(id, status, featuredTitle='', featuredUrl='') {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key in localStorage. Login owner first.', 'err'); return false; }
+
+      const res = await fetch('/.netlify/functions/paid-lane-status', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'x-tkfm-owner-key': k },
+        body: JSON.stringify({ id, status, featuredTitle, featuredUrl, featuredKind:'link' })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        showMsg(data.error || 'Update failed', 'err');
+        return false;
+      }
+      return true;
+    }
+
+    function render(items) {
+      const tbody = $('#rows');
+      tbody.innerHTML = '';
+
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="small">No submissions yet.</td></tr>';
+        return;
+      }
+
+      for (const it of items) {
+        const id = esc(it.id);
+        const laneId = esc(it.laneId || it.planId || '');
+        const who = esc([it.name, it.email].filter(Boolean).join(' — '));
+        const links = esc(it.links || '');
+        const notes = esc(it.notes || '');
+        const when = esc((it.createdAt || '').replace('T',' ').replace('Z',''));
+        const status = esc(it.status || 'new');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${tag(status)}</td>
+          <td><div class="mono">${laneId}</div><div class="mono">${id}</div></td>
+          <td>${who}</td>
+          <td>${links ? '<a href="'+links.split(/\s+/)[0]+'" target="_blank" rel="noreferrer">Open</a><div class="mono">'+links+'</div>' : ''}</td>
+          <td>${notes ? '<div style="max-width:340px;white-space:pre-wrap">'+notes+'</div>' : ''}</td>
+          <td class="small">${when}</td>
+          <td>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn" data-act="approve" data-id="${id}" data-lane="${laneId}">Approve</button>
+              <button class="btn" data-act="reject" data-id="${id}">Reject</button>
+              <button class="btn" data-act="feature" data-id="${id}" data-lane="${laneId}" data-links="${esc(it.links||'')}">Approve + Feature</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function refresh() {
+      showMsg('Loading...', 'info');
+      const data = await apiList();
+      if (data.ok) {
+        render(data.items || []);
+        showMsg('Loaded.', 'info');
+        window.__tkfm_items = data.items || [];
+      }
+    }
+
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+
+      const act = btn.getAttribute('data-act');
+      const id = btn.getAttribute('data-id');
+
+      if (act === 'approve') {
+        btn.disabled = true;
+        const ok = await apiStatus(id, 'approved');
+        btn.disabled = false;
+        if (ok) refresh();
+      }
+
+      if (act === 'reject') {
+        btn.disabled = true;
+        const ok = await apiStatus(id, 'rejected');
+        btn.disabled = false;
+        if (ok) refresh();
+      }
+
+      if (act === 'feature') {
+        const links = btn.getAttribute('data-links') || '';
+        const urlGuess = (links.trim().split(/\s+/)[0] || '').trim();
+        const title = prompt('Featured title (what shows on radio-tv):', 'TKFM Featured');
+        if (title === null) return;
+
+        const url = prompt('Featured URL (link to play):', urlGuess);
+        if (url === null) return;
+
+        btn.disabled = true;
+        const ok = await apiStatus(id, 'approved', title, url);
+        btn.disabled = false;
+        if (ok) refresh();
+      }
+    });
+
+    $('#refreshBtn').addEventListener('click', refresh);
+
+    $('#exportBtn').addEventListener('click', () => {
+      const items = window.__tkfm_items || [];
+      const blob = new Blob([JSON.stringify(items, null, 2)], { type:'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'tkfm_paid_lane_inbox_export.json';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+    });
+
+    refresh();
+  </script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
+</body>
+</html>

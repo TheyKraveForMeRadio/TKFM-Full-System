@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
   <meta name="tkfm-access" content="owner" />
   <script src="/js/access-gates.js" defer></script>
 
@@ -26,8 +28,12 @@
     ::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
   </style>
 <script src="/js/tkfm-fx.js"></script>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script src="/js/tkfm-paid-lane-modal.js" defer></script>
+  <script src="/js/tkfm-paid-lane-submit.js" defer></script>
 </head>
 <body class="text-slate-50 min-h-screen flex flex-col" data-tkfm-theme="label">
+  <div id="tkfmOwnerLock"></div>
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'label' });</script>
 
   <!-- NAV / GOLD LABEL VIBE -->
@@ -514,5 +520,6 @@
   <script src="/js/owner-lock.js" data-owner-page="owner"></script>
   <script type="module" src="/js/tkfm-logo-resolver.js"></script>
 <script src="/js/tkfm-checkout.js"></script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>

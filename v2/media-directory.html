@@ -25,6 +25,7 @@
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
     input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
     input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+    .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
   </style>
 
 </head>
@@ -42,6 +43,7 @@
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
         <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
         <a href="podcast-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcasters</a>
         <a href="video-engine.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎬 Video</a>
         <a href="social-engine.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">📣 Social</a>
@@ -61,20 +63,20 @@
     </h1>
 
     <p class="text-slate-100/90 max-w-4xl">
-      This directory is for <span class="text-emerald-200 font-semibold">listeners</span>.
-      Creators apply using Media Submit, then the owner approves to publish.
+      If a show includes a YouTube link, you can watch it inline. For full plays, open the show link.
+      Want the big TV view? Open <a class="text-purple-200 font-semibold hover:underline" href="radio-tv.html">Radio TV</a>.
     </p>
 
     <div class="rounded-2xl border border-slate-700/50 bg-black/40 p-5 text-sm text-slate-200/85">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p class="font-extrabold text-slate-50">Creators: get listed + get featured</p>
-          <p class="mt-1">Podcasters can join the monthly lane, submit show links, and TKFM schedules features.</p>
+          <p class="mt-1">Submit show links → owner approves → the directory updates automatically.</p>
         </div>
         <div class="flex flex-wrap gap-2">
           <a class="tab border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="media-submit.html">📝 Media Submit</a>
+          <a class="tab border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">📺 Radio TV</a>
           <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="podcast-engine.html">🎙 Podcaster Lane</a>
-          <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="video-engine.html">🎬 Video Lane</a>
         </div>
       </div>
     </div>
@@ -114,13 +116,35 @@
   </main>
 
   <script>
+    function safe(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function youtubeEmbed(url){
+      url = String(url||'').trim();
+      if (!url) return '';
+      let m = url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      m = url.match(/[?&]v=([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      m = url.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      return '';
+    }
+
     function card(item){
-      const safe = (s)=>String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       const cover = item.coverUrl ? `<img src="${safe(item.coverUrl)}" class="w-full h-40 object-cover rounded-xl border border-slate-700/50" alt="cover">` : '';
       const creator = item.creatorName ? `<p class="text-slate-400 text-xs mt-2">by ${safe(item.creatorName)}</p>` : '';
       const desc = item.description ? `<p class="text-slate-300/85 text-sm mt-2">${safe(item.description)}</p>` : '';
-      const secondary = item.secondaryUrl ? `<a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="${safe(item.secondaryUrl)}" target="_blank" rel="noreferrer">🔗 More</a>` : '';
       const tagLine = Array.isArray(item.tags) && item.tags.length ? `<p class="text-[0.65rem] uppercase tracking-[0.22em] text-slate-400 mt-3">${safe(item.tags.join(' • '))}</p>` : '';
+      const secondary = item.secondaryUrl ? `<a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="${safe(item.secondaryUrl)}" target="_blank" rel="noreferrer">🔗 More</a>` : '';
+      const yt = youtubeEmbed(item.primaryUrl);
+      const inline = yt ? `
+        <div class="frame mt-3">
+          <iframe class="w-full h-full" src="${yt}" title="TKFM Media" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+        </div>
+      ` : '';
+
       return `
         <div class="card rounded-2xl p-5">
           <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">${item.type==='video'?'Featured Video':'Featured Podcast'}</p>
@@ -128,10 +152,12 @@
           ${cover}
           ${creator}
           ${desc}
+          ${inline}
           ${tagLine}
           <div class="mt-4 flex flex-wrap gap-2">
             <a class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="${safe(item.primaryUrl)}" target="_blank" rel="noreferrer">▶ Watch / Listen</a>
             ${secondary}
+            <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="radio-tv.html">📺 TV</a>
           </div>
         </div>
       `;
@@ -174,6 +200,7 @@
     </div>
   </footer>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>
 

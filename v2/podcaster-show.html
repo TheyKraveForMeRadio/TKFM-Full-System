@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Podcast Show</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.22),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.18),transparent 55%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18)}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+  </style>
+</head>
+<body class="text-slate-50 min-h-screen">
+  <header class="border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p id="titleTop" class="text-sm font-semibold">Podcast Show</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="podcaster-directory.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📚 Directory</a>
+        <a href="podcaster-live.html" class="px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 text-red-200">🔴 Live</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 pt-8 pb-14 space-y-6">
+    <div class="card rounded-2xl p-6">
+      <div class="flex flex-col md:flex-row gap-6">
+        <img id="cover" class="w-full md:w-52 h-52 rounded-2xl object-cover border border-slate-700/50 bg-black/30" alt="cover"/>
+        <div class="flex-1">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">TKFM Podcast</p>
+          <h1 id="showName" class="text-3xl md:text-5xl font-extrabold mt-2 leading-tight">Loading…</h1>
+          <p id="hostName" class="text-slate-200/85 mt-3 font-semibold"></p>
+          <p id="category" class="text-slate-400 text-sm mt-1"></p>
+          <p id="bio" class="text-slate-200/85 mt-4"></p>
+
+          <div class="mt-5 flex flex-wrap gap-2" id="links"></div>
+        </div>
+      </div>
+      <p class="text-slate-500 text-xs mt-5">Show ID: <span id="slug" class="mono"></span></p>
+    </div>
+
+    <div class="card rounded-2xl p-6">
+      <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Watch / Listen</p>
+      <h2 class="text-2xl font-extrabold mt-2">Open the links above for the latest episode</h2>
+      <p class="text-slate-200/85 mt-2">Live casts are approved and displayed on the TKFM TV screen when scheduled.</p>
+    </div>
+
+    <div id="err" class="card rounded-2xl p-6 hidden">
+      <h2 class="text-2xl font-extrabold text-red-200">Not Found</h2>
+      <p class="text-slate-200/85 mt-2">No profile exists for this show yet.</p>
+      <a href="podcaster-directory.html" class="inline-block mt-4 px-4 py-2 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200 text-xs uppercase tracking-[0.22em] font-extrabold">Back to Directory</a>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-5xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="podcaster-directory.html">Directory</a><span>•</span>
+        <a class="hover:text-slate-200" href="podcast-engine.html">Podcast Engine</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function qs(name){
+      const u = new URL(window.location.href);
+      return u.searchParams.get(name) || '';
+    }
+    function safe(s){ return String(s||''); }
+
+    function linkBtn(label, href){
+      const a = document.createElement('a');
+      a.href = href;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.className = 'px-4 py-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 text-xs uppercase tracking-[0.22em] font-extrabold hover:bg-emerald-500/15';
+      a.textContent = label;
+      return a;
+    }
+
+    async function load(){
+      const slug = qs('slug').trim().toLowerCase();
+      if (!slug){
+        document.getElementById('err').classList.remove('hidden');
+        return;
+      }
+
+      const res = await fetch('/.netlify/functions/podcaster-profile-get?slug=' + encodeURIComponent(slug));
+      const out = await res.json().catch(()=>({}));
+      const p = out && out.profile ? out.profile : null;
+
+      if (!p){
+        document.getElementById('err').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('titleTop').textContent = safe(p.showName || 'Podcast Show');
+      document.getElementById('showName').textContent = safe(p.showName || '');
+      document.getElementById('hostName').textContent = (p.hostName ? ('Hosted by ' + safe(p.hostName)) : '');
+      document.getElementById('category').textContent = safe(p.category || '');
+      document.getElementById('bio').textContent = safe(p.bio || '');
+      document.getElementById('slug').textContent = safe(p.slug || slug);
+
+      const cover = document.getElementById('cover');
+      cover.src = p.coverUrl ? p.coverUrl : 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="100%" height="100%" fill="#020617"/><text x="50%" y="50%" font-family="Arial" font-size="18" fill="#94a3b8" text-anchor="middle" dominant-baseline="middle">TKFM Podcast</text></svg>');
+
+      const links = document.getElementById('links');
+      links.innerHTML = '';
+      if (p.website) links.appendChild(linkBtn('Website', p.website));
+      if (p.youtube) links.appendChild(linkBtn('YouTube', p.youtube));
+      if (p.spotify) links.appendChild(linkBtn('Spotify', p.spotify));
+    }
+
+    load();
+  </script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
+</body>
+</html>

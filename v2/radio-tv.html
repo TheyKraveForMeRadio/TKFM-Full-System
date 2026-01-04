@@ -29,8 +29,60 @@
     .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
   </style>
 
+  <script src="/js/tkfm-featured-podcast-lane.js"></script>
+  <script src="/js/tkfm-featured-tv-rotator.js"></script>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script src="/js/tkfm-featured-cta-injector.js"></script>
+  <script src="/js/tkfm-paid-lane-modal.js" defer></script>
+  <script src="/js/tkfm-paid-lane-submit.js" defer></script>
+  <script src="/js/tkfm-featured-rail.js" defer></script>
+  <script src="/js/tkfm-featured-podcast-player.js" defer></script>
+  <script src="/js/tkfm-radio-tv-cta-bar.js" defer></script>
+  <script src="/js/tkfm-featured-podcast-rotator.js" defer></script>
+  <script src="/js/tkfm-featured-rail-stability.js" defer></script>
 </head>
 <body class="text-slate-50 min-h-screen">
+
+  <!-- TKFM Featured Rail (shows Featured TV + Podcasts instantly) -->
+  <!-- TKFM Radio TV: Get Featured CTA bar -->
+  <div id="tkfmRadioTvCtaHost"></div>
+
+  <div id="tkfmFeaturedRailHost"></div>
+
+
+  <!-- TKFM Featured TV (auto-rotating pinned media) -->
+  <section id="tkfmFeaturedTV" class="w-full max-w-6xl mx-auto px-4 pt-6">
+    <div class="rounded-2xl border border-cyan-400/30 bg-slate-950/60 shadow-xl overflow-hidden">
+      <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-cyan-400/20">
+        <div>
+          <div class="text-sm uppercase tracking-widest text-cyan-300">Featured TV</div>
+          <div class="text-xs text-slate-300 opacity-80">Pinned media rotates automatically — listeners see it instantly.</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="featuredTvNext" class="px-3 py-2 rounded-xl border border-purple-400/30 bg-slate-900/60 text-slate-100 hover:bg-slate-900">Next</button>
+          <button id="featuredTvToggle" class="px-3 py-2 rounded-xl border border-pink-400/30 bg-slate-900/60 text-slate-100 hover:bg-slate-900">Pause Rotation</button>
+          <button id="featuredTvOpen" class="px-3 py-2 rounded-xl border border-cyan-400/30 bg-slate-900/60 text-slate-100 hover:bg-slate-900">Open</button>
+        </div>
+      </div>
+
+      <div class="aspect-video w-full bg-black">
+        <iframe id="featuredTvFrame" class="w-full h-full" src="" title="TKFM Featured TV" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div id="featuredTvMeta" class="px-4 py-3 text-slate-100"></div>
+    </div>
+  </section>
+
+
+  <!-- TKFM Featured Podcast Lane (embedded at top of TV screen) -->
+  <section id="tkfmFeaturedPodcastLane">
+    <div class="tkfmFeaturedPodcastLane__head">
+      <div class="tkfmFeaturedPodcastLane__title">Featured Podcasts</div>
+      <div class="tkfmFeaturedPodcastLane__sub">Pinned on TKFM TV — tap a show to play instantly</div>
+    </div>
+    <div id="tkfmFeaturedPodcastRail" class="tkfmFeaturedPodcastLane__rail"></div>
+  </section>
+
 
   <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
@@ -360,6 +412,7 @@
     </div>
   </footer>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>
 
