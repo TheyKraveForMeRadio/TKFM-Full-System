@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Owner — Tracking Test</title>
+
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7;
+      --pink:#ec4899;
+      --c:#22d3ee;
+      --w: rgba(255,255,255,.92);
+      --w2: rgba(255,255,255,.70);
+      --card: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.10);
+    }
+    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--w); }
+    .wrap{ max-width: 1000px; margin: 0 auto; padding: 18px; }
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .h{ font-size: 20px; font-weight: 1000; letter-spacing:.2px; }
+    .sub{ margin-top:4px; font-size: 12px; color: var(--w2); max-width: 90ch; line-height:1.5; }
+    .pill{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(168,85,247,.35); background: rgba(168,85,247,.12); padding:8px 10px; border-radius:999px; font-size:12px; color: var(--w); }
+    .btn{ cursor:pointer; border-radius:12px; padding:10px 12px; border:1px solid var(--line); background: rgba(255,255,255,.04); color: var(--w); font-weight: 1000; }
+    .btnPrimary{ border:none; background: linear-gradient(90deg, var(--p), var(--pink), var(--c)); }
+    .btn:hover{ border-color: rgba(34,211,238,.35); }
+    .card{ margin-top:14px; border:1px solid rgba(168,85,247,.25); background: var(--card); border-radius: 16px; padding: 14px; }
+    label{ display:block; font-size: 12px; color: var(--w2); font-weight: 900; margin-top: 10px; }
+    input{ width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.10); background: rgba(2,6,23,.65); color: rgba(255,255,255,.92); padding:12px; font-size:14px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; color: rgba(255,255,255,.72); white-space: pre-wrap; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top: 10px; }
+    .tag{ display:inline-block; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); font-size: 12px; }
+    #msg{ margin-top:10px; display:none; padding:10px; border-radius:12px; border:1px solid rgba(34,211,238,.35); }
+  </style>
+</head>
+<body>
+  <div id="tkfmOwnerLock"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="h">Tracking Test</div>
+        <div class="sub">Send impression/click events to <span class="mono">featured-media-track</span> and verify stats update (owner-only).</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <span class="pill">Owner Tools</span>
+        <a href="/owner-boost-dashboard.html"><button class="btn" type="button">Boost Dashboard</button></a>
+        <a href="/radio-hub.html"><button class="btn" type="button">Open Radio</button></a>
+      </div>
+    </div>
+
+    <div id="msg"></div>
+
+    <div class="card">
+      <div style="font-weight:1000">Test ID</div>
+      <label>Featured ID</label>
+      <input id="fid" placeholder="e.g. fm_abc123 or tkfm_test_..." />
+
+      <div class="row">
+        <button class="btn btnPrimary" id="impBtn" type="button">Send Impression</button>
+        <button class="btn btnPrimary" id="clkBtn" type="button">Send Click</button>
+        <button class="btn" id="loadBtn" type="button">Load Stats</button>
+        <span class="tag">Endpoint: <span class="mono">/.netlify/functions/featured-media-track</span></span>
+      </div>
+
+      <div style="margin-top:12px; font-weight:1000">Result</div>
+      <div class="mono" id="out">—</div>
+    </div>
+  </div>
+
+  <script src="/js/tkfm-owner-tracking-test.js"></script>
+</body>
+</html>
