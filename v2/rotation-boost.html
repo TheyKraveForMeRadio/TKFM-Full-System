@@ -31,6 +31,8 @@
     a{ color: rgba(34,211,238,.95); text-decoration:none; }
     a:hover{ text-decoration: underline; }
     .note{ margin-top: 14px; font-size: 12px; color: var(--w2); }
+    label{ display:block; font-size: 12px; color: var(--w2); font-weight: 900; margin-top: 10px; }
+    input{ width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.10); background: rgba(2,6,23,.65); color: rgba(255,255,255,.92); padding:12px; font-size:14px; }
   </style>
 </head>
 <body>
@@ -39,14 +41,22 @@
       <div>
         <div class="h">Rotation Boost</div>
         <div class="sub">
-          Pay → submit your link → you’re pinned to the top of the <b>Radio‑TV Featured</b> rail while your boost is active.
-          Perfect for drops, videos, and campaign rollouts.
+          Paste your link → pick a boost plan → checkout → your boost auto-activates and pins to the top of the <b>Radio‑TV Featured</b> rail.
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
         <span class="pill">Neon Boost Lane</span>
         <a href="/radio-hub.html"><button class="btn" type="button" style="width:auto">Back to Radio</button></a>
       </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div style="font-weight:1000">What are you boosting?</div>
+      <label>Title</label>
+      <input data-boost-title placeholder="Artist — Track / Video Title"/>
+      <label>URL (YouTube / Spotify / Link)</label>
+      <input data-boost-url placeholder="https://"/>
+      <div class="note">Your URL is required so the boost can auto-activate after checkout.</div>
     </div>
 
     <div class="grid">
@@ -56,7 +66,7 @@
         <ul>
           <li>7‑day priority placement on Radio‑TV Featured rail</li>
           <li>Perfect for single drops + new videos</li>
-          <li>Submit immediately after checkout</li>
+          <li>Auto-activates after checkout</li>
         </ul>
         <div style="height:12px"></div>
         <button class="btn btnPrimary" data-boost-plan="rotation_boost_7d">Buy Boost (7d)</button>
@@ -68,7 +78,7 @@
         <ul>
           <li>30‑day priority placement</li>
           <li>For campaigns + project rollouts</li>
-          <li>Submit immediately after checkout</li>
+          <li>Auto-activates after checkout</li>
         </ul>
         <div style="height:12px"></div>
         <button class="btn btnPrimary" data-boost-plan="rotation_boost_30d">Buy Boost (30d)</button>
@@ -76,7 +86,8 @@
     </div>
 
     <div class="note">
-      Stripe setup requirement: Create two one‑time prices with lookup keys <b>rotation_boost_7d</b> and <b>rotation_boost_30d</b>.
+      Stripe setup: two one‑time prices with lookup keys <b>rotation_boost_7d</b> and <b>rotation_boost_30d</b>.
+      Webhook setup: set <b>STRIPE_WEBHOOK_SECRET</b> and point Stripe webhook to <b>/.netlify/functions/stripe-webhook</b>.
     </div>
   </div>
 

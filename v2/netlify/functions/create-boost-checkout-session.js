@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { getStore, setStore } from './_helpers.js';
 
 function json(statusCode, data) {
   return {
@@ -19,10 +20,21 @@ function getOrigin(event) {
   return `${proto}://${host}`;
 }
 
-function safeStr(v, max = 120) {
+function safeStr(v, max = 200) {
   if (v === null || v === undefined) return '';
   const s = String(v).trim();
   return s.length > max ? s.slice(0, max) : s;
+}
+
+function normalizeUrl(v) {
+  let s = safeStr(v, 1000);
+  if (!s) return '';
+  if (!/^https?:\/\//i.test(s) && /^[a-z0-9.-]+\.[a-z]{2,}/i.test(s)) s = 'https://' + s;
+  return s;
+}
+
+function makeToken() {
+  return 'bp_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
 }
 
 export async function handler(event) {
@@ -36,6 +48,9 @@ export async function handler(event) {
 
     const body = event.body ? JSON.parse(event.body) : {};
     const planId = safeStr(body.planId || body.plan_id, 80);
+    const title = safeStr(body.title, 140) || 'Rotation Boost';
+    const url = normalizeUrl(body.url);
+
     if (!planId) return json(400, { ok: false, error: 'Missing planId' });
 
     // Only allow boost plans through this endpoint
@@ -43,13 +58,34 @@ export async function handler(event) {
       return json(400, { ok: false, error: 'Invalid boost planId' });
     }
 
+    // Require URL up front (this enables auto-submit via webhook)
+    if (!url) return json(400, { ok: false, error: 'Missing url' });
+
     // Resolve price by lookup_key == planId
     const out = await stripe.prices.list({ active: true, lookup_keys: [planId], limit: 1 });
     const price = out && out.data && out.data[0] ? out.data[0] : null;
     if (!price || !price.id) return json(400, { ok: false, error: 'No active Stripe price for lookup_key planId' });
 
+    // Store pending payload for webhook fulfillment
+    const token = makeToken();
+    const pendingKey = 'boost_pending';
+    const pendingList = (await getStore(pendingKey)) || [];
+    const pend = Array.isArray(pendingList) ? pendingList : [];
+
+    pend.unshift({
+      token,
+      planId,
+      title,
+      url,
+      createdAt: new Date().toISOString()
+    });
+
+    // Keep the list small
+    const trimmed = pend.slice(0, 500);
+    await setStore(pendingKey, trimmed);
+
     const origin = getOrigin(event);
-    const successUrl = `${origin}/rotation-boost-submit.html?session_id={CHECKOUT_SESSION_ID}`;
+    const successUrl = `${origin}/rotation-boost-success.html?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${origin}/rotation-boost.html?canceled=1`;
 
     const session = await stripe.checkout.sessions.create({
@@ -59,7 +95,8 @@ export async function handler(event) {
       cancel_url: cancelUrl,
       metadata: {
         tkfm_lane: 'rotation_boost',
-        planId
+        planId,
+        boostToken: token
       }
     });
 

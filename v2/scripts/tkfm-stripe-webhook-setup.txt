@@ -1,0 +1,16 @@
+STRIPE WEBHOOK SETUP (Rotation Boost Auto-Activate)
+
+1) In Stripe Dashboard → Developers → Webhooks:
+   Add endpoint:
+   https://www.tkfmradio.com/.netlify/functions/stripe-webhook
+
+2) Listen to event:
+   checkout.session.completed
+
+3) Copy the Signing secret and set in Netlify env:
+   STRIPE_WEBHOOK_SECRET=whsec_...
+
+4) Keep:
+   STRIPE_SECRET_KEY already set
+
+After this, Rotation Boost will auto-activate after checkout (no submit page needed).
