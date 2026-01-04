@@ -22,7 +22,7 @@
     }
     body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--w); }
     .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
-    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
     .h{ font-size: 20px; font-weight: 900; letter-spacing:.2px; }
     .sub{ margin-top:4px; font-size: 12px; color: var(--w2); }
     .pill{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(168,85,247,.35); background: rgba(168,85,247,.12); padding:8px 10px; border-radius:999px; font-size:12px; color: var(--w); }
@@ -30,6 +30,9 @@
     .btn:hover{ border-color: rgba(34,211,238,.35); }
     .btnPrimary{ border:none; background: linear-gradient(90deg, var(--p), var(--pink), var(--c)); }
     .btnDanger{ border-color: rgba(236,72,153,.45); }
+    .btnTiny{ padding:8px 10px; border-radius: 12px; font-size: 12px; }
+    .btnBoost7{ border-color: rgba(34,211,238,.35); }
+    .btnBoost30{ border-color: rgba(168,85,247,.35); }
     .card{ margin-top:14px; border:1px solid rgba(168,85,247,.25); background: var(--card); border-radius: 16px; padding: 12px; }
     table{ width:100%; border-collapse: collapse; margin-top: 10px; }
     th, td{ text-align:left; padding:10px 8px; border-bottom: 1px solid rgba(255,255,255,.08); vertical-align: top; }
@@ -50,17 +53,17 @@
     <div class="top">
       <div>
         <div class="h">Featured Manager</div>
-        <div class="sub">Owner-only: edit / move to top / delete featured items. Boosted items show BOOST tag.</div>
+        <div class="sub">Owner-only: edit / move to top / delete / boost. Boost sets <span class="mono">boostUntil</span> so boosted items float to the top while active.</div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
         <span class="pill">TKFM Radio Neon + Label Gold</span>
         <a href="/owner-paid-lane-inbox.html" style="text-decoration:none">
           <button class="btn" type="button">Paid Lane Inbox</button>
         </a>
+        <a href="/owner-stripe-verifier.html" style="text-decoration:none">
+          <button class="btn" type="button">Stripe Verifier</button>
+        </a>
         <button class="btn" id="refreshBtn" type="button">Refresh</button>
-<a href="/owner-stripe-verifier.html" style="text-decoration:none">
-  <button class="btn" type="button">Stripe Verifier</button>
-</a>
         <button class="btn btnPrimary" id="pruneBtn" type="button">Prune Expired Boosts</button>
       </div>
     </div>
@@ -115,6 +118,12 @@
       return Number.isFinite(ms) && ms > Date.now();
     }
 
+    function fmtWhen(v) {
+      const s = String(v||'').trim();
+      if (!s) return '';
+      return s.replace('T',' ').replace('Z','');
+    }
+
     async function apiList() {
       const k = ownerKey();
       if (!k) { showMsg('Missing owner key in localStorage. Login owner first.', 'err'); return []; }
@@ -150,6 +159,25 @@
       return true;
     }
 
+    async function apiBoost(id, days) {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key in localStorage. Login owner first.', 'err'); return false; }
+
+      const res = await fetch('/.netlify/functions/featured-media-boost', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'x-tkfm-owner-key': k },
+        body: JSON.stringify({ id, days })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        showMsg(data.error || 'Boost failed', 'err');
+        return false;
+      }
+      showMsg('BOOSTED ✅ until ' + fmtWhen(data.boostUntil), 'info');
+      return true;
+    }
+
     async function apiPrune() {
       const k = ownerKey();
       if (!k) { showMsg('Missing owner key in localStorage. Login owner first.', 'err'); return false; }
@@ -182,7 +210,7 @@
         const id = esc(it.id || '');
         const title = esc(it.title || 'Featured');
         const url = esc(it.url || it.link || '');
-        const added = esc((it.addedAt || it.createdAt || '').replace('T',' ').replace('Z',''));
+        const added = esc(fmtWhen(it.addedAt || it.createdAt || ''));
         const boostUntil = it.boostUntil || '';
         const boosted = isBoostActive(boostUntil);
 
@@ -191,13 +219,15 @@
           <td><div style="font-weight:900">${title}</div></td>
           <td>${url ? '<a href="'+url+'" target="_blank" rel="noreferrer">Open</a><div class="mono">'+url+'</div>' : ''}</td>
           <td style="color:rgba(255,255,255,.70);font-size:12px">${added}</td>
-          <td>${boosted ? '<span class="tag tagBoost">BOOST</span><div class="mono">'+esc(String(boostUntil).replace('T',' ').replace('Z',''))+'</div>' : '<span class="tag">—</span>'}</td>
+          <td>${boosted ? '<span class="tag tagBoost">BOOST</span><div class="mono">'+esc(fmtWhen(boostUntil))+'</div>' : '<span class="tag">—</span>'}</td>
           <td class="mono">${id}</td>
           <td>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn" data-act="top" data-id="${id}">Move Top</button>
-              <button class="btn" data-act="edit" data-id="${id}" data-title="${title}" data-url="${url}">Edit</button>
-              <button class="btn btnDanger" data-act="del" data-id="${id}">Delete</button>
+              <button class="btn btnTiny btnBoost7" data-act="boost7" data-id="${id}">Boost 7d</button>
+              <button class="btn btnTiny btnBoost30" data-act="boost30" data-id="${id}">Boost 30d</button>
+              <button class="btn btnTiny" data-act="top" data-id="${id}">Move Top</button>
+              <button class="btn btnTiny" data-act="edit" data-id="${id}" data-title="${title}" data-url="${url}">Edit</button>
+              <button class="btn btnTiny btnDanger" data-act="del" data-id="${id}">Delete</button>
             </div>
           </td>
         `;
@@ -219,6 +249,20 @@
 
       const act = btn.getAttribute('data-act');
       const id = btn.getAttribute('data-id');
+
+      if (act === 'boost7') {
+        btn.disabled = true;
+        const ok = await apiBoost(id, 7);
+        btn.disabled = false;
+        if (ok) refresh();
+      }
+
+      if (act === 'boost30') {
+        btn.disabled = true;
+        const ok = await apiBoost(id, 30);
+        btn.disabled = false;
+        if (ok) refresh();
+      }
 
       if (act === 'top') {
         btn.disabled = true;
