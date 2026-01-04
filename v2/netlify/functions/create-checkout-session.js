@@ -1,143 +1,226 @@
-import Stripe from 'stripe';
+import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
-function json(body) {
-  try { return body ? JSON.parse(body) : {}; } catch { return {}; }
+
+// TKFM_STRIPE_LOOKUP_FALLBACK
+async function tkfmResolvePriceId(planId) {
+  const id = (planId || '').trim();
+  if (!id) return null;
+
+  // Prefer explicit env mapping first
+  const mapped = (typeof PRICE_MAP !== 'undefined' && PRICE_MAP && PRICE_MAP[id]) ? String(PRICE_MAP[id]).trim() : '';
+
+// TKFM: If your checkout handler assigns priceId via PRICE_MAP[planId], replace with:
+// const priceId = await tkfmResolvePriceId(planId);
+  if (mapped) return mapped;
+
+  // Fallback: resolve by Stripe lookup_key (Price lookup key == planId)
+  try {
+    const out = await stripe.prices.list({ active: true, lookup_keys: [id], limit: 1 });
+    const p = out && out.data && out.data[0] ? out.data[0] : null;
+    if (p && p.id) return p.id;
+  } catch (e) {
+    // ignore; handled by caller
+  }
+  return null;
 }
 
-function getOrigin(event) {
-  const h = event.headers || {};
-  const proto = (h['x-forwarded-proto'] || h['X-Forwarded-Proto'] || 'https').split(',')[0].trim();
-  const host = (h['x-forwarded-host'] || h['X-Forwarded-Host'] || h.host || h.Host || '').split(',')[0].trim();
+/**
+ * TKFM create-checkout-session (ESM)
+ * - Robust planId parsing + aliases
+ * - Accepts direct Stripe price ids (price_...)
+ * - Retrieves Price to auto-select mode (subscription vs payment)
+ * - Uses ONLY `customer` (never customer_email at same time)
+ * - Success routes to /post-checkout.html with session_id + planId
+ */
+function json(statusCode, obj) {
+  return {
+    statusCode,
+    headers: {
+      "content-type": "application/json",
+      "access-control-allow-origin": "*",
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "POST,OPTIONS",
+    },
+    body: JSON.stringify(obj),
+  };
+}
+
+function getOrigin(headers = {}) {
+  const h = Object.fromEntries(Object.entries(headers).map(([k, v]) => [String(k).toLowerCase(), v]));
+  // Prefer explicit Origin when present
+  if (h.origin) return h.origin;
+  const proto = h["x-forwarded-proto"] || "https";
+  const host = h["x-forwarded-host"] || h.host;
   if (host) return `${proto}://${host}`;
-  if (process.env.URL) return process.env.URL;            // Netlify site URL
-  if (process.env.DEPLOY_PRIME_URL) return process.env.DEPLOY_PRIME_URL;
-  return 'https://www.tkfmradio.com';
+  return "https://www.tkfmradio.com";
 }
 
 function normalizeKey(s) {
-  return String(s || '')
+  return String(s || "")
     .trim()
     .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
+    .replace(/[^A-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
 }
 
-function pickPlanId(event, payload) {
-  const q = event.queryStringParameters || {};
-  return (
-    payload.planId || payload.plan || payload.feature || payload.id ||
-    payload.lookup_key || payload.lookupKey ||
-    q.planId || q.plan || q.feature || q.id || q.lookup_key || q.lookupKey ||
-    ''
-  ).toString().trim();
+function envGetFirst(names) {
+  for (const n of names) {
+    const v = process.env[n];
+    if (v && String(v).trim()) return String(v).trim();
+  }
+  return "";
 }
 
-function mapPlanToPriceId(planId) {
-  // If caller already passed a Stripe price id, accept it directly.
-  if (typeof planId === 'string' && planId.startsWith('price_')) return planId;
+function resolvePriceId(planIdRaw) {
+  const planId = String(planIdRaw || "").trim();
+  if (!planId) return { ok: false, error: "Missing planId" };
 
-  const k = normalizeKey(planId);
-  if (!k) return '';
+  // Direct Stripe price id support
+  if (/^price_[A-Za-z0-9]+$/.test(planId)) return { ok: true, planId, priceId: planId };
 
+  // Known aliases (legacy → canonical)
+  const alias = {
+    // Video lane
+    video_monthly_visuals: "video_monthly_visuals",
+    visuals_monthly: "video_monthly_visuals",
+
+    // Creator pass (example)
+    video_creator_pass_monthly: "video_creator_pass_monthly",
+    creator_pass_monthly: "creator_pass_monthly",
+
+    // Social lane
+    social_starter_monthly: "social_starter_monthly",
+
+    // Sponsor lane
+    sponsor_autopilot_monthly: "sponsor_autopilot_monthly",
+    starter_sponsor_monthly: "starter_sponsor_monthly",
+    city_sponsor_monthly: "city_sponsor_monthly",
+    takeover_sponsor_monthly: "takeover_sponsor_monthly",
+    takeover_viral_monthly: "takeover_viral_monthly",
+
+    // Submission packs
+    priority_submission_pack: "priority_submission_pack",
+    playlist_pitch_pack: "playlist_pitch_pack",
+    press_run_pack: "press_run_pack",
+    radio_interview_slot: "radio_interview_slot",
+
+    // AI/Label lane
+    ai_radio_intro: "ai_radio_intro",
+    ai_feature_verse_kit: "ai_feature_verse_kit",
+    ai_label_brand_pack: "ai_label_brand_pack",
+
+    // DJ / Mixtape lane
+    mixtape_hosting_starter: "mixtape_hosting_starter",
+    mixtape_hosting_pro: "mixtape_hosting_pro",
+    mixtape_hosting_elite: "mixtape_hosting_elite",
+  };
+
+  const canonical = alias[planId] || planId;
+
+  const norm = normalizeKey(canonical);
+
+  // Candidate env var names
   const candidates = [
-    `STRIPE_PRICE_${k}`,
-    // common alias patterns:
-    `STRIPE_PRICE_AI_${k}`,
-    `STRIPE_PRICE_LABEL_${k}`,
-    `STRIPE_PRICE_${k}_MONTHLY`,
-    `STRIPE_PRICE_${k}_YEARLY`,
+    `STRIPE_PRICE_${norm}`,
+    // Common special cases / legacy
+    `STRIPE_PRICE_AI_${norm}`,
+    `STRIPE_PRICE_LABEL_${norm}`,
+    `STRIPE_PRICE_VIDEO_${norm}`,
   ];
 
-  // If planId already ends with _MONTHLY, try without and vice versa.
-  if (k.endsWith('_MONTHLY')) candidates.push(`STRIPE_PRICE_${k.replace(/_MONTHLY$/, '')}`);
-  else candidates.push(`STRIPE_PRICE_${k}_MONTHLY`);
-
-  // Legacy/special cases (keeps platform stable)
-  const legacy = {
-    ROTATION_BOOST: 'STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN',
-    ROTATION_BOOST_CAMPAIGN: 'STRIPE_PRICE_ROTATION_BOOST_CAMPAIGN',
-    TAKEOVER_SPONSOR_MONTHLY: 'STRIPE_PRICE_TAKEOVER_SPONSOR_MONTHLY',
-    CITY_SPONSOR_MONTHLY: 'STRIPE_PRICE_CITY_SPONSOR_MONTHLY',
-    STARTER_SPONSOR_MONTHLY: 'STRIPE_PRICE_STARTER_SPONSOR_MONTHLY',
-    SPONSOR_CITY_MONTHLY: 'STRIPE_PRICE_SPONSOR_CITY_MONTHLY',
-    SPONSOR_TAKEOVER_MONTHLY: 'STRIPE_PRICE_SPONSOR_TAKEOVER_MONTHLY',
-  };
-  if (legacy[k]) candidates.unshift(legacy[k]);
-
-  for (const envName of candidates) {
-    const val = process.env[envName];
-    if (val && String(val).startsWith('price_')) return String(val).trim();
+  const priceId = envGetFirst(candidates);
+  if (!priceId) {
+    return {
+      ok: false,
+      error: `Missing Stripe env mapping for planId "${planId}" (tried ${candidates.join(", ")})`,
+    };
   }
-  return '';
+  return { ok: true, planId: canonical, priceId };
 }
 
 async function getOrCreateCustomer(email) {
-  const clean = String(email || '').trim();
-  if (!clean) return null;
-
-  // Stripe search is available; but list is fine for most small volumes.
-  const existing = await stripe.customers.list({ email: clean, limit: 1 });
-  if (existing && existing.data && existing.data.length) return existing.data[0];
-
-  return await stripe.customers.create({ email: clean });
+  const em = String(email || "").trim();
+  if (!em) return "";
+  const existing = await stripe.customers.list({ email: em, limit: 1 });
+  if (existing.data && existing.data[0]) return existing.data[0].id;
+  const created = await stripe.customers.create({ email: em });
+  return created.id;
 }
 
 export async function handler(event) {
   try {
-    if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
-      return { statusCode: 500, body: JSON.stringify({ ok:false, error:'STRIPE_SECRET_KEY missing or invalid in environment.' }) };
+    if (event.httpMethod === "OPTIONS") return json(200, { ok: true });
+    if (event.httpMethod !== "POST") return json(405, { ok: false, error: "Method not allowed" });
+
+    if (!process.env.STRIPE_SECRET_KEY || !String(process.env.STRIPE_SECRET_KEY).startsWith("sk_")) {
+      return json(500, { ok: false, error: "STRIPE_SECRET_KEY missing or invalid" });
     }
 
-    const payload = json(event.body);
-    const planId = pickPlanId(event, payload);
-    if (!planId) return { statusCode: 400, body: JSON.stringify({ ok:false, error:'Missing planId.' }) };
-
-    const priceId = mapPlanToPriceId(planId);
-    if (!priceId) {
-      return { statusCode: 400, body: JSON.stringify({ ok:false, error:`Missing Stripe price mapping for "${planId}". Check env vars.` }) };
+    let body = {};
+    try {
+      body = event.body ? JSON.parse(event.body) : {};
+    } catch {
+      body = {};
     }
 
+    const planId =
+      body.planId ||
+      body.plan ||
+      body.feature ||
+      body.id ||
+      body.lookupKey ||
+      body.lookup_key ||
+      "";
+
+    const email = body.email || body.customer_email || "";
+
+    const origin = getOrigin(event.headers || {});
+
+    const resolved = resolvePriceId(planId);
+    if (!resolved.ok) return json(400, { ok: false, error: resolved.error });
+
+    // Retrieve price to determine mode
     let price;
     try {
-      price = await stripe.prices.retrieve(priceId);
+      price = await stripe.prices.retrieve(resolved.priceId);
     } catch (e) {
-      return { statusCode: 400, body: JSON.stringify({ ok:false, error:`Could not retrieve price "${priceId}". Check env var mapping and Stripe mode/account.`, stripeMessage: e?.message || String(e) }) };
+      return json(400, {
+        ok: false,
+        error: `Could not retrieve price "${resolved.priceId}". Check env var mapping and Stripe mode/account.`,
+        stripeMessage: e?.message || String(e),
+      });
     }
 
-    const origin = getOrigin(event);
-    const success = `${origin}/post-checkout.html?session_id={CHECKOUT_SESSION_ID}&planId=${encodeURIComponent(planId)}`;
-    const cancel = `${origin}/pricing.html?canceled=1`;
+    const mode = price.recurring ? "subscription" : "payment";
 
-    const mode = price?.recurring ? 'subscription' : 'payment';
+    const successUrl =
+      `${origin}/post-checkout.html` +
+      `?session_id={CHECKOUT_SESSION_ID}` +
+      `&planId=${encodeURIComponent(resolved.planId)}`;
+
+    const cancelUrl = `${origin}/pricing.html`;
 
     const sessionParams = {
       mode,
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: success,
-      cancel_url: cancel,
-      // Let users enter tax/email/address in Checkout as needed.
-      billing_address_collection: 'auto',
+      line_items: [{ price: resolved.priceId, quantity: 1 }],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       allow_promotion_codes: true,
+      metadata: { planId: String(resolved.planId) },
     };
 
-    // IMPORTANT FIX:
-    // Stripe Checkout forbids setting BOTH `customer` and `customer_email`.
-    // We always attach a `customer` when an email is provided.
-    const email = (payload.email || payload.customer_email || payload.customerEmail || '').toString().trim();
+    // IMPORTANT: Stripe allows only ONE of customer or customer_email
     if (email) {
-      const customer = await getOrCreateCustomer(email);
-      if (customer?.id) sessionParams.customer = customer.id;
-      // DO NOT set customer_email when customer is set.
+      const customerId = await getOrCreateCustomer(email);
+      if (customerId) sessionParams.customer = customerId;
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
 
-    return { statusCode: 200, body: JSON.stringify({ ok:true, url: session.url }) };
+    return json(200, { ok: true, url: session.url });
   } catch (e) {
-    return { statusCode: 500, body: JSON.stringify({ ok:false, error: e?.message || String(e) }) };
+    return json(500, { ok: false, error: "Server error", stripeMessage: e?.message || String(e) });
   }
 }
