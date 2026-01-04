@@ -15,3 +15,6 @@ netlify/functions/v2/
 # IGNORE EVERYTHING GENERATED
 **/*.log
 _HOLD
+
+# TKFM local secrets
+.tkfm_owner_key
