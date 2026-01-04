@@ -336,6 +336,7 @@
       if (!res.ok || !data.ok) { showMsg(data.error || 'Cleanup failed', 'err'); return; }
       showMsg('Cleanup complete: ' + data.before + ' → ' + data.after, 'info');
       refresh();
+    tkfmAutoMaintenance();
     }
 
     async function refresh() {
@@ -369,6 +370,38 @@ $('#resetBtn').disabled = false;
 
     refresh();
   </script>
-  <script src="/js/tkfm-featured-id.js"></script>
+  <script src="/js/tkfm-featured-id.js">
+  // TKFM_AUTO_MAINTENANCE_V1
+  async function tkfmAutoMaintenance() {
+    try {
+      const k = ownerKey && ownerKey();
+      if (!k) return;
+
+      const last = Number(localStorage.getItem('tkfm_last_featured_maint_ms') || '0');
+      const now = Date.now();
+      const day = 24 * 60 * 60 * 1000;
+      if (last && (now - last) < day) return;
+
+      // Run cleanup (dedupe + unboost expired + cap store)
+      await fetch('/.netlify/functions/featured-media-maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'x-tkfm-owner-key': k },
+        body: JSON.stringify({ keepMax: 250 })
+      }).catch(() => null);
+
+      // Normalize ids (add id from url-hash when missing)
+      await fetch('/.netlify/functions/featured-media-normalize-ids', {
+        method: 'POST',
+        headers: { 'x-tkfm-owner-key': k }
+      }).catch(() => null);
+
+      localStorage.setItem('tkfm_last_featured_maint_ms', String(now));
+
+      if (typeof showMsg === 'function') showMsg('Auto maintenance complete (daily).', 'info');
+      if (typeof refresh === 'function') refresh();
+    } catch (_) {}
+  }
+
+</script>
 </body>
 </html>
