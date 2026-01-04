@@ -53,7 +53,7 @@
     <div class="top">
       <div>
         <div class="h">Paid Lane Inbox</div>
-        <div class="sub">Owner-only queue: approve submissions + (optional) promote to featured_media store.</div>
+        <div class="sub">Owner-only queue: approve submissions + feature + (optional) rotation boost.</div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
         <span class="pill">TKFM Radio Neon + Label Gold</span>
@@ -153,6 +153,24 @@
       return true;
     }
 
+    async function apiBoost(url, title, laneId) {
+      const k = ownerKey();
+      if (!k) { showMsg('Missing owner key in localStorage. Login owner first.', 'err'); return false; }
+
+      const res = await fetch('/.netlify/functions/rotation-boost-apply', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'x-tkfm-owner-key': k },
+        body: JSON.stringify({ url, title, laneId, days: 7 })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        showMsg(data.error || 'Boost failed', 'err');
+        return false;
+      }
+      return true;
+    }
+
     function render(items) {
       const tbody = $('#rows');
       tbody.innerHTML = '';
@@ -181,9 +199,10 @@
           <td class="small">${when}</td>
           <td>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn" data-act="approve" data-id="${id}" data-lane="${laneId}">Approve</button>
+              <button class="btn" data-act="approve" data-id="${id}">Approve</button>
               <button class="btn" data-act="reject" data-id="${id}">Reject</button>
               <button class="btn" data-act="feature" data-id="${id}" data-lane="${laneId}" data-links="${esc(it.links||'')}">Approve + Feature</button>
+              <button class="btn" data-act="boost" data-id="${id}" data-lane="${laneId}" data-links="${esc(it.links||'')}">Approve + Boost (7d)</button>
             </div>
           </td>
         `;
@@ -207,6 +226,9 @@
 
       const act = btn.getAttribute('data-act');
       const id = btn.getAttribute('data-id');
+      const laneId = btn.getAttribute('data-lane') || '';
+      const links = btn.getAttribute('data-links') || '';
+      const urlGuess = (links.trim().split(/\s+/)[0] || '').trim();
 
       if (act === 'approve') {
         btn.disabled = true;
@@ -223,8 +245,6 @@
       }
 
       if (act === 'feature') {
-        const links = btn.getAttribute('data-links') || '';
-        const urlGuess = (links.trim().split(/\s+/)[0] || '').trim();
         const title = prompt('Featured title (what shows on radio-tv):', 'TKFM Featured');
         if (title === null) return;
 
@@ -235,6 +255,22 @@
         const ok = await apiStatus(id, 'approved', title, url);
         btn.disabled = false;
         if (ok) refresh();
+      }
+
+      if (act === 'boost') {
+        const title = prompt('Boost title (what shows on radio-tv):', 'Rotation Boost');
+        if (title === null) return;
+
+        const url = prompt('Boost URL (link to play):', urlGuess);
+        if (url === null) return;
+
+        btn.disabled = true;
+        const ok1 = await apiStatus(id, 'approved', title, url);
+        let ok2 = false;
+        if (ok1) ok2 = await apiBoost(url, title, laneId || 'rotation_boost');
+        btn.disabled = false;
+
+        if (ok1 && ok2) refresh();
       }
     });
 
@@ -252,6 +288,5 @@
 
     refresh();
   </script>
-<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>

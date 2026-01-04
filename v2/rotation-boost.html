@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Rotation Boost — TKFM Radio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7;
+      --pink:#ec4899;
+      --c:#22d3ee;
+      --b:#3b82f6;
+      --w: rgba(255,255,255,.92);
+      --w2: rgba(255,255,255,.70);
+      --card: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.10);
+    }
+    body{ margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--w); }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+    .hero{ margin-top:16px; border-radius: 22px; border:1px solid rgba(168,85,247,.25); background: radial-gradient(1200px 500px at 20% 0%, rgba(168,85,247,.18), transparent 60%), radial-gradient(1200px 500px at 80% 0%, rgba(34,211,238,.14), transparent 60%), rgba(255,255,255,.03); padding: 18px; }
+    .h{ font-size: 30px; font-weight: 900; letter-spacing:.1px; }
+    .sub{ margin-top: 6px; color: var(--w2); line-height:1.45; max-width: 70ch; }
+    .grid{ margin-top: 14px; display:grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+    .card{ grid-column: span 6; border-radius: 18px; border:1px solid rgba(255,255,255,.10); background: var(--card); padding: 14px; }
+    .tier{ font-size: 14px; font-weight: 900; letter-spacing:.1px; }
+    .price{ margin-top:8px; font-size: 24px; font-weight: 900; }
+    .list{ margin-top: 10px; color: var(--w2); font-size: 13px; line-height:1.5; }
+    .btn{ margin-top: 12px; width:100%; cursor:pointer; border-radius: 14px; padding: 12px 14px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: var(--w); font-weight: 900; }
+    .btnPrimary{ border:none; background: linear-gradient(90deg, var(--p), var(--pink), var(--c)); }
+    .note{ margin-top: 12px; font-size: 12px; color: var(--w2); }
+    @media (max-width: 860px){ .card{ grid-column: span 12; } .h{ font-size: 26px; } }
+  </style>
+
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script src="/js/tkfm-paid-lane-modal.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="h">Rotation Boost</div>
+      <div class="sub">
+        Turn one track into a moment. Buy a boost, then instantly submit your link — it goes into the TKFM Owner Inbox.
+        Once approved, your item gets pinned to the top of the Featured rail on Radio‑TV.
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="tier">BOOST — 7 DAYS</div>
+          <div class="price">$99</div>
+          <div class="list">
+            • 7‑day priority placement on Radio‑TV Featured rail<br/>
+            • Perfect for single drops + new videos<br/>
+            • Submit immediately after checkout
+          </div>
+          <button class="btn btnPrimary" data-plan="rotation_boost_7d">Buy Boost (7d)</button>
+          <button class="btn" data-open-paid-lane="1" data-lane="rotation_boost_7d">Already purchased? Submit now</button>
+        </div>
+
+        <div class="card">
+          <div class="tier">BOOST — 30 DAYS</div>
+          <div class="price">$299</div>
+          <div class="list">
+            • 30‑day priority placement<br/>
+            • For campaigns + project rollouts<br/>
+            • Submit immediately after checkout
+          </div>
+          <button class="btn btnPrimary" data-plan="rotation_boost_30d">Buy Boost (30d)</button>
+          <button class="btn" data-open-paid-lane="1" data-lane="rotation_boost_30d">Already purchased? Submit now</button>
+        </div>
+      </div>
+
+      <div class="note">
+        Boost approval is owner-controlled to keep the radio clean. No redirects. No broken flows.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
