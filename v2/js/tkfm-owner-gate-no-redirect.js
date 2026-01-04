@@ -1,103 +1,91 @@
-// TKFM Owner Gate (NO REDIRECT)
-// Prevents blink loops by showing a locked overlay instead of redirecting.
-//
-// Use on owner-only pages:
-// 1) Include: <script src="/js/tkfm-owner-guard.js"></script>
-// 2) Include: <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
-// 3) Add: <div id="tkfmOwnerLock"></div> near top of <body>
+(() => {
+  // TKFM Owner Gate (NO hard redirects)
+  // Requires: /js/tkfm-owner-guard.js
+  // Behavior:
+  //   - If owner key missing, shows a lock panel in #tkfmOwnerLock (if present)
+  //   - Does NOT change window.location automatically
+  //   - Keeps page usable for non-owner viewing but disables owner actions by hiding buttons tagged data-owner-only="1"
 
-(function(){
-  function isOwner(){
-    try{
-      return (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.isOwnerLocal && window.TKFM_OWNER_GUARD.isOwnerLocal());
-    }catch(e){
-      return false;
-    }
+  function $(sel, root=document) { return root.querySelector(sel); }
+
+  function ownerKey() {
+    return (window.tkfmOwnerKey && window.tkfmOwnerKey()) || '';
   }
 
-  function overlay(){
-    const host = document.getElementById('tkfmOwnerLock');
+  function isAuthed() {
+    return (window.tkfmIsOwnerAuthed && window.tkfmIsOwnerAuthed()) || false;
+  }
+
+  function hideOwnerOnly() {
+    document.querySelectorAll('[data-owner-only="1"]').forEach((el) => {
+      el.style.display = 'none';
+    });
+  }
+
+  function showLock() {
+    const host = $('#tkfmOwnerLock');
     if (!host) return;
 
-    if (host.dataset.rendered === '1') return;
-    host.dataset.rendered = '1';
-
-    const next = location.pathname.replace(/^\//,'') + location.search + location.hash;
-    const loginHref = 'owner-login.html?next=' + encodeURIComponent(next);
-
     host.innerHTML = `
-      <div style="
-        position:fixed; inset:0; z-index:99999;
-        background:rgba(2,6,23,0.92);
-        display:flex; align-items:center; justify-content:center;
-        padding:24px;
-      ">
-        <div style="
-          width:min(720px, 100%);
-          background:rgba(2,6,23,0.72);
-          border:1px solid rgba(148,163,184,0.18);
-          border-radius:20px;
-          padding:22px;
-          color:#fff;
-          font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-        ">
-          <div style="letter-spacing:0.22em; text-transform:uppercase; font-size:11px; color:rgba(226,232,240,0.7)">
-            TKFM • Owner Only
-          </div>
-          <h2 style="margin:10px 0 0 0; font-size:28px; font-weight:900; line-height:1.15">
-            Locked
-          </h2>
-          <p style="margin:10px 0 0 0; color:rgba(226,232,240,0.85); font-size:14px; line-height:1.5">
-            This engine is owner-only. Login to unlock. We do <b>not</b> auto-redirect (prevents blink loops).
-          </p>
-
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px">
-            <a href="${loginHref}" style="
-              display:inline-block; padding:10px 14px;
-              border-radius:999px; font-weight:900;
-              letter-spacing:0.18em; text-transform:uppercase; font-size:11px;
-              border:1px solid rgba(236,72,153,0.45);
-              background:rgba(236,72,153,0.10);
-              color:#ffe4f1;
-              text-decoration:none;
-            ">Owner Login</a>
-
-            <button id="tkfmClearOwner" style="
-              padding:10px 14px;
-              border-radius:999px; font-weight:900;
-              letter-spacing:0.18em; text-transform:uppercase; font-size:11px;
-              border:1px solid rgba(148,163,184,0.35);
-              background:rgba(148,163,184,0.10);
-              color:#e2e8f0;
-              cursor:pointer;
-            ">Clear Session</button>
-          </div>
-
-          <div style="margin-top:14px; color:rgba(148,163,184,0.8); font-size:12px">
-            Next: <span style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono','Courier New', monospace;">${next}</span>
-          </div>
+      <div style="max-width:980px;margin:14px auto 0;padding:14px;border-radius:16px;
+                  border:1px solid rgba(236,72,153,.35);
+                  background:rgba(236,72,153,.10);
+                  color:rgba(255,255,255,.92);
+                  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+        <div style="font-weight:1000;font-size:14px;letter-spacing:.2px;">Owner Locked</div>
+        <div style="margin-top:6px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.75);">
+          This page is owner-only. Enter your Owner Key to unlock owner tools.
+        </div>
+        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <a href="/owner-login.html" style="text-decoration:none;">
+            <button type="button" style="cursor:pointer;border:0;border-radius:12px;padding:10px 12px;
+                    font-weight:1000;color:#020617;
+                    background:linear-gradient(90deg,#a855f7,#ec4899,#22d3ee);">
+              Open Owner Login
+            </button>
+          </a>
+          <button id="tkfmOwnerPasteKeyBtn" type="button"
+            style="cursor:pointer;border-radius:12px;padding:10px 12px;border:1px solid rgba(255,255,255,.12);
+                   background:rgba(255,255,255,.04);color:rgba(255,255,255,.92);font-weight:1000;">
+            Paste Owner Key
+          </button>
+          <span id="tkfmOwnerGateMsg" style="font-size:12px;color:rgba(255,255,255,.75);"></span>
         </div>
       </div>
     `;
 
-    const btn = document.getElementById('tkfmClearOwner');
-    if (btn){
-      btn.addEventListener('click', ()=>{
-        try{
-          if (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.clearOwner) window.TKFM_OWNER_GUARD.clearOwner();
-        }catch(e){}
-        location.reload();
+    const btn = $('#tkfmOwnerPasteKeyBtn');
+    const msg = $('#tkfmOwnerGateMsg');
+    if (btn) {
+      btn.addEventListener('click', async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          const k = String(text || '').trim();
+          if (!k) { if (msg) msg.textContent = 'Clipboard empty.'; return; }
+          localStorage.setItem('TKFM_OWNER_KEY', k);
+          if (msg) msg.textContent = 'Owner key saved. Refreshing…';
+          setTimeout(() => location.reload(), 350);
+        } catch (_) {
+          if (msg) msg.textContent = 'Clipboard blocked. Open Owner Login instead.';
+        }
       });
     }
   }
 
-  function run(){
-    if (!isOwner()) overlay();
+  function boot() {
+    if (!window.TKFM_OWNER_GUARD_OK) {
+      console.warn('Owner guard missing (js/tkfm-owner-guard.js).');
+      showLock();
+      hideOwnerOnly();
+      return;
+    }
+
+    if (!isAuthed()) {
+      showLock();
+      hideOwnerOnly();
+    }
   }
 
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', run);
-  } else {
-    run();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
