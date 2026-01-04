@@ -13,6 +13,6 @@ if grep -q "await tkfmResolvePriceId(planId)" "$F"; then
   echo "OK: resolver is used for planId (auto-wired)"
 else
   echo "WARN: resolver present but not auto-wired."
-  echo "      Search for PRICE_MAP[planId] and replace that assignment with:"
+  echo "      Search for PRICE_MAP[planId] and replace with:"
   echo "      const priceId = await tkfmResolvePriceId(planId);"
 fi

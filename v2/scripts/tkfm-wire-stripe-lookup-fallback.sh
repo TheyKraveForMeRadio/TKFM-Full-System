@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# TKFM: Stripe lookup_key fallback (FINAL)
-# Works with package.json "type":"module"
+# TKFM: Stripe lookup_key fallback runner (CJS-safe)
+# Works even when package.json has "type":"module"
 
 ROOT="${1:-.}"
 cd "$ROOT"
@@ -10,4 +10,4 @@ cd "$ROOT"
 F="netlify/functions/create-checkout-session.js"
 [ -f "$F" ] || { echo "SKIP: $F not found"; exit 0; }
 
-node scripts/tkfm-wire-stripe-lookup-fallback.js "$F"
+node scripts/tkfm-wire-stripe-lookup-fallback.cjs "$F"
