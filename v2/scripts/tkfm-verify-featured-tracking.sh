@@ -14,15 +14,13 @@ else
   echo "WARN: radio-hub.html not found"
 fi
 
-echo "== CHECK: featured loader emits REAL data-featured-id wiring =="
+echo "== CHECK: featured loader has REAL id wiring =="
 if [ -f js/tkfm-radio-tv-featured.js ]; then
-  if grep -E "<[^>]*data-featured-id[[:space:]]*=" -n js/tkfm-radio-tv-featured.js >/dev/null 2>&1; then
-    echo "OK (markup attribute)"
-  elif grep -E "setAttribute\(\s*['\"]data-featured-id['\"]" -n js/tkfm-radio-tv-featured.js >/dev/null 2>&1; then
+  if grep -E "setAttribute\(\s*['\"]data-featured-id['\"]" -n js/tkfm-radio-tv-featured.js >/dev/null 2>&1; then
     echo "OK (DOM setAttribute)"
   else
-    echo "FAIL: js/tkfm-radio-tv-featured.js still missing real featured id wiring"
-    echo "      Run: ./scripts/tkfm-patch-featured-itid.sh ."
+    echo "FAIL: js/tkfm-radio-tv-featured.js missing DOM data-featured-id wiring"
+    echo "      Run: ./scripts/tkfm-force-featured-id-wire.sh ."
     exit 5
   fi
 else
