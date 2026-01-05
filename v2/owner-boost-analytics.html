@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Owner — Boost Analytics</title>
+
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7;
+      --pink:#ec4899;
+      --c:#22d3ee;
+      --b:#3b82f6;
+      --w: rgba(255,255,255,.92);
+      --m: rgba(255,255,255,.70);
+      --d: rgba(255,255,255,.10);
+      --card: rgba(255,255,255,.04);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: radial-gradient(1000px 600px at 10% -10%, rgba(168,85,247,.25), transparent 55%),
+                  radial-gradient(900px 600px at 90% 0%, rgba(34,211,238,.18), transparent 55%),
+                  radial-gradient(900px 700px at 50% 110%, rgba(236,72,153,.16), transparent 55%),
+                  var(--bg);
+      color: var(--w);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    .wrap{ max-width:1200px; margin:0 auto; padding:24px 16px 70px; }
+    .top{ display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; }
+    .h{ font-weight:1000; letter-spacing:.2px; font-size:22px; }
+    .sub{ color: var(--m); margin-top:6px; font-size:13px; line-height:1.5; max-width:780px; }
+    .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; border:1px solid rgba(168,85,247,.25); background: rgba(168,85,247,.10); font-size:12px; color: rgba(255,255,255,.85); }
+    .btn{
+      cursor:pointer;
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.92);
+      font-weight:1000;
+    }
+    .btn:hover{ border-color: rgba(34,211,238,.35); }
+    .btnPrimary{
+      border:0;
+      color:#020617;
+      background: linear-gradient(90deg, var(--p), var(--pink), var(--c));
+    }
+    .card{
+      margin-top:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius:18px;
+      padding:14px;
+    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+      padding:10px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      min-width: 180px;
+    }
+    label{ font-size:11px; color: rgba(255,255,255,.70); }
+    input, select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(2,6,23,.55);
+      color: rgba(255,255,255,.92);
+      outline:none;
+    }
+    table{ width:100%; border-collapse: collapse; font-size:13px; }
+    th, td{ padding:10px 8px; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:top; }
+    th{ text-align:left; color: rgba(255,255,255,.70); font-weight:900; font-size:12px; position:sticky; top:0; background: rgba(2,6,23,.80); }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .tag{
+      display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12); font-size:11px; color: rgba(255,255,255,.80);
+      background: rgba(255,255,255,.04);
+    }
+    .tagBoost{ border-color: rgba(250,204,21,.35); background: rgba(250,204,21,.10); }
+    .tagExpired{ border-color: rgba(236,72,153,.35); background: rgba(236,72,153,.10); }
+    a{ color: rgba(34,211,238,.95); text-decoration:none; }
+    a:hover{ text-decoration: underline; }
+    #msg{ margin-top:10px; display:none; padding:10px; border-radius:12px; border:1px solid rgba(34,211,238,.35); }
+  </style>
+</head>
+<body>
+  <div id="tkfmOwnerLock"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="h">Boost Analytics</div>
+        <div class="sub">Merged view: Featured items + tracking stats. Sort by CTR/clicks/impressions, filter Active Boosts, export CSV.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <span class="pill">TKFM Neon (#a855f7 / #ec4899 / #22d3ee)</span>
+        <a href="/owner-boost-dashboard.html"><button class="btn" type="button">Boost Dashboard</button></a>
+        <a href="/owner-paid-lane-inbox.html"><button class="btn" type="button">Paid Lane Inbox</button></a>
+        <a href="/owner-featured-manager.html"><button class="btn" type="button">Featured Manager</button></a>
+        <button class="btn btnPrimary" id="refreshBtn" type="button">Load</button>
+        <button class="btn" id="exportBtn" type="button">Export CSV</button>
+      </div>
+    </div>
+
+    <div id="msg"></div>
+
+    <div class="card">
+      <div class="row">
+        <div class="field" style="min-width:260px;flex:1">
+          <label>Search</label>
+          <input id="q" placeholder="title / artist / id / url"/>
+        </div>
+        <div class="field">
+          <label>Filter</label>
+          <select id="filter">
+            <option value="all">All</option>
+            <option value="boosted">Boosted Active</option>
+            <option value="expired">Boosted Expired</option>
+            <option value="notBoosted">Not Boosted</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Sort</label>
+          <select id="sort">
+            <option value="boostFirst">Boosted first</option>
+            <option value="clicks">Clicks</option>
+            <option value="impressions">Impressions</option>
+            <option value="ctr">CTR</option>
+            <option value="last7ctr">Last 7d CTR</option>
+            <option value="last7clicks">Last 7d Clicks</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Limit</label>
+          <select id="limit">
+            <option value="50">50</option>
+            <option value="100" selected>100</option>
+            <option value="250">250</option>
+            <option value="9999">All</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:auto; max-height: 68vh;">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:260px">Item</th>
+            <th>Boost</th>
+            <th class="mono">Impr</th>
+            <th class="mono">Clicks</th>
+            <th class="mono">CTR</th>
+            <th class="mono">7d Impr</th>
+            <th class="mono">7d Clicks</th>
+            <th class="mono">7d CTR</th>
+            <th class="mono">ID</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+  function showMsg(txt, type='info'){
+    const el = document.getElementById('msg');
+    el.style.display = 'block';
+    el.style.borderColor = type==='err' ? 'rgba(236,72,153,.45)' : 'rgba(34,211,238,.35)';
+    el.textContent = txt;
+  }
+
+  function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function ownerKey(){
+    return (window.tkfmOwnerKey && window.tkfmOwnerKey()) || (localStorage.getItem('TKFM_OWNER_KEY')||'').trim();
+  }
+
+  function pct(x){
+    const n = Number(x);
+    if (!Number.isFinite(n)) return '0%';
+    return (n*100).toFixed(n<0.1?2:1) + '%';
+  }
+
+  function toCsv(rows){
+    const head = ['title','artist','url','boostUntil','boostedActive','impressions','clicks','ctr','last7Impressions','last7Clicks','last7Ctr','id'];
+    const out = [head.join(',')];
+    rows.forEach(r=>{
+      const it = r || {};
+      const st = it.stats || {};
+      const b = it.boost || {};
+      const line = [
+        JSON.stringify(it.title||''),
+        JSON.stringify(it.artist||''),
+        JSON.stringify(it.url||''),
+        JSON.stringify(b.boostUntil||''),
+        JSON.stringify(!!b.boostedActive),
+        st.impressions||0,
+        st.clicks||0,
+        st.ctr||0,
+        st.last7Impressions||0,
+        st.last7Clicks||0,
+        st.last7Ctr||0,
+        JSON.stringify(it.id||'')
+      ].join(',');
+      out.push(line);
+    });
+    return out.join('\n');
+  }
+
+  function sortItems(items, mode){
+    const n = (v)=> Number(v)||0;
+    const copy = items.slice();
+
+    copy.sort((a,b)=>{
+      const A=a||{}, B=b||{};
+      const ast=A.stats||{}, bst=B.stats||{};
+      const abo=A.boost||{}, bbo=B.boost||{};
+
+      if (mode==='boostFirst'){
+        const ba = abo.boostedActive ? 1 : 0;
+        const bb = bbo.boostedActive ? 1 : 0;
+        if (bb!==ba) return bb-ba;
+        return n(bst.clicks)-n(ast.clicks);
+      }
+      if (mode==='clicks') return n(bst.clicks)-n(ast.clicks);
+      if (mode==='impressions') return n(bst.impressions)-n(ast.impressions);
+      if (mode==='ctr') return n(bst.ctr)-n(ast.ctr);
+      if (mode==='last7ctr') return n(bst.last7Ctr)-n(ast.last7Ctr);
+      if (mode==='last7clicks') return n(bst.last7Clicks)-n(ast.last7Clicks);
+      return 0;
+    });
+
+    return copy;
+  }
+
+  let RAW = [];
+
+  function render(){
+    const q = (document.getElementById('q').value||'').trim().toLowerCase();
+    const filter = document.getElementById('filter').value;
+    const sort = document.getElementById('sort').value;
+    const limit = Number(document.getElementById('limit').value||'100') || 100;
+
+    let rows = RAW.slice();
+
+    if (filter==='boosted') rows = rows.filter(x => x?.boost?.boostedActive);
+    if (filter==='expired') rows = rows.filter(x => x?.boost?.boostedExpired);
+    if (filter==='notBoosted') rows = rows.filter(x => !x?.boost?.boostUntil);
+
+    if (q){
+      rows = rows.filter(x=>{
+        const it=x||{};
+        return (
+          String(it.title||'').toLowerCase().includes(q) ||
+          String(it.artist||'').toLowerCase().includes(q) ||
+          String(it.id||'').toLowerCase().includes(q) ||
+          String(it.url||'').toLowerCase().includes(q)
+        );
+      });
+    }
+
+    rows = sortItems(rows, sort);
+
+    const shown = rows.slice(0, limit);
+
+    const tbody = document.getElementById('rows');
+    tbody.innerHTML = '';
+
+    shown.forEach((it)=>{
+      const st = it.stats || {};
+      const b = it.boost || {};
+      const boostTag = b.boostedActive
+        ? `<span class="tag tagBoost">Active • ${Math.max(0,b.daysLeft||0)}d</span>`
+        : (b.boostedExpired ? `<span class="tag tagExpired">Expired</span>` : `<span class="tag">—</span>`);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="font-weight:1000">${esc(it.title || 'Untitled')}</div>
+          <div style="color:rgba(255,255,255,.70);font-size:12px;margin-top:3px">${esc(it.artist || '')}</div>
+          <div style="margin-top:6px"><a href="${esc(it.url||'#')}" target="_blank" rel="noopener">Open</a></div>
+        </td>
+        <td>
+          ${boostTag}
+          <div class="mono" style="margin-top:6px;color:rgba(255,255,255,.70);font-size:12px">${esc(b.boostUntil || '')}</div>
+        </td>
+        <td class="mono">${st.impressions||0}</td>
+        <td class="mono">${st.clicks||0}</td>
+        <td class="mono">${pct(st.ctr||0)}</td>
+        <td class="mono">${st.last7Impressions||0}</td>
+        <td class="mono">${st.last7Clicks||0}</td>
+        <td class="mono">${pct(st.last7Ctr||0)}</td>
+        <td class="mono">${esc(it.id||'')}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('exportBtn').onclick = () => {
+      const csv = toCsv(rows);
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tkfm-boost-analytics.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 800);
+    };
+  }
+
+  async function load(){
+    try{
+      const k = ownerKey();
+      if (!k) { showMsg('Owner key missing. Open /owner-login.html first.', 'err'); return; }
+
+      showMsg('Loading analytics…');
+      const res = await fetch('/.netlify/functions/featured-media-analytics-admin', {
+        headers: { 'x-tkfm-owner-key': k }
+      });
+      const data = await res.json().catch(()=>null);
+      if (!data || !data.ok){
+        showMsg('Unauthorized or error. Ensure your Netlify env TKFM_OWNER_KEY matches your local key.', 'err');
+        return;
+      }
+      RAW = data.items || [];
+      showMsg('Loaded ' + RAW.length + ' items.');
+      render();
+    }catch(e){
+      showMsg('Load failed.', 'err');
+    }
+  }
+
+  ['q','filter','sort','limit'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+
+  document.getElementById('refreshBtn').addEventListener('click', load);
+
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', load);
+  else load();
+</script>
+
+<!-- TKFM: BOOST CTA START -->
+<section class="tkfm-boost-cta" style="
+  margin:24px auto; max-width:1100px;
+  background: rgba(2,6,23,0.85);
+  border: 1px solid rgba(168,85,247,0.35);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+">
+  <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:flex-start; justify-content:space-between;">
+    <div style="min-width:260px; flex:1;">
+      <div style="letter-spacing:.12em; font-size:12px; color:#22d3ee; text-transform:uppercase;">Paid Lane</div>
+      <h2 style="margin:6px 0 8px; font-size:26px; color:#a855f7; line-height:1.15;">Rotation Boost — Radio‑TV Featured</h2>
+      <p style="margin:0; color:rgba(255,255,255,0.82); font-size:14px;">
+        Priority placement on the <b>Radio‑TV Featured</b> rail. Perfect for single drops, videos, and rollout campaigns.
+        <b>Submit immediately after checkout.</b>
+      </p>
+    </div>
+
+    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
+      <div style="width:260px; background: rgba(15,23,42,0.6); border:1px solid rgba(236,72,153,0.35); border-radius:16px; padding:14px;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;">
+          <div style="font-weight:800; color:#ec4899;">BOOST — 7 DAYS</div>
+          <div style="font-weight:900; color:#facc15; font-size:20px;">$99</div>
+        </div>
+        <ul style="margin:10px 0 12px 18px; padding:0; color:rgba(255,255,255,0.82); font-size:13px; line-height:1.35;">
+          <li>7‑day priority placement</li>
+          <li>Single drops + new videos</li>
+          <li>Instant submit after checkout</li>
+        </ul>
+        <button class="tkfm-checkout"
+          data-plan="rotation_boost_7d"
+          data-feature="rotation_boost_7d"
+          style="width:100%; border:0; cursor:pointer; border-radius:12px; padding:10px 12px; font-weight:900;
+            background: linear-gradient(90deg, #a855f7, #ec4899); color:#020617;">
+          Buy Boost (7d)
+        </button>
+        <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,0.55);">
+          Lookup key: <code style="color:#22d3ee;">rotation_boost_7d</code>
+        </div>
+      </div>
+
+      <div style="width:260px; background: rgba(15,23,42,0.6); border:1px solid rgba(34,211,238,0.35); border-radius:16px; padding:14px;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;">
+          <div style="font-weight:800; color:#22d3ee;">BOOST — 30 DAYS</div>
+          <div style="font-weight:900; color:#facc15; font-size:20px;">$299</div>
+        </div>
+        <ul style="margin:10px 0 12px 18px; padding:0; color:rgba(255,255,255,0.82); font-size:13px; line-height:1.35;">
+          <li>30‑day priority placement</li>
+          <li>Campaign + project rollouts</li>
+          <li>Instant submit after checkout</li>
+        </ul>
+        <button class="tkfm-checkout"
+          data-plan="rotation_boost_30d"
+          data-feature="rotation_boost_30d"
+          style="width:100%; border:0; cursor:pointer; border-radius:12px; padding:10px 12px; font-weight:900;
+            background: linear-gradient(90deg, #22d3ee, #3b82f6); color:#020617;">
+          Buy Boost (30d)
+        </button>
+        <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,0.55);">
+          Lookup key: <code style="color:#22d3ee;">rotation_boost_30d</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- TKFM: BOOST CTA END -->
+</body>
+</html>
