@@ -20,3 +20,4 @@ scripts/*report*.json
 backups/*
 !backups/.gitignore
 .tkfm_boost_env_*.txt
+.tkfm_boost_env_*.txt
