@@ -1,63 +1,57 @@
-(() => {
-  // TKFM: Boost Checkout (Rotation Boost only) — Auto-submit via webhook
-  // Requires inputs:
-  //   [data-boost-title] (optional)
-  //   [data-boost-url]   (required)
-  // Buttons:
-  //   <button data-boost-plan="rotation_boost_7d">...</button>
-  // Endpoint:
-  //   /.netlify/functions/create-boost-checkout-session (stores pending + sets metadata token)
+// TKFM: Boost Checkout Interceptor
+// Prevents generic checkout wiring from handling boost buttons and routes them to a dedicated endpoint.
+(function () {
+  const BOOST_KEYS = new Set(['rotation_boost_7d', 'rotation_boost_30d']);
+  const ENDPOINT = '/.netlify/functions/create-boost-checkout-session';
 
-  function $ (sel, root = document) { return root.querySelector(sel); }
-  function $all(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
-
-  function normalizeUrl(v) {
-    let s = String(v || '').trim();
-    if (!s) return '';
-    if (!/^https?:\/\//i.test(s) && /^[a-z0-9.-]+\.[a-z]{2,}/i.test(s)) s = 'https://' + s;
-    return s;
+  function getKeyFromEl(el) {
+    if (!el) return '';
+    const a = el.getAttribute('data-plan') || '';
+    const b = el.getAttribute('data-feature') || '';
+    const c = el.getAttribute('data-plan-id') || '';
+    const d = el.getAttribute('data-lookup-key') || '';
+    return (a || b || c || d || '').trim();
   }
 
-  async function start(planId, title, url) {
-    const res = await fetch('/.netlify/functions/create-boost-checkout-session', {
+  async function postJson(data) {
+    const r = await fetch(ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ planId, title, url })
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(data),
     });
+    const txt = await r.text();
+    let j = null;
+    try { j = JSON.parse(txt); } catch (e) {}
+    return { ok: r.ok, status: r.status, json: j, text: txt };
+  }
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.ok || !data.url) {
-      alert((data && data.error) ? data.error : 'Checkout failed');
+  async function runBoostCheckout(key) {
+    const res = await postJson({ planId: key });
+    const url = res?.json?.url || res?.json?.checkout_url || res?.json?.checkoutUrl || '';
+    if (url) {
+      window.location.href = url;
       return;
     }
-    window.location.href = data.url;
+    // Fallback: show minimal error
+    alert('Boost checkout failed. Status: ' + res.status + '\n' + (res?.json?.error || res.text || 'Unknown error'));
   }
 
-  function bind() {
-    const btns = $all('[data-boost-plan]');
-    if (!btns.length) return;
+  // Capture-phase listener so it wins over other click handlers.
+  document.addEventListener('click', function (e) {
+    const btn = e.target && (e.target.closest ? e.target.closest('[data-plan],[data-feature],[data-plan-id],[data-lookup-key]') : null);
+    if (!btn) return;
 
-    btns.forEach((b) => {
-      b.addEventListener('click', (e) => {
-        e.preventDefault();
+    const key = getKeyFromEl(btn);
+    if (!BOOST_KEYS.has(key)) return;
 
-        const planId = String(b.getAttribute('data-boost-plan') || '').trim();
-        if (!planId) return;
+    // Mark + stop other handlers
+    if (btn.dataset.tkfmBoostLock === '1') return;
+    btn.dataset.tkfmBoostLock = '1';
 
-        const titleEl = $('[data-boost-title]');
-        const urlEl = $('[data-boost-url]');
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
 
-        const title = titleEl ? String(titleEl.value || '').trim() : '';
-        const url = normalizeUrl(urlEl ? urlEl.value : '');
-
-        if (!url) { alert('Paste a URL to boost first'); return; }
-
-        b.disabled = true;
-        start(planId, title, url).finally(() => { b.disabled = false; });
-      });
-    });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
-  else bind();
+    runBoostCheckout(key);
+  }, true);
 })();

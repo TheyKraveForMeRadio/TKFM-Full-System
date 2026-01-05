@@ -1,107 +1,97 @@
 import Stripe from 'stripe';
-import { getStore, setStore } from './_helpers.js';
 
-function json(statusCode, data) {
-  return {
-    statusCode,
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'no-store'
-    },
-    body: JSON.stringify(data)
-  };
-}
-
-function getOrigin(event) {
-  const h = event.headers || {};
-  const proto = (h['x-forwarded-proto'] || h['X-Forwarded-Proto'] || 'https').split(',')[0].trim();
-  const host = (h['x-forwarded-host'] || h['X-Forwarded-Host'] || h['host'] || h['Host'] || '').split(',')[0].trim();
-  if (!host) return 'https://www.tkfmradio.com';
-  return `${proto}://${host}`;
-}
-
-function safeStr(v, max = 200) {
-  if (v === null || v === undefined) return '';
-  const s = String(v).trim();
-  return s.length > max ? s.slice(0, max) : s;
-}
-
-function normalizeUrl(v) {
-  let s = safeStr(v, 1000);
-  if (!s) return '';
-  if (!/^https?:\/\//i.test(s) && /^[a-z0-9.-]+\.[a-z]{2,}/i.test(s)) s = 'https://' + s;
-  return s;
-}
-
-function makeToken() {
-  return 'bp_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
-}
-
+/**
+ * TKFM: Dedicated Boost checkout endpoint (does NOT touch existing create-checkout-session.js)
+ *
+ * Accepts JSON body with any of:
+ *  - planId / plan / id / lookup_key / priceLookupKey / feature
+ * Expects lookup key:
+ *  - rotation_boost_7d  -> STRIPE_PRICE_ROTATION_BOOST_7D
+ *  - rotation_boost_30d -> STRIPE_PRICE_ROTATION_BOOST_30D
+ */
 export async function handler(event) {
   try {
-    if (event.httpMethod !== 'POST') return json(405, { ok: false, error: 'Method not allowed' });
-
-    const secret = (process.env.STRIPE_SECRET_KEY || '').trim();
-    if (!secret) return json(500, { ok: false, error: 'Stripe secret key not configured' });
-
-    const stripe = new Stripe(secret);
-
-    const body = event.body ? JSON.parse(event.body) : {};
-    const planId = safeStr(body.planId || body.plan_id, 80);
-    const title = safeStr(body.title, 140) || 'Rotation Boost';
-    const url = normalizeUrl(body.url);
-
-    if (!planId) return json(400, { ok: false, error: 'Missing planId' });
-
-    // Only allow boost plans through this endpoint
-    if (!/^rotation_boost_(7d|30d)$/i.test(planId)) {
-      return json(400, { ok: false, error: 'Invalid boost planId' });
+    if (event.httpMethod !== 'POST') {
+      return { statusCode: 405, body: JSON.stringify({ ok:false, error:'Method not allowed' }) };
     }
 
-    // Require URL up front (this enables auto-submit via webhook)
-    if (!url) return json(400, { ok: false, error: 'Missing url' });
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+      return { statusCode: 500, body: JSON.stringify({ ok:false, error:'Missing STRIPE_SECRET_KEY' }) };
+    }
+    const stripe = new Stripe(stripeKey);
 
-    // Resolve price by lookup_key == planId
-    const out = await stripe.prices.list({ active: true, lookup_keys: [planId], limit: 1 });
-    const price = out && out.data && out.data[0] ? out.data[0] : null;
-    if (!price || !price.id) return json(400, { ok: false, error: 'No active Stripe price for lookup_key planId' });
+    let body = {};
+    try { body = JSON.parse(event.body || '{}'); } catch (e) { body = {}; }
 
-    // Store pending payload for webhook fulfillment
-    const token = makeToken();
-    const pendingKey = 'boost_pending';
-    const pendingList = (await getStore(pendingKey)) || [];
-    const pend = Array.isArray(pendingList) ? pendingList : [];
+    const lookup =
+      body.planId ||
+      body.plan ||
+      body.id ||
+      body.lookup_key ||
+      body.priceLookupKey ||
+      body.feature ||
+      body.data_plan ||
+      body.dataPlan ||
+      body.data_feature ||
+      body.dataFeature ||
+      '';
 
-    pend.unshift({
-      token,
-      planId,
-      title,
-      url,
-      createdAt: new Date().toISOString()
-    });
+    if (!lookup || typeof lookup !== 'string') {
+      return { statusCode: 400, body: JSON.stringify({ ok:false, error:'Missing plan/lookup key' }) };
+    }
 
-    // Keep the list small
-    const trimmed = pend.slice(0, 500);
-    await setStore(pendingKey, trimmed);
+    const priceId =
+      lookup === 'rotation_boost_7d'
+        ? process.env.STRIPE_PRICE_ROTATION_BOOST_7D
+        : lookup === 'rotation_boost_30d'
+          ? process.env.STRIPE_PRICE_ROTATION_BOOST_30D
+          : null;
 
-    const origin = getOrigin(event);
-    const successUrl = `${origin}/rotation-boost-success.html?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${origin}/rotation-boost.html?canceled=1`;
+    if (!priceId || typeof priceId !== 'string' || !priceId.startsWith('price_')) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          ok:false,
+          error:'Boost price env missing',
+          lookup,
+          expectedEnv: lookup === 'rotation_boost_7d' ? 'STRIPE_PRICE_ROTATION_BOOST_7D' : (lookup === 'rotation_boost_30d' ? 'STRIPE_PRICE_ROTATION_BOOST_30D' : 'UNKNOWN'),
+        }),
+      };
+    }
+
+    const headers = event.headers || {};
+    const proto = headers['x-forwarded-proto'] || 'https';
+    const host = headers.host || headers.Host || '';
+    const origin = host ? `${proto}://${host}` : (headers.origin || headers.Origin || '');
+
+    // If you have a post-checkout page, send users there; otherwise fallback to rotation-boost.
+    const successPath = '/post-checkout.html';
+    const cancelPath = '/rotation-boost.html';
+
+    const success_url = `${origin}${successPath}?plan=${encodeURIComponent(lookup)}&session_id={CHECKOUT_SESSION_ID}`;
+    const cancel_url = `${origin}${cancelPath}?canceled=1&plan=${encodeURIComponent(lookup)}`;
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: [{ price: price.id, quantity: 1 }],
-      success_url: successUrl,
-      cancel_url: cancelUrl,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url,
+      cancel_url,
+      // Optional metadata to help you reconcile in webhooks
       metadata: {
         tkfm_lane: 'rotation_boost',
-        planId,
-        boostToken: token
-      }
+        tkfm_lookup: lookup,
+      },
     });
 
-    return json(200, { ok: true, url: session.url, id: session.id });
-  } catch (e) {
-    return json(500, { ok: false, error: 'Server error' });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ ok:true, id: session.id, url: session.url }),
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ ok:false, error: String(err?.message || err || 'Unknown error') }),
+    };
   }
 }
