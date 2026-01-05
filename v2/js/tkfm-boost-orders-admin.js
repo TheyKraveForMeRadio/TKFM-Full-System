@@ -7,10 +7,7 @@
   function set(el, txt){ if (el) el.textContent = txt; }
   function esc(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-  async function getOwnerKey(){
-    // Owner key is stored in .tkfm_owner_key by your scripts, but browser can't read file.
-    // Your owner gate script typically exposes it via localStorage or prompt flow.
-    // We'll try localStorage keys that TKFM already uses.
+  function getOwnerKeyFromLocalStorage(){
     const candidates = [
       'TKFM_OWNER_KEY',
       'tkfm_owner_key',
@@ -21,6 +18,22 @@
       const v = localStorage.getItem(k);
       if (v && v.length > 10) return v;
     }
+    return '';
+  }
+
+  async function getOwnerKey(){
+    let v = getOwnerKeyFromLocalStorage();
+    if (v) return v;
+
+    // Fallback: prompt owner once (stored locally so future loads are automatic)
+    try{
+      v = prompt('Owner Key required for analytics.\nPaste TKFM_OWNER_KEY:') || '';
+      v = String(v).trim();
+      if (v && v.length > 10) {
+        localStorage.setItem('TKFM_OWNER_KEY', v);
+        return v;
+      }
+    }catch(e){}
     return '';
   }
 
