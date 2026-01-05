@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Owner Boost Checkout Debug — TKFM</title>
+
+  <!-- OWNER GUARD -->
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --panel:rgba(15,23,42,.60);
+      --stroke:rgba(148,163,184,.20);
+      --purple:#a855f7;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
+      --gold:#facc15;
+      --text:rgba(255,255,255,.90);
+      --muted:rgba(255,255,255,.66);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1100px 720px at 18% 10%, rgba(168,85,247,.22), transparent 55%),
+        radial-gradient(900px 620px at 88% 15%, rgba(34,211,238,.18), transparent 55%),
+        radial-gradient(900px 620px at 65% 85%, rgba(236,72,153,.14), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 44px}
+    .top{
+      display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      padding:16px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(2,6,23,.82), rgba(15,23,42,.55));
+      border-radius:22px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+    .kicker{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+    h1{margin:6px 0 0;font-size:20px}
+    .sub{margin:6px 0 0;color:rgba(255,255,255,.75);font-size:13px;line-height:1.45}
+    .row{margin-top:14px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      border:0; cursor:pointer;
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:900;
+      letter-spacing:.02em;
+      background: rgba(2,6,23,.55);
+      border:1px solid var(--stroke);
+      color:rgba(255,255,255,.9);
+      text-decoration:none;
+      display:inline-flex;align-items:center;gap:10px;
+    }
+    .btn:hover{filter:brightness(1.05);border-color:rgba(168,85,247,.35)}
+    .btnPrimary{background:linear-gradient(90deg,var(--purple),var(--pink));color:var(--bg);border:0}
+    .btnCyan{background:linear-gradient(90deg,var(--cyan),var(--blue));color:var(--bg);border:0}
+    .btnGold{background:linear-gradient(90deg,var(--gold),#f97316);color:var(--bg);border:0}
+
+    .panel{
+      margin-top:14px;
+      border-radius:22px;
+      border:1px solid var(--stroke);
+      background: var(--panel);
+      padding:16px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.22);
+    }
+    .panel h2{margin:0 0 10px;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+    .box{
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.18);
+      background: rgba(2,6,23,.55);
+      padding:12px;
+      min-height:220px;
+      overflow:auto;
+    }
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size:12px;
+      color: rgba(255,255,255,.85);
+    }
+    .tag{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.55);color:rgba(255,255,255,.72);font-size:12px}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;color:#22d3ee}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="tkfmOwnerLock"></div>
+
+    <div class="top">
+      <div>
+        <div class="kicker">Owner Tools</div>
+        <h1>Boost Checkout Debug</h1>
+        <p class="sub">
+          Creates a Stripe Checkout Session using multiple payload shapes (so it works no matter how your function expects inputs).
+          It will show you the raw JSON response and extract a Checkout URL if available.
+        </p>
+        <div class="row">
+          <a class="btn" href="/owner-boost-dashboard.html">← Boost Dashboard</a>
+          <a class="btn" href="/owner-paid-lane-inbox.html">Paid Lane Inbox</a>
+          <a class="btn" href="/rotation-boost.html">Public Boost Page</a>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;align-items:center;">
+        <span class="tag">Lookup: <code>rotation_boost_7d</code></span>
+        <span class="tag">Lookup: <code>rotation_boost_30d</code></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Run</h2>
+      <div class="row">
+        <button class="btn btnPrimary" id="btn7">Create Session — 7 Days ($99)</button>
+        <button class="btn btnCyan" id="btn30">Create Session — 30 Days ($299)</button>
+        <button class="btn btnGold" id="btnClear">Clear Output</button>
+      </div>
+      <div class="grid" style="margin-top:12px;">
+        <div class="box">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px;">
+            <div class="kicker">Request attempts</div>
+            <button class="btn" id="btnCopyReq" style="padding:8px 10px;border-radius:12px;">Copy</button>
+          </div>
+          <pre id="reqOut">Ready.</pre>
+        </div>
+        <div class="box">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px;">
+            <div class="kicker">Response</div>
+            <button class="btn" id="btnCopyRes" style="padding:8px 10px;border-radius:12px;">Copy</button>
+          </div>
+          <pre id="resOut">Ready.</pre>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px;">
+        <a class="btn btnPrimary" id="openCheckout" href="#" target="_blank" style="display:none;">Open Checkout URL</a>
+        <span class="tag" id="checkoutUrlTag" style="display:none;">URL: <code id="checkoutUrlCode"></code></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const reqOut = document.getElementById('reqOut');
+    const resOut = document.getElementById('resOut');
+    const openCheckout = document.getElementById('openCheckout');
+    const checkoutUrlTag = document.getElementById('checkoutUrlTag');
+    const checkoutUrlCode = document.getElementById('checkoutUrlCode');
+
+    function setReq(txt){ reqOut.textContent = txt; }
+    function setRes(txt){ resOut.textContent = txt; }
+
+    function extractUrl(obj){
+      if (!obj || typeof obj !== 'object') return '';
+      return obj.url || obj.checkout_url || obj.checkoutUrl || obj.redirectUrl || obj.redirect_url || '';
+    }
+
+    async function postJSON(url, data){
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type':'application/json' },
+        body: JSON.stringify(data)
+      });
+      const text = await r.text();
+      let json = null;
+      try { json = JSON.parse(text); } catch(e) {}
+      return { ok: r.ok, status: r.status, text, json };
+    }
+
+    async function tryCreateSession(lookupKey){
+      const endpoint = '/.netlify/functions/create-checkout-session';
+
+      const attempts = [
+        { planId: lookupKey },
+        { lookup_key: lookupKey },
+        { id: lookupKey },
+        { plan: lookupKey },
+        { priceLookupKey: lookupKey },
+        { feature: lookupKey },
+        { data_plan: lookupKey },
+        { dataPlan: lookupKey }
+      ];
+
+      setReq('Endpoint: ' + endpoint + '\\n\\n' + attempts.map((a,i)=>`${i+1}. ${JSON.stringify(a)}`).join('\\n'));
+      openCheckout.style.display = 'none';
+      checkoutUrlTag.style.display = 'none';
+      checkoutUrlCode.textContent = '';
+
+      let last = null;
+      for (let i=0;i<attempts.length;i++){
+        const payload = attempts[i];
+        last = await postJSON(endpoint, payload);
+        const out = {
+          attempt: i+1,
+          payload,
+          status: last.status,
+          ok: last.ok,
+          json: last.json,
+          raw: last.json ? undefined : last.text
+        };
+        setRes(JSON.stringify(out, null, 2));
+
+        const url = extractUrl(last.json);
+        if (url && typeof url === 'string'){
+          openCheckout.href = url;
+          openCheckout.style.display = 'inline-flex';
+          checkoutUrlCode.textContent = url;
+          checkoutUrlTag.style.display = 'inline-flex';
+          return;
+        }
+      }
+
+      // If none yielded URL, still show last response
+      if (last){
+        const out = {
+          message: 'No checkout URL returned. Check function implementation / env vars.',
+          lastStatus: last.status,
+          lastOk: last.ok,
+          lastJson: last.json,
+          lastRaw: last.json ? undefined : last.text
+        };
+        setRes(JSON.stringify(out, null, 2));
+      }
+    }
+
+    document.getElementById('btn7').addEventListener('click', ()=>tryCreateSession('rotation_boost_7d'));
+    document.getElementById('btn30').addEventListener('click', ()=>tryCreateSession('rotation_boost_30d'));
+
+    document.getElementById('btnClear').addEventListener('click', ()=>{
+      setReq('Ready.');
+      setRes('Ready.');
+      openCheckout.style.display = 'none';
+      checkoutUrlTag.style.display = 'none';
+      checkoutUrlCode.textContent = '';
+    });
+
+    async function copyText(id){
+      const el = document.getElementById(id);
+      const txt = (el && el.textContent) ? el.textContent : '';
+      try{ await navigator.clipboard.writeText(txt); }catch(e){}
+    }
+    document.getElementById('btnCopyReq').addEventListener('click', ()=>copyText('reqOut'));
+    document.getElementById('btnCopyRes').addEventListener('click', ()=>copyText('resOut'));
+  </script>
+</body>
+</html>
