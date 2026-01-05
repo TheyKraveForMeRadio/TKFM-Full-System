@@ -18,3 +18,17 @@ _HOLD
 
 # TKFM local secrets
 .tkfm_owner_key
+# TKFM: repo hygiene (generated)
+.netlify/
+Thumbs.db
+.env.local
+.env.*.local
+backups/
+*BACKUP*
+*.BACKUP.*
+*.BROKEN.*
+*.tmp
+*.bak
+*.orig
+*.swp
+nul
