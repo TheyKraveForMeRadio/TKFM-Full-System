@@ -2,11 +2,13 @@
 set -euo pipefail
 
 # TKFM: Ensure Boost prices exist WITH lookup_key set at create-time
-# FIX: avoid bash $99 -> $9 positional var expansion (unbound variable).
+# FIX: lookup_key may already exist on a DIFFERENT product — reuse it.
 #
-# Creates or finds:
-#   rotation_boost_7d  (99 USD)  -> STRIPE_PRICE_ROTATION_BOOST_7D
-#   rotation_boost_30d (299 USD) -> STRIPE_PRICE_ROTATION_BOOST_30D
+# Behavior:
+# 1) Prefer global lookup search:
+#    GET /v1/prices?lookup_keys[]=rotation_boost_7d
+# 2) If not found, create a new price with lookup_key.
+# 3) If create fails "already uses that lookup key", re-resolve via lookup and continue.
 #
 # Requires:
 #   export STRIPE_SECRET_KEY=sk_live_...   (or sk_test_...)
@@ -35,6 +37,7 @@ curl_post_to_file () {
   curl -sS -X POST "$url" -u "${STRIPE_SECRET_KEY}:" "$@" > "$out"
 }
 
+# ---------- ESM-safe JSON helpers (node - stdin argv shifts) ----------
 node_get_field () {
   local fp="$1"
   local field="$2"
@@ -44,14 +47,40 @@ const args = process.argv.slice(2);
 const fp = args[0] || '';
 const field = args[1] || '';
 try{
-  const s = fs.readFileSync(fp,'utf8');
-  const j = JSON.parse(s);
-  if (j?.error?.message) {
-    process.stdout.write('__ERROR__:' + String(j.error.message));
-  } else {
-    const val = (j && Object.prototype.hasOwnProperty.call(j, field)) ? j[field] : '';
-    process.stdout.write(String(val ?? ''));
-  }
+  const j = JSON.parse(fs.readFileSync(fp,'utf8'));
+  if (j?.error?.message) process.stdout.write('__ERROR__:' + String(j.error.message));
+  else process.stdout.write(String(j?.[field] ?? ''));
+}catch(e){
+  process.stdout.write('');
+}
+NODE
+}
+
+node_get_error_message () {
+  local fp="$1"
+  node --input-type=module - "$fp" <<'NODE'
+import fs from 'node:fs';
+const args = process.argv.slice(2);
+const fp = args[0] || '';
+try{
+  const j = JSON.parse(fs.readFileSync(fp,'utf8'));
+  process.stdout.write(String(j?.error?.message ?? ''));
+}catch(e){
+  process.stdout.write('');
+}
+NODE
+}
+
+node_get_first_price_id () {
+  local fp="$1"
+  node --input-type=module - "$fp" <<'NODE'
+import fs from 'node:fs';
+const args = process.argv.slice(2);
+const fp = args[0] || '';
+try{
+  const j = JSON.parse(fs.readFileSync(fp,'utf8'));
+  const id = j?.data?.[0]?.id || '';
+  process.stdout.write(String(id||''));
 }catch(e){
   process.stdout.write('');
 }
@@ -81,39 +110,29 @@ process.stdout.write(found || '');
 NODE
 }
 
-node_find_price_by_lookup_for_product () {
-  local fp="$1"
-  local lookup="$2"
-  node --input-type=module - "$fp" "$lookup" <<'NODE'
-import fs from 'node:fs';
-const args = process.argv.slice(2);
-const fp = args[0] || '';
-const lookup = args[1] || '';
-let j = {};
-try{ j = JSON.parse(fs.readFileSync(fp,'utf8')); }catch(e){}
-const data = Array.isArray(j?.data) ? j.data : [];
-let found = '';
-for (const pr of data){
-  if (pr?.lookup_key === lookup) { found = pr.id; break; }
+# ---------- Stripe helpers ----------
+stripe_price_by_lookup () {
+  local lookup="$1"
+  local out="$2"
+  curl_get_to_file "https://api.stripe.com/v1/prices?lookup_keys[]=${lookup}&limit=1" "$out"
 }
-process.stdout.write(found || '');
-NODE
+
+resolve_lookup_price_id () {
+  local lookup="$1"
+  local tmp
+  tmp="$(mk)"
+  stripe_price_by_lookup "$lookup" "$tmp"
+  local id
+  id="$(node_get_first_price_id "$tmp")"
+  rm -f "$tmp" 2>/dev/null || true
+  printf "%s" "$id"
 }
 
 echo "== TKFM STRIPE: ENSURE BOOST PRICES WITH LOOKUP =="
 
-# 1) Find product
+# 1) Find or create product (product is mainly for metadata + organization)
 TMPP="$(mk)"
 curl_get_to_file "https://api.stripe.com/v1/products?limit=100" "$TMPP"
-
-ERRLIST="$(node_get_field "$TMPP" "id")"
-if [[ "$ERRLIST" == __ERROR__:* ]]; then
-  echo "FAIL: Stripe products list error: ${ERRLIST#__ERROR__:}"
-  cat "$TMPP" || true
-  rm -f "$TMPP" 2>/dev/null || true
-  exit 3
-fi
-
 PROD_ID="$(node_find_product_id "$TMPP")"
 rm -f "$TMPP" 2>/dev/null || true
 
@@ -133,24 +152,23 @@ if [ -z "$PROD_ID" ]; then
     rm -f "$TMPC" 2>/dev/null || true
     exit 4
   fi
-
-  LIVEMODE="$(node_get_field "$TMPC" "livemode")"
-  if [ "$LIVEMODE" = "false" ]; then
-    echo "WARN: Stripe livemode=false (TEST key). For LIVE, export sk_live_... and re-run."
-  fi
-
   rm -f "$TMPC" 2>/dev/null || true
 fi
 
 echo "OK: product=$PROD_ID"
 
-# 2) List existing prices for product (scan lookup_key)
-TMPL="$(mk)"
-curl_get_to_file "https://api.stripe.com/v1/prices?product=${PROD_ID}&limit=100&active=true" "$TMPL"
-PRICE_7D="$(node_find_price_by_lookup_for_product "$TMPL" "rotation_boost_7d")"
-PRICE_30D="$(node_find_price_by_lookup_for_product "$TMPL" "rotation_boost_30d")"
+# 2) Prefer global lookup-key resolution (works even if price belongs to other product)
+PRICE_7D="$(resolve_lookup_price_id rotation_boost_7d)"
+PRICE_30D="$(resolve_lookup_price_id rotation_boost_30d)"
 
-# 3) Create missing prices with lookup_key at create-time
+if [ -n "$PRICE_7D" ]; then
+  echo "OK: found existing lookup rotation_boost_7d -> $PRICE_7D"
+fi
+if [ -n "$PRICE_30D" ]; then
+  echo "OK: found existing lookup rotation_boost_30d -> $PRICE_30D"
+fi
+
+# 3) Create missing prices (lookup_key at create-time)
 if [ -z "$PRICE_7D" ]; then
   echo "INFO: creating price rotation_boost_7d (99 USD)..."
   TMP7="$(mk)"
@@ -163,17 +181,33 @@ if [ -z "$PRICE_7D" ]; then
     -d "metadata[duration_days]=7" \
     -d "metadata[tkfm_product]=rotation_boost" \
     -d "metadata[feature_lane]=radio_tv_featured"
+
   NEW7="$(node_get_field "$TMP7" "id")"
-  if [[ "$NEW7" == __ERROR__:* ]] || [ -z "$NEW7" ]; then
-    echo "FAIL: price create (7d) failed"
-    cat "$TMP7" || true
-    rm -f "$TMPL" "$TMP7" 2>/dev/null || true
-    exit 5
+  if [ -z "$NEW7" ]; then
+    MSG="$(node_get_error_message "$TMP7")"
+    if echo "$MSG" | grep -qi "already uses that lookup key"; then
+      # race/exists on other product: resolve and continue
+      RESOLVED="$(resolve_lookup_price_id rotation_boost_7d)"
+      if [ -n "$RESOLVED" ]; then
+        echo "OK: lookup already existed, using $RESOLVED"
+        PRICE_7D="$RESOLVED"
+        rm -f "$TMP7" 2>/dev/null || true
+      else
+        echo "FAIL: lookup exists but could not resolve via search"
+        cat "$TMP7" || true
+        rm -f "$TMP7" 2>/dev/null || true
+        exit 5
+      fi
+    else
+      echo "FAIL: price create (7d) failed"
+      cat "$TMP7" || true
+      rm -f "$TMP7" 2>/dev/null || true
+      exit 5
+    fi
+  else
+    PRICE_7D="$NEW7"
+    rm -f "$TMP7" 2>/dev/null || true
   fi
-  PRICE_7D="$NEW7"
-  rm -f "$TMP7" 2>/dev/null || true
-else
-  echo "OK: found existing rotation_boost_7d price: $PRICE_7D"
 fi
 
 if [ -z "$PRICE_30D" ]; then
@@ -188,20 +222,33 @@ if [ -z "$PRICE_30D" ]; then
     -d "metadata[duration_days]=30" \
     -d "metadata[tkfm_product]=rotation_boost" \
     -d "metadata[feature_lane]=radio_tv_featured"
-  NEW30="$(node_get_field "$TMP30" "id")"
-  if [[ "$NEW30" == __ERROR__:* ]] || [ -z "$NEW30" ]; then
-    echo "FAIL: price create (30d) failed"
-    cat "$TMP30" || true
-    rm -f "$TMPL" "$TMP30" 2>/dev/null || true
-    exit 6
-  fi
-  PRICE_30D="$NEW30"
-  rm -f "$TMP30" 2>/dev/null || true
-else
-  echo "OK: found existing rotation_boost_30d price: $PRICE_30D"
-fi
 
-rm -f "$TMPL" 2>/dev/null || true
+  NEW30="$(node_get_field "$TMP30" "id")"
+  if [ -z "$NEW30" ]; then
+    MSG="$(node_get_error_message "$TMP30")"
+    if echo "$MSG" | grep -qi "already uses that lookup key"; then
+      RESOLVED="$(resolve_lookup_price_id rotation_boost_30d)"
+      if [ -n "$RESOLVED" ]; then
+        echo "OK: lookup already existed, using $RESOLVED"
+        PRICE_30D="$RESOLVED"
+        rm -f "$TMP30" 2>/dev/null || true
+      else
+        echo "FAIL: lookup exists but could not resolve via search"
+        cat "$TMP30" || true
+        rm -f "$TMP30" 2>/dev/null || true
+        exit 6
+      fi
+    else
+      echo "FAIL: price create (30d) failed"
+      cat "$TMP30" || true
+      rm -f "$TMP30" 2>/dev/null || true
+      exit 6
+    fi
+  else
+    PRICE_30D="$NEW30"
+    rm -f "$TMP30" 2>/dev/null || true
+  fi
+fi
 
 echo ""
 echo "STRIPE_PRODUCT_ROTATION_BOOST=$PROD_ID"
