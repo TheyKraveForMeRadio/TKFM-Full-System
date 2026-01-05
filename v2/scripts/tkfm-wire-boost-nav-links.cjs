@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * TKFM: Wire "Rotation Boost" nav/button into common pages (idempotent).
- * Inserts a small CTA link near top of <body> (after first <header> or before <main>).
+ * Inserts a small CTA link near top of <body> (after first <header> or after <body>).
  *
  * Usage:
  *   node scripts/tkfm-wire-boost-nav-links.cjs .
@@ -52,46 +52,24 @@ function patch(fp) {
 
   const lower = s.toLowerCase();
 
-  function insertAfter(tagStart, tagEnd) {
-    const a = lower.indexOf(tagStart);
-    if (a === -1) return false;
-    const b = lower.indexOf(tagEnd, a);
-    if (b === -1) return false;
-    const end = b + tagEnd.length;
-    s = s.slice(0, end) + '\n' + link + '\n' + s.slice(end);
-    return true;
-  }
-
-  // Prefer after </header> if present
-  let ok = insertAfter('<header', '</header>');
-  if (!ok) {
-    // Or after opening <body>
+  // Prefer after </header>
+  const hdrClose = lower.indexOf('</header>');
+  if (hdrClose !== -1) {
+    s = s.slice(0, hdrClose + 9) + '\n' + link + '\n' + s.slice(hdrClose + 9);
+  } else {
+    // Else after opening <body ...>
     const bi = lower.indexOf('<body');
     if (bi !== -1) {
       const gt = lower.indexOf('>', bi);
       if (gt !== -1) {
         s = s.slice(0, gt + 1) + '\n' + link + '\n' + s.slice(gt + 1);
-        ok = true;
+      } else {
+        s += '\n' + link + '\n';
       }
+    } else {
+      s += '\n' + link + '\n';
     }
   }
-  if (!ok) {
-    // Or before <main>
-    const mi = lower.indexOf('<main');
-    if (mi !== -1) {
-      s = s.slice(0, mi) + link + '\n' + s.slice(mi);
-      ok = true;
-    }
-  }
-  if (!ok) {
-    // Or before </body>
-    const ei = lower.lastIndexOf('</body>');
-    if (ei !== -1) {
-      s = s.slice(0, ei) + '\n' + link + '\n' + s.slice(ei);
-      ok = true;
-    }
-  }
-  if (!ok) s += '\n' + link + '\n';
 
   fs.writeFileSync(fp, s, 'utf8');
   return { file: fp, status: 'patched' };
