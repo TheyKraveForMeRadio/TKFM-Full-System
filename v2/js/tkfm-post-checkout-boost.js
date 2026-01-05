@@ -34,7 +34,18 @@
   async function postJson(data) {
     const r = await fetch(ENDPOINT, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json' }
+
+  async function recordOrder(session_id){
+    try{
+      await fetch('/.netlify/functions/boost-order-record', {
+        method:'POST',
+        headers:{ 'content-type':'application/json' },
+        body: JSON.stringify({ session_id })
+      });
+    }catch(e){}
+  }
+,
       body: JSON.stringify(data),
     });
     const txt = await r.text();
@@ -117,6 +128,10 @@
     log('PAID ✅');
     log('Unlocking: ' + lookup + ' (' + days + ' days)');
     const target = applyUnlock(lookup, days, sessionId);
+
+    // Record server-side order (anti-fake)
+    recordOrder(sessionId);
+
 
     if (BTN) {
       BTN.style.display = 'inline-flex';

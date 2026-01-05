@@ -90,8 +90,27 @@
     a:hover{ text-decoration: underline; }
     #msg{ margin-top:10px; display:none; padding:10px; border-radius:12px; border:1px solid rgba(34,211,238,.35); }
   </style>
+<!-- TKFM: BOOST CHECKOUT INTERCEPTOR -->
+<script defer src="/js/tkfm-boost-checkout.js"></script>
 </head>
 <body>
+<!-- TKFM: OWNER BOOST CHECKOUT DEBUG LINK -->
+<a href="/owner-boost-checkout-debug.html" style="
+  display:inline-flex;align-items:center;gap:10px;
+  margin:10px 0 0;
+  padding:10px 14px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:900;
+  color:#020617;
+  background: linear-gradient(90deg,#22d3ee,#3b82f6);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+">
+  <span style="letter-spacing:.12em;font-size:12px;text-transform:uppercase;">Owner</span>
+  <span style="font-size:14px;">Boost Checkout Debug</span>
+</a>
+
+
   <div id="tkfmOwnerLock"></div>
 
   <div class="wrap">
@@ -419,5 +438,41 @@
   </div>
 </section>
 <!-- TKFM: BOOST CTA END -->
+
+<!-- TKFM: BOOST ORDERS PANEL -->
+<section style="
+  margin:20px auto; max-width:1100px;
+  background: rgba(2,6,23,0.82);
+  border: 1px solid rgba(34,211,238,0.30);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+">
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="letter-spacing:.12em;font-size:12px;color:#22d3ee;text-transform:uppercase;">Revenue</div>
+      <h2 style="margin:6px 0 0;font-size:20px;color:rgba(255,255,255,.92);">Boost Orders (Stripe)</h2>
+      <div style="margin-top:6px;color:rgba(255,255,255,.68);font-size:12px;line-height:1.4;">
+        Server-recorded orders (anti-fake). Totals + last 50 orders.
+      </div>
+    </div>
+    <button id="tkfmBoostOrdersRefresh" style="
+      border:0; cursor:pointer; border-radius:14px; padding:10px 12px; font-weight:900;
+      background: linear-gradient(90deg, #22d3ee, #3b82f6); color:#020617;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    ">Refresh</button>
+  </div>
+
+  <div id="tkfmBoostOrdersTotals" style="margin-top:12px;"></div>
+
+  <div style="margin-top:12px; border-radius:16px; border:1px solid rgba(148,163,184,.18); background: rgba(15,23,42,.55); overflow:auto;">
+    <div id="tkfmBoostOrdersTable"></div>
+  </div>
+
+  <pre id="tkfmBoostOrdersOut" style="margin-top:12px; font-size:12px; color:rgba(255,255,255,.65);">Loading…</pre>
+</section>
+
+
+<script src="/js/tkfm-boost-orders-admin.js"></script>
 </body>
 </html>
