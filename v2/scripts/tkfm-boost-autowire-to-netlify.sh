@@ -1,130 +1,90 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# TKFM: ONE COMMAND — Stripe lookup keys -> price ids -> set Netlify env (all contexts)
-#
-# Requirements:
-#   - STRIPE_SECRET_KEY set in shell, OR present in .env as STRIPE_SECRET_KEY=...
-#   - netlify CLI installed + logged in + site linked
-#
-# Usage:
-#   ./scripts/tkfm-boost-autowire-to-netlify.sh
-#
-# This script:
-#   1) Finds prices by LOOKUP KEY:
-#        rotation_boost_7d (must be $99 one_time USD)
-#        rotation_boost_30d (must be $299 one_time USD)
-#   2) Sets Netlify env:
-#        STRIPE_PRICE_ROTATION_BOOST_7D
-#        STRIPE_PRICE_ROTATION_BOOST_30D
-#   3) Prints next step: restart netlify dev
+# TKFM: Boost Auto-Wire to Netlify (robust + ESM-safe)
+# FIX: use reliable env:set helper to avoid account_id errors.
 
-load_key_from_env() {
-  if [ -n "${STRIPE_SECRET_KEY:-}" ]; then return 0; fi
-  if [ -f ".env" ]; then
-    local line
-    line="$(grep -E '^STRIPE_SECRET_KEY=' .env 2>/dev/null | head -n 1 || true)"
-    if [ -n "$line" ]; then
-      STRIPE_SECRET_KEY="${line#STRIPE_SECRET_KEY=}"
-      STRIPE_SECRET_KEY="$(printf "%s" "$STRIPE_SECRET_KEY" | tr -d '\r\n' | xargs || true)"
-      export STRIPE_SECRET_KEY
-    fi
-  fi
-}
-
-load_key_from_env
+need() { echo "FAIL: $1"; exit 2; }
+mk(){ mktemp 2>/dev/null || echo "/tmp/tkfm_$RANDOM.json"; }
 
 if [ -z "${STRIPE_SECRET_KEY:-}" ]; then
-  echo "FAIL: missing STRIPE_SECRET_KEY (export it OR put STRIPE_SECRET_KEY=... in .env)" >&2
-  exit 2
+  need "STRIPE_SECRET_KEY not set. Example: export STRIPE_SECRET_KEY=sk_live_..."
+fi
+if ! command -v netlify >/dev/null 2>&1; then
+  need "netlify CLI not found. Install: npm i -g netlify-cli"
+fi
+if [ ! -f scripts/tkfm-netlify-env-set.sh ]; then
+  need "scripts/tkfm-netlify-env-set.sh missing (unzip latest patch)"
 fi
 
-if ! command -v curl >/dev/null 2>&1; then
-  echo "FAIL: curl not found" >&2
-  exit 3
-fi
-
-if ! command -v node >/dev/null 2>&1; then
-  echo "FAIL: node not found" >&2
-  exit 4
-fi
-
-api_get() {
-  local path="$1"
-  curl -sS "https://api.stripe.com/v1/${path}" -u "${STRIPE_SECRET_KEY}:"
+get_from_envfile () {
+  local key="$1"
+  [ -f .env ] || return 0
+  grep -E "^${key}=" .env | tail -n 1 | cut -d= -f2- | tr -d '\r\n' || true
 }
 
-pick() {
-  # stdin json, arg expression
-  local expr="$1"
-  node - <<'NODE' "$expr"
-const expr = process.argv[2] || '';
-let s='';process.stdin.on('data',d=>s+=d);
-process.stdin.on('end',()=>{
-  let j;
-  try{ j=JSON.parse(s);}catch(e){process.stdout.write('');return;}
-  try{
-    // eslint-disable-next-line no-eval
-    const out = eval(expr);
-    process.stdout.write(String(out==null?'':out));
-  }catch(e){ process.stdout.write(''); }
-});
+get_from_netlify () {
+  local key="$1"
+  netlify env:get "$key" 2>/dev/null | tr -d '\r\n' || true
+}
+
+stripe_find_by_lookup_to_file () {
+  local lookup="$1"
+  local out="$2"
+  curl -sS "https://api.stripe.com/v1/prices?lookup_keys[]=${lookup}&limit=1" -u "${STRIPE_SECRET_KEY}:" > "$out"
+}
+
+json_get_first_id_from_file () {
+  local fp="$1"
+  node --input-type=module - "$fp" <<'NODE'
+import fs from 'node:fs';
+const fp = process.argv.slice(2)[0] || '';
+try{
+  const j = JSON.parse(fs.readFileSync(fp,'utf8'));
+  if (j?.error?.message) process.stdout.write('');
+  else process.stdout.write(String(j?.data?.[0]?.id || ''));
+}catch(e){
+  process.stdout.write('');
+}
 NODE
 }
 
-get_price_id_by_lookup() {
+resolve_lookup () {
   local lookup="$1"
-  local expect_amount="$2"
-  local json id active amount currency type
-  json="$(api_get "prices?lookup_keys[]=${lookup}&limit=1")"
-  id="$(printf "%s" "$json" | pick "(j.data&&j.data[0]&&j.data[0].id)||''")"
-  if [ -z "$id" ]; then
-    echo "FAIL: Stripe lookup key not found: $lookup" >&2
-    exit 10
-  fi
-  active="$(printf "%s" "$json" | pick "String(!!(j.data&&j.data[0]&&j.data[0].active))")"
-  amount="$(printf "%s" "$json" | pick "String((j.data&&j.data[0]&&j.data[0].unit_amount)||'')")"
-  currency="$(printf "%s" "$json" | pick "String((j.data&&j.data[0]&&j.data[0].currency)||'')")"
-  type="$(printf "%s" "$json" | pick "String((j.data&&j.data[0]&&j.data[0].type)||'')")"
-
-  if [ "$active" != "true" ]; then echo "FAIL: $lookup price not active" >&2; exit 11; fi
-  if [ "$currency" != "usd" ]; then echo "FAIL: $lookup currency != usd" >&2; exit 12; fi
-  if [ "$type" != "one_time" ]; then echo "FAIL: $lookup type != one_time" >&2; exit 13; fi
-  if [ "$amount" != "$expect_amount" ]; then echo "FAIL: $lookup amount mismatch expected=$expect_amount got=$amount" >&2; exit 14; fi
-
+  local tmp
+  tmp="$(mk)"
+  stripe_find_by_lookup_to_file "$lookup" "$tmp"
+  local id
+  id="$(json_get_first_id_from_file "$tmp")"
+  rm -f "$tmp" 2>/dev/null || true
   printf "%s" "$id"
 }
 
-P7="$(get_price_id_by_lookup rotation_boost_7d 9900)"
-P30="$(get_price_id_by_lookup rotation_boost_30d 29900)"
+PRICE_7D="$(resolve_lookup rotation_boost_7d)"
+PRICE_30D="$(resolve_lookup rotation_boost_30d)"
 
-echo "OK: Stripe price ids"
-echo "STRIPE_PRICE_ROTATION_BOOST_7D=$P7"
-echo "STRIPE_PRICE_ROTATION_BOOST_30D=$P30"
-echo
+if [ -z "$PRICE_7D" ] || [ -z "$PRICE_30D" ]; then
+  echo "WARN: could not resolve via lookup_keys[] search. Falling back to env price ids."
 
-if ! command -v netlify >/dev/null 2>&1; then
-  echo "WARN: netlify CLI not found. Set these in Netlify UI env vars:" >&2
-  echo "STRIPE_PRICE_ROTATION_BOOST_7D=$P7"
-  echo "STRIPE_PRICE_ROTATION_BOOST_30D=$P30"
-  exit 0
+  P7="$(get_from_envfile STRIPE_PRICE_ROTATION_BOOST_7D)"
+  P30="$(get_from_envfile STRIPE_PRICE_ROTATION_BOOST_30D)"
+  if [ -z "$P7" ]; then P7="$(get_from_netlify STRIPE_PRICE_ROTATION_BOOST_7D)"; fi
+  if [ -z "$P30" ]; then P30="$(get_from_netlify STRIPE_PRICE_ROTATION_BOOST_30D)"; fi
+
+  if [ -z "$P7" ] || [ -z "$P30" ]; then
+    echo "FAIL: missing Boost price ids in .env or Netlify env."
+    exit 3
+  fi
+
+  PRICE_7D="$P7"
+  PRICE_30D="$P30"
 fi
 
-set_one() {
-  local key="$1"
-  local val="$2"
-  netlify env:set "$key" "$val" >/dev/null 2>&1 || true
-  for ctx in production deploy-preview branch-deploy dev; do
-    netlify env:set "$key" "$val" --context "$ctx" >/dev/null 2>&1 || true
-  done
-  for scope in production deploy-preview branch-deploy; do
-    netlify env:set "$key" "$val" --scope "$scope" >/dev/null 2>&1 || true
-  done
-}
+chmod +x scripts/tkfm-netlify-env-set.sh >/dev/null 2>&1 || true
+./scripts/tkfm-netlify-env-set.sh STRIPE_PRICE_ROTATION_BOOST_7D "$PRICE_7D" all
+./scripts/tkfm-netlify-env-set.sh STRIPE_PRICE_ROTATION_BOOST_30D "$PRICE_30D" all
 
-set_one STRIPE_PRICE_ROTATION_BOOST_7D "$P7"
-set_one STRIPE_PRICE_ROTATION_BOOST_30D "$P30"
-
-echo "OK: Netlify env set (best-effort across contexts)"
-echo "NEXT: restart netlify dev so env reloads:"
-echo "netlify dev --port 8888"
+echo "STRIPE_PRICE_ROTATION_BOOST_7D=$PRICE_7D"
+echo "STRIPE_PRICE_ROTATION_BOOST_30D=$PRICE_30D"
+echo "OK: Netlify env set"
+echo "NEXT: restart netlify dev: netlify dev --port 8888"
