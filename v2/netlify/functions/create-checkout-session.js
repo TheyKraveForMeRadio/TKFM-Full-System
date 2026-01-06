@@ -1,137 +1,124 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
- * TKFM CHECKOUT RESOLVER (fix Netlify/Lambda 4KB env limit)
+ * TKFM checkout resolver:
+ * - Primary: resolve Stripe Price by lookup_key (same as data-plan / data-feature ids)
+ * - Optional: allow direct price id if request provides priceId (admin/debug)
  *
- * Goal:
- * - STOP depending on dozens of STRIPE_PRICE_* env vars (which breaks Netlify deploy)
- * - Prefer Stripe lookup_key = planId (or explicit lookup_key passed in)
- * - Keep backwards compatibility: if STRIPE_PRICE_* exists, still use it
- *
- * Accepted request body (JSON):
- * {
- *   "planId": "rotation_boost_7d" | "creator_pass_monthly" | ...
- *   "lookup_key": "rotation_boost_7d" (optional)
- *   "priceId": "price_..." (optional)
- *   "quantity": 1 (optional)
- *   "mode": "payment"|"subscription" (optional)
- *   "success_url": "https://.../post-checkout.html?session_id={CHECKOUT_SESSION_ID}" (optional)
- *   "cancel_url": "https://.../pricing.html" (optional)
- *   "metadata": { ... } (optional)
- * }
+ * This avoids stuffing dozens of STRIPE_PRICE_* env vars into Netlify (4KB Lambda env limit).
  */
 
-function json(statusCode, obj) {
+function jsonBody(event) {
+  try {
+    return event.body ? JSON.parse(event.body) : {};
+  } catch {
+    return {};
+  }
+}
+
+function pickOrigin(event) {
+  const h = event.headers || {};
+  const origin =
+    h.origin ||
+    (h.referer ? new URL(h.referer).origin : '') ||
+    process.env.URL ||
+    process.env.DEPLOY_PRIME_URL ||
+    process.env.DEPLOY_URL ||
+    'https://tkfmradio.com';
+  return origin;
+}
+
+function bad(statusCode, msg, extra = {}) {
   return {
     statusCode,
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(obj),
+    body: JSON.stringify({ ok: false, error: msg, ...extra }),
   };
 }
 
-function sanitizeEnvKey(planId = '') {
-  return String(planId)
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
-}
-
-function inferMode(planId = '', requested) {
-  if (requested === 'payment' || requested === 'subscription') return requested;
-  const id = String(planId || '');
-  if (/(_MONTHLY|_YEARLY)$/i.test(id)) return 'subscription';
-  if (/MONTHLY|YEARLY/i.test(id)) return 'subscription';
-  return 'payment';
-}
-
-async function resolvePriceId({ planId, lookup_key, priceId }) {
-  // direct price id wins
-  if (priceId && String(priceId).startsWith('price_')) return String(priceId);
-
-  const pid = String(planId || '').trim();
-  const lkp = String(lookup_key || '').trim() || pid;
-
-  // env var convention (keeps legacy wiring working)
-  if (pid) {
-    const envKey = `STRIPE_PRICE_${sanitizeEnvKey(pid)}`;
-    if (process.env[envKey]) return String(process.env[envKey]);
+async function resolvePrice({ lookupKey, priceId }) {
+  // Allow direct price id if explicitly provided
+  if (priceId && typeof priceId === 'string' && priceId.startsWith('price_')) {
+    const p = await stripe.prices.retrieve(priceId);
+    return p || null;
   }
 
-  // explicit boost env vars (kept minimal)
-  if (pid === 'rotation_boost_7d' && process.env.STRIPE_PRICE_ROTATION_BOOST_7D) {
-    return String(process.env.STRIPE_PRICE_ROTATION_BOOST_7D);
-  }
-  if (pid === 'rotation_boost_30d' && process.env.STRIPE_PRICE_ROTATION_BOOST_30D) {
-    return String(process.env.STRIPE_PRICE_ROTATION_BOOST_30D);
-  }
+  if (!lookupKey || typeof lookupKey !== 'string') return null;
 
-  // Stripe lookup_key (preferred)
-  if (lkp) {
-    const res = await stripe.prices.list({ lookup_keys: [lkp], limit: 1 });
-    const found = res?.data?.[0]?.id;
-    if (found) return found;
-  }
+  const res = await stripe.prices.list({
+    lookup_keys: [lookupKey],
+    limit: 1,
+    active: true,
+  });
 
-  return '';
+  return res?.data?.[0] || null;
 }
 
 export async function handler(event) {
+  if (event.httpMethod !== 'POST') return bad(405, 'Method not allowed');
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return bad(500, 'Missing STRIPE_SECRET_KEY in Netlify env');
+  }
+
+  const body = jsonBody(event);
+
+  // Frontend sends one of these:
+  // - planId (data-plan)  e.g. creator_pass_monthly
+  // - featureId (data-feature) e.g. rotation_boost_7d
+  // - lookupKey explicit
+  const planId = body.planId || body.plan || null;
+  const featureId = body.featureId || body.feature || null;
+  const lookupKey = body.lookupKey || body.lookup_key || planId || featureId || null;
+
+  const priceId = body.priceId || body.price || null;
+
+  let price;
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return json(500, { ok: false, error: 'Missing STRIPE_SECRET_KEY' });
-    }
+    price = await resolvePrice({ lookupKey, priceId });
+  } catch (e) {
+    return bad(400, 'Could not resolve Stripe price', { lookupKey, message: e?.message || String(e) });
+  }
 
-    const body = event.body ? JSON.parse(event.body) : {};
-    const planId = body.planId || body.plan || body.lookupKey || body.lookup_key || '';
-    const lookup_key = body.lookup_key || body.lookupKey || '';
-    const priceId = body.priceId || body.price || '';
-    const quantity = Number(body.quantity || 1) || 1;
+  if (!price?.id) {
+    return bad(400, 'Could not resolve Stripe price', {
+      lookupKey,
+      hint: 'Ensure a Stripe Price exists with lookup_key == the plan/feature id (live vs test must match STRIPE_SECRET_KEY).',
+    });
+  }
 
-    const resolvedPriceId = await resolvePriceId({ planId, lookup_key, priceId });
-    if (!resolvedPriceId) {
-      return json(400, {
-        ok: false,
-        error: 'Price not resolved',
-        planId,
-        hint:
-          'Create a Stripe Price with lookup_key = planId (ex: rotation_boost_7d) OR set STRIPE_PRICE_<PLANID> env var.',
-      });
-    }
+  const origin = pickOrigin(event);
 
-    const mode = inferMode(planId, body.mode);
+  // Optional: preserve a deep link so post-checkout can route the user
+  const continueTo = body.continueTo || body.continue_to || '';
 
-    const origin =
-      (event.headers && (event.headers.origin || event.headers.Origin)) ||
-      (event.headers &&
-      (event.headers.referer || event.headers.Referer)
-        ? new URL(event.headers.referer || event.headers.Referer).origin
-        : '') ||
-      'https://tkfmradio.com';
+  // IMPORTANT: recurring prices require mode=subscription
+  const mode = price.recurring ? 'subscription' : 'payment';
 
-    const success_url =
-      body.success_url ||
-      `${origin}/post-checkout.html?session_id={CHECKOUT_SESSION_ID}`;
-    const cancel_url =
-      body.cancel_url ||
-      `${origin}/pricing.html`;
-
-    const metadata = {
-      tkfm_plan: String(planId || lookup_key || resolvedPriceId || ''),
-      ...(body.metadata && typeof body.metadata === 'object' ? body.metadata : {}),
-    };
-
+  try {
     const session = await stripe.checkout.sessions.create({
       mode,
-      line_items: [{ price: resolvedPriceId, quantity }],
-      success_url,
-      cancel_url,
-      metadata,
+      line_items: [{ price: price.id, quantity: 1 }],
+      success_url:
+        `${origin}/post-checkout.html?session_id={CHECKOUT_SESSION_ID}` +
+        (continueTo ? `&continueTo=${encodeURIComponent(continueTo)}` : ''),
+      cancel_url: `${origin}/pricing.html?canceled=1`,
+      metadata: {
+        tkfm_plan_id: String(planId || ''),
+        tkfm_feature_id: String(featureId || ''),
+        tkfm_lookup_key: String(lookupKey || ''),
+        tkfm_continue_to: String(continueTo || ''),
+      },
     });
 
-    return json(200, { ok: true, id: session.id, url: session.url });
+    return {
+      statusCode: 200,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ok: true, url: session.url, id: session.id, mode }),
+    };
   } catch (e) {
-    return json(500, { ok: false, error: String(e?.message || e) });
+    return bad(500, 'Stripe checkout create failed', { message: e?.message || String(e), mode });
   }
 }
