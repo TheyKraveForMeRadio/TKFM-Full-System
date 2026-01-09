@@ -10,7 +10,6 @@
   <script>
     (function(){
       function ok(){ return !!window.__TKFM_OWNER_GUARD_LOADED; }
-      function fail(){ try{ if (typeof showMsg === "function") showMsg("Owner guard missing (js/tkfm-owner-guard.js).", false); }catch(e){} }
       var s = document.querySelector("script[src=\"/js/tkfm-owner-guard.js\"]");
       if (!s){ fail(); return; }
       s.addEventListener("error", fail);
