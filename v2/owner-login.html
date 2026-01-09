@@ -6,7 +6,7 @@
   <title>Owner Login — TKFM</title>
   <meta name="robots" content="noindex,nofollow"/>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-guard.js" defer></script>
   <style>
     body{
       background:#020617;
@@ -24,6 +24,7 @@
   </style>
 </head>
 <body class="text-slate-50 min-h-screen">
+  <div id="tkfmOwnerLock"></div>
   <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-5xl mx-auto px-4 py-4 flex items-center gap-4">
       <a href="index.html" class="flex items-center gap-3">
@@ -134,13 +135,13 @@
             if (v && String(v).trim()) keys.push(k);
           });
         }catch(e){}
-        const ok = (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.isOwnerLocal && window.TKFM_OWNER_GUARD.isOwnerLocal());
+        const ok = (window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal());
         $('state').textContent = ok ? 'OWNER' : 'LOCKED';
         $('keys').textContent = keys.length ? keys.join(', ') : 'none';
 
         // Pre-fill email if stored
         try{
-          const any = window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.getAny ? window.TKFM_OWNER_GUARD.getAny() : {};
+          const any = window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.getAny ? window.__TKFM_OWNER_GUARD_LOADED.getAny() : {};
           if (any && any.email && !$('email').value) $('email').value = any.email;
         }catch(_e){}
       }
@@ -152,12 +153,16 @@
 
         showMsg('Verifying…', true);
 
-        if (!window.TKFM_OWNER_GUARD || !window.TKFM_OWNER_GUARD.login){
-          showMsg('Owner guard missing (js/tkfm-owner-guard.js).', false);
+        if (!window.__TKFM_OWNER_GUARD_LOADED || !window.__TKFM_OWNER_GUARD_LOADED.login){
+          setTimeout(() => {
+            if (!window.__TKFM_OWNER_GUARD_LOADED) {
+              showMsg('Owner guard missing (js/tkfm-owner-guard.js).', false);
+            }
+          }, 350);
           return;
         }
 
-        const res = await window.TKFM_OWNER_GUARD.login({ email, password, ownerKey });
+        const res = await window.__TKFM_OWNER_GUARD_LOADED.login({ email, password, ownerKey });
         if (!res || !res.ok){
           showMsg('❌ ' + (res && res.error ? res.error : 'Login failed.'), false);
           refreshState();
@@ -166,8 +171,8 @@
 
         // EXTRA SAFETY: force legacy keys again (stops older pages bouncing)
         try{
-          if (window.TKFM_OWNER_GUARD.setLegacyKeys){
-            window.TKFM_OWNER_GUARD.setLegacyKeys({ email, ownerKey, token: res.token || '' });
+          if (window.__TKFM_OWNER_GUARD_LOADED.setLegacyKeys){
+            window.__TKFM_OWNER_GUARD_LOADED.setLegacyKeys({ email, ownerKey, token: res.token || '' });
           }
         }catch(_e){}
 
@@ -176,14 +181,14 @@
       }
 
       function clear(){
-        if (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.clearOwner) window.TKFM_OWNER_GUARD.clearOwner();
+        if (window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.clearOwner) window.__TKFM_OWNER_GUARD_LOADED.clearOwner();
         showMsg('Cleared owner session.', true);
         refreshState();
       }
 
       function cont(){
         const next = $('next').value || 'god-view.html';
-        const ok = (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.isOwnerLocal && window.TKFM_OWNER_GUARD.isOwnerLocal());
+        const ok = (window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal());
         if (!ok){
           showMsg('Locked. Login first.', false);
           return;
