@@ -1,0 +1,6 @@
+[build]
+publish = "dist"
+command = "bash ./scripts/tkfm-prebuild-clean.sh && npm run build && bash ./scripts/tkfm-postbuild-copy-owner-guard.sh"
+
+[functions]
+directory = "netlify/functions"
