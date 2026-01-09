@@ -156,8 +156,12 @@
         if (!window.__TKFM_OWNER_GUARD_LOADED || !window.__TKFM_OWNER_GUARD_LOADED.login){
           setTimeout(() => {
             if (!window.__TKFM_OWNER_GUARD_LOADED) {
+              setTimeout(() => {
+            if (!window.__TKFM_OWNER_GUARD_LOADED) {
               showMsg('Owner guard missing (js/tkfm-owner-guard.js).', false);
             }
+          }, 350);
+}
           }, 350);
           return;
         }
