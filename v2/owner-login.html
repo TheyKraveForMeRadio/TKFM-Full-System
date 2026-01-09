@@ -7,6 +7,13 @@
   <meta name="robots" content="noindex,nofollow"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tkfm-owner-guard.js" defer></script>
+  <script>
+    setTimeout(() => {
+      if (!window.__TKFM_OWNER_GUARD_LOADED) {
+        try { showMsg("Owner guard missing (js/tkfm-owner-guard.js).", false); } catch(e) {}
+      }
+    }, 350);
+  </script>
   <style>
     body{
       background:#020617;
@@ -158,7 +165,6 @@
             if (!window.__TKFM_OWNER_GUARD_LOADED) {
               setTimeout(() => {
             if (!window.__TKFM_OWNER_GUARD_LOADED) {
-              showMsg('Owner guard missing (js/tkfm-owner-guard.js).', false);
             }
           }, 350);
 }
