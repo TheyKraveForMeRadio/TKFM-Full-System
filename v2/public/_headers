@@ -1,0 +1,8 @@
+/owner-login.html
+  Cache-Control: no-store
+
+/js/tkfm-owner-guard.js
+  Cache-Control: no-store
+
+/js/tkfm-owner-gate-no-redirect.js
+  Cache-Control: no-store
