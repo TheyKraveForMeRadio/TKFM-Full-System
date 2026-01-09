@@ -6,11 +6,21 @@
   <title>Owner Login — TKFM</title>
   <meta name="robots" content="noindex,nofollow"/>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/js/tkfm-owner-guard.js" defer></script>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script>
+    (function(){
+      function ok(){ return !!window.__TKFM_OWNER_GUARD_LOADED; }
+      function fail(){ try{ if (typeof showMsg === "function") showMsg("Owner guard missing (js/tkfm-owner-guard.js).", false); }catch(e){} }
+      var s = document.querySelector("script[src=\"/js/tkfm-owner-guard.js\"]");
+      if (!s){ fail(); return; }
+      s.addEventListener("error", fail);
+      s.addEventListener("load", function(){ if(!ok()) fail(); });
+      setTimeout(function(){ if(!ok()) fail(); }, 1500);
+    })();
+  </script>
   <script>
     setTimeout(() => {
       if (!window.__TKFM_OWNER_GUARD_LOADED) {
-        try { showMsg("Owner guard missing (js/tkfm-owner-guard.js).", false); } catch(e) {}
       }
     }, 350);
   </script>
