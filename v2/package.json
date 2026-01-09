@@ -9,7 +9,8 @@
     "preview": "vite preview --host",
     "tw:build": "npx @tailwindcss/cli -i ./src/input.css -o ./public/tailwind.css --minify",
     "tw:watch": "npx @tailwindcss/cli -i ./src/input.css -o ./public/tailwind.css --watch",
-    "prebuild": "npm run tw:build"
+    "prebuild": "npm run tw:build",
+    "postbuild": "bash ./scripts/tkfm-postbuild-copy-static-js.sh && bash ./scripts/tkfm-postbuild-copy-root-html.sh"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.18",
