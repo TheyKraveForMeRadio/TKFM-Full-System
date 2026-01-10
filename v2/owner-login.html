@@ -9,11 +9,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tkfm-owner-guard.js"></script>
   <script>
+    setTimeout(function(){
+      if (!window.__TKFM_OWNER_GUARD_LOADED) {
+        try { if (typeof showMsg === "function") showMsg("Owner guard missing (js/tkfm-owner-guard.js).", false); } catch(e) {}
+      }
+    }, 1200);
+  </script>
+  <script>
     (function(){
-      function fail(msg){ try{ if(typeof showMsg==="function") showMsg(msg,false); }catch(e){} }
       setTimeout(function(){
         if(!window.__TKFM_OWNER_GUARD_LOADED){
-          fail("Owner guard missing (js/tkfm-owner-guard.js).");
         }
       }, 1200);
     })();
