@@ -1,0 +1,74 @@
+<!-- TKFM OWNER LOGIN DIRECT VERIFY (failsafe) -->
+<div style="max-width:720px;margin:14px auto 0;padding:14px;border-radius:18px;background:rgba(2,6,23,.55);border:1px solid rgba(34,211,238,.18);color:#e2e8f0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;">
+  <div style="font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(34,211,238,.95);">OWNER VERIFY</div>
+  <div style="font-weight:900;font-size:18px;margin-top:8px;">Enter Owner Key and verify instantly.</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;">
+    <input id="tkfmOwnerKeyField" placeholder="Paste TKFM_OWNER_KEY" autocomplete="off" style="flex:1;min-width:260px;padding:10px 12px;border-radius:14px;border:1px solid rgba(34,211,238,.22);background:rgba(15,23,42,.55);color:#e2e8f0;outline:none;" />
+    <button id="tkfmOwnerVerifyBtn" type="button" style="padding:10px 14px;border-radius:14px;border:1px solid rgba(250,204,21,.30);background:linear-gradient(90deg, rgba(250,204,21,.18), rgba(249,115,22,.10));color:#fff7ed;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:12px;cursor:pointer;">Verify</button>
+    <button id="tkfmOwnerClearBtn2" type="button" style="padding:10px 14px;border-radius:14px;border:1px solid rgba(34,211,238,.35);background:rgba(2,6,23,.65);color:#e2e8f0;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:12px;cursor:pointer;">Clear</button>
+  </div>
+  <div id="tkfmOwnerVerifyMsg" style="margin-top:10px;font-size:12px;color:rgba(226,232,240,.78);">Status: idle</div>
+</div>
+
+<script>
+(function(){
+  const msg = document.getElementById('tkfmOwnerVerifyMsg');
+  const inp = document.getElementById('tkfmOwnerKeyField');
+  const btn = document.getElementById('tkfmOwnerVerifyBtn');
+  const clr = document.getElementById('tkfmOwnerClearBtn2');
+
+  function setMsg(t, ok){
+    msg.textContent = t;
+    msg.style.color = ok ? 'rgba(34,211,238,.95)' : 'rgba(236,72,153,.95)';
+  }
+
+  function setOwnerKey(k){
+    localStorage.setItem('TKFM_OWNER_KEY', k);
+    localStorage.setItem('tkfm_owner_key', k);
+    localStorage.setItem('tkfm_owner_token', k);
+    localStorage.setItem('tkfm_owner_authed', 'true');
+    localStorage.setItem('owner_authed', 'true');
+    localStorage.setItem('TKFM_OWNER_AUTH', 'true');
+    localStorage.setItem('tkfm_owner_access', 'true');
+    localStorage.setItem('tkfm_owner_session', 'true');
+  }
+
+  async function verify(k){
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 6000);
+    try{
+      const res = await fetch('/.netlify/functions/owner-auth-check', {
+        method:'GET',
+        headers:{ 'x-tkfm-owner-key': String(k||'').trim() },
+        signal: ctrl.signal
+      });
+      clearTimeout(t);
+      const data = await res.json().catch(()=>({}));
+      return !!(res.ok && data.ok);
+    }catch(e){
+      clearTimeout(t);
+      return false;
+    }
+  }
+
+  btn.addEventListener('click', async ()=>{
+    const k = (inp.value||'').trim();
+    if(!k){ setMsg('Status: paste your owner key first', false); return; }
+    setMsg('Status: verifying…', true);
+    const ok = await verify(k);
+    if(ok){
+      setOwnerKey(k);
+      setMsg('Status: verified ✅ reloading…', true);
+      setTimeout(()=>location.reload(), 400);
+    } else {
+      setMsg('Status: invalid key or verify failed (check Netlify env TKFM_OWNER_KEY)', false);
+    }
+  });
+
+  clr.addEventListener('click', ()=>{
+    ['TKFM_OWNER_KEY','tkfm_owner_key','tkfm_owner_token','tkfm_owner_authed','owner_authed','TKFM_OWNER_AUTH','tkfm_owner_access','tkfm_owner_session'].forEach(k=>localStorage.removeItem(k));
+    setMsg('Status: cleared. paste key + verify.', true);
+    inp.value='';
+  });
+})();
+</script>
