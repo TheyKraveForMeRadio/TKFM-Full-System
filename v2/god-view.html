@@ -115,6 +115,22 @@
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
     .hidden{display:none !important}
   </style>
+  <script>
+  (function(){
+    function t(v){v=String(v||"");return v==="true"||v==="1";}
+    function get(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+    function authed(){
+      return t(get("tkfm_owner_authed")) || t(get("owner_authed")) || t(get("TKFM_OWNER_AUTH")) || t(get("tkfm_owner_access")) || t(get("tkfm_owner_session")) || !!(get("TKFM_OWNER_KEY")||get("tkfm_owner_key")||get("tkfm_owner_token"));
+    }
+    window.__TKFM_OWNER_OK = authed();
+    document.addEventListener("DOMContentLoaded", function(){
+      if (window.__TKFM_OWNER_OK){
+        var lock = document.getElementById("tkfmOwnerLockWrap") || document.getElementById("tkfmOwnerLock") || document.querySelector("[data-owner-lock]");
+        if (lock) { try{ lock.remove(); }catch(e){} }
+      }
+    });
+  })();
+  </script>
 </head>
 
 <body>
@@ -139,10 +155,7 @@
     <!-- LOCKED STATE (NO AUTO REDIRECT - stops blinking forever) -->
     <section id="locked" class="glass card">
       <div class="k">Owner Gate</div>
-      <div class="h1"><span class="grad">Access Locked</span></div>
-      <p class="p">
-        This page no longer auto-redirects (to prevent loops). Click Owner Login, then come back to God View.
-      </p>
+      <div class="h1"><span class="grad"></p>
       <div class="divider"></div>
 
       <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
