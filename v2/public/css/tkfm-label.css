@@ -1,0 +1,3 @@
+:root{--bg:#020617;--gold:#facc15;--gold2:#eab308;--amber:#f97316}
+body{background:var(--bg)}
+.tkfmLabelGold{color:var(--gold)}
