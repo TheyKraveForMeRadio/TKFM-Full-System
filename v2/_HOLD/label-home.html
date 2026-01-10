@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>They Krave For Me Records — Label Home</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(6,8,20,0.98);
+      --bg-soft: rgba(15,23,42,0.96);
+      --gold: #facc15;
+      --gold-deep: #eab308;
+      --amber: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f9fafb;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border-subtle: rgba(148,163,184,0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #111827 0, transparent 52%),
+        radial-gradient(circle at top right, rgba(234,179,8,0.55) 0, transparent 60%),
+        radial-gradient(circle at top left, rgba(248,113,113,0.45) 0, transparent 60%),
+        linear-gradient(to bottom, #020617, #020617 55%, #000 100%);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: 1.6rem .9rem 2.3rem;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* NAVBAR */
+    .nav-shell {
+      max-width: 1180px;
+      margin: 0 auto 1.7rem;
+      padding: .55rem .9rem .6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(224,231,255,0.45);
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.98) 0, rgba(15,23,42,0.95) 55%, rgba(15,23,42,0.93) 100%);
+      box-shadow:
+        0 26px 55px rgba(15,23,42,0.98),
+        0 0 40px rgba(234,179,8,0.40);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+
+    .nav-logo {
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #fde68a, #facc15, #f97316);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 18px rgba(250,250,249,0.9);
+      white-space: nowrap;
+    }
+
+    .nav-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--text-muted);
+      white-space: nowrap;
+      display: none;
+    }
+
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .75rem;
+    }
+
+    .nav-link {
+      padding: .26rem .8rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: rgba(15,23,42,0.96);
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      border-color: rgba(250,250,249,0.85);
+      color: #f9fafb;
+      background: rgba(15,23,42,1);
+    }
+
+    .nav-link-primary {
+      border-color: rgba(250,250,249,0.9);
+      background: radial-gradient(circle at top, #facc15 0, #854d0e 60%);
+      color: #020617;
+      box-shadow:
+        0 0 20px rgba(250,250,249,0.9),
+        0 0 32px rgba(245,158,11,0.9);
+    }
+
+    .nav-link-radio {
+      border-color: rgba(56,189,248,0.85);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.3) 0, rgba(15,23,42,0.98) 60%);
+      color: #e0f2fe;
+    }
+
+    @media (min-width: 880px) {
+      .nav-tag { display: block; }
+    }
+
+    @media (max-width: 840px) {
+      .nav-shell { padding-inline: .8rem; }
+      .nav {
+        flex-wrap: wrap;
+        gap: .5rem;
+      }
+      .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 1.3rem .7rem 2.1rem;
+      }
+      .nav-shell {
+        margin-bottom: 1.4rem;
+      }
+      .nav-links {
+        font-size: .72rem;
+      }
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* HERO */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.05fr);
+      gap: 1.8rem;
+      margin-bottom: 2.1rem;
+      position: relative;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-fx {
+      position: absolute;
+      inset: -160px -90px auto auto;
+      background:
+        radial-gradient(circle at top right, rgba(234,179,8,0.65) 0, transparent 55%),
+        radial-gradient(circle at top left, rgba(248,113,113,0.45) 0, transparent 60%);
+      opacity: .8;
+      filter: blur(6px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-kicker {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .24em;
+      color: #facc15;
+      margin-bottom: .55rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.1rem, 2.6vw + 1.6rem, 2.8rem);
+      line-height: 1.05;
+      margin-bottom: .8rem;
+      text-shadow:
+        0 0 30px rgba(0,0,0,0.8),
+        0 0 40px rgba(250,204,21,0.8);
+    }
+
+    .hero-sub {
+      font-size: .9rem;
+      line-height: 1.7;
+      color: #e5e7eb;
+      max-width: 32rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-sub strong {
+      color: #f97316;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .22rem .7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(251,191,36,0.85);
+      background: rgba(15,23,42,0.96);
+      font-size: .7rem;
+      color: #fef9c3;
+    }
+    .pill span {
+      width: .48rem;
+      height: .48rem;
+      border-radius: 999px;
+      background: radial-gradient(circle, #facc15 0, #854d0e 75%);
+      box-shadow: 0 0 10px rgba(250,204,21,0.95);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem .7rem;
+      align-items: center;
+      margin-bottom: .7rem;
+    }
+
+    .btn-main {
+      border-radius: 999px;
+      padding: .5rem 1.3rem;
+      border: 1px solid rgba(250,250,249,0.95);
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .21em;
+      font-weight: 600;
+      color: #020617;
+      background: radial-gradient(circle at top, #facc15 0, #b45309 60%);
+      cursor: pointer;
+      box-shadow:
+        0 0 20px rgba(250,250,249,0.85),
+        0 0 36px rgba(245,158,11,0.9);
+    }
+
+    .btn-main:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .45rem 1.2rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: rgba(15,23,42,0.98);
+      cursor: pointer;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(250,250,249,0.85);
+      color: #f9fafb;
+    }
+
+    .hero-note {
+      font-size: .75rem;
+      color: var(--text-muted);
+      max-width: 19rem;
+    }
+    .hero-note strong { color:#facc15; }
+
+    /* HERO PANEL */
+    .hero-panel {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-card {
+      border-radius: 1.3rem;
+      border: 1px solid rgba(148,163,184,0.55);
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.98) 0, rgba(15,23,42,0.96) 50%, rgba(15,23,42,0.94) 100%);
+      box-shadow:
+        0 22px 55px rgba(15,23,42,0.98),
+        0 0 40px rgba(234,179,8,0.35);
+      padding: 1.1rem 1.05rem 1.05rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -110% -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(234,179,8,0.38) 0, transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(248,113,113,0.28) 0, transparent 55%);
+      opacity: .8;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .hero-card-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: .8rem;
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: .7rem;
+    }
+
+    .hero-card-label {
+      font-size: .68rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #facc15;
+      margin-bottom: .2rem;
+    }
+
+    .hero-card-title {
+      font-size: .88rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+    }
+
+    .hero-card-sub {
+      font-size: .78rem;
+      color: var(--text-muted);
+      max-width: 15rem;
+    }
+
+    .hero-card-badge {
+      border-radius: 999px;
+      padding: .18rem .68rem;
+      border: 1px solid rgba(56,189,248,0.9);
+      background: rgba(15,23,42,0.98);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #bae6fd;
+      white-space: nowrap;
+    }
+
+    .hero-card-list {
+      font-size: .78rem;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .hero-card-list ul {
+      margin-top: .4rem;
+      padding-left: 1rem;
+    }
+
+    .hero-card-list li {
+      margin-bottom: .18rem;
+    }
+
+    .hero-card-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      margin-top: .2rem;
+    }
+
+    .btn-chip {
+      border-radius: 999px;
+      padding: .3rem .8rem;
+      border: 1px solid rgba(234,179,8,0.85);
+      background: rgba(15,23,42,0.98);
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      cursor: pointer;
+      color: #fef9c3;
+    }
+
+    .btn-chip-alt {
+      border-radius: 999px;
+      padding: .3rem .8rem;
+      border: 1px solid rgba(148,163,184,0.85);
+      background: rgba(15,23,42,0.98);
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .btn-chip-alt:hover {
+      border-color: rgba(250,250,249,0.9);
+      color: #f9fafb;
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom: 2.1rem;
+    }
+
+    .section-inner {
+      border-radius: 1.3rem;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.98) 0, rgba(15,23,42,0.95) 55%, rgba(15,23,42,0.94) 100%);
+      box-shadow: 0 20px 55px rgba(15,23,42,0.95);
+      padding: 1.3rem 1.25rem 1.35rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-inner::before {
+      content: "";
+      position: absolute;
+      inset: -80% -40%;
+      background:
+        radial-gradient(circle at top left, rgba(250,204,21,0.28) 0, transparent 60%),
+        radial-gradient(circle at top right, rgba(168,85,247,0.25) 0, transparent 55%);
+      opacity: .7;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .section-inner > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-kicker {
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #facc15;
+      margin-bottom: .35rem;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin-bottom: .35rem;
+    }
+
+    .section-sub {
+      font-size: .82rem;
+      color: var(--text-muted);
+      max-width: 36rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub strong {
+      color: #f97316;
+    }
+
+    /* CARD GRID */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: .95rem;
+    }
+
+    .card {
+      border-radius: 1rem;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      padding: .9rem .85rem .9rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -60% -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(234,179,8,0.3) 0, transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.25) 0, transparent 60%);
+      opacity: .6;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-kicker {
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #facc15;
+      margin-bottom: .25rem;
+    }
+
+    .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .25rem;
+    }
+
+    .card-body {
+      font-size: .8rem;
+      color: #e5e7eb;
+      margin-bottom: .5rem;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .3rem;
+      margin-bottom: .45rem;
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: .2rem .55rem;
+      border: 1px solid rgba(148,163,184,0.85);
+      background: rgba(15,23,42,0.98);
+      font-size: .7rem;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+
+    .card-footnote {
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      border-radius: 999px;
+      padding: .2rem .6rem;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      border: 1px solid rgba(234,179,8,0.8);
+      background: rgba(24,20,0,0.98);
+      color: #fef9c3;
+    }
+
+    .badge-blue {
+      border-color: rgba(59,130,246,0.9);
+      background: rgba(15,23,42,0.98);
+      color: #bfdbfe;
+    }
+
+    .badge-pink {
+      border-color: rgba(236,72,153,0.9);
+      background: rgba(35,20,33,0.98);
+      color: #fed7e2;
+    }
+
+    /* TWO COLUMN GRIDS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1.1fr);
+      gap: .95rem;
+    }
+
+    @media (max-width: 1000px) {
+      .hero {
+        grid-template-columns: minmax(0,1.2fr) minmax(0,1.05fr);
+        gap: 1.4rem;
+      }
+      .card-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+      .grid-2 {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .card-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    .footer-note {
+      margin-top: 1.3rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track { background:#020617; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148,163,184,0.8);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">They Krave For Me Records</div>
+    <div class="nav-tag">Label • Contracts • GOD VIEW</div>
+
+    <div class="nav-links">
+      <a href="label-home.html" class="nav-link nav-link-primary">Label Home</a>
+      <a href="index.html" class="nav-link nav-link-radio">TKFM Radio</a>
+      <a href="label-onboarding.html" class="nav-link">Onboarding</a>
+      <a href="label-contract-lab.html" class="nav-link">Contract Lab</a>
+      <a href="autopilot-engine.html" class="nav-link">Autopilot</a>
+      <a href="ai-dj-engine.html" class="nav-link">AI DJ</a>
+      <a href="app-hub.html" class="nav-link">App Hub</a>
+      <a href="owner-login.html" class="nav-link">Owner Login</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+
+    <div class="hero-inner">
+      <div class="hero-kicker">They Krave For Me Records</div>
+      <h1 class="hero-title">Where radio motion becomes paperwork.</h1>
+      <p class="hero-sub">
+        TKFM is the **neon radio side**. This is the **black &amp; gold label side** — where you
+        track heat, build offers, and turn the right artists into signed partners with **clean,
+        automated paperwork.**
+      </p>
+
+      <div class="hero-pills">
+        <div class="pill"><span></span> Radio metrics feed Autopilot &amp; A&amp;R</div>
+        <div class="pill"><span></span> Label Onboarding &amp; Contract Lab</div>
+        <div class="pill"><span></span> Owner-only AI DJ &amp; GOD VIEW</div>
+      </div>
+
+      <div class="hero-actions">
+        <a href="label-onboarding.html">
+          <button class="btn-main">Start Label Onboarding</button>
+        </a>
+        <a href="autopilot-engine.html">
+          <button class="btn-ghost">Open Autopilot Dashboard</button>
+        </a>
+        <p class="hero-note">
+          <strong>Rule:</strong> Radio side is public.  
+          Label side is where decisions, contracts and offers live.
+        </p>
+      </div>
+    </div>
+
+    <!-- HERO LABEL PANEL -->
+    <aside class="hero-panel">
+      <div class="hero-card">
+        <div class="hero-card-inner">
+          <div class="hero-card-header">
+            <div>
+              <div class="hero-card-label">Label Control Room</div>
+              <div class="hero-card-title">From signal to signature</div>
+              <div class="hero-card-sub">
+                One lane for deal flow: Onboarding → Contract draft → Final PDF / copy →
+                archive in your JSON engine.
+              </div>
+            </div>
+            <div class="hero-card-badge">GOD VIEW READY</div>
+          </div>
+
+          <div class="hero-card-list">
+            <strong>Core flow:</strong>
+            <ul>
+              <li>1. Label onboarding collects deal skeleton &amp; splits.</li>
+              <li>2. Contract Lab generates an editable agreement.</li>
+              <li>3. Autopilot and radio stats signal who deserves offers.</li>
+            </ul>
+          </div>
+
+          <div class="hero-card-footer">
+            <a href="label-onboarding.html"><button class="btn-chip">Onboard an Artist</button></a>
+            <a href="label-contract-lab.html"><button class="btn-chip-alt">Open Contract Lab</button></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- LABEL PIPELINE: ONBOARDING / CONTRACTS -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-kicker">Deal pipeline</div>
+      <h2 class="section-title">From intake to signed agreement</h2>
+      <p class="section-sub">
+        The label side is a **pipeline**, not chaos. You collect the right data once, let the
+        contract template do the heavy lifting, and keep everything stored through your **local JSON
+        engine + Netlify functions**.
+      </p>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Step 1 — Onboarding</div>
+            <div class="card-title">Label / Artist intake form</div>
+            <div class="card-body">
+              Use <strong>label-onboarding.html</strong> to capture:
+              label name, reps, artist names, project info, splits, territory, term &amp; advance.
+              This data is saved into localStorage for the next step.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Label &amp; artist details</span>
+              <span class="tag">Splits &amp; term</span>
+              <span class="tag">Territory &amp; advance</span>
+            </div>
+            <div class="card-footnote">
+              Route: <strong>label-onboarding.html</strong>  
+              Feeds into: <strong>label-contract-lab.html</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Step 2 — Contract Lab</div>
+            <div class="card-title">Auto-built contract draft</div>
+            <div class="card-body">
+              <strong>label-contract-lab.html</strong> loads your onboarding data and generates a
+              working contract draft you can fully edit before saving. When you click save, it hits
+              <strong>label-contract-save</strong> and stores into your <code>contracts</code> JSON store.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Editable template</span>
+              <span class="tag">Saved via Netlify function</span>
+              <span class="tag">JSON-backed archive</span>
+            </div>
+            <div class="card-footnote">
+              Routes:
+              <strong>label-contract-lab.html</strong> → <strong>/.netlify/functions/label-contract-save</strong>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div style="margin-top:.9rem;" class="grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Step 3 — Output</div>
+            <div class="card-title">Printable / copyable contract</div>
+            <div class="card-body">
+              <strong>label-contract-output.html</strong> pulls a contract by ID from your
+              <code>contracts</code> store via <strong>label-contract-get</strong>. You get a clean
+              page to print, export as PDF, or copy text into your e-signature platform.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Print-ready</span>
+              <span class="tag">Copy to clipboard</span>
+              <span class="tag">Lookup via ID</span>
+            </div>
+            <div class="card-footnote">
+              Route: <strong>label-contract-output.html?id=CONTRACT_ID</strong>  
+              Function: <strong>/.netlify/functions/label-contract-get</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Step 4 — Archive</div>
+            <div class="card-title">Local JSON deal library</div>
+            <div class="card-body">
+              Every contract you save becomes part of your **internal library**. Later we can add
+              filters, search, and summaries — but the foundation is already set with the
+              <code>contracts</code> store.
+            </div>
+            <div class="card-tags">
+              <span class="tag">JSON engine</span>
+              <span class="tag">Versionable</span>
+              <span class="tag">Search-ready</span>
+            </div>
+            <div class="card-footnote">
+              Stored in: <strong>contracts.json</strong> (via your Netlify JSON helper).
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTOPILOT + AI DJ -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-kicker">Brains of the operation</div>
+      <h2 class="section-title">Autopilot Monetization &amp; AI DJ</h2>
+      <p class="section-sub">
+        The label side is also where your <strong>money &amp; automation brain</strong> lives:
+        <strong>Autopilot Monetization</strong> reads station stats, and the **AI DJ Engine**
+        gives you owner-only control over how you automate and monetize TKFM.
+      </p>
+
+      <div class="card-grid">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Autopilot</div>
+            <div class="card-title">Monetization Engine Dashboard</div>
+            <div class="card-body">
+              <strong>autopilot-engine.html</strong> reads from your JSON stores (stats, sponsors,
+              mixtapes) via <strong>autopilot-stats</strong> and shows you:
+              elite packages sold, sponsor clicks, featured views and projected monthly / yearly revenue.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Elite packages</span>
+              <span class="tag">Sponsors &amp; clicks</span>
+              <span class="tag">Featured views</span>
+            </div>
+            <div class="card-footnote">
+              Route: <strong>autopilot-engine.html</strong> • Function: <strong>/.netlify/functions/autopilot-stats</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">AI DJ Engine</div>
+            <div class="card-title">Owner-only automation brain</div>
+            <div class="card-body">
+              <strong>ai-dj-engine.html</strong> is where you keep the secret sauce:
+              AI DJ logic, playlists, show templates and future automation. Access is controlled via
+              Supabase + local role checks so only **owner / elite** touch it.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Supabase-auth gated</span>
+              <span class="tag">Owner / elite roles</span>
+              <span class="tag">Expansion room</span>
+            </div>
+            <div class="card-footnote">
+              Route: <strong>ai-dj-engine.html</strong> • Guarded by <strong>ai-dj-access-gateway</strong>.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">GOD VIEW</div>
+            <div class="card-title">App Hub &amp; Owner Login</div>
+            <div class="card-body">
+              Use the <strong>App Hub</strong> and <strong>Owner Login</strong> pages as the
+              control panel entry. From there, you can branch to Autopilot, AI DJ, Label Onboarding,
+              Contract Lab and more — all hidden behind your Supabase roles.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Owner route</span>
+              <span class="tag">Supabase user roles</span>
+              <span class="tag">Central control</span>
+            </div>
+            <div class="card-footnote">
+              Routes: <strong>app-hub.html</strong> • <strong>owner-login.html</strong> (connect into your v2 auth flow).
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRIDGE BACK TO RADIO -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-kicker">Bridge</div>
+      <h2 class="section-title">Radio → Label feedback loop</h2>
+      <p class="section-sub">
+        TKFM Radio feeds this side with **real behavior**: who’s getting spins, clicks, features
+        and response. The label uses that to decide who gets interviews, promo packs and
+        contract offers through the tools above.
+      </p>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">From Neon to Black &amp; Gold</div>
+            <div class="card-title">Who graduates from radio</div>
+            <div class="card-body">
+              Keep the station fun and fast on the neon side. Then, when certain artists clearly
+              stand out, you move here — label home — and pull their name through Onboarding,
+              Contract Lab and Autopilot to decide how big their offer should be.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Signal → Offer</span>
+              <span class="tag">TKFM metrics</span>
+              <span class="tag">Label-ready</span>
+            </div>
+            <div class="card-footnote">
+              Radio home: <strong>index.html</strong> • Label home: <strong>label-home.html</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Back to station</div>
+            <div class="card-title">Signal boosts &amp; sponsor plays</div>
+            <div class="card-body">
+              Once a deal or partnership is live, you send the story back to TKFM Radio for
+              announcements, countdowns, sponsor reads and more — keeping the loop constant between
+              what the streets hear and what the paperwork says.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Announcement runs</span>
+              <span class="tag">Sponsor tie-ins</span>
+              <span class="tag">Looped ecosystem</span>
+            </div>
+            <div class="card-footnote">
+              Always one click away from TKFM: use the “TKFM Radio” nav pill to jump back.
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    Label side is for **decisions, deals and data**.  
+    Radio side is for **energy, exposure and discovery.** Both are TKFM — you just decide who
+    graduates to black &amp; gold.
+  </p>
+</main>
+
+</body>
+</html>

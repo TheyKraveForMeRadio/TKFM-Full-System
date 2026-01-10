@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM • Autopilot Pricing Engine</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.98);
+      --accent-orange: #fb923c;
+      --accent-pink: #ec4899;
+      --accent-cyan: #22d3ee;
+      --accent-purple: #6366f1;
+      --accent-gold: #facc15;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.22), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.2), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-orbit {
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.8);
+      inset: -150px auto auto -160px;
+      opacity: .7;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 130px rgba(250,204,21,1),
+        0 0 190px rgba(0,0,0,1);
+      animation: spin 32s linear infinite;
+      pointer-events: none;
+    }
+    .bg-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: inherit;
+      border: 1px solid rgba(96,165,250,0.9);
+      box-shadow:
+        0 0 80px rgba(96,165,250,1),
+        0 0 130px rgba(0,0,0,1);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.55) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 2.4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-bottom: 1.2rem;
+    }
+    .nav-pill {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fefce8;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.35), transparent 60%),
+        radial-gradient(circle at 100% 100%, #020617, #000000 65%);
+      box-shadow:
+        0 0 24px rgba(250,204,21,1),
+        0 0 40px rgba(0,0,0,1);
+    }
+    .nav-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-main {
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #fef9c3;
+    }
+    .nav-sub {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .nav-spacer {
+      margin-left: auto;
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+    }
+    .nav-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      padding: .22rem .7rem;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .shell {
+      border-radius: 28px;
+      border: 1px solid rgba(250,204,21,0.8);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.2), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 60%),
+        radial-gradient(circle at 50% 130%, rgba(15,23,42,0.98), #020617 70%);
+      padding: 1.5rem 1.4rem 1.7rem;
+      box-shadow:
+        0 0 80px rgba(15,23,42,1),
+        0 0 140px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.3rem;
+    }
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(251,113,133,0.2), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      opacity: .9;
+    }
+    .shell-inner { position: relative; z-index: 1; }
+
+    .kicker {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #fde68a;
+      margin-bottom: .4rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#fef3c7,#facc15,#fb923c,#22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 42px rgba(250,204,21,0.85),
+        0 0 70px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .7rem;
+      font-size: .9rem;
+      color: #e5e7eb;
+      max-width: 620px;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .6rem;
+      font-size: .72rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .22rem .7rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .pill span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(34,211,238,1);
+    }
+
+    .range-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .7rem;
+      font-size: .8rem;
+    }
+    @media (max-width: 520px) {
+      .range-grid { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .field {
+      border-radius: 16px;
+      border: 1px solid rgba(71,85,105,1);
+      background: rgba(15,23,42,0.98);
+      padding: .6rem .7rem;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: .3rem;
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .25rem;
+    }
+    .badge {
+      font-size: .68rem;
+      padding: .08rem .5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-gold);
+    }
+    .hint {
+      margin-top: .2rem;
+      font-size: .7rem;
+      color: var(--text-muted);
+    }
+    .hint strong { color: #e5e7eb; }
+
+    .money-row {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .6rem;
+      margin-top: .6rem;
+      font-size: .82rem;
+    }
+    @media (max-width: 640px) {
+      .money-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    .money-card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%),
+        rgba(15,23,42,0.98);
+      padding: .55rem .7rem;
+    }
+    .money-label {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+    .money-value {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .money-value span {
+      font-size: .8rem;
+      color: #9ca3af;
+      font-weight: 500;
+      margin-left: .25rem;
+    }
+
+    .summary-card {
+      margin-top: .6rem;
+      border-radius: 18px;
+      border: 1px dashed rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.9);
+      padding: .6rem .75rem;
+      font-size: .8rem;
+    }
+
+    .ai-note {
+      margin-top: .5rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+    }
+
+    .grid-bottom {
+      display: grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+      gap: .9rem;
+    }
+    @media (max-width: 860px) {
+      .grid-bottom { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 22px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: .9rem .95rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      font-size: .8rem;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.12), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .85;
+      pointer-events: none;
+    }
+    .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin: 0 0 .35rem;
+    }
+    .card-kicker {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .22rem;
+    }
+
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: .2rem 0 .7rem;
+      font-size: .78rem;
+    }
+    .list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      margin-top: .26rem;
+      flex-shrink: 0;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(34,211,238,1);
+    }
+    .dot-gold {
+      background: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(250,204,21,1);
+    }
+
+    .plan-text {
+      font-size: .78rem;
+      color: #e5e7eb;
+      white-space: pre-line;
+    }
+
+    .footer-note {
+      margin-top: .7rem;
+      font-size: .74rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orbit { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbit"></div>
+<div class="scanline"></div>
+
+<main>
+  <header class="nav-bar">
+    <div class="nav-pill">AP</div>
+    <div class="nav-text">
+      <div class="nav-main">Autopilot pricing</div>
+      <div class="nav-sub">TKFM Radio × They Krave For Me Records</div>
+    </div>
+    <div class="nav-spacer">
+      <div class="nav-chip">Owner / Label access</div>
+      <div class="nav-chip">AI core: heuristics</div>
+    </div>
+  </header>
+
+  <section class="shell">
+    <div class="shell-inner">
+      <div class="kicker">AI-guided pricing rails</div>
+      <h1>Let the system suggest the bag.</h1>
+      <p class="hero-sub">
+        Instead of guessing prices for features, label packs or DJ hosting,
+        you set the **floor / ceiling** and describe how ready the artist is.
+        The AI core suggests a safe lane so you don’t lowball yourself.
+      </p>
+
+      <div class="hero-grid">
+        <div>
+          <div class="pill-row">
+            <div class="pill"><span></span> Use for TKFM feature packs</div>
+            <div class="pill"><span></span> Use for label bundles &amp; deals</div>
+          </div>
+
+          <div class="range-grid" style="margin-top:.8rem;">
+            <div class="field">
+              <label for="floor">
+                Floor price
+                <span class="badge">$<span id="floor-value">100</span></span>
+              </label>
+              <input id="floor" type="range" min="25" max="1000" step="25" value="100" />
+              <p class="hint">
+                Lowest price you’d accept for this lane.  
+                <strong>AI will never go below this.</strong>
+              </p>
+            </div>
+
+            <div class="field">
+              <label for="ceiling">
+                Ceiling price
+                <span class="badge">$<span id="ceiling-value">500</span></span>
+              </label>
+              <input id="ceiling" type="range" min="150" max="3000" step="50" value="500" />
+              <p class="hint">
+                Maximum price you feel comfortable charging in this lane.
+              </p>
+            </div>
+          </div>
+
+          <div class="range-grid" style="margin-top:.7rem;">
+            <div class="field">
+              <label for="readiness">
+                Artist readiness
+                <span class="badge"><span id="readiness-value">60</span>/100</span>
+              </label>
+              <input id="readiness" type="range" min="0" max="100" step="5" value="60" />
+              <p class="hint">
+                Blended score from catalog, audio quality, consistency and socials.
+              </p>
+            </div>
+
+            <div class="field">
+              <label for="demand">
+                Lane demand
+                <span class="badge"><span id="demand-value">0.6</span></span>
+              </label>
+              <input id="demand" type="range" min="0" max="100" step="5" value="60" />
+              <p class="hint">
+                How hot this offer is right now (0 = cold, 1 = on fire).
+              </p>
+            </div>
+          </div>
+
+          <div class="money-row">
+            <div class="money-card">
+              <div class="money-label">Floor</div>
+              <div class="money-value">$<span id="out-floor">100</span><span>owner set</span></div>
+            </div>
+            <div class="money-card">
+              <div class="money-label">AI lane</div>
+              <div class="money-value">$<span id="out-min">0</span> – $<span id="out-max">0</span><span>suggested</span></div>
+            </div>
+            <div class="money-card">
+              <div class="money-label">Ceiling</div>
+              <div class="money-value">$<span id="out-ceiling">500</span><span>hard cap</span></div>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <strong>Summary:</strong>
+            <span id="summary-text">
+              Adjust the sliders to see a recommended range.
+            </span>
+          </div>
+
+          <p class="ai-note">
+            Note: this is **Phase 1** — pure JS heuristics from <code>ai-core.js</code>.  
+            Later you can hook this into real booking data, Stripe analytics and Supabase stats.
+          </p>
+        </div>
+
+        <aside class="card">
+          <div class="card-kicker">Preset ideas</div>
+          <h2 class="card-title">Quick lanes you can save</h2>
+
+          <ul class="list">
+            <li><span class="dot"></span><strong>TKFM Neon Starter Pack</strong> — light rotation + homepage card for early artists.</li>
+            <li><span class="dot-gold"></span><strong>Label Gold Tier</strong> — full label pack with TKFM support and social engine pushes.</li>
+            <li><span class="dot"></span><strong>DJ Hosting Bundle</strong> — mix hosting + schedule-promoted slot on TKFM.</li>
+          </ul>
+
+          <p class="plan-text" id="plan-text">
+Use this lane to calibrate pricing before you mint or adjust Stripe products.
+Keep a note of the range you like, then lock it in manually on Stripe for now.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-bottom">
+    <article class="card">
+      <div class="card-kicker">How to use this in real life</div>
+      <h2 class="card-title">Turn the range into real offers</h2>
+      <ul class="list">
+        <li><span class="dot"></span> Pick a lane (Starter feature, Heavy rotation, Label pack, DJ hosting, etc).</li>
+        <li><span class="dot"></span> Set a <strong>floor</strong> that respects your time and platform.</li>
+        <li><span class="dot-gold"></span> Let the AI suggest a range, then pick a clean number inside it (e.g. $349).</li>
+        <li><span class="dot"></span> Create or update your Stripe products with those prices using your lookup keys.</li>
+      </ul>
+      <p class="plan-text">
+Later, this page can push changes directly into Stripe or log decisions into Supabase.
+For now, treat it like a **smart calculator** that keeps you from undercharging.
+      </p>
+    </article>
+
+    <article class="card">
+      <div class="card-kicker">Access control</div>
+      <h2 class="card-title">Who should see this?</h2>
+      <ul class="list">
+        <li><span class="dot-gold"></span> <strong>Owner</strong> — always.</li>
+        <li><span class="dot"></span> <strong>Label staff</strong> — if you trust them to quote deals.</li>
+        <li><span class="dot"></span> **Not** regular artists or DJs — they only see the prices, not the rails.</li>
+      </ul>
+      <p class="plan-text">
+This page is protected by <code>auth-gateway.js</code> so only
+<code>owner</code> and <code>label</code> roles can open it when everything is wired up.
+      </p>
+    </article>
+  </section>
+
+  <p class="footer-note">
+    Autopilot Pricing Engine • Runs on TKFM AI core. Use it to protect your value.
+  </p>
+</main>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+  import { protectPage } from "./auth-gateway.js";
+  import { suggestPriceRange } from "./ai-core.js";
+
+  // 1) Only owner + label can use this page
+  protectPage(["owner", "label"]);
+
+  const floorEl = document.getElementById("floor");
+  const ceilingEl = document.getElementById("ceiling");
+  const readinessEl = document.getElementById("readiness");
+  const demandEl = document.getElementById("demand");
+
+  const floorValueEl = document.getElementById("floor-value");
+  const ceilingValueEl = document.getElementById("ceiling-value");
+  const readinessValueEl = document.getElementById("readiness-value");
+  const demandValueEl = document.getElementById("demand-value");
+
+  const outFloor = document.getElementById("out-floor");
+  const outCeiling = document.getElementById("out-ceiling");
+  const outMin = document.getElementById("out-min");
+  const outMax = document.getElementById("out-max");
+  const summaryText = document.getElementById("summary-text");
+
+  function updateUI() {
+    const floor = Number(floorEl.value);
+    const ceiling = Number(ceilingEl.value);
+    const readiness = Number(readinessEl.value);
+    const demandSlider = Number(demandEl.value);
+    const demand = demandSlider / 100;
+
+    // Keep floor below ceiling
+    if (floor >= ceiling) {
+      if (document.activeElement === floorEl) {
+        ceilingEl.value = floor + 50;
+      } else {
+        floorEl.value = ceiling - 50;
+      }
+    }
+
+    const safeFloor = Number(floorEl.value);
+    const safeCeiling = Number(ceilingEl.value);
+
+    floorValueEl.textContent = safeFloor;
+    ceilingValueEl.textContent = safeCeiling;
+    readinessValueEl.textContent = readiness;
+    demandValueEl.textContent = demand.toFixed(2);
+
+    const range = suggestPriceRange({
+      floor: safeFloor,
+      ceiling: safeCeiling,
+      readiness,
+      demand
+    });
+
+    outFloor.textContent = range.floor;
+    outCeiling.textContent = range.ceiling;
+    outMin.textContent = range.suggestedMin;
+    outMax.textContent = range.suggestedMax;
+
+    let laneText = "starter lane";
+
+    if (readiness >= 80 && demand >= 0.7) {
+      laneText = "premium / heavy rotation lane";
+    } else if (readiness >= 60 && demand >= 0.5) {
+      laneText = "standard feature lane";
+    } else if (readiness <= 40) {
+      laneText = "development lane";
+    }
+
+    summaryText.textContent =
+      `For this ${laneText}, your safe range is about $${range.suggestedMin}–$${range.suggestedMax} ` +
+      `with a midpoint near $${range.mid}. Floor is locked at $${range.floor} and ceiling at $${range.ceiling}.`;
+  }
+
+  floorEl.addEventListener("input", updateUI);
+  ceilingEl.addEventListener("input", updateUI);
+  readinessEl.addEventListener("input", updateUI);
+  demandEl.addEventListener("input", updateUI);
+
+  updateUI();
+</script>
+</body>
+</html>

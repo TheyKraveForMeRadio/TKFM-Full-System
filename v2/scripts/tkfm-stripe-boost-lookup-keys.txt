@@ -1,0 +1,91 @@
+TKFM STRIPE SETUP — ROTATION BOOST (Radio‑TV Featured)
+Date: 2026-01-04
+
+YOU WILL CREATE 1 PRODUCT + 2 ONE‑TIME PRICES (with LOOKUP KEYS)
+
+========================
+PRODUCT (Stripe Dashboard)
+========================
+Product name:
+TKFM Rotation Boost — Radio‑TV Featured
+
+Statement descriptor (optional):
+TKFM BOOST
+
+Description (paste):
+Priority placement on the Radio‑TV Featured rail. Your drop gets seen first. Auto‑submit opens right after checkout.
+
+Metadata (optional but recommended):
+feature_lane = radio_tv_featured
+tkfm_product = rotation_boost
+
+========================
+PRICE 1 (ONE‑TIME)
+========================
+Nickname:
+BOOST — 7 DAYS
+
+Amount:
+$99.00 USD
+
+Billing:
+One‑time
+
+LOOKUP KEY (IMPORTANT):
+rotation_boost_7d
+
+Metadata (optional but recommended):
+duration_days = 7
+tier = boost_7d
+lane = radio_tv_featured
+
+Copy for page:
+• 7‑day priority placement on Radio‑TV Featured rail
+• Perfect for single drops + new videos
+• Submit immediately after checkout
+
+========================
+PRICE 2 (ONE‑TIME)
+========================
+Nickname:
+BOOST — 30 DAYS
+
+Amount:
+$299.00 USD
+
+Billing:
+One‑time
+
+LOOKUP KEY (IMPORTANT):
+rotation_boost_30d
+
+Metadata (optional but recommended):
+duration_days = 30
+tier = boost_30d
+lane = radio_tv_featured
+
+Copy for page:
+• 30‑day priority placement
+• For campaigns + project rollouts
+• Submit immediately after checkout
+
+========================
+WHAT TO PASTE INTO NETLIFY ENV (after you create prices)
+========================
+Set these to the Stripe PRICE IDs you create:
+
+STRIPE_PRICE_ROTATION_BOOST_7D=price_XXXXXXXXXXXX
+STRIPE_PRICE_ROTATION_BOOST_30D=price_XXXXXXXXXXXX
+
+(If your code is lookup‑key based already, you still want these as a safe fallback.)
+
+========================
+QUICK VERIFY (after prices exist)
+========================
+1) Confirm buttons are using:
+data-plan="rotation_boost_7d"  and  data-plan="rotation_boost_30d"
+(or your existing ids, but lookup keys must match the plan id mapping)
+
+2) Run your owner verifier page (if installed) and confirm:
+- it finds rotation_boost_7d / rotation_boost_30d
+- checkout redirects to Stripe successfully

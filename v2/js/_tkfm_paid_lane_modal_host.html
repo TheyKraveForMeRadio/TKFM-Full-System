@@ -1,0 +1,57 @@
+<div id="tkfmPaidLaneModal" data-open="0" aria-hidden="true">
+  <div id="tkfmPaidLaneModalOverlay" aria-hidden="true"></div>
+
+  <div id="tkfmPaidLaneModalCard" role="dialog" aria-modal="true" aria-labelledby="tkfmPaidLaneTitle">
+    <div id="tkfmPaidLaneModalTop">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div id="tkfmPaidLaneBadge">TKFM</div>
+        <div>
+          <div id="tkfmPaidLaneTitle" style="font-weight:900; letter-spacing:.04em;">Paid Lane Submission</div>
+          <div style="font-size:12px; opacity:.82;">Submit instantly after purchase — feeds Featured + Autopilot.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div id="tkfmPaidLanePlanPill">Paid Lane</div>
+        <button id="tkfmPaidLaneClose" class="tkfmBtn" type="button" aria-label="Close">Close</button>
+      </div>
+    </div>
+
+    <div id="tkfmPaidLaneBody">
+      <h3>Lane: <span id="tkfmPaidLaneLane">Paid Lane</span></h3>
+      <p>Send clean, public links and a contact we can reach. This goes straight into the TKFM review queue.</p>
+
+      <form id="tkfmPaidLaneForm">
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_title">Title</label>
+          <input id="tkfmPaidLane_title" type="text" placeholder="Project / Track / Campaign title" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_link">Link</label>
+          <input id="tkfmPaidLane_link" type="url" placeholder="https:// (YouTube, SoundCloud, Drive, Dropbox, Press link…)" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_contact">Contact</label>
+          <input id="tkfmPaidLane_contact" type="text" placeholder="Email / IG / Phone (so we can follow up)" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_notes">Notes</label>
+          <textarea id="tkfmPaidLane_notes" rows="4" placeholder="Any details you want TKFM to follow…"></textarea>
+        </div>
+
+        <div id="tkfmPaidLane_next">
+          Next step: <a id="tkfmPaidLane_next_link" href="/engines.html">Go to your lane</a>
+        </div>
+
+        <div id="tkfmPaidLane_status">Submit your details — this feeds Featured + Autopilot.</div>
+
+        <div id="tkfmPaidLaneActions">
+          <button class="tkfmBtn tkfmBtnGold" type="submit">Submit Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

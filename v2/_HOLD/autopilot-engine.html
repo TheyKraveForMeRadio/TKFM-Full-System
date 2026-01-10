@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TKFM — Autopilot Monetization Engine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #3b0764 0, #020617 40%, #000 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+    .neon-ring {
+      box-shadow:
+        0 0 35px rgba(236, 72, 153, 0.6),
+        0 0 80px rgba(147, 51, 234, 0.7);
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 flex flex-col min-h-screen">
+
+  <!-- HEADER -->
+  <header class="border-b border-purple-500/40 backdrop-blur bg-black/40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-full border border-fuchsia-400/60 neon-ring flex items-center justify-center">
+          <span class="text-xs font-semibold tracking-[0.18em]">TKFM</span>
+        </div>
+        <div>
+          <div class="text-xs uppercase tracking-[0.22em] text-fuchsia-300/80">
+            They Krave For Me Radio
+          </div>
+          <div class="text-sm text-slate-300">
+            Autopilot Monetization Engine
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 text-xs">
+        <span class="px-2 py-1 rounded-full border border-emerald-400/60 text-emerald-300/90">
+          REVENUE AUTOPILOT
+        </span>
+        <span
+          id="role-badge"
+          class="px-2 py-1 rounded-full border border-purple-400/50 text-purple-200/90 uppercase tracking-[0.18em]"
+        >
+          ROLE
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+
+      <!-- ERROR -->
+      <div
+        id="autopilot-error"
+        class="mb-4 hidden text-xs px-3 py-2 rounded-lg border border-red-500/70 bg-red-500/10 text-red-100"
+      >
+        ❌ Unable to load live monetization stats. Check Netlify functions & JSON stores.
+      </div>
+
+      <!-- SUMMARY + PROJECTION -->
+      <div class="grid gap-6 lg:grid-cols-[1.4fr,1.1fr]">
+        
+        <!-- SUMMARY -->
+        <section class="bg-slate-900/60 border border-fuchsia-500/40 rounded-2xl p-6 relative">
+          <h1 class="text-xl font-semibold mb-4">Live Monetization Summary</h1>
+
+          <div class="grid gap-4 md:grid-cols-3 text-xs">
+            <!-- Elite Packages -->
+            <div class="bg-black/40 border border-fuchsia-500/40 rounded-xl p-4">
+              <div class="uppercase text-[10px] tracking-[0.16em] text-fuchsia-300 mb-1">Elite Packages</div>
+              <div class="text-slate-400 text-[11px] mb-2">Artist & DJ elite slots</div>
+              <div class="flex justify-between">
+                <div>
+                  <div class="text-[11px] text-slate-400">Sold</div>
+                  <div id="eliteSold" class="text-2xl font-bold">--</div>
+                </div>
+                <div class="text-right">
+                  <div id="elitePrice" class="text-sm text-fuchsia-200">$--</div>
+                  <div class="text-[11px] text-slate-500">
+                    Gross: <span id="eliteRevenue">$0.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sponsors -->
+            <div class="bg-black/40 border border-purple-500/40 rounded-xl p-4">
+              <div class="uppercase text-[10px] tracking-[0.16em] text-purple-300 mb-1">Sponsors</div>
+              <div class="text-slate-400 text-[11px] mb-2">Rotations + clicks</div>
+              <div class="flex justify-between">
+                <div>
+                  <div id="sponsorCount" class="text-2xl font-bold">--</div>
+                  <div class="text-[11px] text-slate-400">Active</div>
+                </div>
+                <div class="text-right">
+                  <div id="sponsorClicks" class="text-sm text-purple-200">--</div>
+                  <div class="text-[11px] text-slate-500">
+                    Est: <span id="sponsorRevenue">$0.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Spins -->
+            <div class="bg-black/40 border border-emerald-500/40 rounded-xl p-4">
+              <div class="uppercase text-[10px] tracking-[0.16em] text-emerald-300 mb-1">Featured Spins</div>
+              <div class="text-slate-400 text-[11px] mb-2">Spotlights / mixtape features</div>
+              <div class="flex justify-between">
+                <div>
+                  <div id="featuredViews" class="text-2xl font-bold">--</div>
+                  <div class="text-[11px] text-slate-400">Views</div>
+                </div>
+                <div class="text-right">
+                  <div id="featureRevenue" class="text-sm text-emerald-200">$0.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROJECTION -->
+        <section class="bg-slate-900/60 border border-fuchsia-500/40 rounded-2xl p-6">
+          <h2 class="text-xs uppercase tracking-[0.18em] text-fuchsia-200 mb-3">
+            Revenue Projection
+          </h2>
+
+          <div class="space-y-6">
+            <div>
+              <div class="text-[11px] text-slate-400 uppercase">Projected / Month</div>
+              <div id="projectedMonthly" class="text-3xl font-semibold mt-1">$0.00</div>
+            </div>
+
+            <div>
+              <div class="text-[11px] text-slate-400 uppercase">Projected / Year</div>
+              <div id="projectedYearly" class="text-2xl font-semibold mt-1">$0.00</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <section class="grid gap-4 md:grid-cols-3 text-xs">
+        <a href="pricing.html"
+          class="rounded-xl border border-fuchsia-500/60 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 p-4 transition">
+          <div class="uppercase tracking-[0.16em] text-fuchsia-200 mb-1">Pricing Matrix</div>
+          <div class="text-slate-300">Adjust artist / DJ / label plans</div>
+        </a>
+
+        <a href="feature-engine.html"
+          class="rounded-xl border border-purple-500/60 bg-purple-500/10 hover:bg-purple-500/20 p-4 transition">
+          <div class="uppercase tracking-[0.16em] text-purple-200 mb-1">Feature Engine</div>
+          <div class="text-slate-300">Spotlights → value → $$$</div>
+        </a>
+
+        <a href="sponsors.html"
+          class="rounded-xl border border-emerald-500/60 bg-emerald-500/10 hover:bg-emerald-500/20 p-4 transition">
+          <div class="uppercase tracking-[0.16em] text-emerald-200 mb-1">Sponsor Room</div>
+          <div class="text-slate-300">Add/update sponsor rotations</div>
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- SIMPLE INLINE JS (NO IMPORTS, NO mountShell) -->
+  <script>
+    function setText(id, value) {
+      const el = document.getElementById(id)
+      if (!el) return
+      el.textContent = value
+    }
+
+    async function initAutopilotDashboard() {
+      try {
+        const res = await fetch('/.netlify/functions/autopilot-stats')
+        if (!res.ok) throw new Error('Failed to load autopilot stats')
+
+        const data = await res.json()
+
+        setText('eliteSold', data.eliteSold ?? '0')
+        setText('elitePrice', data.elitePrice != null ? '$' + data.elitePrice : '$0')
+        setText(
+          'eliteRevenue',
+          data.eliteRevenue != null ? '$' + data.eliteRevenue.toFixed(2) : '$0.00'
+        )
+
+        setText('sponsorCount', data.sponsorsCount ?? '0')
+        setText('sponsorClicks', data.sponsorClicks ?? '0')
+        setText(
+          'sponsorRevenue',
+          data.sponsorRevenue != null ? '$' + data.sponsorRevenue.toFixed(2) : '$0.00'
+        )
+
+        setText('featuredViews', data.featuredViews ?? '0')
+        setText(
+          'featureRevenue',
+          data.featureRevenue != null ? '$' + data.featureRevenue.toFixed(2) : '$0.00'
+        )
+
+        setText(
+          'projectedMonthly',
+          data.projectedMonthly != null ? '$' + data.projectedMonthly.toFixed(2) : '$0.00'
+        )
+        setText(
+          'projectedYearly',
+          data.projectedYearly != null ? '$' + data.projectedYearly.toFixed(2) : '$0.00'
+        )
+      } catch (err) {
+        console.error('initAutopilotDashboard error:', err)
+        const warning = document.getElementById('autopilot-error')
+        if (warning) warning.classList.remove('hidden')
+      }
+    }
+
+    initAutopilotDashboard()
+  </script>
+</body>
+</html>

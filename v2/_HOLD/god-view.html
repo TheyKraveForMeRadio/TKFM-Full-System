@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM • GOD VIEW</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.98);
+      --accent-orange: #fb923c;
+      --accent-pink: #ec4899;
+      --accent-cyan: #22d3ee;
+      --accent-purple: #6366f1;
+      --accent-gold: #facc15;
+      --accent-gold-deep: #b45309;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.25), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.2), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.5rem .9rem 2.4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bg-orbit {
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.8);
+      inset: -140px -160px auto auto;
+      opacity: .75;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 130px rgba(250,204,21,1),
+        0 0 190px rgba(0,0,0,1);
+      animation: spin 30s linear infinite;
+      pointer-events: none;
+    }
+    .bg-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: inherit;
+      border: 1px solid rgba(96,165,250,0.9);
+      box-shadow:
+        0 0 80px rgba(96,165,250,1),
+        0 0 130px rgba(0,0,0,1);
+    }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.55) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(22px);
+      background: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0.98),
+        rgba(15,23,42,0.8),
+        transparent
+      );
+      border-bottom: 1px solid rgba(250,204,21,0.6);
+      margin: 0 -0.9rem 1.3rem;
+      padding: .5rem .9rem .6rem;
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .nav-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fefce8;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.38), transparent 60%),
+        radial-gradient(circle at 100% 100%, #020617, #000000 65%);
+      box-shadow:
+        0 0 24px rgba(250,204,21,1),
+        0 0 40px rgba(0,0,0,1);
+    }
+    .nav-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-main {
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: #fef9c3;
+    }
+    .nav-sub {
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .75rem;
+    }
+    .nav-link {
+      padding: .25rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+      background: transparent;
+      color: #e5e7eb;
+      transition:
+        background .16s,
+        border-color .16s,
+        transform .16s,
+        box-shadow .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.98);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+    }
+    .nav-link--primary {
+      border-color: rgba(250,204,21,1);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.24), transparent 60%);
+      box-shadow:
+        0 0 24px rgba(250,204,21,1),
+        0 0 36px rgba(0,0,0,1);
+      color: #0f172a;
+    }
+
+    .hero {
+      border-radius: 30px;
+      border: 1px solid rgba(250,204,21,0.75);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.22), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.18), transparent 60%),
+        radial-gradient(circle at 50% 120%, rgba(15,23,42,0.98), #020617 70%);
+      padding: 1.8rem 1.5rem 1.9rem;
+      margin-bottom: 1.8rem;
+      box-shadow:
+        0 0 80px rgba(15,23,42,1),
+        0 0 140px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(251,113,133,0.2), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.18), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.4fr 1.1fr;
+      gap: 1.2rem;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+    }
+
+    .hero-kicker {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #fde68a;
+      margin-bottom: .4rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#fef3c7,#facc15,#fb923c,#22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 46px rgba(250,204,21,0.9),
+        0 0 70px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .9rem;
+      font-size: .95rem;
+      color: #e5e7eb;
+      max-width: 580px;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-pills {
+      margin-top: .9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .75rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .28rem .9rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .32rem;
+    }
+    .pill span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 18px rgba(250,204,21,1);
+    }
+    .pill--neon span {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 18px rgba(34,211,238,1);
+    }
+
+    .hero-note {
+      margin-top: .85rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 420px;
+    }
+
+    .hero-card {
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.18), transparent 60%),
+        rgba(15,23,42,0.98);
+      padding: 1rem 1rem 1.2rem;
+      box-shadow: 0 0 44px rgba(0,0,0,1);
+      font-size: .8rem;
+    }
+    .hero-card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .35rem;
+      display: flex;
+      justify-content: space-between;
+      gap: .5rem;
+      align-items: center;
+    }
+    .owner-chip {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      padding: .22rem .7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.9);
+      background: rgba(15,23,42,0.98);
+      color: #fef9c3;
+      box-shadow:
+        0 0 16px rgba(250,204,21,1),
+        0 0 26px rgba(0,0,0,1);
+    }
+    .hero-card-sub {
+      color: var(--text-muted);
+      margin-bottom: .6rem;
+    }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .5rem;
+      margin-bottom: .75rem;
+    }
+    @media (max-width: 520px) {
+      .mini-grid { grid-template-columns: minmax(0,1fr); }
+    }
+    .mini-card {
+      border-radius: 14px;
+      border: 1px solid rgba(75,85,99,1);
+      background: rgba(15,23,42,0.98);
+      padding: .5rem .6rem;
+    }
+    .mini-label {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .18rem;
+    }
+    .mini-value {
+      font-size: .82rem;
+      color: #e5e7eb;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .2rem;
+    }
+    .btn-main {
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      padding: .5rem 1.2rem;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #020617;
+      background: linear-gradient(120deg,#f97316,#ec4899,#6366f1);
+      box-shadow:
+        0 0 24px rgba(236,72,153,1),
+        0 0 36px rgba(0,0,0,1);
+    }
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .46rem 1rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      cursor: pointer;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1.15fr 1.05fr 1.05fr;
+      gap: .9rem;
+      margin-bottom: 1.3rem;
+    }
+    @media (max-width: 1024px) {
+      .grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width: 720px) {
+      .grid-3 { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 20px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: .9rem .95rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      transition:
+        transform .18s,
+        box-shadow .18s,
+        border-color .18s,
+        background .18s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .85;
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(250,204,21,0.9);
+      background: #020617;
+      box-shadow:
+        0 0 34px rgba(250,204,21,0.85),
+        0 0 48px rgba(0,0,0,1);
+    }
+
+    .card-kicker {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .22rem;
+    }
+    .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .4rem;
+    }
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .85rem;
+      margin-bottom: .4rem;
+    }
+    .stat-pill {
+      border-radius: 999px;
+      padding: .18rem .65rem;
+      border: 1px solid rgba(75,85,99,1);
+      background: rgba(15,23,42,0.98);
+      font-size: .75rem;
+    }
+
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: .2rem 0 .7rem;
+      font-size: .78rem;
+    }
+    .list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      margin-top: .25rem;
+      flex-shrink: 0;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(34,211,238,1);
+    }
+    .dot-gold {
+      background: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(250,204,21,1);
+    }
+    .dot-pink {
+      background: var(--accent-pink);
+      box-shadow: 0 0 12px rgba(236,72,153,1);
+    }
+    .dot-purple {
+      background: var(--accent-purple);
+      box-shadow: 0 0 12px rgba(99,102,241,1);
+    }
+
+    .link-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      font-size: .72rem;
+    }
+    .link-chip {
+      border-radius: 999px;
+      padding: .2rem .7rem;
+      border: 1px solid rgba(55,65,81,1);
+      background: rgba(15,23,42,0.98);
+      cursor: pointer;
+    }
+    .link-chip a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .footer-note {
+      margin-top: .6rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orbit { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbit"></div>
+<div class="scanline"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">
+      <div class="nav-mark">GV</div>
+      <div class="nav-text">
+        <div class="nav-main">GOD VIEW</div>
+        <div class="nav-sub">TKFM Radio × They Krave For Me Records</div>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <button class="nav-link" onclick="window.location.href='dashboard.html'">Artist Hub</button>
+      <button class="nav-link" onclick="window.location.href='dj-portal.html'">DJ Hub</button>
+      <button class="nav-link" onclick="window.location.href='label-home.html'">Label Home</button>
+      <button class="nav-link" onclick="window.location.href='app-hub.html'">App Hub</button>
+      <button class="nav-link nav-link--primary" id="logout-btn">Sign out</button>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">Owner access only</div>
+        <h1>All signals. One desk.</h1>
+        <p class="hero-sub">
+          This is your **GOD VIEW** — a single panel that sees across
+          <strong>TKFM Radio</strong>, <strong>They Krave For Me Records</strong>,
+          AI engines, autopilot pricing, sponsors, and label packs.  
+          Only you and trusted owners should ever land here.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Role required: <strong>owner</strong></div>
+          <div class="pill pill--neon"><span></span> Radio side: neon TKFM systems</div>
+          <div class="pill"><span></span> Label side: black &amp; gold record label brain</div>
+        </div>
+
+        <p class="hero-note" id="owner-line">
+          Authenticating owner…
+        </p>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-title">
+          Live control shortcuts
+          <span class="owner-chip">Owner verified</span>
+        </div>
+        <p class="hero-card-sub">
+          Quick links into the deepest parts of the system.  
+          AI engines and autopilot pricing will eventually respond to this panel first.
+        </p>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <div class="mini-label">AI control</div>
+            <div class="mini-value">
+              Tune AI rules: pricing rails, sponsor scoring, pack suggestions.  
+              <br /><strong>ai-control-room.html</strong>
+            </div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">Contract brain</div>
+            <div class="mini-value">
+              See label-side contracts &amp; AI drafts.  
+              <br /><strong>label-contract-generator.html</strong>
+            </div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">Monetization</div>
+            <div class="mini-value">
+              TKFM &amp; label revenue engines, autopilot pricing &amp; features.
+            </div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">Spotlight &amp; packs</div>
+            <div class="mini-value">
+              Artist packs, DJ hosting, sponsor flights, AI slot suggestions.
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn-main" type="button" onclick="window.location.href='ai-control-room.html'">
+            Open AI control room
+          </button>
+          <button class="btn-ghost" type="button" onclick="window.location.href='label-home.html'">
+            Go to label HQ
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="grid-3">
+    <!-- RADIO / TKFM BLOCK -->
+    <article class="card">
+      <div class="card-kicker">TKFM radio</div>
+      <h2 class="card-title">Neon engines</h2>
+      <div class="stat-row">
+        <span class="stat-pill">AI DJ engine (owner-only)</span>
+        <span class="stat-pill">Feature leaderboard</span>
+      </div>
+      <ul class="list">
+        <li><span class="dot"></span> Control AI DJ experiments via <strong>ai-dj-console.html</strong> and <strong>ai-dj-engine.html</strong>.</li>
+        <li><span class="dot-gold"></span> Watch the **feature leaderboards** to see what’s moving.</li>
+        <li><span class="dot-purple"></span> Use <strong>autopilot-engine.html</strong> to draft bundles using AI core logic.</li>
+      </ul>
+      <div class="link-row">
+        <span class="link-chip"><a href="ai-dj-console.html">AI DJ console</a></span>
+        <span class="link-chip"><a href="feature-leaderboards.html">Feature leaderboards</a></span>
+        <span class="link-chip"><a href="autopilot-engine.html">Autopilot engine</a></span>
+      </div>
+    </article>
+
+    <!-- LABEL BLOCK -->
+    <article class="card">
+      <div class="card-kicker">They Krave For Me Records</div>
+      <h2 class="card-title">Label black &amp; gold</h2>
+      <div class="stat-row">
+        <span class="stat-pill">AI pack builder</span>
+        <span class="stat-pill">Label sponsor engine</span>
+      </div>
+      <ul class="list">
+        <li><span class="dot-gold"></span> Design and refine packs in <strong>label-pack-builder.html</strong>.</li>
+        <li><span class="dot"></span> Track flows &amp; splits via <strong>label-revenue-engine.html</strong>.</li>
+        <li><span class="dot-pink"></span> Hunt new money with <strong>label-sponsor-engine.html</strong> and A&amp;R radar.</li>
+      </ul>
+      <div class="link-row">
+        <span class="link-chip"><a href="label-home.html">Label home</a></span>
+        <span class="link-chip"><a href="label-pack-builder.html">Pack builder</a></span>
+        <span class="link-chip"><a href="label-sponsor-engine.html">Label sponsors</a></span>
+      </div>
+    </article>
+
+    <!-- AI + AUTOPILOT BLOCK -->
+    <article class="card">
+      <div class="card-kicker">AI &amp; autopilot</div>
+      <h2 class="card-title">Brains &amp; rails</h2>
+      <div class="stat-row">
+        <span class="stat-pill">AI core brain</span>
+        <span class="stat-pill">Autopilot pricing</span>
+      </div>
+      <ul class="list">
+        <li><span class="dot-purple"></span> Core heuristics live in <strong>ai-core.js</strong> (readiness, pricing, sponsors).</li>
+        <li><span class="dot"></span> UI for pricing at <strong>autopilot-pricing.html</strong>.</li>
+        <li><span class="dot-gold"></span> Owner controls “floor / ceiling” rails via God View notes &amp; future JS.</li>
+      </ul>
+      <div class="link-row">
+        <span class="link-chip"><a href="autopilot-pricing.html">Autopilot pricing</a></span>
+        <span class="link-chip"><a href="autopilot-sponsors.html">Autopilot sponsors</a></span>
+        <span class="link-chip"><a href="ai-onboarding.html">AI onboarding</a></span>
+      </div>
+    </article>
+  </section>
+
+  <p class="footer-note">
+    GOD VIEW • Owner-only control for TKFM Radio &amp; They Krave For Me Records.  
+    If you’re seeing this and you’re not the owner, something is misconfigured — lock it down.
+  </p>
+</main>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+  import { protectPage, logoutAndReturnToLogin } from "./auth-gateway.js";
+
+  // 1) Protect: owner only
+  protectPage(["owner"]);
+
+  // 2) Personalize the owner line
+  const ownerLine = document.getElementById("owner-line");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  async function initOwner() {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data?.user) return;
+
+    const email = data.user.email || "owner";
+    const role = data.user.user_metadata?.tkfm_role || "owner";
+
+    ownerLine.textContent = `Signed in as ${email} • role: ${role.toUpperCase()} • GOD VIEW unlocked.`;
+  }
+
+  initOwner();
+
+  logoutBtn.addEventListener("click", async () => {
+    await logoutAndReturnToLogin();
+  });
+</script>
+</body>
+</html>

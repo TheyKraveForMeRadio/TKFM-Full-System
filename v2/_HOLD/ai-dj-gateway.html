@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AI DJ Access Gateway — TKFM</title>
+
+  <link rel="stylesheet" href="/v2/label-theme.css">
+
+  <style>
+    :root{
+      --bg:#020617;
+      --panel:rgba(15,23,42,.96);
+      --border:rgba(56,189,248,.7);
+      --accent:#22d3ee;
+      --pink:#ec4899;
+      --lime:#a3e635;
+    }
+    body{
+      background:
+        radial-gradient(circle at 50% -20%,#1e293b,#020617 60%);
+      color:#e5e7eb;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    main{
+      max-width:1180px;
+      margin:0 auto;
+      padding:1.6rem .9rem 2.8rem;
+    }
+    .hero{
+      position:relative;
+      border-radius:26px;
+      padding:1.6rem 1.4rem 1.7rem;
+      overflow:hidden;
+      border:1px solid rgba(56,189,248,.7);
+      background:radial-gradient(circle at 0 0,#22d3ee33,#020617),
+                 radial-gradient(circle at 100% 0,#ec489933,transparent 55%);
+      box-shadow:
+        0 0 40px rgba(8,47,73,.9),
+        0 0 80px rgba(236,72,153,.45);
+    }
+    .hero-glow{
+      position:absolute;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(34,211,238,.3),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,.35),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.8;
+      pointer-events:none;
+    }
+    .hero-inner{position:relative;z-index:1;}
+    h1{
+      font-size:2.4rem;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#e5e7eb;
+      text-shadow:
+        0 0 18px rgba(34,211,238,.8),
+        0 0 30px rgba(236,72,153,.7);
+    }
+    .hero-sub{
+      margin-top:.4rem;
+      color:#cbd5f5;
+      max-width:720px;
+      font-size:.94rem;
+    }
+    .hero-band{
+      margin-top:.7rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      font-size:.78rem;
+      color:#e5e7eb;
+    }
+    .hero-chip{
+      border-radius:999px;
+      padding:.25rem .65rem;
+      border:1px solid rgba(191,219,254,.8);
+      background:rgba(15,23,42,.95);
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .hero-chip span{
+      display:inline-block;
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 10px var(--accent);
+    }
+    .hero-cta{
+      margin-top:1rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.6rem;
+      align-items:center;
+    }
+    .btn-main{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      border-radius:999px;
+      padding:.6rem 1.1rem;
+      border:none;
+      cursor:pointer;
+      font-size:.85rem;
+      font-weight:700;
+      background:linear-gradient(135deg,#22d3ee,#ec4899);
+      color:#0b1120;
+      box-shadow:0 0 28px rgba(236,72,153,.85);
+      transition:.18s;
+    }
+    .btn-main:hover{transform:scale(1.03);}
+    .btn-ghost{
+      font-size:.8rem;
+      color:#e5e7eb;
+      opacity:.8;
+    }
+    .status-pill{
+      margin-left:auto;
+      font-size:.78rem;
+      padding:.25rem .65rem;
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.7);
+      background:rgba(15,23,42,.9);
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+    }
+    .status-pill-dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 10px #22c55e;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:2fr 1.4fr;
+      gap:1.3rem;
+      margin-top:1.6rem;
+    }
+    @media (max-width:900px){
+      .layout{grid-template-columns:1fr;}
+      .status-pill{margin-left:0;}
+    }
+
+    .panel{
+      background:var(--panel);
+      border-radius:20px;
+      border:1px solid var(--border);
+      padding:1.2rem 1.05rem 1.4rem;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 30px rgba(15,23,42,.9);
+    }
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 0 0,#22d3ee1f,transparent 60%),
+        radial-gradient(circle at 100% 0,#ec48991f,transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .panel-inner{position:relative;z-index:1;}
+    .panel h2{
+      font-size:1.12rem;
+      font-weight:700;
+      margin-bottom:.2rem;
+    }
+    .panel small{
+      color:#9ca3af;
+      font-size:.8rem;
+    }
+
+    .tiers{
+      margin-top:.9rem;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:.9rem;
+    }
+    .tier{
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.7);
+      background:rgba(15,23,42,.98);
+      padding:.9rem .8rem 1rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .tier.hot{
+      border-color:var(--accent);
+      box-shadow:0 0 25px rgba(34,211,238,.75);
+    }
+    .tier.locked{
+      border-style:dashed;
+      opacity:.7;
+      backdrop-filter:blur(2px);
+    }
+    .tier-label{
+      font-size:.74rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#22d3ee;
+      margin-bottom:.15rem;
+    }
+    .tier-title{
+      font-size:1.02rem;
+      font-weight:700;
+    }
+    .tier-price{
+      margin-top:.25rem;
+      font-size:.95rem;
+      color:#e5e7eb;
+    }
+    .tier-price span{
+      font-size:.75rem;
+      color:#9ca3af;
+    }
+    .tier-features{
+      margin-top:.4rem;
+      font-size:.78rem;
+      color:#cbd5f5;
+      list-style:none;
+      padding:0;
+    }
+    .tier-features li{
+      display:flex;
+      gap:.4rem;
+      margin-bottom:.2rem;
+    }
+    .tier-features li::before{
+      content:"◆";
+      color:var(--accent);
+      font-size:.6rem;
+      margin-top:.18rem;
+    }
+    .tier-btn{
+      margin-top:.6rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      border-radius:999px;
+      padding:.45rem .85rem;
+      border:none;
+      font-size:.78rem;
+      font-weight:700;
+      cursor:pointer;
+      background:linear-gradient(135deg,#22d3ee,#ec4899);
+      color:#0b1120;
+      box-shadow:0 0 18px rgba(236,72,153,.75);
+    }
+    .tier-btn.locked{
+      background:rgba(15,23,42,.96);
+      color:#9ca3af;
+      border:1px solid rgba(148,163,184,.7);
+      box-shadow:none;
+      cursor:default;
+    }
+
+    .fx-eq{
+      position:absolute;
+      right:.8rem;
+      bottom:.85rem;
+      display:flex;
+      gap:3px;
+      opacity:.7;
+    }
+    .fx-eq span{
+      width:3px;
+      border-radius:999px;
+      background:linear-gradient(to top,#22d3ee,#ec4899);
+      animation:bars 1.2s ease-in-out infinite;
+    }
+    .fx-eq span:nth-child(2){animation-delay:.15s;}
+    .fx-eq span:nth-child(3){animation-delay:.3s;}
+    .fx-eq span:nth-child(4){animation-delay:.45s;}
+    @keyframes bars{
+      0%,100%{height:6px;}
+      40%{height:18px;}
+      70%{height:10px;}
+    }
+
+    .status-card{
+      margin-top:.6rem;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.7);
+      padding:.6rem .7rem;
+      font-size:.8rem;
+      background:rgba(15,23,42,.96);
+    }
+    .status-card strong{color:#e5e7eb;}
+    .status-card span{color:#a5b4fc;}
+
+    .list-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:.7rem;
+      margin-top:.8rem;
+      font-size:.8rem;
+    }
+    .mini-block{
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.7);
+      background:rgba(15,23,42,.98);
+      padding:.6rem .7rem;
+    }
+    .mini-title{
+      font-size:.82rem;
+      font-weight:600;
+      margin-bottom:.15rem;
+    }
+    .mini-body{
+      color:#9ca3af;
+    }
+
+    .note{
+      font-size:.78rem;
+      color:#9ca3af;
+      margin-top:.7rem;
+    }
+
+    .toast{
+      position:fixed;
+      right:1rem;
+      bottom:1rem;
+      background:rgba(15,23,42,.98);
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.85);
+      padding:.55rem .9rem;
+      font-size:.78rem;
+      display:none;
+      z-index:80;
+      box-shadow:0 0 20px rgba(56,189,248,.8);
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <h1>AI DJ ACCESS GATEWAY</h1>
+      <p class="hero-sub">
+        Turn your TKFM radio sets into **full AI-assisted experiences** — smart crates, autopilot
+        set flows, feature-aware drops and playlist heatmaps. You decide your lane; the engine
+        does the heavy lifting.
+      </p>
+      <div class="hero-band">
+        <div class="hero-chip"><span></span> AI set builder &amp; smart crates</div>
+        <div class="hero-chip"><span></span> Feature &amp; sponsor-aware drops</div>
+        <div class="hero-chip"><span></span> Schedule-aware show planning</div>
+      </div>
+      <div class="hero-cta">
+        <button class="btn-main" id="scrollTiers">
+          ⚡ See AI DJ tiers
+        </button>
+        <div class="btn-ghost">
+          Owner-only engine.  
+          DJs unlock access by upgrading their lane.
+        </div>
+        <div class="status-pill" id="accessStatus">
+          <span class="status-pill-dot"></span>
+          <span id="statusText">Current access: NONE</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="layout" id="tiersSection">
+
+    <!-- LEFT: TIERS -->
+    <div class="panel">
+      <div class="panel-inner">
+        <h2>Choose your AI DJ lane</h2>
+        <small>
+          This is how DJs plug into the AI DJ Engine. Final billing will run through Stripe;
+          for now you can treat this as the **official tier map**.
+        </small>
+
+        <div class="tiers">
+          <!-- CORE -->
+          <div class="tier hot" data-tier="core">
+            <div class="tier-label">Level 1 • Core Access</div>
+            <div class="tier-title">AI Crate Assistant</div>
+            <div class="tier-price">
+              $49 / month <span>• recommended starter</span>
+            </div>
+            <ul class="tier-features">
+              <li>Smart crates based on tempo, energy &amp; mood.</li>
+              <li>Set skeletons for show themes (night drive, club hour, etc.).</li>
+              <li>Basic integration with TKFM DJ schedule.</li>
+              <li>1-click export to your DJ tools (manual for now).</li>
+            </ul>
+            <button class="tier-btn" data-activate="core">
+              🔓 Mark as active (local test)
+            </button>
+            <div class="fx-eq">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <!-- PRO -->
+          <div class="tier" data-tier="pro">
+            <div class="tier-label" style="color:var(--lime);">Level 2 • Pro Autopilot</div>
+            <div class="tier-title">Full AI DJ Autopilot</div>
+            <div class="tier-price">
+              $99 / month <span>• heavy users &amp; show runners</span>
+            </div>
+            <ul class="tier-features">
+              <li>Everything in Core, plus AI-assisted transitions &amp; talking points.</li>
+              <li>Feature-aware placement so paid records get correct shine.</li>
+              <li>Sponsor call-out suggestions based on your Sponsor Engine.</li>
+              <li>Show templates for weekly series, mixtapes and label specials.</li>
+            </ul>
+            <button class="tier-btn" data-activate="pro">
+              🚀 Mark as active (local test)
+            </button>
+            <div class="fx-eq">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <!-- GOD MODE / OWNER ONLY -->
+          <div class="tier locked">
+            <div class="tier-label" style="color:#f97316;">Owner • GOD MODE</div>
+            <div class="tier-title">TKFM Master Console</div>
+            <div class="tier-price">
+              Owner-only <span>• not for sale</span>
+            </div>
+            <ul class="tier-features">
+              <li>Full AI DJ Engine access, cross-station control and deep GraphFX knobs.</li>
+              <li>Direct wiring into feature revenue, sponsor engine and label side.</li>
+              <li>System-level presets that DJs only see as “magic” in their lane.</li>
+            </ul>
+            <button class="tier-btn locked" disabled>
+              🔒 Locked to station owner
+            </button>
+          </div>
+        </div>
+
+        <div class="note">
+          When you’re ready, you (or a dev) can wire each tier button to a real Stripe checkout
+          session for <code>dj_ai_core</code> and <code>dj_ai_pro</code> products.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: HOW IT CONNECTS -->
+    <div class="panel">
+      <div class="panel-inner">
+        <h2>How this plugs into TKFM</h2>
+        <small>
+          The gateway doesn’t move audio by itself. It just tells the system what the DJ is allowed
+          to see when they hit the AI DJ Engine.
+        </small>
+
+        <div class="list-grid">
+          <div class="mini-block">
+            <div class="mini-title">1. Access flag (local)</div>
+            <div class="mini-body">
+              This page writes a simple flag into <code>localStorage["tkfm_dj_ai_tier"]</code> so
+              you can simulate what Core vs Pro feels like before Stripe + Supabase are wired in.
+            </div>
+          </div>
+          <div class="mini-block">
+            <div class="mini-title">2. Engine behavior</div>
+            <div class="mini-body">
+              Your <code>ai-dj-engine.html</code> can read that same flag and decide which AI tools
+              to reveal: just crates, or full autopilot &amp; sponsor-aware flows.
+            </div>
+          </div>
+          <div class="mini-block">
+            <div class="mini-title">3. Future: real billing</div>
+            <div class="mini-body">
+              Stripe products can mirror these tiers. Supabase roles can then map
+              <span>core</span>/<span>pro</span> to real accounts, instead of reading localStorage.
+            </div>
+          </div>
+          <div class="mini-block">
+            <div class="mini-title">4. DJ experience</div>
+            <div class="mini-body">
+              DJs hit TKFM → log into their DJ dashboard → tap “AI DJ Engine” → this gateway checks
+              if they’re cleared, then lets them in with the correct power level.
+            </div>
+          </div>
+        </div>
+
+        <div class="status-card" id="statusCard">
+          <strong>Local test status:</strong>
+          <span id="statusDetail">no AI DJ tier set yet.</span>
+        </div>
+
+        <div class="note">
+          Nothing here calls external APIs. It’s all **front-end + localStorage**, safe for your
+          current Netlify free tier. Later, this same UI becomes the front-end of a real
+          subscription gate.
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast">Updated.</div>
+
+<script>
+  const KEY = "tkfm_dj_ai_tier";
+
+  function getTier(){
+    try{
+      return localStorage.getItem(KEY) || "";
+    }catch(e){
+      return "";
+    }
+  }
+
+  function setTier(tier){
+    try{
+      if(!tier){
+        localStorage.removeItem(KEY);
+      }else{
+        localStorage.setItem(KEY,tier);
+      }
+    }catch(e){}
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(()=>{ t.style.display = "none"; }, 1700);
+  }
+
+  function renderStatus(){
+    const tier = getTier();
+    const text = document.getElementById("statusText");
+    const detail = document.getElementById("statusDetail");
+    const pill = document.getElementById("accessStatus").querySelector(".status-pill-dot");
+
+    let label = "NONE";
+    let desc = "no AI DJ tier set yet.";
+    let color = "#64748b";
+
+    if(tier === "core"){
+      label = "CORE";
+      desc = "Core AI crate assistant active for this browser.";
+      color = "#22d3ee";
+    }else if(tier === "pro"){
+      label = "PRO";
+      desc = "Full AI DJ Autopilot active for this browser.";
+      color = "#a3e635";
+    }
+
+    text.textContent = "Current access: " + label;
+    detail.textContent = desc;
+    pill.style.background = color;
+    pill.style.boxShadow = "0 0 10px " + color;
+
+    document.querySelectorAll(".tier").forEach(t=>{
+      const name = t.getAttribute("data-tier");
+      if(!name) return;
+      if(name === tier){
+        t.classList.add("hot");
+      }else{
+        t.classList.remove("hot");
+      }
+    });
+  }
+
+  document.getElementById("scrollTiers").addEventListener("click", ()=>{
+    const el = document.getElementById("tiersSection");
+    el.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+
+  document.querySelectorAll("[data-activate]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const tier = btn.getAttribute("data-activate");
+      setTier(tier);
+      renderStatus();
+      showToast("AI DJ tier set to " + tier.toUpperCase() + " (local test).");
+    });
+  });
+
+  renderStatus();
+</script>
+
+<div class="toast" id="toast">Updated.</div>
+</body>
+</html>

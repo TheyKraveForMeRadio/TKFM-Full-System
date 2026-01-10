@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="robots" content="noindex,nofollow"/>
+  <title>TKFM — Owner Console</title>
+  <style>
+    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--b:#3b82f6;}
+    html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+    body{
+      background:
+        radial-gradient(900px 420px at 15% 12%, rgba(168,85,247,.22), transparent 60%),
+        radial-gradient(820px 420px at 70% 20%, rgba(236,72,153,.18), transparent 60%),
+        radial-gradient(900px 480px at 55% 85%, rgba(34,211,238,.14), transparent 60%),
+        var(--bg);
+      color:#e5e7eb;
+      display:flex;align-items:center;justify-content:center;
+      padding:20px;
+    }
+    .card{
+      width:min(1080px,96vw);
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(2,6,23,.78);
+      backdrop-filter: blur(10px);
+      border-radius:18px;
+      padding:22px;
+      box-shadow: 0 0 0 1px rgba(168,85,247,.12), 0 12px 50px rgba(0,0,0,.55);
+    }
+    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .title{font-size:22px;font-weight:900;margin:0;letter-spacing:.3px;}
+    .sub{opacity:.86;margin:8px 0 0;font-size:13px;line-height:1.55;}
+    .pill{
+      display:inline-block;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      opacity:.92;
+      margin-left:10px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 10px;}
+    input{
+      flex:1;min-width:240px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      padding:10px 12px;
+      color:#fff;outline:none;
+    }
+    button{
+      border-radius:12px;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(90deg, rgba(168,85,247,.28), rgba(236,72,153,.22), rgba(34,211,238,.16));
+      color:#fff;cursor:pointer;font-weight:900;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:12px;
+      margin-top:14px;
+    }
+    .panel{
+      grid-column: span 12;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.30);
+      border-radius:16px;
+      padding:14px;
+    }
+    @media (min-width:980px){
+      .panel.third{grid-column: span 4;}
+      .panel.half{grid-column: span 6;}
+    }
+    .links{display:flex;flex-direction:column;gap:8px;}
+    a{color:var(--c);text-decoration:none;font-weight:900;}
+    pre{
+      margin:0;
+      padding:12px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      overflow:auto;
+      max-height:40vh;
+      font-size:12px;
+    }
+    .hint{
+      margin:10px 0 0;
+      opacity:.85;
+      font-size:12px;
+      line-height:1.55;
+    }
+    .badge{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.2px;
+      opacity:.95;
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+  <div class="card">
+    <div class="top">
+      <div>
+        <p class="title">Owner Console <span class="pill" id="state">LOCKED</span></p>
+        <p class="sub">
+          Private operations console for TKFM. Unlock with your <span class="badge">TKFM_OWNER_KEY</span> to enable owner tools on this device.
+        </p>
+        <p class="hint">
+          Bookmark this page for your internal use. Do not include it in public navigation.
+        </p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <a href="/radio-hub.html">Radio Hub</a>
+        <a href="/pricing.html">Pricing</a>
+        <a href="/account.html">Account Sync</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <input id="key" type="password" placeholder="Enter TKFM_OWNER_KEY" autocomplete="current-password"/>
+      <button id="unlock">Unlock</button>
+      <button id="lock">Lock</button>
+    </div>
+
+    <div class="grid">
+      <div class="panel third">
+        <p style="margin:0 0 8px;font-weight:900;">Owner Tools</p>
+        <div class="links" id="ownerLinks">
+          <a data-owner href="/god-view.html">God View</a>
+          <a data-owner href="/tkfm-dev-console.html">Dev Console</a>
+          <a data-owner href="/owner-ops-dashboard.html">Owner Ops</a>
+          <a data-owner href="/ai-dj-engine.html">AI DJ Engine</a>
+        </div>
+      </div>
+
+      <div class="panel half">
+        <p style="margin:0 0 8px;font-weight:900;">Feature State (local)</p>
+        <pre id="features">{}</pre>
+      </div>
+
+      <div class="panel half">
+        <p style="margin:0 0 8px;font-weight:900;">Member State</p>
+        <pre id="member">{}</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const stateEl = document.getElementById('state');
+    const keyEl = document.getElementById('key');
+    const featEl = document.getElementById('features');
+    const memEl = document.getElementById('member');
+
+    function isUnlocked(){
+      const k = (localStorage.getItem('TKFM_OWNER_KEY') || '').trim();
+      return (k && k.length >= 16);
+    }
+
+    function refresh() {
+      const feats = JSON.parse(localStorage.getItem('tkfm_user_features') || '{}');
+
+      const mem = {
+        tier: localStorage.getItem('tkfm_memberTier') || 'free',
+        email: localStorage.getItem('tkfm_member_email') || '',
+        session: localStorage.getItem('tkfm_member_session') || '',
+        return_url: localStorage.getItem('tkfm_return_url') || ''
+      };
+
+      featEl.textContent = JSON.stringify(feats, null, 2);
+      memEl.textContent = JSON.stringify(mem, null, 2);
+
+      const ok = isUnlocked();
+      stateEl.textContent = ok ? 'UNLOCKED' : 'LOCKED';
+
+      document.querySelectorAll('[data-owner]').forEach(a => {
+        a.onclick = null;
+        if (!ok) a.onclick = (e) => { e.preventDefault(); alert('Owner locked'); };
+      });
+    }
+
+    document.getElementById('unlock').addEventListener('click', () => {
+      const k = (keyEl.value || '').trim();
+      if (!k || k.length < 16) return alert('Invalid key');
+      localStorage.setItem('TKFM_OWNER_KEY', k);
+      keyEl.value = '';
+      refresh();
+    });
+
+    document.getElementById('lock').addEventListener('click', () => {
+      localStorage.removeItem('TKFM_OWNER_KEY');
+      refresh();
+    });
+
+    refresh();
+  </script>
+  <script type="module" src="/js/tkfm-logo-resolver.js"></script>
+<script src="/js/tkfm-checkout.js"></script>
+</body>
+</html>

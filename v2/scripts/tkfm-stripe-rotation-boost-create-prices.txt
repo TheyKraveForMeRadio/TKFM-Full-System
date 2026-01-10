@@ -1,0 +1,17 @@
+TKFM STRIPE — ROTATION BOOST (LOOKUP KEY MODE)
+
+Create ONE product:
+Product name: Rotation Boost (TKFM Radio)
+
+Create TWO prices (one-time):
+1) Rotation Boost — 7 Days
+   Amount: $99.00
+   Lookup key: rotation_boost_7d
+
+2) Rotation Boost — 30 Days
+   Amount: $299.00
+   Lookup key: rotation_boost_30d
+
+Checkout resolves price by:
+- STRIPE_PRICE_* env mapping OR
+- Stripe lookup key == planId

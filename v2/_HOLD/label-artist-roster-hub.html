@@ -1,0 +1,915 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>They Krave For Me Records — Artist Roster Hub</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(7, 7, 12, 0.96);
+      --bg-card-soft: rgba(15, 23, 42, 0.96);
+      --accent-gold: #facc15;
+      --accent-gold-soft: rgba(250, 204, 21, 0.25);
+      --accent-amber: #f97316;
+      --accent-ink: #020617;
+      --accent-holo: #22c1c3;
+      --accent-magenta: #ff00c3;
+      --border-soft: rgba(148, 163, 184, 0.8);
+      --text-soft: #e5e7eb;
+      --text-muted: #9ca3af;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.08), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(148, 163, 184, 0.25), transparent 60%),
+        radial-gradient(circle at 50% 120%, #020617, #020617 70%);
+      color: var(--text-soft);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.8rem 0.9rem 3rem;
+      position: relative;
+    }
+
+    /* Floating label vinyl FX */
+    .vinyl-orbit {
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      top: 8%;
+      right: -8%;
+      opacity: 0.45;
+      pointer-events: none;
+      animation: orbitSpin 28s linear infinite;
+      mix-blend-mode: screen;
+    }
+    .vinyl-orbit::before,
+    .vinyl-orbit::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+    }
+    .vinyl-orbit::before {
+      inset: 18%;
+      border: 1px solid rgba(250, 204, 21, 0.5);
+      box-shadow:
+        0 0 26px rgba(250, 204, 21, 0.6),
+        0 0 50px rgba(0, 0, 0, 0.95);
+    }
+    .vinyl-orbit::after {
+      width: 36px;
+      height: 36px;
+      left: calc(50% - 18px);
+      top: calc(50% - 18px);
+      background: radial-gradient(circle, #000, #020617);
+      box-shadow:
+        0 0 10px rgba(0, 0, 0, 0.9),
+        0 0 26px rgba(250, 204, 21, 0.9);
+    }
+
+    @keyframes orbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 30px;
+      padding: 1.6rem 1.4rem 1.9rem;
+      border: 1px solid rgba(250, 204, 21, 0.85);
+      background:
+        radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.15), #020617 60%),
+        radial-gradient(circle at 100% 0, rgba(34, 211, 238, 0.14), transparent 55%);
+      box-shadow:
+        0 0 40px rgba(0, 0, 0, 0.9),
+        0 0 80px rgba(250, 204, 21, 0.45);
+      overflow: hidden;
+    }
+
+    .hero-fx {
+      position: absolute;
+      inset: -35%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(250, 204, 21, 0.25), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(34, 211, 238, 0.2), transparent 60%),
+        radial-gradient(circle at 50% 15%, rgba(99, 102, 241, 0.25), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .hero-inner { position: relative; z-index: 1; }
+
+    h1 {
+      margin: 0;
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #facc15, #fde68a, #f97316);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 26px rgba(250, 204, 21, 0.8),
+        0 0 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .hero-kicker {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #e5e7eb;
+      opacity: 0.8;
+      margin-bottom: 0.1rem;
+    }
+
+    .hero-sub {
+      margin-top: 0.4rem;
+      max-width: 720px;
+      font-size: 0.94rem;
+      color: #e5e7eb;
+    }
+
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-band {
+      margin-top: 0.7rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 0.26rem 0.8rem;
+      border: 1px solid rgba(250, 250, 250, 0.26);
+      background: rgba(15, 23, 42, 0.98);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .chip span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.9);
+    }
+
+    .hero-bottom {
+      margin-top: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+    }
+
+    .btn-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 999px;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #facc15, #f97316);
+      color: #020617;
+      box-shadow:
+        0 0 26px rgba(250, 204, 21, 0.9),
+        0 0 40px rgba(0, 0, 0, 0.9);
+      white-space: nowrap;
+      transition: transform 0.18s;
+    }
+
+    .btn-main:hover { transform: scale(1.03); }
+
+    .hero-note {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      max-width: 320px;
+    }
+
+    .status-pill {
+      margin-left: auto;
+      font-size: 0.78rem;
+      padding: 0.26rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.9);
+      background: rgba(7, 7, 12, 0.98);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 12px #22c55e;
+    }
+
+    @media (max-width: 768px) {
+      .status-pill { margin-left: 0; }
+    }
+
+    /* LAYOUT */
+    .grid {
+      margin-top: 1.7rem;
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 1.4rem;
+    }
+    @media (max-width: 992px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      position: relative;
+      border-radius: 22px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.05rem 1rem 1.3rem;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.85);
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.08), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(34, 211, 238, 0.12), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .panel-inner { position: relative; z-index: 1; }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: #e5e7eb;
+      margin: 0.1rem 0 0.5rem;
+    }
+
+    .panel p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 0 0 0.7rem;
+    }
+
+    /* LEFT FILTER / SUMMARY */
+    .field {
+      margin-bottom: 0.75rem;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .field label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #e5e7eb;
+    }
+
+    .field-input,
+    .field-select {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(10, 10, 16, 0.98);
+      color: var(--text-soft);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .field-input:focus,
+    .field-select:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 16px rgba(250, 204, 21, 0.5);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.2rem;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 0.26rem 0.8rem;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(12, 10, 16, 0.98);
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .pill span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #4b5563;
+    }
+
+    .pill.active-artist span {
+      background: var(--accent-gold);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.9);
+    }
+    .pill.active-producer span {
+      background: #22c1c3;
+      box-shadow: 0 0 10px #22c1c3;
+    }
+    .pill.active-dj span {
+      background: #f97316;
+      box-shadow: 0 0 10px #f97316;
+    }
+
+    .slider-wrap {
+      margin-top: 0.4rem;
+    }
+    .slider-wrap input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-gold);
+    }
+    .slider-label-row {
+      margin-top: 0.2rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .summary-box {
+      margin-top: 0.7rem;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(9, 9, 13, 0.98);
+      padding: 0.65rem 0.8rem;
+      font-size: 0.78rem;
+    }
+
+    .summary-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: #fef9c3;
+      margin-bottom: 0.2rem;
+    }
+
+    .summary-body strong { color: #fef9c3; }
+
+    .summary-foot {
+      margin-top: 0.35rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .btn-ghost {
+      margin-top: 0.7rem;
+      border-radius: 999px;
+      padding: 0.42rem 0.9rem;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(8, 8, 12, 0.98);
+      color: var(--text-soft);
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 16px rgba(250, 204, 21, 0.6);
+    }
+
+    .note {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 0.55rem;
+    }
+
+    /* RIGHT ROSTER GRID */
+    .roster-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 0.5rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .roster-title {
+      font-size: 0.96rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fef9c3;
+    }
+
+    .roster-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.18rem;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+    }
+    .legend-dot.artist { background: var(--accent-gold); }
+    .legend-dot.producer { background: #22c1c3; }
+    .legend-dot.dj { background: #f97316; }
+
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .card {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: var(--bg-card-soft);
+      padding: 0.8rem 0.8rem 1.05rem;
+      overflow: hidden;
+      cursor: default;
+      transition:
+        transform 0.18s,
+        border-color 0.18s,
+        box-shadow 0.18s,
+        background 0.18s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: var(--accent-gold);
+      box-shadow:
+        0 0 26px rgba(250, 204, 21, 0.6),
+        0 0 40px rgba(0, 0, 0, 0.95);
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .card-role-artist::before,
+    .card-role-producer::before,
+    .card-role-dj::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .card-role-artist::before {
+      background: radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.18), transparent 60%);
+    }
+    .card-role-producer::before {
+      background: radial-gradient(circle at 100% 0, rgba(34, 193, 195, 0.2), transparent 60%);
+    }
+    .card-role-dj::before {
+      background: radial-gradient(circle at 50% 0, rgba(249, 115, 22, 0.2), transparent 60%);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-inner { position: relative; z-index: 1; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.45rem;
+    }
+
+    .badge-role {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      border-radius: 999px;
+      padding: 0.18rem 0.7rem;
+      border: 1px solid rgba(250, 250, 250, 0.24);
+      background: rgba(7, 7, 12, 0.98);
+    }
+
+    .badge-role-artist { color: #fef9c3; border-color: rgba(250, 204, 21, 0.85); }
+    .badge-role-producer { color: #e0f2fe; border-color: rgba(34, 193, 195, 0.8); }
+    .badge-role-dj { color: #ffedd5; border-color: rgba(249, 115, 22, 0.85); }
+
+    .badge-tag {
+      font-size: 0.7rem;
+      border-radius: 999px;
+      padding: 0.16rem 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(8, 8, 12, 0.98);
+      color: var(--text-muted);
+    }
+
+    .card-name {
+      margin-top: 0.3rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #f9fafb;
+    }
+
+    .card-meta {
+      margin-top: 0.15rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .tag-row {
+      margin-top: 0.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 0.16rem 0.55rem;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(7, 7, 12, 0.98);
+    }
+
+    .score-row {
+      margin-top: 0.45rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .heat-bar-wrap {
+      margin-top: 0.3rem;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(7, 7, 12, 0.98);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .heat-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
+      width: 60%;
+      box-shadow: 0 0 16px rgba(250, 250, 250, 0.6);
+    }
+
+    .card-footer-note {
+      margin-top: 0.35rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .note-bottom {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 0.7rem;
+    }
+  </style>
+</head>
+<body>
+<div class="vinyl-orbit"></div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <div class="hero-kicker">They Krave For Me Records • Label Side Only</div>
+      <h1>Artist Roster Hub</h1>
+      <p class="hero-sub">
+        Black &amp; gold label HQ for your <strong>signed artists, producers and DJs</strong>.
+        This page is where you visually track who’s in the building, who’s almost signed, and who’s
+        just getting watched — totally separate from the <strong>TKFMradio neon side</strong>.
+      </p>
+
+      <div class="hero-band">
+        <div class="chip"><span></span> Artist / Producer / DJ roster view</div>
+        <div class="chip"><span></span> Heat / priority meter for each talent</div>
+        <div class="chip"><span></span> Designed to plug into GOD VIEW + contract lab later</div>
+      </div>
+
+      <div class="hero-bottom">
+        <button class="btn-main" id="scrollHub">
+          🎚️ Open label roster grid
+        </button>
+        <p class="hero-note">
+          Names and stats are placeholders for now. Later your .js + Supabase will feed this from
+          real label accounts and contracts.
+        </p>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          <span>Mode: Label overview • 3 tiers of priority</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- GRID -->
+    <section class="grid" id="hubSection">
+      <!-- LEFT: FILTER & SUMMARY -->
+      <aside class="panel">
+        <div class="panel-inner">
+          <div class="section-title">Filter lanes (visual only for now)</div>
+          <p>
+            These controls don’t hit a database yet — they just define how you’ll think about your
+            roster when we wire it into Supabase &amp; the AI contract engine later.
+          </p>
+
+          <div class="field">
+            <label for="search">Quick search</label>
+            <input id="search" class="field-input" type="text" placeholder="Type artist / producer / DJ name (visual only)"/>
+          </div>
+
+          <div class="field">
+            <label>Lane focus</label>
+            <div class="pill-row">
+              <button class="pill active-artist">
+                <span></span> Artists
+              </button>
+              <button class="pill active-producer">
+                <span></span> Producers
+              </button>
+              <button class="pill active-dj">
+                <span></span> DJs &amp; show hosts
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Heat / priority band</label>
+            <div class="slider-wrap">
+              <input type="range" min="0" max="100" step="5" value="65" />
+              <div class="slider-label-row">
+                <span>Watching / early talks</span>
+                <span>Core roster / “flagship”</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="status">Status</label>
+            <select id="status" class="field-select">
+              <option>Show everyone</option>
+              <option>Signed &amp; active</option>
+              <option>In talks / paperwork out</option>
+              <option>On radar only</option>
+            </select>
+          </div>
+
+          <div class="summary-box">
+            <div class="summary-title">Roster snapshot (concept)</div>
+            <div class="summary-body">
+              Imagine this panel reading from your database: <strong>X active
+              artists</strong>, <strong>Y producers</strong>, and <strong>Z DJs</strong>, with a quick
+              flag for who’s <strong>over-performing</strong> vs. who needs a better push.
+            </div>
+            <div class="summary-foot">
+              Later the GOD VIEW can pull these counts into charts next to your <strong>label revenue
+              engine</strong> and <strong>contract lab</strong>.
+            </div>
+          </div>
+
+          <button class="btn-ghost">
+            🔗 Jump to Label Contract Lab
+          </button>
+
+          <p class="note">
+            Real logic will come from your label-side tables (artists, producers, DJs, sponsors)
+            once we start building the .js and Netlify functions for this side.
+          </p>
+        </div>
+      </aside>
+
+      <!-- RIGHT: ROSTER GRID -->
+      <article class="panel">
+        <div class="panel-inner">
+          <div class="roster-header">
+            <div>
+              <div class="roster-title">Roster cards (mock data)</div>
+              <p class="roster-sub">
+                Think of these as placeholder profiles. When we wire data, each card becomes a live
+                snapshot of a **label account** from your onboarding + contract flow.
+              </p>
+            </div>
+            <div class="legend">
+              <span><span class="legend-dot artist"></span> Artist</span>
+              <span><span class="legend-dot producer"></span> Producer</span>
+              <span><span class="legend-dot dj"></span> DJ / Host</span>
+            </div>
+          </div>
+
+          <div class="roster-grid">
+            <!-- ARTIST 1 -->
+            <div class="card card-role-artist">
+              <div class="card-inner">
+                <div class="card-top">
+                  <span class="badge-role badge-role-artist">Artist • Core</span>
+                  <span class="badge-tag">Flagship</span>
+                </div>
+                <div class="card-name">Nova Saint</div>
+                <div class="card-meta">Melodic trap &amp; R&amp;B • heavy local buzz • consistent visuals</div>
+
+                <div class="tag-row">
+                  <span class="tag">City: Midwest</span>
+                  <span class="tag">Heat: 8/10</span>
+                  <span class="tag">Deal: 1 album + options</span>
+                </div>
+
+                <div class="score-row">
+                  <span>Streams vs. spend: strong</span>
+                  <span>Contract: locked</span>
+                </div>
+                <div class="heat-bar-wrap">
+                  <div class="heat-fill" style="width: 78%;"></div>
+                </div>
+                <div class="card-footer-note">
+                  This type of card would be fed from label accounts + contract lab: split, term,
+                  campaign notes, and AI “pressure” score.
+                </div>
+              </div>
+            </div>
+
+            <!-- PRODUCER -->
+            <div class="card card-role-producer">
+              <div class="card-inner">
+                <div class="card-top">
+                  <span class="badge-role badge-role-producer">Producer • Beats</span>
+                  <span class="badge-tag">In talks</span>
+                </div>
+                <div class="card-name">808 Shrine</div>
+                <div class="card-meta">Dark club drums • sample-heavy packs • strong DJ relationships</div>
+
+                <div class="tag-row">
+                  <span class="tag">Heat: 7/10</span>
+                  <span class="tag">Split: 50 / 50 pub (example)</span>
+                  <span class="tag">Pack builder ready</span>
+                </div>
+
+                <div class="score-row">
+                  <span>Placement energy: rising</span>
+                  <span>Paperwork: draft</span>
+                </div>
+                <div class="heat-bar-wrap">
+                  <div class="heat-fill" style="width: 68%;"></div>
+                </div>
+                <div class="card-footer-note">
+                  Later, AI could suggest which artists in your roster should be matched to this
+                  producer inside the **label pack builder**.
+                </div>
+              </div>
+            </div>
+
+            <!-- ARTIST 2 -->
+            <div class="card card-role-artist">
+              <div class="card-inner">
+                <div class="card-top">
+                  <span class="badge-role badge-role-artist">Artist • Developing</span>
+                  <span class="badge-tag">On radar</span>
+                </div>
+                <div class="card-name">Violet Kareem</div>
+                <div class="card-meta">Alt rap + soul • heavy TikTok chops • early booking offers</div>
+
+                <div class="tag-row">
+                  <span class="tag">Heat: 6/10</span>
+                  <span class="tag">Stage: talking</span>
+                  <span class="tag">Slot: pilot EP</span>
+                </div>
+
+                <div class="score-row">
+                  <span>Conversion: high potential</span>
+                  <span>Contract: not sent</span>
+                </div>
+                <div class="heat-bar-wrap">
+                  <div class="heat-fill" style="width: 58%;"></div>
+                </div>
+                <div class="card-footer-note">
+                  Once AI onboarding is active, this card could auto-update from submissions +
+                  feature performance on the TKFM radio side.
+                </div>
+              </div>
+            </div>
+
+            <!-- DJ / HOST -->
+            <div class="card card-role-dj">
+              <div class="card-inner">
+                <div class="card-top">
+                  <span class="badge-role badge-role-dj">DJ • Show Host</span>
+                  <span class="badge-tag">TKFM slot</span>
+                </div>
+                <div class="card-name">DJ Krave Anthem</div>
+                <div class="card-meta">Club / radio mix show • brings local &amp; tour energy</div>
+
+                <div class="tag-row">
+                  <span class="tag">Heat: 8/10</span>
+                  <span class="tag">Live365 show slots</span>
+                  <span class="tag">AI DJ console access (owner only)</span>
+                </div>
+
+                <div class="score-row">
+                  <span>Show performance: strong</span>
+                  <span>Deal: host + promo</span>
+                </div>
+                <div class="heat-bar-wrap">
+                  <div class="heat-fill" style="width: 75%;"></div>
+                </div>
+                <div class="card-footer-note">
+                  This is where label + TKFM meet: DJ tied into radio schedule board, sponsor
+                  engine, and AI DJ tools, but still through the label view.
+                </div>
+              </div>
+            </div>
+
+            <!-- ARTIST 3 -->
+            <div class="card card-role-artist">
+              <div class="card-inner">
+                <div class="card-top">
+                  <span class="badge-role badge-role-artist">Artist • Prospect</span>
+                  <span class="badge-tag">A&amp;R radar</span>
+                </div>
+                <div class="card-name">Brickhouse Rell</div>
+                <div class="card-meta">Street records • strong neighborhood pull • early spin tests</div>
+
+                <div class="tag-row">
+                  <span class="tag">Heat: 5/10</span>
+                  <span class="tag">Data: TKFM feature tests</span>
+                  <span class="tag">Contract lab: draft idea</span>
+                </div>
+
+                <div class="score-row">
+                  <span>Risk: medium</span>
+                  <span>Reward: upside</span>
+                </div>
+                <div class="heat-bar-wrap">
+                  <div class="heat-fill" style="width: 52%;"></div>
+                </div>
+                <div class="card-footer-note">
+                  Later, AI could pull feature leaderboard scores + sponsor interest into this card
+                  to decide if you send paperwork or just keep watching.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <p class="note-bottom">
+            When we’re ready to start the **.js / Supabase / Netlify functions** phase, this page
+            becomes a live dashboard driven by real label accounts, contracts, and AI scoring. For
+            now it’s your **visual blueprint** for how They Krave For Me Records should feel.
+          </p>
+        </div>
+      </article>
+    </section>
+</main>
+
+<script>
+  // Just tiny UX sugar: smooth scroll, no data logic yet.
+  document.getElementById("scrollHub").addEventListener("click", () => {
+    document.getElementById("hubSection")
+      .scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+</script>
+
+</body>
+</html>

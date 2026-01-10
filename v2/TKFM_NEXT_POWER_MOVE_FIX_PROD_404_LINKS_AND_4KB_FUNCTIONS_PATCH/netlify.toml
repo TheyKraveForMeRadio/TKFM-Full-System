@@ -1,0 +1,6 @@
+[build]
+publish = "dist"
+command = "bash ./scripts/tkfm-prebuild-clean.sh && bash ./scripts/tkfm-build-static-multipage.sh"
+
+[functions]
+directory = "netlify/functions"

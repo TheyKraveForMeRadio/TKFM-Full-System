@@ -24,6 +24,7 @@
   </style>
 </head>
 <body class="text-slate-50 min-h-screen">
+  <div id="tkfmOwnerLock"></div>
   <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
       <a href="god-view.html" class="flex items-center gap-3">
@@ -36,7 +37,6 @@
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
         <a href="radio-tv-featured.html" class="px-3 py-1 rounded-full border border-red-400/80 bg-red-400/10 text-red-200">Featured TV</a>
         <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">Radio Hub</a>
-        <a href="owner-login.html" class="px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-200">Owner Login</a>
       </nav>
     </div>
   </header>
@@ -57,7 +57,6 @@
       <h2 class="text-2xl font-extrabold">Access Locked</h2>
       <p class="text-slate-200/85 mt-2">Login as owner, then return here.</p>
       <a class="btn inline-block mt-4 border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15"
-         id="goLogin" href="owner-login.html">Owner Login</a>
     </div>
 
     <div id="app" class="grid gap-4 hidden">
@@ -215,7 +214,6 @@
 
       function setLoginHref(){
         const next = location.pathname.replace(/^\//,'') + location.search + location.hash;
-        $('goLogin').href = 'owner-login.html?next=' + encodeURIComponent(next);
       }
 
       function esc(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -323,7 +321,6 @@
 
         $('clearOwner').addEventListener('click', ()=>{
           if (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.clearOwner) window.TKFM_OWNER_GUARD.clearOwner();
-          location.replace('owner-login.html?next=' + encodeURIComponent(location.pathname.replace(/^\//,'')));
         });
 
         document.body.addEventListener('click', async (e)=>{
@@ -359,7 +356,6 @@
       <div class="flex gap-2 flex-wrap">
         <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
         <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
-        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
       </div>
     </div>
   </footer>

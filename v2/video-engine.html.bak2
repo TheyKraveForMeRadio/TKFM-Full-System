@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Video Engine — Visuals Lane</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <script src="/js/tkfm-checkout.js" defer></script>
+  
+<!-- TKFM Video Engine: Pro Customer Copy (Paid Lane) -->
+  <!-- TKFM_PAID_LANE_MODAL_STYLES_START -->
+  <!-- TKFM_PAID_LANE_MODAL_STYLES_END -->
+  <style id="tkfmVideoEngineTheme">
+/* TKFM VIDEO ENGINE — Neon Radio (TKFM Radio colors) */
+:root{
+  --bg:#020617;
+  --purple:#a855f7;
+  --pink:#ec4899;
+  --cyan:#22d3ee;
+  --blue:#3b82f6;
+  --gold:#facc15;
+}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 0 0, rgba(34,211,238,.22), transparent 55%),
+    radial-gradient(circle at 100% 0, rgba(236,72,153,.30), transparent 55%),
+    radial-gradient(circle at 50% 100%, rgba(168,85,247,.28), transparent 55%),
+    radial-gradient(circle at 60% 50%, rgba(250,204,21,.08), transparent 60%);
+  color:#e2e8f0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+.card{
+  background:rgba(2,6,23,.55);
+  border:1px solid rgba(148,163,184,.18);
+  transition:transform .12s ease,border-color .12s ease;
+}
+.card:hover{
+  border-color:rgba(34,211,238,.35);
+  transform:translateY(-1px);
+}
+.pill{
+  font-size:.7rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+}
+.btn{
+  border-radius:999px;
+  font-size:.78rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:800;
+  padding:.65rem 1rem;
+  white-space:nowrap;
+}
+.soft{color:rgba(226,232,240,.82)}
+.price{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+.toast{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:22px;
+  z-index:9999;
+  max-width:92vw;
+}
+  </style>
+
+  <!-- TKFM_PAID_LANE_MODAL_STYLES_START -->
+  <style id="tkfmPaidLaneModalStyles">
+/* TKFM Paid Lane Modal Styles (Neon Radio + subtle gold) */
+#tkfmPaidLaneModal{display:none; position:fixed; inset:0; z-index:999999;}
+#tkfmPaidLaneModal[data-open="1"]{display:block;}
+#tkfmPaidLaneModalOverlay{position:absolute; inset:0; background:rgba(2,6,23,.72);}
+#tkfmPaidLaneModalCard{
+  position:relative;
+  width:min(720px, calc(100% - 24px));
+  margin:min(8vh, 72px) auto 0 auto;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(2,6,23,.98), rgba(2,6,23,.92));
+  border:1px solid rgba(34,211,238,.35);
+  box-shadow:0 30px 120px rgba(0,0,0,.55);
+  color:#e2e8f0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  overflow:hidden;
+}
+#tkfmPaidLaneModalTop{padding:14px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(34,211,238,.18);}
+#tkfmPaidLaneBadge{width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:linear-gradient(90deg, rgba(168,85,247,.35), rgba(236,72,153,.25)); border:1px solid rgba(168,85,247,.35); font-weight:900;}
+#tkfmPaidLanePlanPill{font-size:12px; opacity:.9; padding:6px 10px; border-radius:999px; border:1px solid rgba(250,204,21,.25); background:rgba(250,204,21,.08); color:#fde68a; white-space:nowrap;}
+#tkfmPaidLaneBody{padding:16px;}
+.tkfmPLField{display:flex; flex-direction:column; gap:6px; margin-bottom:12px;}
+.tkfmPLField label{font-size:12px; opacity:.85;}
+.tkfmPLField input,.tkfmPLField textarea{width:100%; padding:10px 12px; border-radius:14px; border:1px solid rgba(34,211,238,.22); background:rgba(15,23,42,.55); color:#e2e8f0; outline:none;}
+.tkfmPLField input:focus,.tkfmPLField textarea:focus{border-color:rgba(34,211,238,.55)}
+#tkfmPaidLaneActions{display:flex; gap:10px; align-items:center; justify-content:flex-end; padding:14px 16px; border-top:1px solid rgba(34,211,238,.18);}
+.tkfmBtn{border:1px solid rgba(34,211,238,.35); background:rgba(2,6,23,.65); color:#e2e8f0; padding:10px 14px; border-radius:14px; cursor:pointer; font-weight:800;}
+.tkfmBtnHot{background:linear-gradient(90deg, rgba(168,85,247,.35), rgba(236,72,153,.25)); border-color:rgba(168,85,247,.35);}
+.tkfmBtnGold{background:linear-gradient(90deg, rgba(250,204,21,.20), rgba(249,115,22,.12)); border-color:rgba(250,204,21,.30); color:#fff7ed;}
+#tkfmPaidLane_status{font-size:12px; opacity:.9; margin-top:8px;}
+#tkfmPaidLane_next{display:none; margin-top:10px; padding:10px 12px; border-radius:16px; border:1px solid rgba(59,130,246,.25); background:rgba(59,130,246,.10);}
+#tkfmPaidLane_next a{color:#93c5fd; font-weight:800; text-decoration:none;}
+  </style>
+  <!-- TKFM_PAID_LANE_MODAL_STYLES_END -->
+</head>
+<body class="text-slate-50 min-h-screen">
+<section id="tkfmVideoProCopy" class="card" style="padding:18px 18px; margin: 14px auto 18px; max-width:1100px;">
+  <div class="pill" style="color: rgba(34,211,238,.85);">TKFM VIDEO ENGINE • PAID VISUALS LANE</div>
+  <h2 style="margin:10px 0 8px; font-weight:900; letter-spacing:.2px;">
+    Turn your visuals into motion — then put them on air.
+  </h2>
+  <p class="soft" style="margin:0 0 10px;">
+    This is the paid lane for creators who want real visibility. Buy the lane that fits your goal, submit your link, and we push it through the TKFM pipeline:
+    <strong>Review → Scheduling → Featured placements → On-air + promo</strong>.
+  </p>
+
+  <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-top:12px;">
+    <div class="card" style="padding:14px;">
+      <div class="pill" style="color: rgba(236,72,153,.9);">What to submit</div>
+      <ul style="margin:10px 0 0; padding-left:18px; color: rgba(226,232,240,.9); line-height:1.6;">
+        <li><strong>Video link</strong> (YouTube / Vimeo) OR <strong>Drive link</strong> (share access)</li>
+        <li><strong>Artist name + song title</strong> exactly how you want it displayed</li>
+        <li><strong>Instagram/TikTok</strong> handle (optional but recommended)</li>
+        <li><strong>Notes</strong>: release date, vibe, location, target audience</li>
+      </ul>
+    </div>
+
+    <div class="card" style="padding:14px;">
+      <div class="pill" style="color: rgba(250,204,21,.95);">How it works</div>
+      <ol style="margin:10px 0 0; padding-left:18px; color: rgba(226,232,240,.9); line-height:1.6;">
+        <li><strong>Choose a package</strong> (Visuals Monthly / Music Video Push / Reels Pack / Creator Pass)</li>
+        <li><strong>Checkout</strong> and you’re unlocked instantly</li>
+        <li><strong>Submit your link</strong> on this page (look for “Submit Now”)</li>
+        <li><strong>We review + schedule</strong> and confirm next steps</li>
+      </ol>
+    </div>
+
+    <div class="card" style="padding:14px;">
+      <div class="pill" style="color: rgba(168,85,247,.95);">Professional expectations</div>
+      <p class="soft" style="margin:10px 0 0;">
+        Keep it clean: no broken links, no private files, no missing info. If your link isn’t accessible, your submission can’t move forward.
+        Want the fastest turnaround? Include your full credits + a clean description we can copy/paste.
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="padding:14px; margin-top:12px;">
+    <div class="pill" style="color: rgba(34,211,238,.9);">Support</div>
+    <p class="soft" style="margin:10px 0 0;">
+      If you’ve purchased and something isn’t unlocking, refresh the page once. Your paid lane is tied to your checkout and unlocks instantly.
+    </p>
+  </div>
+</section>
+  
+  <div id="tkfmPaidLaneModal" aria-hidden="true">
+    <div id="tkfmPaidLaneModalOverlay" data-tkfm-modal-close="1"></div>
+    <div id="tkfmPaidLaneModalCard" role="dialog" aria-modal="true" aria-label="Paid Lane Submission">
+      <div id="tkfmPaidLaneModalTop">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div id="tkfmPaidLaneBadge">TKFM</div>
+          <div>
+            <div style="font-weight:900; font-size:16px; letter-spacing:.3px;">Paid Lane Submission</div>
+            <div style="font-size:12px; opacity:.8;">Submit instantly after purchase — feeds Featured + Autopilot.</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div id="tkfmPaidLanePlanPill">Lane: (not set)</div>
+          <button class="tkfmBtn" type="button" data-tkfm-modal-close="1" aria-label="Close">Close</button>
+        </div>
+      </div>
+
+      <div id="tkfmPaidLaneBody">
+        <input id="tkfmPaidLane_planId" type="hidden" value="" />
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_title">Title</label>
+          <input id="tkfmPaidLane_title" type="text" placeholder="Project / Track / Campaign title" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_link">Link</label>
+          <input id="tkfmPaidLane_link" type="url" placeholder="https:// (YouTube, SoundCloud, Drive, Dropbox, Press link...)" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_contact">Contact</label>
+          <input id="tkfmPaidLane_contact" type="text" placeholder="Email / IG / Phone (so we can follow up)" />
+        </div>
+
+        <div class="tkfmPLField">
+          <label for="tkfmPaidLane_notes">Notes</label>
+          <textarea id="tkfmPaidLane_notes" rows="4" placeholder="Any details you want TKFM to follow..."></textarea>
+        </div>
+
+        <div id="tkfmPaidLane_status"></div>
+
+        <div id="tkfmPaidLane_next">
+          Next step: <a id="tkfmPaidLane_go" href="/pricing.html">Go to your lane</a>
+        </div>
+      </div>
+
+      <div id="tkfmPaidLaneActions">
+        <button class="tkfmBtnGold tkfmBtn" type="button" id="tkfmPaidLane_submit">Submit Now</button>
+      </div>
+    </div>
+  </div>
+      
+  <script src="/js/tkfm-quick-checkout.js"></script>
+  <script src="/js/tkfm-paid-lane-submit.js"></script>
+<div id="tkfmPaidLaneSubmitHost" style="padding:12px 16px; max-width:1100px; margin:0 auto;"></div>
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">Video Engine</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="media-directory.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🎥 Media</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
+        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+
+<main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 pill text-purple-200">
+    <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
+    <span>Video + Visuals</span>
+  </div>
+
+  <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+    Visuals that plug into TKFM — TV rotation, scheduled features, and live screens.
+  </h1>
+
+  <p class="soft max-w-4xl">
+    This lane is built for creators who want consistent video + visuals connected to the radio platform.
+    Monthly members get ongoing support and placement-ready content.
+  </p>
+
+  <div class="grid lg:grid-cols-3 gap-4">
+    <section class="lg:col-span-2 card rounded-2xl p-6">
+      <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Offers</p>
+      <h2 class="text-2xl font-extrabold mt-2">Video & Visuals Lanes</h2>
+
+      <div class="mt-4 grid md:grid-cols-2 gap-3">
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-5">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Monthly</p>
+          <h3 class="text-xl font-extrabold mt-2">Monthly Visuals Lane</h3>
+          <p class="soft text-sm mt-2">Ongoing visuals + rollout support to keep your content moving weekly.</p>
+          <p class="price text-2xl font-extrabold mt-4"><span data-price-for="video_monthly_visuals">…</span></p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15"
+              data-plan="video_monthly_visuals">Checkout — <span data-price-for="video_monthly_visuals">…</span></button>
+            <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="radio-tv.html">Open TV</a>
+          </div>
+          <p class="text-slate-500 text-xs mt-3">Lookup key: <span class="price">video_monthly_visuals</span></p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-5">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Monthly</p>
+          <h3 class="text-xl font-extrabold mt-2">AI Imaging Pack (Monthly)</h3>
+          <p class="soft text-sm mt-2">Ongoing imaging assets (covers, banners, templates) delivered monthly.</p>
+          <p class="price text-2xl font-extrabold mt-4"><span data-price-for="ai_imaging_pack_monthly">…</span></p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15"
+              data-plan="ai_imaging_pack_monthly">Checkout — <span data-price-for="ai_imaging_pack_monthly">…</span></button>
+            <a class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" href="submit.html">Submit Brief</a>
+          </div>
+          <p class="text-slate-500 text-xs mt-3">Lookup key: <span class="price">ai_imaging_pack_monthly</span></p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-700/50 bg-black/30 p-5 md:col-span-2">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Monthly</p>
+          <h3 class="text-xl font-extrabold mt-2">Video Creator Pass (Monthly)</h3>
+          <p class="soft text-sm mt-2">Creator lane for video placement + priority TV rotation + schedule eligibility.</p>
+          <p class="price text-2xl font-extrabold mt-4"><span data-price-for="video_creator_pass_monthly">…</span></p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15"
+              data-plan="video_creator_pass_monthly">Checkout — <span data-price-for="video_creator_pass_monthly">…</span></button>
+            <a class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15" href="media-directory.html">Media Directory</a>
+          </div>
+          <p class="text-slate-500 text-xs mt-3">Lookup key: <span class="price">video_creator_pass_monthly</span></p>
+        </div>
+      </div>
+
+      <div class="mt-5 rounded-2xl border border-slate-700/50 bg-black/30 p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">How it plugs in</p>
+        <ul class="mt-3 space-y-2 text-sm text-slate-200/85">
+          <li>• Approved media is eligible for TV rotation via <a class="text-purple-200 font-semibold hover:underline" href="radio-tv.html">Radio TV</a>.</li>
+          <li>• Owner schedules prime windows on <a class="text-sky-200 font-semibold hover:underline" href="schedule.html">Schedule</a>.</li>
+          <li>• Live casts override TV when approved (Live Now first).</li>
+        </ul>
+      </div>
+    </section>
+
+    <aside class="card rounded-2xl p-6">
+      <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Fix applied</p>
+      <h3 class="text-xl font-extrabold mt-2">Monthly Visuals Lane now uses live Stripe pricing</h3>
+      <p class="soft text-sm mt-2">
+        Button lookup key: <span class="price">video_monthly_visuals</span> → env var <span class="price">STRIPE_PRICE_VIDEO_MONTHLY_VISUALS</span>.
+        Prices render on the page by calling the new <span class="price">price-info</span> function.
+      </p>
+    </aside>
+  </div>
+</main>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+</body>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script></html>
+

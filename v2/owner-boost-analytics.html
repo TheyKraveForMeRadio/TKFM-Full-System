@@ -340,7 +340,6 @@
   async function load(){
     try{
       const k = ownerKey();
-      if (!k) { showMsg('Owner key missing. Open /owner-login.html first.', 'err'); return; }
 
       showMsg('Loading analytics…');
       const res = await fetch('/.netlify/functions/featured-media-analytics-admin', {

@@ -1,0 +1,50 @@
+<!-- TKFM_PAID_LANE_MODAL_START -->
+<div id="tkfmPaidLaneModal" aria-hidden="true">
+  <div id="tkfmPaidLaneModalOverlay"></div>
+  <div id="tkfmPaidLaneModalCard" role="dialog" aria-modal="true">
+    <div id="tkfmPaidLaneModalTop">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div id="tkfmPaidLaneBadge">TKFM</div>
+        <div>
+          <div style="font-weight:900; font-size:16px; letter-spacing:.3px;">Paid Lane Submission</div>
+          <div style="opacity:.85; font-size:12px;">Submit instantly after purchase — feeds Featured + Autopilot.</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div id="tkfmPaidLanePlanPill">Lane: (select a product first)</div>
+        <button class="tkfmBtn" type="button" data-tkfm-modal-close="1">Close</button>
+      </div>
+    </div>
+
+    <div id="tkfmPaidLaneBody">
+      <input id="tkfmPaidLane_planId" type="hidden" value="" />
+      <div class="tkfmPLField">
+        <label for="tkfmPaidLane_title">Title</label>
+        <input id="tkfmPaidLane_title" type="text" placeholder="Project / Track / Campaign title" />
+      </div>
+      <div class="tkfmPLField">
+        <label for="tkfmPaidLane_link">Link</label>
+        <input id="tkfmPaidLane_link" type="text" placeholder="https:// (YouTube, SoundCloud, Drive, Dropbox, Press link...)" />
+      </div>
+      <div class="tkfmPLField">
+        <label for="tkfmPaidLane_contact">Contact</label>
+        <input id="tkfmPaidLane_contact" type="text" placeholder="Email / IG / Phone (so we can follow up)" />
+      </div>
+      <div class="tkfmPLField">
+        <label for="tkfmPaidLane_notes">Notes</label>
+        <textarea id="tkfmPaidLane_notes" rows="4" placeholder="Any details you want TKFM to follow..."></textarea>
+      </div>
+
+      <div id="tkfmPaidLane_status"></div>
+
+      <div id="tkfmPaidLane_next">
+        Next step: <a id="tkfmPaidLane_go" href="/pricing.html">Go to your lane</a>
+      </div>
+    </div>
+
+    <div id="tkfmPaidLaneActions">
+      <button class="tkfmBtn tkfmBtnGold" type="button" id="tkfmPaidLane_submit">Submit Now</button>
+    </div>
+  </div>
+</div>
+<!-- TKFM_PAID_LANE_MODAL_END -->

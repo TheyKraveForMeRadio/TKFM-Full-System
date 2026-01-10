@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Artist Accounts — They Krave For Me Radio</title>
+
+  <style>
+    :root {
+      --pink:#ff007f; --cyan:#06b6d4; --gold:#facc15;
+      --bg:radial-gradient(circle at 10% 0%,#020014,#020617 55%,#000000 100%);
+      --cardbg:rgba(15,23,42,0.97);
+      --border:rgba(148,163,184,0.35);
+    }
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:var(--bg);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:#e5e7eb;
+      padding:1.5rem .9rem 2.5rem;
+      position:relative;
+      overflow-x:hidden;
+    }
+
+    .bg-orbit {
+      position:fixed; inset:-40%;
+      z-index:-3; pointer-events:none;
+      background:conic-gradient(
+        from 230deg,
+        rgba(255,0,128,.35),
+        rgba(56,189,248,.32),
+        rgba(250,204,21,.3),
+        rgba(129,140,248,.34),
+        rgba(255,0,128,.35)
+      );
+      filter:blur(40px); mix-blend-mode:screen;
+      animation:orbit 36s linear infinite;
+    }
+    .bg-glow {
+      position:fixed; inset:-20%;
+      z-index:-4; pointer-events:none;
+      background:
+        radial-gradient(circle at 0 0,rgba(255,0,128,.4),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(56,189,248,.4),transparent 60%),
+        radial-gradient(circle at 50% 0,rgba(250,204,21,.35),transparent 60%);
+      filter:blur(14px);
+      animation:glow 26s ease-in-out infinite alternate;
+    }
+    @keyframes orbit { 0%{transform:rotate(0deg) scale(1.05);}100%{transform:rotate(360deg) scale(1.05);} }
+    @keyframes glow { 0%{transform:translate3d(0,0,0);}100%{transform:translate3d(-4%,2%,0);} }
+
+    main { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
+
+    header {
+      display:flex; justify-content:space-between; gap:1rem;
+      align-items:flex-start; flex-wrap:wrap;
+    }
+    .kicker {
+      font-size:.78rem; letter-spacing:.2em; text-transform:uppercase;
+      color:rgba(191,219,254,.95); margin-bottom:.25rem;
+    }
+    h1 {
+      margin:0; font-size:2.1rem; font-weight:900;
+      background:linear-gradient(120deg,var(--pink),var(--gold),var(--cyan));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 0 18px rgba(255,0,128,.9),0 0 30px rgba(56,189,248,.9);
+    }
+    .subtitle {
+      margin-top:.35rem; font-size:.9rem; color:rgba(203,213,225,.98);
+      max-width:32rem;
+    }
+    .subtitle span { color:var(--gold); }
+
+    .header-right {
+      min-width:220px; text-align:right; font-size:.8rem;
+    }
+    .chip-row {
+      display:flex; flex-wrap:wrap; gap:.35rem;
+      justify-content:flex-end; margin-top:.4rem;
+    }
+    .chip {
+      font-size:.74rem; padding:.22rem .6rem;
+      border-radius:999px; border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.98); color:rgba(226,232,240,.98);
+      text-decoration:none;
+    }
+    .badge {
+      display:inline-flex; align-items:center; gap:.35rem;
+      margin-top:.25rem;
+      padding:.25rem .65rem; border-radius:999px;
+      border:1px solid rgba(250,204,21,.95);
+      background:rgba(113,63,18,.98); color:#fef3c7;
+    }
+    .badge span { color:var(--gold); font-weight:700; }
+
+    .grid {
+      display:grid; gap:1rem;
+      grid-template-columns:1.2fr 1fr;
+      margin-top:1.2rem;
+    }
+    @media (max-width:900px){ .grid{grid-template-columns:1fr;} }
+
+    .card {
+      background:var(--cardbg);
+      border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:0 20px 45px rgba(15,23,42,.95);
+      padding:1rem .95rem 1.1rem;
+      position:relative; overflow:hidden;
+    }
+    .card::before {
+      content:""; position:absolute; inset:-50%;
+      background:conic-gradient(
+        from 210deg,
+        rgba(255,0,128,.34),
+        rgba(56,189,248,.25),
+        rgba(250,204,21,.22),
+        rgba(129,140,248,.25),
+        rgba(255,0,128,.34)
+      );
+      filter:blur(32px); opacity:.3; z-index:-1;
+    }
+    .card h2 {
+      margin:.1rem 0 .2rem; font-size:1.05rem; font-weight:800;
+    }
+    .card-sub { font-size:.8rem; color:rgba(148,163,184,.96); margin-bottom:.55rem; }
+
+    label {
+      display:block; margin-bottom:.18rem;
+      font-size:.75rem; letter-spacing:.13em;
+      text-transform:uppercase; color:rgba(148,163,184,.98);
+    }
+    input, select, textarea {
+      width:100%; border-radius:11px;
+      border:1px solid rgba(51,65,85,.95);
+      background:rgba(15,23,42,.98);
+      color:#e5e7eb; padding:.6rem .7rem;
+      font-size:.86rem; outline:none;
+      margin-bottom:.65rem;
+      transition:border-color .18s,box-shadow .18s,background .18s;
+    }
+    textarea { min-height:70px; resize:vertical; font-family:inherit; }
+    input:focus, select:focus, textarea:focus {
+      border-color:rgba(56,189,248,1);
+      box-shadow:0 0 0 1px rgba(56,189,248,.8),0 0 18px rgba(56,189,248,.8);
+      background:rgba(15,23,42,1);
+    }
+    .hint { margin:-.45rem 0 .7rem; font-size:.72rem; color:rgba(148,163,184,.9); }
+
+    button {
+      width:100%; border-radius:999px;
+      border:none; padding:.75rem;
+      font-size:.9rem; font-weight:700;
+      cursor:pointer; color:#020617;
+      background:linear-gradient(120deg,#22c55e,#f97316,var(--pink),var(--cyan));
+      text-shadow:0 0 10px rgba(255,255,255,.9);
+      box-shadow:0 20px 40px rgba(15,23,42,.98);
+      transition:transform .16s,box-shadow .16s,filter .16s;
+    }
+    button:hover {
+      transform:translateY(-1px) scale(1.02);
+      filter:brightness(1.04);
+      box-shadow:0 24px 50px rgba(15,23,42,1);
+    }
+
+    .metrics-row {
+      display:grid; gap:.5rem;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      margin-bottom:.45rem;
+    }
+    @media(max-width:700px){ .metrics-row{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media(max-width:520px){ .metrics-row{grid-template-columns:1fr;}}
+
+    .metric {
+      border-radius:13px;
+      border:1px solid rgba(30,64,175,.85);
+      background:rgba(15,23,42,.98);
+      padding:.5rem .55rem;
+      font-size:.78rem;
+    }
+    .metric-label { color:rgba(148,163,184,.96); font-size:.74rem; margin-bottom:.1rem; }
+    .metric-value { font-size:1rem; font-weight:700; }
+    .metric-sub { font-size:.72rem; color:rgba(148,163,184,.92); }
+
+    .list { margin-top:.4rem; font-size:.78rem; }
+    .artist-row {
+      display:flex; justify-content:space-between; gap:.4rem;
+      padding:.35rem .45rem;
+      border-radius:11px;
+      border:1px solid rgba(31,41,55,.95);
+      background:rgba(15,23,42,.98);
+      margin-bottom:.3rem;
+    }
+    .pill-mini {
+      font-size:.7rem; border-radius:999px;
+      padding:.12rem .5rem; border:1px solid rgba(148,163,184,.9);
+      color:rgba(226,232,240,.98);
+      white-space:nowrap;
+    }
+    .pill-mini.hot { border-color:var(--gold); color:#fef9c3; }
+
+    .note {
+      margin-top:.4rem; font-size:.74rem; color:rgba(148,163,184,.96);
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+
+<body>
+  <div class="bg-orbit"></div>
+  <div class="bg-glow"></div>
+
+  <main>
+    <header>
+      <div>
+        <div class="kicker">They Krave For Me Radio</div>
+        <h1>Artist Accounts — who’s moving with TKFM right now.</h1>
+        <p class="subtitle">
+          Add artists, assign TKFM plans, and let future AI engines read this data
+          to suggest features, rotation, and deals. <span>Owner-only view.</span>
+        </p>
+      </div>
+      <div class="header-right">
+        <div class="badge">
+          👑 <span>Owner Console</span>
+        </div>
+        <div class="chip-row">
+          <a href="/v2/god-view.html" class="chip">GOD VIEW</a>
+          <a href="/v2/ai-onboarding.html" class="chip">AI Onboarding</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <!-- LEFT: Add Artist -->
+      <div class="card">
+        <h2>Add Artist to TKFM System</h2>
+        <p class="card-sub">
+          This writes to your local snapshot now. Later we can wire it to a
+          Netlify function like <code>get-artists</code> + Supabase.
+        </p>
+
+        <label for="artist_name">Artist / Stage Name</label>
+        <input id="artist_name" placeholder="Example: THEY KRAVE / Skyline Poet"/>
+
+        <label for="artist_email">Email</label>
+        <input id="artist_email" placeholder="artist@example.com"/>
+
+        <label for="artist_plan">Plan</label>
+        <select id="artist_plan">
+          <option value="Artist Ignite Single – $99 one-time">Artist Ignite Single – $99 one-time</option>
+          <option value="Artist Motion Monthly – $199/month">Artist Motion Monthly – $199/month</option>
+          <option value="Artist Elite Takeover – $399/month">Artist Elite Takeover – $399/month</option>
+        </select>
+
+        <label for="artist_label">Label (optional)</label>
+        <input id="artist_label" placeholder="They Krave For Me Records / Independent"/>
+
+        <label for="artist_notes">Notes</label>
+        <textarea id="artist_notes" placeholder="Example: Sound is dark melodic street. Wants heavy rotation and cross-promo."></textarea>
+
+        <div class="hint">
+          Pricing aligns with your Stripe catalog. In the future, creating an artist here
+          can also trigger a Stripe subscription or one-time checkout.
+        </div>
+
+        <button id="addArtistBtn">➕ Add Artist</button>
+      </div>
+
+      <!-- RIGHT: Metrics + List -->
+      <div class="card">
+        <h2>Artist Snapshot</h2>
+        <p class="card-sub">
+          Local-only overview of who you’ve added. Think of this as your
+          “roster scratchpad” for now.
+        </p>
+
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-label">Total artists</div>
+            <div class="metric-value" id="m_total">0</div>
+            <div class="metric-sub">In TKFM system</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Projected monthly (Motion + Elite)</div>
+            <div class="metric-value" id="m_mrr">$0</div>
+            <div class="metric-sub">Rough view of monthly artist subs</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Ignite one-time count</div>
+            <div class="metric-value" id="m_ignite">0</div>
+            <div class="metric-sub">Single campaign purchases</div>
+          </div>
+        </div>
+
+        <div class="list" id="artist_list">
+          <div style="font-size:.78rem;color:rgba(148,163,184,.96);">
+            No artists added yet. As you add artists, they’ll stack here with their plan,
+            label, and basic notes.
+          </div>
+        </div>
+
+        <div class="note">
+          This page currently uses <code>localStorage</code> only (key:
+          <code>tkfm_artists</code>). Later you can mirror this to Supabase
+          and secure Netlify functions for full database storage.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // OWNER GUARD
+    (function guardOwner(){
+      const role = localStorage.getItem("tkfm_role");
+      if (role !== "owner") {
+        alert("Owner access only. Redirecting to owner login.");
+        window.location.href = "/v2/owner-login.html";
+      }
+    })();
+
+    const ARTISTS_KEY = "tkfm_artists";
+
+    function loadArtists() {
+      try {
+        const raw = localStorage.getItem(ARTISTS_KEY);
+        if (!raw) return [];
+        const list = JSON.parse(raw);
+        return Array.isArray(list) ? list : [];
+      } catch (e) {
+        console.warn("Failed to parse tkfm_artists:", e);
+        return [];
+      }
+    }
+
+    function saveArtists(list) {
+      localStorage.setItem(ARTISTS_KEY, JSON.stringify(list));
+    }
+
+    function computeMetrics(list) {
+      let igniteCount = 0;
+      let mrr = 0; // only Motion + Elite considered recurring
+
+      list.forEach(a => {
+        const plan = a.plan || "";
+        if (plan.includes("Ignite")) igniteCount++;
+        if (plan.includes("Motion Monthly")) mrr += 199;
+        if (plan.includes("Elite Takeover")) mrr += 399;
+      });
+
+      document.getElementById("m_total").textContent = list.length;
+      document.getElementById("m_ignite").textContent = igniteCount;
+      document.getElementById("m_mrr").textContent = "$" + mrr.toLocaleString();
+    }
+
+    function renderArtists() {
+      const list = loadArtists();
+      const container = document.getElementById("artist_list");
+      container.innerHTML = "";
+
+      if (!list.length) {
+        container.innerHTML = "<div style='font-size:.78rem;color:rgba(148,163,184,.96);'>No artists added yet.</div>";
+        computeMetrics(list);
+        return;
+      }
+
+      list.forEach(a => {
+        const row = document.createElement("div");
+        row.className = "artist-row";
+
+        const left = document.createElement("div");
+        left.innerHTML = `
+          <strong>${a.name || "Unknown Artist"}</strong><br/>
+          <span style="color:rgba(148,163,184,.96);">${a.email || "no-email"}</span><br/>
+          <span style="color:rgba(148,163,184,.9);font-size:.75rem;">${a.notes || ""}</span>
+        `;
+
+        const right = document.createElement("div");
+        right.style.textAlign = "right";
+        right.style.fontSize = ".74rem";
+
+        const plan = document.createElement("div");
+        plan.className = "pill-mini";
+        if ((a.plan || "").includes("Motion") || (a.plan || "").includes("Elite")) {
+          plan.className += " hot";
+        }
+        plan.textContent = a.plan || "No plan";
+
+        const labelPill = document.createElement("div");
+        labelPill.className = "pill-mini";
+        labelPill.style.marginTop = ".18rem";
+        labelPill.textContent = a.label || "Independent";
+
+        right.appendChild(plan);
+        right.appendChild(labelPill);
+        row.appendChild(left);
+        row.appendChild(right);
+        container.appendChild(row);
+      });
+
+      computeMetrics(list);
+    }
+
+    function addArtist() {
+      const name = document.getElementById("artist_name").value.trim();
+      const email = document.getElementById("artist_email").value.trim();
+      const plan = document.getElementById("artist_plan").value;
+      const label = document.getElementById("artist_label").value.trim();
+      const notes = document.getElementById("artist_notes").value.trim();
+
+      if (!name || !email) {
+        alert("Please enter at least artist name and email.");
+        return;
+      }
+
+      const list = loadArtists();
+      list.push({
+        id: Date.now().toString(),
+        name,
+        email,
+        plan,
+        label: label || "Independent",
+        notes,
+        createdAt: new Date().toISOString()
+      });
+      saveArtists(list);
+
+      // Future: also POST to a Netlify function here, e.g.:
+      // fetch('/.netlify/functions/get-artists',{method:'POST', ...})
+
+      document.getElementById("artist_name").value = "";
+      document.getElementById("artist_email").value = "";
+      document.getElementById("artist_label").value = "";
+      document.getElementById("artist_notes").value = "";
+
+      alert("✅ Artist added to TKFM snapshot.");
+      renderArtists();
+    }
+
+    document.getElementById("addArtistBtn").addEventListener("click", addArtist);
+
+    // Initial render
+    renderArtists();
+  </script>
+</body>
+</html>

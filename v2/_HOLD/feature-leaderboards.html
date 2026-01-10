@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM Radio — Feature Leaderboards</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.96);
+      --neon-purple: #a855f7;
+      --neon-pink: #ec4899;
+      --neon-cyan: #22d3ee;
+      --neon-indigo: #4f46e5;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #22c55e;
+      --accent-red: #ef4444;
+      --accent-slate: #64748b;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(236,72,153,0.25), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.22), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 3rem;
+      position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* BACKGROUND FX */
+    .orbit {
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      border: 1px solid rgba(236,72,153,0.55);
+      top: -110px;
+      right: -120px;
+      opacity: 0.7;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 100px rgba(236,72,153,1),
+        0 0 150px rgba(0,0,0,1);
+      animation: orbitSpin 27s linear infinite;
+    }
+    .orbit::before {
+      content: "";
+      position: absolute;
+      inset: 24%;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.95);
+      box-shadow:
+        0 0 60px rgba(56,189,248,1),
+        0 0 80px rgba(0,0,0,1);
+    }
+    @keyframes orbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .wave {
+      position: fixed;
+      inset: auto -25% -220px -25%;
+      background:
+        radial-gradient(circle at 15% 0, rgba(56,189,248,0.25), transparent 60%),
+        radial-gradient(circle at 85% 35%, rgba(236,72,153,0.23), transparent 60%);
+      opacity: 0.8;
+      pointer-events: none;
+      filter: blur(10px);
+    }
+
+    .ticker-glow {
+      position: fixed;
+      inset: auto 0 0 0;
+      height: 120px;
+      background:
+        radial-gradient(circle at 50% 0, rgba(236,72,153,0.23), transparent 60%);
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.4) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .orbit { opacity: 0.35; }
+      .wave { opacity: 0.6; }
+      .scanline { opacity: 0.25; }
+    }
+
+    /* NAV — TKFM NEON SIDE */
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(22px);
+      background: linear-gradient(to bottom,
+        rgba(15,23,42,0.98),
+        rgba(15,23,42,0.6),
+        transparent
+      );
+      border-bottom: 1px solid rgba(129,140,248,0.5);
+      margin: -1.6rem -0.9rem 1.4rem;
+      padding: .45rem .9rem .55rem;
+    }
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: conic-gradient(from 220deg,#22d3ee,#a855f7,#ec4899,#22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 26px rgba(236,72,153,1),
+        0 0 40px rgba(0,0,0,1);
+      white-space: nowrap;
+    }
+    .nav-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .78rem;
+    }
+    .nav-link {
+      padding: .26rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #e5e7eb;
+      background: transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        transform .16s,
+        box-shadow .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.97);
+      border-color: rgba(129,140,248,0.9);
+      transform: translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color: rgba(236,72,153,0.95);
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.26),transparent 60%);
+      box-shadow:
+        0 0 26px rgba(236,72,153,1),
+        0 0 38px rgba(0,0,0,1);
+      color: #f9fafb;
+    }
+
+    @media (max-width: 960px) {
+      .nav-tag { display:none; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 32px;
+      padding: 1.9rem 1.5rem 2.1rem;
+      border: 1px solid rgba(129,140,248,0.9);
+      background:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.26),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.24),transparent 55%),
+        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(0,0,0,1) 70%);
+      box-shadow:
+        0 0 60px rgba(15,23,42,1),
+        0 0 110px rgba(0,0,0,1);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .hero-noise {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(129,140,248,0.25),transparent 65%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.23),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.4fr 1.05fr;
+      gap: 1.2rem;
+      align-items: center;
+    }
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; }
+    }
+
+    .hero-kicker {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #a5b4fc;
+      margin-bottom: .35rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      background: linear-gradient(130deg,#22d3ee,#a855f7,#ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 40px rgba(236,72,153,1),
+        0 0 68px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .8rem;
+      font-size: .96rem;
+      max-width: 640px;
+      color: #e5e7eb;
+    }
+    .hero-sub strong {
+      color: #e0f2fe;
+    }
+
+    .hero-pills {
+      margin-top: .9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      font-size: .78rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .3rem .85rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .pill span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 18px rgba(56,189,248,0.9);
+    }
+    .pill-alt span {
+      background: var(--neon-pink);
+      box-shadow: 0 0 18px rgba(236,72,153,0.9);
+    }
+
+    .hero-note {
+      margin-top: .8rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 360px;
+    }
+
+    /* HERO PANEL (TOP 3) */
+    .hero-card {
+      border-radius: 24px;
+      border: 1px solid rgba(129,140,248,0.9);
+      background: radial-gradient(circle at 0 0,rgba(236,72,153,0.23),transparent 65%),
+                  radial-gradient(circle at 100% 100%,rgba(15,23,42,1),rgba(0,0,0,0.96));
+      padding: 1rem 1rem 1.2rem;
+      box-shadow:
+        0 0 36px rgba(236,72,153,1),
+        0 0 50px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .hero-card-inner { position: relative; z-index: 1; }
+
+    .hero-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .8rem;
+      margin-bottom: .5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      border-radius: 999px;
+      padding: .18rem .7rem;
+      border: 1px solid rgba(248,250,252,0.35);
+      background: rgba(15,23,42,0.96);
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 12px rgba(34,197,94,1);
+    }
+
+    .status-pill {
+      border-radius: 999px;
+      padding: .2rem .65rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .status-live {
+      border-color: rgba(34,197,94,0.95);
+      color: #bbf7d0;
+      box-shadow: 0 0 12px rgba(34,197,94,0.9);
+    }
+
+    .hero-card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .25rem;
+    }
+    .hero-card-sub {
+      font-size: .8rem;
+      color: var(--text-main);
+      margin-bottom: .7rem;
+    }
+
+    .podium {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .5rem;
+      font-size: .75rem;
+    }
+    @media (max-width: 540px) {
+      .podium { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .podium-card {
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.96);
+      padding: .5rem .55rem .55rem;
+      display: flex;
+      flex-direction: column;
+      gap: .15rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .podium-card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.26),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .podium-rank {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--text-muted);
+    }
+    .podium-name {
+      font-size: .85rem;
+      font-weight: 600;
+    }
+    .podium-meta {
+      font-size: .74rem;
+      color: var(--text-muted);
+    }
+    .podium-score {
+      margin-top: .2rem;
+      font-size: .75rem;
+      color: #e5e7eb;
+    }
+
+    .hero-cta-row {
+      margin-top: .65rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    .btn-main {
+      border-radius: 999px;
+      padding: .48rem 1.1rem;
+      border: none;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      background: linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+      color: #f9fafb;
+      box-shadow:
+        0 0 18px rgba(236,72,153,1),
+        0 0 30px rgba(0,0,0,1);
+    }
+    .btn-secondary {
+      border-radius: 999px;
+      padding: .42rem .95rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    /* SECTION SHELL */
+    .section {
+      margin-bottom: 1.7rem;
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.2rem 1.05rem 1.4rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.18),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .section-inner { position: relative; z-index: 1; }
+
+    .section-title {
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 0 0 .25rem;
+      color: #e0f2fe;
+    }
+    .section-sub {
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 840px;
+      margin: 0 0 .9rem;
+    }
+
+    /* GRID + TABLES */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 1.05fr;
+      gap: .9rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .9rem;
+    }
+    @media (max-width: 980px) {
+      .grid-2 { grid-template-columns: minmax(0,1fr); }
+      .grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width: 720px) {
+      .grid-3 { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.85);
+      background: rgba(15,23,42,0.96);
+      padding: .9rem .9rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 22px rgba(0,0,0,1);
+      transition:
+        transform .18s,
+        box-shadow .18s,
+        border-color .18s,
+        background .18s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .card-pink::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.24),transparent 65%);
+    }
+    .card-purple::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(129,140,248,0.24),transparent 65%);
+    }
+    .card-gold::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(245,158,11,0.25),transparent 65%);
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(236,72,153,0.95);
+      background: rgba(15,23,42,1);
+      box-shadow:
+        0 0 32px rgba(236,72,153,0.9),
+        0 0 46px rgba(0,0,0,1);
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .6rem;
+      margin-bottom: .3rem;
+    }
+
+    .card-name {
+      font-size: .9rem;
+      font-weight: 600;
+    }
+    .card-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+      margin-bottom: .35rem;
+    }
+
+    .badge-small {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .7rem;
+      border-radius: 999px;
+      padding: .16rem .6rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.96);
+      margin-bottom: .35rem;
+    }
+    .badge-dot-mini {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(34,211,238,0.9);
+    }
+
+    .leader-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .78rem;
+    }
+    .leader-table thead {
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .68rem;
+      color: var(--text-muted);
+    }
+    .leader-table th,
+    .leader-table td {
+      padding: .32rem .15rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .leader-table th.rank,
+    .leader-table td.rank {
+      width: 2.5rem;
+    }
+    .leader-table tr {
+      border-bottom: 1px solid rgba(30,41,59,0.9);
+    }
+    .leader-table tr:last-child {
+      border-bottom: none;
+    }
+    .leader-name {
+      white-space: nowrap;
+    }
+    .leader-meta {
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: .12rem .55rem;
+      font-size: .7rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.97);
+    }
+    .chip-pink {
+      border-color: rgba(236,72,153,0.9);
+      color: #fed7e2;
+    }
+    .chip-cyan {
+      border-color: rgba(56,189,248,0.9);
+      color: #e0f2fe;
+    }
+    .chip-gold {
+      border-color: rgba(245,158,11,0.9);
+      color: #fef3c7;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: .25rem 0 .7rem;
+      font-size: .78rem;
+    }
+    .feature-list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+      align-items: flex-start;
+    }
+    .dot {
+      margin-top: .24rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+      flex-shrink: 0;
+    }
+    .dot-purple {
+      background: var(--neon-purple);
+      box-shadow: 0 0 10px rgba(168,85,247,1);
+    }
+    .dot-cyan {
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(34,211,238,1);
+    }
+    .dot-amber {
+      background: var(--accent-amber);
+      box-shadow: 0 0 10px rgba(245,158,11,1);
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+
+    .lookup {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .72rem;
+      background: rgba(15,23,42,0.96);
+      border-radius: 999px;
+      padding: .22rem .6rem;
+      border: 1px solid rgba(55,65,81,0.9);
+      color: #e5e7eb;
+    }
+
+    /* TICKER */
+    .ticker-shell {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      padding: .32rem .55rem;
+      overflow: hidden;
+      font-size: .74rem;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,1);
+    }
+
+    .ticker-label {
+      position: absolute;
+      left: .65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: .63rem;
+      color: var(--text-muted);
+      background: rgba(15,23,42,0.98);
+      padding: .05rem .35rem;
+      border-radius: 999px;
+      border: 1px solid rgba(51,65,85,1);
+      z-index: 2;
+    }
+
+    .ticker-track {
+      margin-left: 9rem;
+      display: flex;
+      gap: 2.5rem;
+      white-space: nowrap;
+      animation: tickerMove 26s linear infinite;
+    }
+    @keyframes tickerMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      color: #e5e7eb;
+    }
+    .ticker-item strong {
+      color: #f9a8d4;
+    }
+
+    .footer-note {
+      margin-top: 1.15rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .orbit{animation:none;}
+      .ticker-track{animation:none;}
+    }
+  </style>
+</head>
+<body>
+<div class="orbit"></div>
+<div class="wave"></div>
+<div class="ticker-glow"></div>
+<div class="scanline"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">TKFM RADIO</div>
+    <div class="nav-tag">Feature Leaderboards • Neon Heat</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="feature-revenue-engine.html" class="nav-link">Feature Engine</a>
+      <a href="client-vault.html" class="nav-link">Client Vault</a>
+      <a href="sponsor-flight-board.html" class="nav-link">Sponsor Board</a>
+      <a href="tkfm-app-hub.html" class="nav-link">App Hub</a>
+      <a href="feature-leaderboards.html" class="nav-link nav-link-primary">Leaderboards</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">FEATURE HEAT • NEON SIDE</div>
+        <h1>Who’s really moving on TKFM.</h1>
+        <p class="hero-sub">
+          Feature Leaderboards are the **front-of-house scoreboard** for TKFM Radio —  
+          who’s getting spins, who’s in Heavy Motion, which mixtapes and DJs are rising.  
+          Powered behind the scenes by your <strong>Feature Revenue Engine</strong>.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> TKFM neon only — no label contract secrets</div>
+          <div class="pill pill-alt"><span></span> Ranks singles, mixtapes, DJs &amp; brands by on-air motion</div>
+          <div class="pill"><span></span> Perfect teaser for Client Vault &amp; label upgrades</div>
+        </div>
+
+        <p class="hero-note">
+          Later, this page can be driven fully by Supabase + Netlify functions.  
+          For now, it’s a **GraphFX-ready shell** wired to your neon universe.
+        </p>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-inner">
+          <div class="hero-card-header">
+            <div class="badge">
+              <span class="badge-dot"></span> Sample Top 3 • Heavy Motion
+            </div>
+            <span class="status-pill status-live">Visual preview</span>
+          </div>
+
+          <div class="hero-card-title">Heavy Motion Feature Podium</div>
+          <p class="hero-card-sub">
+            Think of this column as the **headline stack** — your most active
+            feature campaigns at a glance.
+          </p>
+
+          <div class="podium">
+            <div class="podium-card">
+              <div class="podium-rank">#1 • HEAVY</div>
+              <div class="podium-name">Artist A — “Single Title”</div>
+              <div class="podium-meta">Drive-time takeover • 4 week run</div>
+              <div class="podium-score">Heat score: 97 / 100</div>
+            </div>
+            <div class="podium-card">
+              <div class="podium-rank">#2 • HEAVY</div>
+              <div class="podium-name">Artist B — “Street Anthem”</div>
+              <div class="podium-meta">Prime-time push • 3 week run</div>
+              <div class="podium-score">Heat score: 92 / 100</div>
+            </div>
+            <div class="podium-card">
+              <div class="podium-rank">#3 • MIDWAVE</div>
+              <div class="podium-name">Artist C — “Late Night”</div>
+              <div class="podium-meta">Mix show favorite • ramping</div>
+              <div class="podium-score">Heat score: 88 / 100</div>
+            </div>
+          </div>
+
+          <div class="hero-cta-row">
+            <button class="btn-main" type="button" onclick="window.location.href='feature-revenue-engine.html'">
+              Open Feature Engine
+            </button>
+            <button class="btn-secondary" type="button" onclick="window.location.href='client-vault.html'">
+              View Client Vault
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <section class="section" style="margin-top:-0.6rem;">
+    <div class="section-inner">
+      <div class="ticker-shell">
+        <div class="ticker-label">live heat ticker</div>
+        <div class="ticker-track">
+          <div class="ticker-item">Artist A — <strong>Heavy Motion Takeover</strong> • 4 weeks • 3x daily in drive-time</div>
+          <div class="ticker-item">Mixtape “Krave City Vol.1” — <strong>Top Mixtape</strong> • Hosted by DJ Krave</div>
+          <div class="ticker-item">Brand “Streetwear Co.” — <strong>Gold Sponsor Flight</strong> • Weekends + late night</div>
+          <div class="ticker-item">Artist D — <strong>Midwave Feature</strong> • Building momentum</div>
+          <!-- duplicated once for smooth loop -->
+          <div class="ticker-item">Artist A — <strong>Heavy Motion Takeover</strong> • 4 weeks • 3x daily in drive-time</div>
+          <div class="ticker-item">Mixtape “Krave City Vol.1” — <strong>Top Mixtape</strong> • Hosted by DJ Krave</div>
+          <div class="ticker-item">Brand “Streetwear Co.” — <strong>Gold Sponsor Flight</strong> • Weekends + late night</div>
+          <div class="ticker-item">Artist D — <strong>Midwave Feature</strong> • Building momentum</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. FEATURED SINGLES -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">1. Featured singles leaderboard</h2>
+      <p class="section-sub">
+        Front-and-center **single records** in rotation on TKFM.  
+        Rankings can later come from your Feature Revenue Engine + spin logs.  
+        Label side can see deeper math; neon side shows clean heat.
+      </p>
+
+      <div class="grid-2">
+        <article class="card card-purple">
+          <div class="card-header-row">
+            <div class="card-name">Top featured singles</div>
+            <span class="status-pill">Sample layout</span>
+          </div>
+          <div class="card-tag">Pulled from feature + spins</div>
+
+          <table class="leader-table">
+            <thead>
+              <tr>
+                <th class="rank">#</th>
+                <th>Record</th>
+                <th>Tier</th>
+                <th>Heat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="rank">1</td>
+                <td>
+                  <div class="leader-name">Artist A — “Single Title”</div>
+                  <div class="leader-meta">Drive-time heavy • 4 week run</div>
+                </td>
+                <td><span class="chip chip-pink">Heavy Motion</span></td>
+                <td>97 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">2</td>
+                <td>
+                  <div class="leader-name">Artist B — “Street Anthem”</div>
+                  <div class="leader-meta">Midday + nights • 3 week run</div>
+                </td>
+                <td><span class="chip chip-cyan">Midwave</span></td>
+                <td>92 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">3</td>
+                <td>
+                  <div class="leader-name">Artist C — “Late Night”</div>
+                  <div class="leader-meta">Late-night specialty show</div>
+                </td>
+                <td><span class="chip">Light Motion</span></td>
+                <td>88 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">4</td>
+                <td>
+                  <div class="leader-name">Artist D — “Intro Record”</div>
+                  <div class="leader-meta">Test run • new artist</div>
+                </td>
+                <td><span class="chip">Light Motion</span></td>
+                <td>79 / 100</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="meta-row" style="margin-top:.6rem;">
+            <span>Future source: feature_singles leaderboard view</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-name">How singles connect to engines</div>
+          <div class="card-tag">TKFM neon vs label</div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> **Feature Revenue Engine** tracks tiers, dates, spend, and spin-weight.</li>
+            <li><span class="dot-cyan"></span> Neon side takes all that math and turns it into a simple leaderboard.</li>
+            <li><span class="dot-amber"></span> **Label side** (They Krave For Me Records) can see splits &amp; contracts — not here.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Keep this page safe for artists, DJs &amp; brands to see publicly or after login.</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. MIXTAPE + DJ LEADERBOARDS -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">2. Mixtape &amp; DJ leaderboards</h2>
+      <p class="section-sub">
+        This block shows who’s really **moving tape-wise** and which DJs are
+        carrying the most motion across TKFM and your **DJ mixtape hosting** lanes.
+      </p>
+
+      <div class="grid-2">
+        <!-- Mixtapes -->
+        <article class="card card-pink">
+          <div class="card-header-row">
+            <div class="card-name">Top mixtapes</div>
+            <span class="status-pill">Hosted runs</span>
+          </div>
+          <div class="card-tag">Powered by TKFM + hosting</div>
+
+          <table class="leader-table">
+            <thead>
+              <tr>
+                <th class="rank">#</th>
+                <th>Mixtape</th>
+                <th>Host</th>
+                <th>Heat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="rank">1</td>
+                <td>
+                  <div class="leader-name">“Krave City Vol.1”</div>
+                  <div class="leader-meta">Exclusive TKFM drop</div>
+                </td>
+                <td><span class="chip chip-gold">DJ Krave</span></td>
+                <td>96 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">2</td>
+                <td>
+                  <div class="leader-name">“Neon Nights”</div>
+                  <div class="leader-meta">Heavy late-night motion</div>
+                </td>
+                <td><span class="chip chip-pink">DJ Steelo</span></td>
+                <td>89 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">3</td>
+                <td>
+                  <div class="leader-name">“City Heat Radio”</div>
+                  <div class="leader-meta">Weekend mix series</div>
+                </td>
+                <td><span class="chip chip-cyan">DJ Nova</span></td>
+                <td>84 / 100</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="meta-row" style="margin-top:.6rem;">
+            <span>Future source: mixtape_hosting + spin data</span>
+          </div>
+        </article>
+
+        <!-- DJs -->
+        <article class="card">
+          <div class="card-header-row">
+            <div class="card-name">Top TKFM DJs</div>
+            <span class="status-pill">Show motion</span>
+          </div>
+          <div class="card-tag">Weighted by shows, tapes &amp; feature support</div>
+
+          <table class="leader-table">
+            <thead>
+              <tr>
+                <th class="rank">#</th>
+                <th>DJ</th>
+                <th>Shows</th>
+                <th>Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="rank">1</td>
+                <td>
+                  <div class="leader-name">DJ Krave</div>
+                  <div class="leader-meta">Drive-time + mixtape drops</div>
+                </td>
+                <td>3 weekly</td>
+                <td>98 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">2</td>
+                <td>
+                  <div class="leader-name">DJ Steelo</div>
+                  <div class="leader-meta">Neon night runs</div>
+                </td>
+                <td>2 weekly</td>
+                <td>92 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">3</td>
+                <td>
+                  <div class="leader-name">DJ Nova</div>
+                  <div class="leader-meta">Weekend takeover</div>
+                </td>
+                <td>1 weekly</td>
+                <td>87 / 100</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="meta-row" style="margin-top:.6rem;">
+            <span>Future: tie into DJ schedule + TKFM AI DJ engine usage.</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SPONSOR & BRAND LEADERBOARD -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">3. Sponsor &amp; brand leaderboard</h2>
+      <p class="section-sub">
+        Keep brands excited by showing who’s really **investing into the culture**
+        and how their support moves alongside the music.
+      </p>
+
+      <div class="grid-2">
+        <article class="card card-gold">
+          <div class="card-header-row">
+            <div class="card-name">Top sponsor campaigns</div>
+            <span class="status-pill">From Sponsor Board</span>
+          </div>
+          <div class="card-tag">Ranked by duration, placement &amp; impact</div>
+
+          <table class="leader-table">
+            <thead>
+              <tr>
+                <th class="rank">#</th>
+                <th>Brand</th>
+                <th>Tier</th>
+                <th>Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="rank">1</td>
+                <td>
+                  <div class="leader-name">Streetwear Co.</div>
+                  <div class="leader-meta">Gold takeover • 6 weeks</div>
+                </td>
+                <td><span class="chip chip-gold">Gold Flight</span></td>
+                <td>95 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">2</td>
+                <td>
+                  <div class="leader-name">Studio X</div>
+                  <div class="leader-meta">Silver flight • 4 weeks</div>
+                </td>
+                <td><span class="chip chip-cyan">Silver Flight</span></td>
+                <td>89 / 100</td>
+              </tr>
+              <tr>
+                <td class="rank">3</td>
+                <td>
+                  <div class="leader-name">Event Co.</div>
+                  <div class="leader-meta">Bronze starter • 3 weeks</div>
+                </td>
+                <td><span class="chip">Bronze Flight</span></td>
+                <td>82 / 100</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="meta-row" style="margin-top:.6rem;">
+            <span>Future source: sponsor_flights + airtime logs</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-name">How brands see this vs label</div>
+          <div class="card-tag">Clean neon story, deep math elsewhere</div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> TKFM neon side shows **tier, duration, highlight results**.</li>
+            <li><span class="dot-cyan"></span> Sponsor Flight Board + label Sponsor Engine hold invoices &amp; contract data.</li>
+            <li><span class="dot-amber"></span> Great entry point to pitch **bigger flights + co-branded segments**.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Owner can tune what shows here from God View &amp; label hub.</span>
+          </div>
+
+          <button class="btn-secondary" type="button" onclick="window.location.href='sponsor-flight-board.html'">
+            Open Sponsor Flight Board
+          </button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. BRIDGES -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">4. Bridges: Client Vault &amp; label side</h2>
+      <p class="section-sub">
+        From this leaderboard, clients can drop into their **Client Vault** for
+        their personal story, and you (owner) can jump to **They Krave For Me Records**  
+        and **God View** for deeper control.
+      </p>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-name">Client Vault</div>
+          <div class="card-tag">Per-client detail view</div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> Takes leaderboard position + feature history + spins and turns it into a **client story**.</li>
+            <li><span class="dot-cyan"></span> Shows only safe neon data — artists don’t see backend numbers.</li>
+            <li><span class="dot-amber"></span> Great place to upsell **more features + AI social packs**.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span class="lookup">link: client-vault.html</span>
+          </div>
+        </article>
+
+        <article class="card card-purple" onclick="window.location.href='label-hub.html'">
+          <div class="card-name">They Krave For Me Records Hub</div>
+          <div class="card-tag">Label side • black &amp; gold</div>
+
+          <ul class="feature-list">
+            <li><span class="dot-purple"></span> Sees TKFM leaderboards as input signals for **AR, packs, contracts**.</li>
+            <li><span class="dot"></span> Holds actual contract, pack and revenue share logic — not here.</li>
+            <li><span class="dot-amber"></span> Keeps radio &amp; label worlds clearly separated visually and technically.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Owner &amp; label staff only.</span>
+          </div>
+        </article>
+
+        <article class="card card-gold" onclick="window.location.href='god-view.html'">
+          <div class="card-name">God View</div>
+          <div class="card-tag">Owner master console</div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> Adjusts how **Feature Engine + leaderboards + vault** talk to each other.</li>
+            <li><span class="dot-cyan"></span> Can tune weight of spins vs feature tier vs sponsor support.</li>
+            <li><span class="dot-amber"></span> Never exposed to artists, DJs or sponsors directly.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Owner-only access via TKFM + label role / keys.</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    TKFM Radio • Feature Leaderboards • Neon scoreboard powered by your Feature Revenue Engine,  
+    keeping They Krave For Me Records contract logic safely on the black &amp; gold side.
+  </p>
+</main>
+
+</body>
+</html>

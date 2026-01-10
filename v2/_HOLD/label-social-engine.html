@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Label Social Engine — They Krave For Me Records</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-panel: #050816;
+      --bg-card: rgba(10,10,15,0.96);
+      --bg-card-soft: rgba(10,10,15,0.9);
+      --accent-gold: #facc15;
+      --accent-amber: #f97316;
+      --accent-emerald: #22c55e;
+      --accent-blue: #38bdf8;
+      --accent-red: #ef4444;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.8);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(248,250,252,0.06), transparent 60%),
+        radial-gradient(circle at 50% 120%, #020617, #020617 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 3rem;
+      position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* HALO FX */
+    .halo-left,
+    .halo-right {
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      border: 1px dashed rgba(250,204,21,0.5);
+      top: 6%;
+      opacity: 0.45;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      animation: haloSpin 26s linear infinite;
+    }
+    .halo-left {
+      left: -8%;
+      box-shadow: 0 0 60px rgba(250,204,21,0.4);
+    }
+    .halo-right {
+      right: -8%;
+      animation-duration: 32s;
+      box-shadow: 0 0 60px rgba(248,250,252,0.2);
+    }
+    .halo-left::before,
+    .halo-right::before {
+      content: "";
+      position: absolute;
+      inset: 16%;
+      border-radius: 999px;
+    }
+    .halo-left::before {
+      border: 1px solid rgba(250,204,21,0.9);
+      box-shadow:
+        0 0 32px rgba(250,204,21,0.9),
+        0 0 40px rgba(0,0,0,1);
+    }
+    .halo-right::before {
+      border: 1px solid rgba(248,250,252,0.6);
+      box-shadow:
+        0 0 28px rgba(248,250,252,0.4),
+        0 0 40px rgba(15,23,42,1);
+    }
+
+    @keyframes haloSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* NAV — LABEL SIDE */
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(20px);
+      background: linear-gradient(to bottom,
+        rgba(3,7,18,0.98),
+        rgba(3,7,18,0.55),
+        transparent
+      );
+      border-bottom: 1px solid rgba(148,163,184,0.35);
+      margin: -1.6rem -0.9rem 1.4rem;
+      padding: .45rem .9rem .55rem;
+    }
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .nav-logo {
+      font-size: .97rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#facc15,#f97316,#fef9c3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 40px rgba(0,0,0,0.9);
+      white-space: nowrap;
+    }
+    .nav-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      font-size: .78rem;
+    }
+    .nav-link {
+      padding: .26rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #e5e7eb;
+      background: transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        color .16s,
+        transform .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.96);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color: rgba(250,204,21,0.95);
+      background: radial-gradient(circle at 0 0,rgba(250,204,21,0.3),transparent 60%);
+      color: #fef9c3;
+      box-shadow:
+        0 0 22px rgba(250,204,21,0.8),
+        0 0 36px rgba(0,0,0,0.95);
+    }
+    .nav-link-radio {
+      border-color: rgba(56,189,248,0.7);
+      background: radial-gradient(circle at 100% 0,rgba(56,189,248,0.2),transparent 60%);
+      color: #e0f2fe;
+    }
+
+    @media (max-width:840px){ .nav-tag{display:none;} }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 30px;
+      padding: 1.7rem 1.4rem 2rem;
+      border: 1px solid rgba(250,204,21,0.8);
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.22),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(248,250,252,0.08),transparent 60%),
+        radial-gradient(circle at 50% 120%,rgba(3,7,18,1),rgba(3,7,18,1) 70%);
+      box-shadow:
+        0 0 50px rgba(0,0,0,1),
+        0 0 70px rgba(0,0,0,0.95);
+      overflow: hidden;
+      margin-bottom: 1.9rem;
+    }
+    .hero-fx {
+      position: absolute;
+      inset: -32%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(250,204,21,0.3),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(15,23,42,1),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.3fr 1.05fr;
+      gap: 1.1rem;
+    }
+    @media (max-width:960px){ .hero-inner{grid-template-columns:1fr;} }
+
+    .hero-kicker {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #e5e7eb;
+      margin-bottom: .3rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.05rem;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#facc15,#f97316,#fef9c3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 30px rgba(250,204,21,1),
+        0 0 45px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .5rem;
+      font-size: .95rem;
+      max-width: 600px;
+      color: #e5e7eb;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-pills {
+      margin-top: .75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .78rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .28rem .8rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .pill span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 14px rgba(250,204,21,0.9);
+    }
+    .pill-alt span {
+      background: var(--accent-blue);
+      box-shadow: 0 0 14px rgba(56,189,248,0.9);
+    }
+
+    .hero-note {
+      margin-top: .7rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 260px;
+    }
+
+    /* HERO PANEL */
+    .hero-panel {
+      border-radius: 22px;
+      border: 1px solid rgba(250,204,21,0.75);
+      background: radial-gradient(circle at 0 0,rgba(250,204,21,0.15),transparent 65%),
+                  radial-gradient(circle at 100% 100%,rgba(15,23,42,1),rgba(3,7,18,0.96));
+      padding: .9rem .9rem 1rem;
+      box-shadow:
+        0 0 30px rgba(250,204,21,0.84),
+        0 0 40px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .hero-panel-inner { position: relative; z-index: 1; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      border-radius: 999px;
+      padding: .18rem .7rem;
+      border: 1px solid rgba(248,250,252,0.3);
+      background: rgba(15,23,42,0.96);
+      margin-bottom: .4rem;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+
+    .hero-panel-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .18rem;
+      color: #fef9c3;
+    }
+    .hero-panel-body {
+      margin-bottom: .4rem;
+      color: #e5e7eb;
+    }
+    .hero-panel-list {
+      margin: 0 0 .6rem;
+      padding-left: 1.1rem;
+      color: var(--text-main);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .45rem 1rem;
+      border: 1px solid rgba(250,204,21,0.9);
+      background: rgba(15,23,42,0.98);
+      color: #fef9c3;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    /* SECTION */
+    .section {
+      margin-bottom: 1.7rem;
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.1rem 1rem 1.3rem;
+      box-shadow: 0 0 32px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.16),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(24,24,27,0.7),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .section-inner { position: relative; z-index: 1; }
+
+    .section-title {
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 0 0 .25rem;
+    }
+    .section-sub {
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 780px;
+      margin: 0 0 .85rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 1.1fr;
+      gap: .9rem;
+    }
+    @media (max-width:960px){ .grid-2{grid-template-columns:1fr;} }
+
+    .card {
+      border-radius: 20px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: var(--bg-card-soft);
+      padding: .9rem .85rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 26px rgba(0,0,0,0.95);
+      transition:
+        transform .16s,
+        border-color .16s,
+        box-shadow .16s,
+        background .16s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -38%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.13),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(24,24,27,0.7),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .card-inner { position: relative; z-index: 1; }
+
+    .card-highlight {
+      border-image: linear-gradient(120deg,#facc15,#f97316,#fef9c3) 1;
+      border-width: 1px;
+      border-style: solid;
+      box-shadow:
+        0 0 28px rgba(250,204,21,0.8),
+        0 0 36px rgba(0,0,0,1);
+    }
+    .card-elite {
+      border-image: linear-gradient(120deg,#facc15,#ef4444,#8b5cf6) 1;
+      border-width: 1px;
+      border-style: solid;
+      box-shadow:
+        0 0 32px rgba(248,113,113,0.8),
+        0 0 40px rgba(0,0,0,1);
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      background: rgba(10,10,15,1);
+    }
+
+    .card-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      color: #e5e7eb;
+      margin-bottom: .18rem;
+    }
+    .card-title {
+      font-size: .98rem;
+      font-weight: 600;
+      margin-bottom: .2rem;
+      color: #fef9c7;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: .3rem 0 .8rem;
+      font-size: .78rem;
+    }
+    .feature-list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+      align-items: flex-start;
+    }
+    .dot {
+      margin-top: .22rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 10px var(--accent-gold);
+      flex-shrink: 0;
+    }
+    .dot-blue {
+      background: var(--accent-blue);
+      box-shadow: 0 0 10px var(--accent-blue);
+    }
+    .dot-red {
+      background: var(--accent-red);
+      box-shadow: 0 0 10px var(--accent-red);
+    }
+
+    .field {
+      margin-bottom: .6rem;
+    }
+    .field label {
+      display: block;
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      color: #cbd5f5;
+      margin-bottom: .22rem;
+    }
+    .field small {
+      display: block;
+      font-size: .72rem;
+      color: var(--text-muted);
+      margin-bottom: .16rem;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.96);
+      padding: .45rem .7rem;
+      color: var(--text-main);
+      font-size: .82rem;
+      outline: none;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+      gap: .55rem;
+    }
+
+    .btn-main {
+      border-radius: 999px;
+      padding: .48rem 1.1rem;
+      border: none;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      background: linear-gradient(135deg,#facc15,#f97316,#fef9c3);
+      color: #020617;
+      box-shadow:
+        0 0 22px rgba(250,204,21,0.85),
+        0 0 32px rgba(0,0,0,1);
+    }
+    .btn-secondary {
+      border-radius: 999px;
+      padding: .4rem .95rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,15,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .76rem;
+      margin: .4rem 0 .6rem;
+    }
+    .pill-chip {
+      border-radius: 999px;
+      padding: .22rem .65rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.96);
+    }
+
+    .plan-meta {
+      font-size: .72rem;
+      color: var(--text-muted);
+      margin-top: .5rem;
+    }
+
+    .footer-note {
+      margin-top: 1.1rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .halo-left,.halo-right{animation:none;}
+      .card{transition:none;}
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+<div class="halo-left"></div>
+<div class="halo-right"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">They Krave For Me Records</div>
+    <div class="nav-tag">Label Social Engine • Black &amp; Gold</div>
+    <div class="nav-links">
+      <a href="label-home.html" class="nav-link">Label Home</a>
+      <a href="label-hub.html" class="nav-link">Label Hub</a>
+      <a href="label-accounts.html" class="nav-link">Accounts</a>
+      <a href="label-pack-builder.html" class="nav-link">Pack Builder</a>
+      <a href="label-social-engine.html" class="nav-link nav-link-primary">Social Engine</a>
+      <a href="god-view.html" class="nav-link">God View</a>
+      <a href="social-engine.html" class="nav-link nav-link-radio">TKFM Social (Public)</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">LABEL SOCIAL ENGINE</div>
+        <h1>Control all AI social packs from HQ</h1>
+        <p class="hero-sub">
+          This is the **owner / admin console** for social power moves. Artists &amp; DJs buy their
+          packs on the TKFM neon side — here, the label decides **who gets what, when, and how hard
+          the AI pushes**.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Map TKFM social plans to label / artist / DJ accounts</div>
+          <div class="pill pill-alt"><span></span> Override campaigns from God View if needed</div>
+          <div class="pill"><span></span> Bundle social AI into label packs &amp; contracts</div>
+        </div>
+
+        <p class="hero-note">
+          Front-end shell only — later, this can talk to your Supabase tables and Netlify Functions.
+        </p>
+      </div>
+
+      <aside class="hero-panel">
+        <div class="hero-panel-inner">
+          <div class="badge">
+            <span class="badge-dot"></span> Owner / staff only
+          </div>
+          <div class="hero-panel-title">What you can control from here</div>
+          <p class="hero-panel-body">
+            You decide which **roster members** are allowed to have AI auto-post turned on, which
+            plans they're on, and how those campaigns line up with label packs, contracts and
+            sponsor plays.
+          </p>
+          <ul class="hero-panel-list">
+            <li>Turn AI auto-post on/off per artist / DJ.</li>
+            <li>See what plan they bought on TKFM.</li>
+            <li>Attach packs to label contracts &amp; revenue engine.</li>
+          </ul>
+          <button class="btn-ghost" type="button" onclick="window.location.href='god-view.html'">
+            Jump to God View
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- MAPPING SECTION -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">1. Map TKFM social packs to label accounts</h2>
+      <p class="section-sub">
+        When an artist or DJ purchases a **Social Connect**, **AI Social Pulse**, or
+        **AI Campaign Takeover** on TKFM, you can map that purchase to your **label / artist / DJ
+        accounts** here.
+      </p>
+
+      <div class="grid-2">
+        <article class="card card-highlight">
+          <div class="card-inner">
+            <div class="card-kicker">Pack assignment</div>
+            <div class="card-title">Choose account &amp; pack</div>
+
+            <form action="#" method="post">
+              <div class="field">
+                <label for="account-type">Account type</label>
+                <small>Which side of the roster is this?</small>
+                <select id="account-type" name="account_type">
+                  <option value="">Select</option>
+                  <option value="artist">Artist</option>
+                  <option value="dj">DJ</option>
+                  <option value="label">Internal label brand</option>
+                  <option value="sponsor">Sponsor / partner</option>
+                </select>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="account-id">Account ID / handle</label>
+                  <small>Match whatever you use in label-accounts / artist-accounts / dj-accounts.</small>
+                  <input id="account-id" name="account_id" type="text" placeholder="artist_123 / dj_krave_streets" />
+                </div>
+                <div class="field">
+                  <label for="pack-select">TKFM social pack</label>
+                  <select id="pack-select" name="pack">
+                    <option value="">Select pack</option>
+                    <option value="tkfm_social_connect_lockin">Social Connect Lock-In ($99)</option>
+                    <option value="tkfm_ai_social_pulse_monthly">AI Social Pulse Monthly ($149)</option>
+                    <option value="tkfm_ai_campaign_takeover">AI Campaign Takeover ($499)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="status">Pack status</label>
+                  <small>Is this active, paused or completed?</small>
+                  <select id="status" name="status">
+                    <option value="">Select</option>
+                    <option value="active">Active</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="priority">Priority</label>
+                  <small>Who gets AI attention first when queues get heavy.</small>
+                  <select id="priority" name="priority">
+                    <option value="">Normal</option>
+                    <option value="high">High — flagship / key roster</option>
+                    <option value="low">Low — light experimental</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn-main" type="submit">
+                Save Mapping (Shell)
+              </button>
+
+              <p class="plan-meta">
+                Later, this can write to a <code>social_packs</code> table in Supabase so your AI
+                knows which accounts have which rights.
+              </p>
+            </form>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Quick reference</div>
+            <div class="card-title">Stripe / lookup_key cheatsheet</div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> <strong>Social Connect Lock-In</strong><br>
+                lookup_key: <code>tkfm_social_connect_lockin</code>
+              </li>
+              <li><span class="dot-blue"></span> <strong>AI Social Pulse Monthly</strong><br>
+                lookup_key: <code>tkfm_ai_social_pulse_monthly</code>
+              </li>
+              <li><span class="dot-red"></span> <strong>AI Campaign Takeover</strong><br>
+                lookup_key: <code>tkfm_ai_campaign_takeover</code>
+              </li>
+            </ul>
+
+            <p class="plan-meta">
+              TKFM neon side uses these keys for checkout.  
+              Label side (here) just **reads** what was bought and decides how to use it.
+            </p>
+
+            <div class="pill-row">
+              <span class="pill-chip">No public access here</span>
+              <span class="pill-chip">Owner / admin tools only</span>
+              <span class="pill-chip">Feeds God View + revenue engine</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI RULES SECTION -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">2. AI posting rules &amp; guardrails</h2>
+      <p class="section-sub">
+        You decide how aggressive the AI gets, when it can post, and what it’s not allowed to touch.
+        These settings can later be read by your AI engine before any post goes live.
+      </p>
+
+      <div class="grid-2">
+        <article class="card card-elite">
+          <div class="card-inner">
+            <div class="card-kicker">Global label rules</div>
+            <div class="card-title">Guardrails for every AI post</div>
+
+            <form action="#" method="post">
+              <div class="field-row">
+                <div class="field">
+                  <label for="post-review-mode">Post review mode</label>
+                  <small>Do you want manual checks before posts go live?</small>
+                  <select id="post-review-mode" name="post_review_mode">
+                    <option value="">Select</option>
+                    <option value="draft_only">Draft only (owner approves)</option>
+                    <option value="auto_with_samples">Auto, but send samples to owner</option>
+                    <option value="full_auto">Full auto (trusted roster only)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="post-hours">Posting window</label>
+                  <small>Example: “10:00–23:00 local time”.</small>
+                  <input id="post-hours" name="post_hours" type="text" placeholder="10:00 – 23:00 (no graveyard posts)" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="off-limits">Off-limits topics</label>
+                <small>Things AI should never talk about in posts.</small>
+                <input id="off-limits" name="off_limits" type="text" placeholder="Legal issues, politics, rumors, personal life, etc." />
+              </div>
+
+              <div class="field">
+                <label for="tone">Tone &amp; style</label>
+                <small>Give AI a brand voice for They Krave For Me Records + TKFM.</small>
+                <input id="tone" name="tone" type="text" placeholder="Street smart, professional, no clout-chasing, no disrespect." />
+              </div>
+
+              <button class="btn-main" type="submit">
+                Save Global Rules (Shell)
+              </button>
+
+              <p class="plan-meta">
+                These rules can live in something like a <code>social_policies</code> table and be
+                injected before every AI generation.
+              </p>
+            </form>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">God View connection</div>
+            <div class="card-title">See impact across the empire</div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> God View can show **who has AI active**, which packs they’re on, and how campaigns are performing.</li>
+              <li><span class="dot-blue"></span> Label pack builder can **auto-include** certain social packs for premium tiers.</li>
+              <li><span class="dot"></span> Sponsor engine room can see which accounts are **social-ready** for brand campaigns.</li>
+              <li><span class="dot-red"></span> You can kill or pause packs instantly from here if anything gets weird.</li>
+            </ul>
+
+            <div style="margin-top:.7rem;display:flex;gap:.45rem;flex-wrap:wrap;">
+              <button class="btn-secondary" type="button" onclick="window.location.href='label-pack-builder.html'">
+                Open Pack Builder
+              </button>
+              <button class="btn-secondary" type="button" onclick="window.location.href='label-revenue-engine.html'">
+                Revenue Engine
+              </button>
+            </div>
+
+            <p class="plan-meta">
+              Social packs aren’t just marketing — they’re also part of the **money and roster**
+              story the rest of the label engine is tracking.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRIDGE BACK TO TKFM -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">3. TKFM vs label — clean separation, shared power</h2>
+      <p class="section-sub">
+        Artists, DJs and brands **buy** their social packs on TKFM.  
+        **You**, as They Krave For Me Records, decide what those packs actually do from this console.
+      </p>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Neon TKFM</div>
+            <div class="card-title">Where checkout happens</div>
+            <p class="plan-meta">
+              TKFM exposes the **Social Connect**, **AI Social Pulse** and **AI Campaign Takeover**
+              plans with Stripe checkout — all neon, all public.
+            </p>
+            <button class="btn-secondary" type="button" onclick="window.location.href='social-engine.html'">
+              View TKFM Social Page
+            </button>
+          </div>
+        </article>
+
+        <article class="card card-highlight">
+          <div class="card-inner">
+            <div class="card-kicker">Black &amp; Gold HQ</div>
+            <div class="card-title">Where strategy lives</div>
+            <p class="plan-meta">
+              Label Social Engine + God View + Pack Builder decide **who gets AI, how much, and how
+              that lines up with contracts, revenue and sponsor plays**.
+            </p>
+            <button class="btn-main" type="button" onclick="window.location.href='god-view.html'">
+              Lock In Social Command
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    They Krave For Me Records • Label Social Engine • Black &amp; gold universe.  
+    TKFM sells the packs — the label moves the pieces.
+  </p>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>They Krave For Me Records • AI Contract Lab</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(10,10,10,0.98);
+      --accent-gold: #facc15;
+      --accent-amber: #f59e0b;
+      --accent-orange: #fb923c;
+      --accent-teal: #22d3ee;
+      --accent-lime: #a3e635;
+      --accent-rose: #fb7185;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.2), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(251,146,60,0.18), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-orbit {
+      position: fixed;
+      width: 560px;
+      height: 560px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.8);
+      inset: -150px auto auto -200px;
+      opacity: .9;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 150px rgba(250,204,21,1),
+        0 0 220px rgba(0,0,0,1);
+      animation: spin 34s linear infinite;
+      pointer-events: none;
+    }
+    .bg-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 20%;
+      border-radius: inherit;
+      border: 1px solid rgba(251,146,60,0.9);
+      box-shadow:
+        0 0 110px rgba(251,146,60,1),
+        0 0 180px rgba(0,0,0,1);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.55) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.7rem .9rem 2.6rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* NAV */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      margin-bottom: 1.4rem;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .nav-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fefce8;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.38), transparent 60%),
+        radial-gradient(circle at 100% 100%, #020617, #000000 65%);
+      box-shadow:
+        0 0 28px rgba(250,204,21,1),
+        0 0 44px rgba(0,0,0,1);
+    }
+    .nav-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-main {
+      font-size: .95rem;
+      font-weight: 900;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: #fef9c3;
+    }
+    .nav-sub {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .nav-spacer {
+      margin-left: auto;
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+    }
+    .nav-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.98);
+      padding: .22rem .7rem;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .nav-chip--gold {
+      border-color: rgba(250,204,21,0.9);
+      color: #fef9c3;
+      box-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 32px rgba(0,0,0,1);
+    }
+
+    /* SHELL */
+    .shell {
+      border-radius: 30px;
+      border: 1px solid rgba(250,204,21,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.22), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(251,146,60,0.18), transparent 60%),
+        radial-gradient(circle at 50% 130%, #020617, #000000 75%);
+      padding: 1.6rem 1.5rem 1.9rem;
+      box-shadow:
+        0 0 110px rgba(15,23,42,1),
+        0 0 180px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.7rem;
+    }
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(251,113,133,0.25), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .shell-inner { position: relative; z-index: 1; }
+
+    .kicker {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #fde68a;
+      margin-bottom: .4rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#fef3c7,#facc15,#fb923c,#f97316);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 46px rgba(250,204,21,0.9),
+        0 0 80px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .7rem;
+      font-size: .9rem;
+      color: #e5e7eb;
+      max-width: 680px;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.1rem;
+      margin-top: 1.1rem;
+    }
+    @media (max-width: 920px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      margin-top: .7rem;
+      font-size: .72rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .22rem .75rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .pill span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 15px rgba(250,204,21,1);
+    }
+    .pill--radio span {
+      background: var(--accent-teal);
+      box-shadow: 0 0 15px rgba(34,211,238,1);
+    }
+    .pill--label span {
+      background: var(--accent-lime);
+      box-shadow: 0 0 15px rgba(163,230,53,1);
+    }
+
+    .builder-card {
+      border-radius: 22px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.15), transparent 60%),
+        rgba(10,10,10,0.98);
+      padding: .9rem 1.05rem 1.1rem;
+      box-shadow: 0 0 32px rgba(0,0,0,1);
+      font-size: .8rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .7rem;
+      margin-top: .7rem;
+    }
+    @media (max-width: 720px) {
+      .field-grid { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .field-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .7rem;
+      margin-top: .7rem;
+    }
+    @media (max-width: 920px) {
+      .field-grid-3 { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: .18rem;
+    }
+    label {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+      padding: .08rem .55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.98);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #e5e7eb;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,1);
+      background: rgba(10,10,10,0.98);
+      color: var(--text-main);
+      padding: .5rem .8rem;
+      font-size: .8rem;
+      outline: none;
+      width: 100%;
+    }
+    input:focus,
+    select:focus {
+      border-color: rgba(250,204,21,1);
+      box-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 30px rgba(0,0,0,1);
+    }
+
+    .hint {
+      font-size: .7rem;
+      color: var(--text-muted);
+    }
+
+    .split-row {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .45rem;
+      margin-top: .4rem;
+    }
+    @media (max-width: 920px) {
+      .split-row { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .split-pill {
+      border-radius: 16px;
+      border: 1px solid rgba(75,85,99,1);
+      background: rgba(15,15,15,0.98);
+      padding: .5rem .6rem;
+      font-size: .76rem;
+    }
+    .split-label {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--text-muted);
+      margin-bottom: .16rem;
+    }
+
+    .chk-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-top: .6rem;
+      font-size: .76rem;
+    }
+    .chk-pill {
+      border-radius: 999px;
+      border: 1px solid rgba(75,85,99,1);
+      background: rgba(15,23,42,0.96);
+      padding: .22rem .65rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      cursor: pointer;
+    }
+    .chk-pill input {
+      accent-color: var(--accent-gold);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .9rem;
+    }
+    .btn-main {
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      padding: .52rem 1.4rem;
+      font-size: .82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #020617;
+      background: linear-gradient(120deg,#facc15,#f97316,#fbbf24);
+      box-shadow:
+        0 0 26px rgba(250,204,21,1),
+        0 0 40px rgba(0,0,0,1);
+    }
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .48rem 1.1rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      cursor: pointer;
+    }
+
+    /* OUTPUT SIDE */
+    .output-card {
+      border-radius: 22px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: .9rem .95rem 1.05rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .output-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 100% 0, rgba(250,204,21,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .output-inner { position: relative; z-index: 1; }
+
+    .card-kicker {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+    .card-title {
+      font-size: .92rem;
+      font-weight: 600;
+      margin: 0 0 .4rem;
+    }
+
+    .summary-box {
+      border-radius: 16px;
+      border: 1px solid rgba(55,65,81,1);
+      background: #020617;
+      padding: .55rem .65rem .7rem;
+      margin-bottom: .6rem;
+      max-height: 210px;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-size: .78rem;
+    }
+
+    .clause-list {
+      border-radius: 16px;
+      border: 1px solid rgba(55,65,81,1);
+      background: #020617;
+      padding: .55rem .65rem;
+      max-height: 240px;
+      overflow: auto;
+      font-size: .78rem;
+    }
+    .clause-item {
+      margin-bottom: .32rem;
+    }
+    .clause-title {
+      font-size: .78rem;
+      font-weight: 600;
+      color: #fef9c3;
+    }
+    .clause-body {
+      font-size: .75rem;
+      color: var(--text-muted);
+    }
+
+    .small-note {
+      margin-top: .5rem;
+      font-size: .74rem;
+      color: var(--text-muted);
+    }
+
+    .footer-note {
+      margin-top: .8rem;
+      font-size: .74rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orbit { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbit"></div>
+<div class="scanline"></div>
+
+<main>
+  <header class="nav-bar">
+    <div class="nav-logo">
+      <div class="nav-pill">KR</div>
+      <div class="nav-text">
+        <div class="nav-main">They Krave For Me Records</div>
+        <div class="nav-sub">AI Contract Lab</div>
+      </div>
+    </div>
+    <div class="nav-spacer">
+      <div class="nav-chip nav-chip--gold">Owner / Label only</div>
+      <div class="nav-chip">Tie packs → deals → TKFM</div>
+    </div>
+  </header>
+
+  <section class="shell">
+    <div class="shell-inner">
+      <div class="kicker">Deals, but make it motion-friendly</div>
+      <h1>Turn packs into real contracts in one pass.</h1>
+      <p class="hero-sub">
+        This lab turns your <strong>AI Pack Builder</strong> output into a clean
+        contract summary with splits, term, and obligations. Use it as your
+        internal blueprint before sending anything to a lawyer or e-sign tool.
+      </p>
+
+      <div class="hero-grid">
+        <!-- LEFT: FORM -->
+        <div class="builder-card">
+          <div class="pill-row">
+            <div class="pill"><span></span> Artist single / EP deals</div>
+            <div class="pill pill--radio"><span></span> TKFM feature + media</div>
+            <div class="pill pill--label"><span></span> Label / sponsor structures</div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="partyName">Artist / DJ / Partner name</label>
+              <input id="partyName" type="text" placeholder="Example: Neon Cartier, DJ Chrome Palace, Basement Syndicate" />
+              <p class="hint">This name will show in the summary and clauses.</p>
+            </div>
+            <div class="field">
+              <label for="dealType">Deal type</label>
+              <select id="dealType">
+                <option value="single">Single deal</option>
+                <option value="ep">EP / Mixtape deal</option>
+                <option value="album">Album / project deal</option>
+                <option value="producer">Producer agreement</option>
+                <option value="dj_residency">DJ residency / show pack</option>
+                <option value="sponsor">Sponsor media pack</option>
+                <option value="service">Services / marketing-only</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="packName">
+                Linked pack name
+                <span class="badge">From Pack Builder</span>
+              </label>
+              <input id="packName" type="text" placeholder="Example: KRAVE LAUNCH PACK, TKFM GOD MODE FEATURE" />
+              <p class="hint">Use the same pack name as in label-pack-builder.html.</p>
+            </div>
+            <div class="field">
+              <label for="priceBand">Price band (USD)</label>
+              <input id="priceBand" type="text" placeholder="Example: $1,250–$1,750" />
+              <p class="hint">You can paste in the range suggested by the pack builder.</p>
+            </div>
+          </div>
+
+          <div class="field-grid-3">
+            <div class="field">
+              <label for="termMonths">Term length (months)</label>
+              <input id="termMonths" type="number" min="1" max="84" value="12" />
+              <p class="hint">How long this deal runs before re-up / option.</p>
+            </div>
+            <div class="field">
+              <label for="optionsCount">Options</label>
+              <input id="optionsCount" type="number" min="0" max="5" value="1" />
+              <p class="hint">Future project options the label can pick up.</p>
+            </div>
+            <div class="field">
+              <label for="territory">Territory</label>
+              <select id="territory">
+                <option value="worldwide">Worldwide</option>
+                <option value="us_only">United States only</option>
+                <option value="na_only">North America only</option>
+                <option value="custom">Custom / limited</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Splits (high level)</label>
+            <div class="split-row">
+              <div class="split-pill">
+                <div class="split-label">Masters</div>
+                <input id="masterArtist" type="number" min="0" max="100" value="50" />
+                <span class="hint">Artist / DJ % on master side</span>
+              </div>
+              <div class="split-pill">
+                <div class="split-label">Masters – label</div>
+                <input id="masterLabel" type="number" min="0" max="100" value="50" />
+                <span class="hint">Label / TKFM % on master side</span>
+              </div>
+              <div class="split-pill">
+                <div class="split-label">Brand / sponsor cuts</div>
+                <input id="brandSplit" type="number" min="0" max="100" value="20" />
+                <span class="hint">Slice reserved for brand / sponsor plays</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Key obligations</label>
+            <div class="chk-row">
+              <label class="chk-pill">
+                <input type="checkbox" id="obTkfmPush" checked />
+                <span>TKFM promo & rotation</span>
+              </label>
+              <label class="chk-pill">
+                <input type="checkbox" id="obContent" checked />
+                <span>Artist must deliver content</span>
+              </label>
+              <label class="chk-pill">
+                <input type="checkbox" id="obExclusivity" />
+                <span>Release exclusivity</span>
+              </label>
+              <label class="chk-pill">
+                <input type="checkbox" id="obAdvance" />
+                <span>Includes advance</span>
+              </label>
+              <label class="chk-pill">
+                <input type="checkbox" id="obSponsorRights" />
+                <span>Includes sponsor rights</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-main" type="button" id="generateBtn">Generate summary</button>
+            <button class="btn-ghost" type="button" id="copySummaryBtn">Copy summary</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: OUTPUT -->
+        <aside class="output-card">
+          <div class="output-inner">
+            <div class="card-kicker">Contract blueprint</div>
+            <h2 class="card-title" id="dealTitle">No deal generated yet</h2>
+
+            <div class="summary-box" id="summaryBox">
+Artist / DJ, deal type, pack name, and pricing will show here.
+
+Use this as your talking points and send to your lawyer / e-sign tool when ready.
+            </div>
+
+            <div class="clause-list" id="clauseList">
+              <!-- Clause blocks injected by JS -->
+            </div>
+
+            <p class="small-note">
+              This is not legal advice. It’s a label-side summary tool so They Krave For Me Records
+              can keep deals consistent and lined up with TKFM + label packs.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    They Krave For Me Records • AI Contract Lab • Turn label + TKFM packs into structured deals.
+  </p>
+</main>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+  import { protectPage } from "./auth-gateway.js";
+  import { aiContractSummary } from "./ai-core.js";
+
+  // Lock this to owner + label roles
+  protectPage(["owner", "label"]);
+
+  const partyNameEl = document.getElementById("partyName");
+  const dealTypeEl = document.getElementById("dealType");
+  const packNameEl = document.getElementById("packName");
+  const priceBandEl = document.getElementById("priceBand");
+  const termMonthsEl = document.getElementById("termMonths");
+  const optionsCountEl = document.getElementById("optionsCount");
+  const territoryEl = document.getElementById("territory");
+  const masterArtistEl = document.getElementById("masterArtist");
+  const masterLabelEl = document.getElementById("masterLabel");
+  const brandSplitEl = document.getElementById("brandSplit");
+
+  const obTkfmPushEl = document.getElementById("obTkfmPush");
+  const obContentEl = document.getElementById("obContent");
+  const obExclusivityEl = document.getElementById("obExclusivity");
+  const obAdvanceEl = document.getElementById("obAdvance");
+  const obSponsorRightsEl = document.getElementById("obSponsorRights");
+
+  const generateBtn = document.getElementById("generateBtn");
+  const copySummaryBtn = document.getElementById("copySummaryBtn");
+  const dealTitleEl = document.getElementById("dealTitle");
+  const summaryBoxEl = document.getElementById("summaryBox");
+  const clauseListEl = document.getElementById("clauseList");
+
+  function dealTypeLabel(value) {
+    switch (value) {
+      case "single": return "single deal";
+      case "ep": return "EP / mixtape deal";
+      case "album": return "album / project deal";
+      case "producer": return "producer agreement";
+      case "dj_residency": return "DJ residency / show pack";
+      case "sponsor": return "sponsor media pack";
+      case "service": return "services / marketing-only agreement";
+      default: return value || "deal";
+    }
+  }
+
+  function territoryLabel(value) {
+    switch (value) {
+      case "worldwide": return "worldwide";
+      case "us_only": return "United States only";
+      case "na_only": return "North America only";
+      case "custom": return "a custom / limited territory defined in the final contract";
+      default: return "worldwide";
+    }
+  }
+
+  function collectDealData() {
+    return {
+      partyName: partyNameEl.value.trim() || "Artist / DJ",
+      dealType: dealTypeEl.value,
+      packName: packNameEl.value.trim() || "KRAVE PACK",
+      priceBand: priceBandEl.value.trim() || "TBD",
+      termMonths: Number(termMonthsEl.value) || 12,
+      optionsCount: Number(optionsCountEl.value) || 0,
+      territory: territoryEl.value,
+      splits: {
+        masterArtist: Number(masterArtistEl.value) || 0,
+        masterLabel: Number(masterLabelEl.value) || 0,
+        brandSplit: Number(brandSplitEl.value) || 0
+      },
+      obligations: {
+        tkfmPush: obTkfmPushEl.checked,
+        content: obContentEl.checked,
+        exclusivity: obExclusivityEl.checked,
+        advance: obAdvanceEl.checked,
+        sponsorRights: obSponsorRightsEl.checked
+      }
+    };
+  }
+
+  function fallbackSummary(data) {
+    const typeText = dealTypeLabel(data.dealType);
+    const terrText = territoryLabel(data.territory);
+
+    const lines = [];
+
+    lines.push(`${data.partyName} — ${typeText}`);
+    lines.push(`Linked pack: ${data.packName}`);
+    lines.push(`Price band (internal): ${data.priceBand}`);
+    lines.push("");
+    lines.push(`Term: ${data.termMonths} month(s) with ${data.optionsCount} option(s).`);
+    lines.push(`Territory: ${terrText}.`);
+    lines.push("");
+    lines.push("High-level splits (subject to long form):");
+    lines.push(
+      `• Masters: ${data.splits.masterArtist}% artist / DJ, ` +
+      `${data.splits.masterLabel}% label / TKFM, ` +
+      `${data.splits.brandSplit}% set aside for brand / sponsor structures where applicable.`
+    );
+    lines.push("");
+
+    const ob = data.obligations;
+    const obLines = [];
+    if (ob.tkfmPush) obLines.push("TKFM provides promo / rotation in line with the selected pack.");
+    if (ob.content) obLines.push("Artist commits to deliver required masters, assets & promo content on time.");
+    if (ob.exclusivity) obLines.push("Release is exclusive to the label / TKFM for the term (details in final contract).");
+    if (ob.advance) obLines.push("Deal includes an advance to be recouped from the artist’s share.");
+    if (ob.sponsorRights) obLines.push("Some rights are cleared for sponsor / brand integration packs.");
+
+    if (obLines.length) {
+      lines.push("Key obligations (summary, not full wording):");
+      obLines.forEach(l => lines.push(`• ${l}`));
+    } else {
+      lines.push("Key obligations: To be defined in long form — no flags set yet.");
+    }
+
+    lines.push("");
+    lines.push("This summary is for They Krave For Me Records internal use only. " +
+      "Use it as a blueprint for contract generation, not as the final legal document.");
+
+    return lines.join("\n");
+  }
+
+  function buildClauses(data) {
+    const clauses = [];
+
+    clauses.push({
+      title: "1. Parties & Purpose",
+      body:
+        `${data.partyName} is entering into a ${dealTypeLabel(data.dealType)} ` +
+        `with They Krave For Me Records, tied to the "${data.packName}" pack ` +
+        `and the TKFM ecosystem.`
+    });
+
+    clauses.push({
+      title: "2. Term & Territory",
+      body:
+        `The initial term is approximately ${data.termMonths} month(s), ` +
+        `with ${data.optionsCount} option period(s) the label may elect to pick up. ` +
+        `The deal is intended for ${territoryLabel(data.territory)}.`
+    });
+
+    clauses.push({
+      title: "3. Masters & Revenue Splits",
+      body:
+        `Masters are shared between artist/DJ and label/TKFM. A working model here is ` +
+        `${data.splits.masterArtist}% artist / DJ and ${data.splits.masterLabel}% label / TKFM, ` +
+        `with around ${data.splits.brandSplit}% reserved for brand / sponsor activations when used. ` +
+        `Exact splits should be locked in the long-form agreement.`
+    });
+
+    const ob = data.obligations;
+    const obPoints = [];
+    if (ob.tkfmPush) {
+      obPoints.push("Label / TKFM will use reasonable efforts to provide promo and rotation consistent with the chosen pack.");
+    }
+    if (ob.content) {
+      obPoints.push("Artist is responsible for delivering clean masters, artwork and content in the required formats and timelines.");
+    }
+    if (ob.exclusivity) {
+      obPoints.push("Releases covered by this deal will be exclusive to the label / TKFM for the duration of the term and applicable options.");
+    }
+    if (ob.advance) {
+      obPoints.push("Any advance paid will be recoupable from the artist’s share of earnings defined in the final contract.");
+    }
+    if (ob.sponsorRights) {
+      obPoints.push("Certain uses may involve sponsor / brand integration; the contract should spell out approvals and limitations.");
+    }
+
+    clauses.push({
+      title: "4. Key Obligations",
+      body: obPoints.length
+        ? obPoints.map(p => `• ${p}`).join("\n")
+        : "Core obligations and expectations will be defined and finalized in the long-form agreement."
+    });
+
+    clauses.push({
+      title: "5. Pack & Services Link",
+      body:
+        `The services and media deliverables are based on the "${data.packName}" pack, ` +
+        `including the elements configured in the AI Pack Builder (radio, interviews, ` +
+        `social pushes, visuals, strategy, and extras where selected). ` +
+        `The contract should tie these clearly to timelines and deliverable lists.`
+    });
+
+    clauses.push({
+      title: "6. Not Legal Advice",
+      body:
+        "This page generates a working summary for label-side planning. Final legal wording, " +
+        "definitions and enforcement terms must be drafted or reviewed by a qualified attorney."
+    });
+
+    return clauses;
+  }
+
+  function renderClauses(clauses) {
+    clauseListEl.innerHTML = "";
+    clauses.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "clause-item";
+      div.innerHTML = `
+        <div class="clause-title">${c.title}</div>
+        <div class="clause-body">${c.body.replace(/\n/g, "<br>")}</div>
+      `;
+      clauseListEl.appendChild(div);
+    });
+  }
+
+  function generateSummary() {
+    const data = collectDealData();
+    dealTitleEl.textContent = `${data.partyName} — ${dealTypeLabel(data.dealType)}`;
+
+    let text = "";
+    try {
+      if (typeof aiContractSummary === "function") {
+        text = aiContractSummary(data) || "";
+      }
+    } catch (err) {
+      console.warn("aiContractSummary failed, using fallback", err);
+    }
+
+    if (!text) {
+      text = fallbackSummary(data);
+    }
+
+    summaryBoxEl.textContent = text;
+    const clauses = buildClauses(data);
+    renderClauses(clauses);
+
+    return { data, text };
+  }
+
+  generateBtn.addEventListener("click", () => {
+    generateSummary();
+  });
+
+  copySummaryBtn.addEventListener("click", async () => {
+    const result = generateSummary();
+    const fullText = `${result.data.partyName} — ${dealTypeLabel(result.data.dealType)}\n\n${result.text}`;
+    try {
+      await navigator.clipboard.writeText(fullText);
+      copySummaryBtn.textContent = "Copied!";
+      setTimeout(() => {
+        copySummaryBtn.textContent = "Copy summary";
+      }, 1400);
+    } catch (err) {
+      console.error("Clipboard error", err);
+      copySummaryBtn.textContent = "Copy failed";
+      setTimeout(() => {
+        copySummaryBtn.textContent = "Copy summary";
+      }, 1600);
+    }
+  });
+</script>
+</body>
+</html>

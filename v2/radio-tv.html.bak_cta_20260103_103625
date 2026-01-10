@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>TKFM Radio TV — Watch While You Listen</title>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/tkfm-ui.js" defer></script>
+  <script src="/js/tkfm-unlocks.js" defer></script>
+  <style>
+    body{
+      background:#020617;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
+        radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+    }
+    .card{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.18);transition:transform .12s ease,border-color .12s ease}
+    .card:hover{border-color:rgba(56,189,248,.35);transform:translateY(-1px)}
+    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
+    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
+    .tab{border-radius:999px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.45rem .9rem;white-space:nowrap}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    input,textarea,select{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
+    input:focus,textarea:focus,select:focus{outline:none!important;border-color:rgba(56,189,248,.6)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important}
+    .soft{color:rgba(226,232,240,.82)}
+    .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
+  </style>
+
+  <script src="/js/tkfm-featured-podcast-lane.js"></script>
+  <script src="/js/tkfm-featured-tv-rotator.js"></script>
+</head>
+<body class="text-slate-50 min-h-screen">
+
+  <!-- TKFM Featured TV (auto-rotating pinned media) -->
+  <section id="tkfmFeaturedTV" class="w-full max-w-6xl mx-auto px-4 pt-6">
+    <div class="rounded-2xl border border-cyan-400/30 bg-slate-950/60 shadow-xl overflow-hidden">
+      <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-cyan-400/20">
+        <div>
+          <div class="text-sm uppercase tracking-widest text-cyan-300">Featured TV</div>
+          <div class="text-xs text-slate-300 opacity-80">Pinned media rotates automatically — listeners see it instantly.</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="featuredTvNext" class="px-3 py-2 rounded-xl border border-purple-400/30 bg-slate-900/60 text-slate-100 hover:bg-slate-900">Next</button>
+          <button id="featuredTvToggle" class="px-3 py-2 rounded-xl border border-pink-400/30 bg-slate-900/60 text-slate-100 hover:bg-slate-900">Pause Rotation</button>
+          <button id="featuredTvOpen" class="px-3 py-2 rounded-xl border border-cyan-400/30 bg-slate-900/60 text-slate-100 hover:bg-slate-900">Open</button>
+        </div>
+      </div>
+
+      <div class="aspect-video w-full bg-black">
+        <iframe id="featuredTvFrame" class="w-full h-full" src="" title="TKFM Featured TV" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div id="featuredTvMeta" class="px-4 py-3 text-slate-100"></div>
+    </div>
+  </section>
+
+
+  <!-- TKFM Featured Podcast Lane (embedded at top of TV screen) -->
+  <section id="tkfmFeaturedPodcastLane">
+    <div class="tkfmFeaturedPodcastLane__head">
+      <div class="tkfmFeaturedPodcastLane__title">Featured Podcasts</div>
+      <div class="tkfmFeaturedPodcastLane__sub">Pinned on TKFM TV — tap a show to play instantly</div>
+    </div>
+    <div id="tkfmFeaturedPodcastRail" class="tkfmFeaturedPodcastLane__rail"></div>
+  </section>
+
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
+        <div class="leading-tight">
+          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
+          <p class="text-sm font-semibold">TKFM Radio TV</p>
+        </div>
+      </a>
+      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
+        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">📻 Radio</a>
+        <a href="radio-tv.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">📺 TV</a>
+        <a href="schedule.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🗓 Schedule</a>
+        <a href="live.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-200">🔴 Live</a>
+        <a href="podcaster-live.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">🎙 Podcaster Live</a>
+        <a href="owner-live-console.html" class="px-3 py-1 rounded-full border border-yellow-400/80 bg-yellow-400/10 text-yellow-200">🔑 Owner Live</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-14 space-y-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 pill text-purple-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
+      <span>Radio + Video Screen</span>
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">
+      TV mode: Live Now → Schedule → Pinned → Rotation.
+    </h1>
+
+    <p class="soft max-w-4xl">
+      Priority order:
+      <span class="mono">Live Now</span> (approved live cast),
+      then <span class="mono">Schedule</span> (current slot),
+      then <span class="mono">Pinned</span>,
+      then playlist rotation.
+    </p>
+
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 card rounded-2xl p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Now Featuring</p>
+          <div class="flex flex-wrap gap-2">
+            <a class="tab border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="live.html">🔴 Live</a>
+            <a class="tab border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="schedule.html">🗓 Schedule</a>
+            <a class="tab border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 hover:bg-yellow-500/15" href="owner-live-console.html">🔑 Owner Live</a>
+          </div>
+        </div>
+
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <span id="sourcePill" class="px-3 py-1 rounded-full border border-slate-500/40 bg-slate-500/10 text-slate-100 text-[0.65rem] uppercase tracking-[0.22em] font-extrabold">Loading</span>
+          <span id="timer" class="mono text-xs text-slate-400"></span>
+        </div>
+
+        <h2 id="showTitle" class="text-2xl font-extrabold mt-3">Loading…</h2>
+        <p id="showMeta" class="text-slate-400 text-sm mt-2"></p>
+        <p id="showDesc" class="text-slate-300/85 text-sm mt-2"></p>
+
+        <div class="frame mt-4">
+          <iframe id="tvFrame" class="w-full h-full" src="" title="TKFM TV" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a id="openLink" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15" href="#" target="_blank" rel="noreferrer">▶ Open Link</a>
+          <button id="nextBtn" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">⏭ Next</button>
+          <button id="refreshBtn" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">↻ Refresh</button>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-5">
+        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Up Next</p>
+        <h3 class="text-xl font-extrabold mt-2">Rotation Playlist</h3>
+        <p class="soft text-sm mt-2">Only approved videos appear here.</p>
+
+        <div class="mt-4 space-y-2" id="playlist"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function safe(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function youtubeEmbed(url){
+      url = String(url||'').trim();
+      if (!url) return '';
+      let m = url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      m = url.match(/[?&]v=([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      m = url.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/i);
+      if (m && m[1]) return 'https://www.youtube.com/embed/' + m[1];
+      return '';
+    }
+
+    function normalizeToEmbed(url){
+      const u = String(url||'').trim();
+      if (!u) return '';
+      const yt = youtubeEmbed(u);
+      if (yt) return yt;
+      if (u.includes('player.twitch.tv')) return u;
+      if (u.includes('embed')) return u;
+      return u;
+    }
+
+    const pill = document.getElementById('sourcePill');
+
+    let items = [];
+    let idx = 0;
+    let rotateSeconds = 120;
+    let pinnedId = null;
+
+    let timerInt = null;
+    let remaining = 0;
+
+    function setPill(text, kind){
+      pill.textContent = text;
+      pill.className = 'px-3 py-1 rounded-full border text-[0.65rem] uppercase tracking-[0.22em] font-extrabold';
+      if (kind === 'live') pill.className += ' border-red-500/40 bg-red-500/10 text-red-100';
+      else if (kind === 'schedule') pill.className += ' border-sky-500/40 bg-sky-500/10 text-sky-100';
+      else if (kind === 'pinned') pill.className += ' border-yellow-500/40 bg-yellow-500/10 text-yellow-100';
+      else pill.className += ' border-purple-500/40 bg-purple-500/10 text-purple-100';
+    }
+
+    function renderPlaylist(){
+      const el = document.getElementById('playlist');
+      if (!items.length) {
+        el.innerHTML = '<p class="text-slate-400 text-sm">No approved videos yet.</p>';
+        return;
+      }
+      el.innerHTML = items.slice(0,8).map((it,i)=>{
+        const active = (i===idx) ? 'border-purple-400/60 bg-purple-400/10' : 'border-slate-700/50 bg-black/30';
+        return `
+          <button class="w-full text-left px-3 py-2 rounded-xl border ${active} hover:border-sky-400/50" data-i="${i}">
+            <p class="text-sm font-extrabold">${safe(it.title||'Untitled')}</p>
+            <p class="text-xs text-slate-400 mt-1">${safe(it.creatorName||'')}</p>
+          </button>
+        `;
+      }).join('');
+      el.querySelectorAll('button[data-i]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          idx = parseInt(btn.getAttribute('data-i'),10) || 0;
+          playRotation(true);
+        });
+      });
+    }
+
+    function setTimer(seconds){
+      remaining = seconds;
+      const t = document.getElementById('timer');
+      if (!seconds) { t.textContent=''; return; }
+      t.textContent = `Auto next in ${remaining}s`;
+      clearInterval(timerInt);
+      timerInt = setInterval(()=>{
+        remaining -= 1;
+        if (remaining <= 0) {
+          nextRotation();
+        } else {
+          t.textContent = `Auto next in ${remaining}s`;
+        }
+      }, 1000);
+    }
+
+    function playUrl(title, creator, desc, url, sourceText, sourceKind){
+      setPill(sourceText, sourceKind);
+      document.getElementById('showTitle').textContent = title || 'TKFM TV';
+      document.getElementById('showDesc').textContent = desc || '';
+      document.getElementById('showMeta').textContent = creator ? ('by ' + creator) : '';
+
+      const embed = normalizeToEmbed(url);
+      document.getElementById('tvFrame').src = embed || '';
+
+      const open = document.getElementById('openLink');
+      open.href = url || '#';
+      if (!url) {
+        open.classList.add('opacity-50');
+        open.setAttribute('aria-disabled','true');
+      } else {
+        open.classList.remove('opacity-50');
+        open.removeAttribute('aria-disabled');
+      }
+    }
+
+    function playRotation(){
+      if (!items.length) return;
+      const it = items[idx] || items[0];
+      playUrl(it.title || 'TKFM TV', it.creatorName || '', it.description || '', it.primaryUrl || '', 'Rotation', 'rotation');
+      renderPlaylist();
+      setTimer(rotateSeconds);
+    }
+
+    function nextRotation(){
+      if (!items.length) return;
+      idx = (idx + 1) % items.length;
+      playRotation();
+    }
+
+    function minutesSinceWeekStart(d){
+      const day = d.getDay();
+      return day*24*60 + d.getHours()*60 + d.getMinutes();
+    }
+    function slotToMinutes(slot){
+      const [sh, sm] = String(slot.start||'00:00').split(':').map(x=>parseInt(x,10)||0);
+      const [eh, em] = String(slot.end||'00:00').split(':').map(x=>parseInt(x,10)||0);
+      const startM = (slot.day||0)*24*60 + sh*60 + sm;
+      const endM = (slot.day||0)*24*60 + eh*60 + em;
+      return { startM, endM };
+    }
+
+    async function pickSource(){
+      // 1) LIVE NOW
+      try {
+        const res = await fetch('/.netlify/functions/live-get');
+        const data = await res.json();
+        if (data && data.active && data.active.url) {
+          playUrl(
+            data.active.title || 'Live Now',
+            data.active.creator || '',
+            data.active.description || '',
+            data.active.url,
+            'Live Now',
+            'live'
+          );
+          setTimer(0);
+          return true;
+        }
+      } catch(e) {}
+
+      // 2) SCHEDULE NOW
+      try {
+        const res = await fetch('/.netlify/functions/schedule-get');
+        const data = await res.json();
+        const slots = (data && data.slots) ? data.slots : [];
+        if (slots && slots.length) {
+          const now = new Date();
+          const nowM = minutesSinceWeekStart(now);
+          let current = null;
+          for (const s of slots){
+            const {startM, endM} = slotToMinutes(s);
+            if (nowM >= startM && nowM < endM) { current = s; break; }
+          }
+          if (current && (current.type === 'podcast' || current.type === 'video') && current.url) {
+            playUrl(
+              current.title || 'Scheduled Show',
+              current.creator || '',
+              '',
+              current.url,
+              'Schedule',
+              'schedule'
+            );
+            setTimer(0);
+            return true;
+          }
+        }
+      } catch(e) {}
+
+      // 3) PINNED (from tv-get cfg)
+      if (pinnedId && items.length) {
+        const pinIndex = items.findIndex(x => x.id === pinnedId);
+        if (pinIndex >= 0) {
+          idx = pinIndex;
+          playUrl(items[idx].title||'Pinned', items[idx].creatorName||'', items[idx].description||'', items[idx].primaryUrl||'', 'Pinned', 'pinned');
+          renderPlaylist();
+          setTimer(rotateSeconds);
+          return true;
+        }
+      }
+
+      // 4) ROTATION
+      playRotation();
+      return true;
+    }
+
+    async function load(){
+      setPill('Loading', 'rotation');
+
+      try {
+        const cfgRes = await fetch('/.netlify/functions/tv-get');
+        const cfg = await cfgRes.json();
+        rotateSeconds = Math.max(30, parseInt(cfg.rotateSeconds || 120, 10) || 120);
+        pinnedId = cfg.pinnedId || null;
+      } catch(e) {
+        rotateSeconds = 120;
+        pinnedId = null;
+      }
+
+      items = [];
+      idx = 0;
+
+      try {
+        const res = await fetch('/.netlify/functions/media-list?type=video&limit=60');
+        const data = await res.json();
+        items = (data && data.items) ? data.items : [];
+      } catch(e) {
+        items = [];
+      }
+
+      renderPlaylist();
+
+      const ok = await pickSource();
+      if (!ok && items.length) playRotation();
+      if (!items.length && !document.getElementById('tvFrame').src) {
+        document.getElementById('showTitle').textContent = 'No approved videos yet';
+        document.getElementById('showDesc').textContent = 'Owner: approve submissions in Owner Media Console.';
+      }
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', ()=>nextRotation());
+    document.getElementById('refreshBtn').addEventListener('click', ()=>load());
+    load();
+    // refresh source every 45s so Live/Schedule flips without reload
+    setInterval(()=>pickSource(), 45000);
+  </script>
+
+
+  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      <p>© <span id="year"></span> They Krave For Me Radio</p>
+      <div class="flex gap-2 flex-wrap">
+        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
+        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
+        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

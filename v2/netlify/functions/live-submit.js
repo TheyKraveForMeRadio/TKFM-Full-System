@@ -1,51 +1,69 @@
 import { getStore, setStore } from './_helpers.js';
+import { requireActivePlansByEmail } from './_entitlement.js';
 
-function ok(body) {
-  return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
-}
-function bad(code, msg) {
-  return { statusCode: code, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ok:false, error: msg }) };
+function json(statusCode, body) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  };
 }
 
-function id() {
-  return 'lr_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+function uid() {
+  return 'live_' + Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
+
+// REQUIRED monthly access for live casts:
+const REQUIRED_PLANS = ['video_creator_pass_monthly'];
 
 export async function handler(event) {
-  if (event.httpMethod !== 'POST') return bad(405, 'Method not allowed');
+  if (event.httpMethod !== 'POST') return json(405, { ok: false, error: 'Method not allowed' });
 
   let payload = {};
-  try { payload = JSON.parse(event.body || '{}'); } catch(e) {}
+  try { payload = JSON.parse(event.body || '{}'); } catch (e) {}
+
+  const email = String(payload.email || '').trim().toLowerCase();
+  if (!email) return json(403, { ok: false, error: 'Missing email. Complete checkout once so we can verify monthly access.' });
+
+  // SERVER GATE: verify active subscription
+  try {
+    const gate = await requireActivePlansByEmail(email, REQUIRED_PLANS);
+    if (!gate.ok) return json(403, { ok: false, error: gate.error || 'Subscription check failed' });
+    if (!gate.hasAny) return json(403, { ok: false, error: 'No active monthly subscription found for Live casts.' });
+  } catch (e) {
+    return json(502, { ok: false, error: 'Could not verify subscription right now.' });
+  }
 
   const title = String(payload.title || '').trim();
   const creator = String(payload.creator || '').trim();
   const type = String(payload.type || 'podcast').trim();
   const url = String(payload.url || '').trim();
   const description = String(payload.description || '').trim();
-  const minutesRaw = parseInt(payload.minutes || 60, 10);
-  const minutes = Math.max(10, Math.min(240, minutesRaw || 60));
+  const minutes = Math.max(10, parseInt(payload.minutes || '60', 10) || 60);
 
-  if (!title || !url) return bad(400, 'Missing title or url');
+  if (!title || !url) return json(400, { ok: false, error: 'Missing title or url' });
 
-  const store = (await getStore('live_queue')) || [];
+  const store = (await getStore('live_requests')) || [];
+  const id = uid();
+  const now = new Date().toISOString();
+
   const req = {
-    id: id(),
+    id,
+    createdAt: now,
+    updatedAt: now,
+    email,
     title,
     creator,
-    type: (type === 'video' ? 'video' : 'podcast'),
+    type,
     url,
     description,
     minutes,
-    status: 'pending',
-    submittedAt: Date.now()
+    status: 'pending', // pending | approved | denied
+    active: false
   };
 
-  const next = Array.isArray(store) ? store : [];
-  next.unshift(req);
+  store.unshift(req);
+  await setStore('live_requests', store);
 
-  // cap queue
-  while (next.length > 200) next.pop();
-
-  await setStore('live_queue', next);
-  return ok({ ok:true, id: req.id });
+  return json(200, { ok: true, id });
 }

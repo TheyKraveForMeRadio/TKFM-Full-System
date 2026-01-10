@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AI DJ Engine</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.84);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.95;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+    .wrap{max-width:1240px;margin:0 auto;padding:22px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{display:flex;align-items:center;gap:12px;padding:12px 22px}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+    }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
+    .tag.warn{border-color:rgba(245,158,11,.28)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .box{
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(2,6,23,.55);
+      border-radius:18px;
+      padding:12px;
+      overflow:auto;
+    }
+</style>
+<script src="/js/tkfm-fx.js"></script>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body data-requires="creator_pass_monthly" data-gate-title="🔒 TKFM Creator Access Required" data-gate-message="Upgrade to Creator Pass to unlock this page." data-tkfm-theme="radio">
+<script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">AI DJ</div>
+        <div style="font-weight:950;letter-spacing:.06em">TKFM • Owner</div>
+      </div>
+      <nav class="nav" aria-label="Owner Nav">
+        <a class="pill" href="god-view.html">God View</a>
+        <a class="pill" href="owner-ops-">Ops</a>
+        <a class="pill" href="tkfm-dev-console.html">Dev</a>
+        <a class="pill" href="ai-dj-engine.html">AI DJ</a>
+        <a class="pill" href="autopilot-engine.html">Autopilot</a>
+        <a class="pill" href="label-home.html">Label Home</a>
+        <a class="pill hot" href="owner-login.html" id="logoutLink">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:18px">
+    <section class="glass card">
+      <div class="k">AI DJ</div>
+      <div class="h1"><span class="grad">AI DJ Engine</span></div>
+      <p class="p">Owner-only. This is the control entry point for AI DJ automation and verification.</p>
+      <div class="divider"></div>
+
+      <div class="grid">
+        <a class="glass tile" href="ai-dj-console.html">
+  <div class="tileK">AI DJ</div>
+  <div class="tileH">AI DJ Console</div>
+  <div class="tileP">Control panel for AI DJ flows and testing.</div>
+  <div class="tags"><span class="tag ok">OWNER</span><span class="tag warn">CONTROL</span></div>
+</a>
+<a class="glass tile" href="now-playing.html">
+  <div class="tileK">Radio</div>
+  <div class="tileH">Now Playing</div>
+  <div class="tileP">Validate track metadata, timing, and UX.</div>
+  <div class="tags"><span class="tag ok">PUBLIC</span><span class="tag warn">VERIFY</span></div>
+</a>
+<a class="glass tile" href="radio-stream-gateway.html">
+  <div class="tileK">Stream</div>
+  <div class="tileH">Live Stream</div>
+  <div class="tileP">Set/verify stream URL and routing.</div>
+  <div class="tags"><span class="tag ok">ENGINE</span><span class="tag warn">ROUTE</span></div>
+</a>
+<a class="glass tile" href="autopilot-engine.html">
+  <div class="tileK">Automation</div>
+  <div class="tileH">Autopilot</div>
+  <div class="tileP">Automation schedule and queue linkage.</div>
+  <div class="tags"><span class="tag ok">ENGINE</span><span class="tag warn">SYNC</span></div>
+</a>
+<a class="glass tile" href="dj-portal.html">
+  <div class="tileK">DJ Lane</div>
+  <div class="tileH">DJ Portal</div>
+  <div class="tileP">DJ ops routing and station tools.</div>
+  <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">OPS</span></div>
+</a>
+<a class="glass tile" href="feature-engine.html">
+  <div class="tileK">Revenue</div>
+  <div class="tileH">Paid Lanes</div>
+  <div class="tileP">Feature engines feeding station motion.</div>
+  <div class="tags"><span class="tag ok">PAID</span><span class="tag warn">LANES</span></div>
+</a>
+      </div>
+
+      
+<div class="divider"></div>
+<div class="k">AI DJ Engine Status</div>
+<div class="p" style="margin-top:6px">This page is the owner-only entry point. The public should never see AI DJ controls.</div>
+<div class="box mono" id="aiBox">Loading…</div>
+<div class="btnRow">
+  <button class="btn btnHot" id="aiCopy" type="button">Copy Status</button>
+  <a class="btn" href="radio-hub.html">Go to Radio Hub</a>
+</div>
+<script>
+  (function(){
+    function get(k){ try{return localStorage.getItem(k)}catch(e){return null} }
+    const out = {
+      RADIO_STREAM_URL: get('RADIO_STREAM_URL') || get('radio_stream_url') || get('tkfm_radioStreamUrl'),
+      memberTier: get('tkfm_memberTier') || get('tkfm_creatorStatus') || 'free',
+      features: (function(){ try{return JSON.parse(get('tkfm_user_features')||'{}')}catch(e){return {}} })(),
+      ownerTokenPresent: !!get('tkfm_owner_token')
+    };
+    const box = document.getElementById('aiBox');
+    if(box) box.textContent = JSON.stringify(out, null, 2);
+    const c = document.getElementById('aiCopy');
+    if(c) c.addEventListener('click', async function(){ try{ await navigator.clipboard.writeText(box.textContent) }catch(e){} });
+  })();
+</script>
+
+    </section>
+  </main>
+
+  
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script>
+    (function(){
+      async function go(){
+        if(window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.requireOwner){
+          await window.TKFM_OWNER_GUARD.requireOwner();
+        } else {
+          location.href = 'owner-login.html?next=' + encodeURIComponent(location.pathname + location.search + location.hash);
+        }
+      }
+      go();
+    })();
+  </script>
+
+
+  <script>
+    (function(){
+      var l = document.getElementById('logoutLink');
+      if(l){
+        l.addEventListener('click', function(e){
+          e.preventDefault();
+          try{ if(window.TKFM_OWNER_GUARD) window.TKFM_OWNER_GUARD.clearOwner(); }catch(_e){}
+          location.href = 'owner-login.html';
+        });
+      }
+    })();
+  </script>
+  <script type="module" src="/js/tkfm-gate.js"></script>
+  <script type="module" src="/js/tkfm-logo-resolver.js"></script>
+<script src="/js/tkfm-checkout.js"></script>
+</body>
+</html>

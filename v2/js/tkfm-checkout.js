@@ -1,54 +1,105 @@
+// TKFM Checkout + Live Price Loader
+// - Click any element with data-plan OR data-feature to start Stripe checkout
+// - Auto-load prices into any element with [data-price-for="lookup_key"] via price-info function
+// - Shows a toast with the missing STRIPE_PRICE_* env var if mapping is not set
+
 (function () {
-  async function startCheckout(planId, qty) {
+  function fmtMoney(unit_amount, currency) {
+    if (unit_amount == null) return '';
+    const n = Number(unit_amount) / 100;
     try {
-      planId = String(planId || '').trim();
-      qty = Math.max(1, Number(qty || 1));
-
-      if (!planId) {
-        alert('Checkout error: missing planId on button (data-plan).');
-        return;
-      }
-
-      const res = await fetch('/.netlify/functions/create-checkout-session', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ planId, quantity: qty })
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!data || !data.ok || !data.url) {
-        const msg = (data && (data.message || data.error)) ? (data.message || data.error) : ('HTTP ' + res.status);
-        console.error('Checkout failed:', data);
-        alert('Checkout failed for "' + planId + '": ' + msg);
-        return;
-      }
-
-      window.location.href = data.url; // preserves #fid fragment
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency: (currency || 'USD').toUpperCase() }).format(n);
     } catch (e) {
-      console.error(e);
-      alert('Checkout crashed: ' + String(e && e.message ? e.message : e));
+      return '$' + n.toFixed(2);
     }
   }
 
-  // EVENT DELEGATION: works for buttons, links, cards, nested spans, etc.
-  document.addEventListener('click', function (e) {
-    const el = e.target.closest('[data-plan],[data-feature],[data-planid],[data-checkout]');
-    if (!el) return;
+  function toast(msg, ok) {
+    try {
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.innerHTML = `
+        <div class="rounded-2xl border ${ok ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100' : 'border-red-500/40 bg-red-500/10 text-red-100'}
+          px-4 py-3 text-sm font-semibold shadow-xl backdrop-blur-xl">
+          ${String(msg || '')}
+        </div>`;
+      document.body.appendChild(el);
+      setTimeout(() => { el.remove(); }, 5200);
+    } catch (e) {}
+  }
 
-    const planId =
-      el.getAttribute('data-plan') ||
-      el.getAttribute('data-feature') ||
-      el.getAttribute('data-planid') ||
-      '';
-
-    // Only intercept clicks that look like pricing CTAs
+  async function checkout(planId, btn) {
     if (!planId) return;
+    const busyClass = 'opacity-60 pointer-events-none';
+    if (btn) btn.classList.add(...busyClass.split(' '));
+    try {
+      const res = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok || !data.url) {
+        const err = (data && (data.error || data.message)) ? (data.error || data.message) : 'Checkout failed';
+        const hint = (data && data.example) ? (' • ' + data.example) : '';
+        toast(`❌ ${err}${hint}`, false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch (e) {
+      toast('❌ Checkout error. Open DevTools → Network for details.', false);
+    } finally {
+      if (btn) btn.classList.remove(...busyClass.split(' '));
+    }
+  }
 
+  window.TKFM_START_CHECKOUT = checkout;
+
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-plan],[data-feature]');
+    if (!t) return;
+    const planId = t.getAttribute('data-plan') || t.getAttribute('data-feature');
+    if (!planId) return;
     e.preventDefault();
-    e.stopPropagation();
-    startCheckout(planId, el.getAttribute('data-qty') || 1);
-  }, true);
+    checkout(planId, t);
+  });
 
-  console.log('TKFM checkout handler loaded');
+  const cache = new Map();
+
+  async function loadPrice(planId) {
+    if (!planId) return null;
+    if (cache.has(planId)) return cache.get(planId);
+
+    const p = fetch('/.netlify/functions/price-info?planId=' + encodeURIComponent(planId))
+      .then(r => r.json().catch(() => ({})).then(j => ({ ok: r.ok && j.ok, ...j })))
+      .catch(() => ({ ok: false }));
+
+    cache.set(planId, p);
+    return p;
+  }
+
+  async function hydratePrices() {
+    const nodes = Array.from(document.querySelectorAll('[data-price-for]'));
+    if (!nodes.length) return;
+
+    const keys = Array.from(new Set(nodes.map(n => n.getAttribute('data-price-for')).filter(Boolean)));
+
+    for (const key of keys) {
+      const data = await loadPrice(key);
+      const priceText = (data && data.ok)
+        ? (fmtMoney(data.unit_amount, data.currency) + (data.interval ? ('/' + data.interval) : ''))
+        : '';
+
+      nodes.forEach(n => {
+        if (n.getAttribute('data-price-for') !== key) return;
+        n.textContent = priceText || '—';
+      });
+
+      if (data && data.ok === false && data.missing_env) {
+        toast(`❌ Missing env var ${data.missing_env} for ${key}`, false);
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', hydratePrices);
 })();

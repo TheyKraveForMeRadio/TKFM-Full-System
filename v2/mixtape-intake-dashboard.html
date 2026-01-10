@@ -13,8 +13,11 @@
   <script src="/js/tkfm-quick-checkout.js"></script>
   <script src="/js/tkfm-paid-lane-modal.js" defer></script>
   <script src="/js/tkfm-paid-lane-submit.js" defer></script>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
 </head>
 <body class="bg-black text-purple-100 min-h-screen font-mono" data-tkfm-theme="radio">
+  <div id="tkfmOwnerLock"></div>
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
   <header class="border-b border-purple-700 px-6 py-4 flex items-center justify-between">
     <div>

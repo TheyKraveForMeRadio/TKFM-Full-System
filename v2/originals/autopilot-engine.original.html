@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
   <meta name="tkfm-access" content="owner" />
   <script src="/js/access-gates.js" defer></script>
 
@@ -26,8 +28,10 @@
     }
   </style>
 <script src="/js/tkfm-fx.js"></script>
+  <script src="/js/tkfm-quick-checkout.js"></script>
 </head>
 <body data-requires="creator_pass_monthly" data-gate-title="🔒 TKFM Creator Access Required" data-gate-message="Upgrade to Creator Pass to unlock this page." class="text-slate-50 min-h-screen flex flex-col" data-tkfm-theme="radio">
+  <div id="tkfmOwnerLock"></div>
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
 
   <!-- NAV -->

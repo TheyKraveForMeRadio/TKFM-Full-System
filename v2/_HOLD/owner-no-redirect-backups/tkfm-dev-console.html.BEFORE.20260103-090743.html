@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Dev Console</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.84);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.95;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+    .wrap{max-width:1240px;margin:0 auto;padding:22px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{display:flex;align-items:center;gap:12px;padding:12px 22px}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+    }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
+    .tag.warn{border-color:rgba(245,158,11,.28)}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .box{
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(2,6,23,.55);
+      border-radius:18px;
+      padding:12px;
+      overflow:auto;
+    }
+</style>
+<script src="/js/tkfm-fx.js"></script>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body data-tkfm-theme="radio">
+<script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">Dev Console</div>
+        <div style="font-weight:950;letter-spacing:.06em">TKFM • Owner</div>
+      </div>
+      <nav class="nav" aria-label="Owner Nav">
+        <a class="pill" href="god-view.html">God View</a>
+        <a class="pill" href="owner-ops-">Ops</a>
+        <a class="pill" href="tkfm-dev-console.html">Dev</a>
+        <a class="pill" href="ai-dj-engine.html">AI DJ</a>
+        <a class="pill" href="autopilot-engine.html">Autopilot</a>
+        <a class="pill" href="label-home.html">Label Home</a>
+        <a class="pill hot" href="owner-login.html" id="logoutLink">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:18px">
+    <section class="glass card">
+      <div class="k">Dev Console</div>
+      <div class="h1"><span class="grad">TKFM Dev Console</span></div>
+      <p class="p">Owner-only. Use this page for quick diagnostics: feature flags, tier signals, and routing to key engines.</p>
+      <div class="divider"></div>
+
+      <div class="grid">
+        <a class="glass tile" href="pricing.html">
+  <div class="tileK">Revenue</div>
+  <div class="tileH">Pricing / Plans</div>
+  <div class="tileP">Confirm Stripe wiring and tier text.</div>
+  <div class="tags"><span class="tag ok">PUBLIC</span><span class="tag warn">REVIEW</span></div>
+</a>
+<a class="glass tile" href="creator-pass.html">
+  <div class="tileK">Unlocks</div>
+  <div class="tileH">Creator Pass</div>
+  <div class="tileP">Test creator unlock flags and paid lanes.</div>
+  <div class="tags"><span class="tag ok">TEST</span><span class="tag warn">UNLOCKS</span></div>
+</a>
+<a class="glass tile" href="dj-tools.html">
+  <div class="tileK">DJ Lane</div>
+  <div class="tileH">DJ Toolkit</div>
+  <div class="tileP">Verify DJ paid tier access flows.</div>
+  <div class="tags"><span class="tag ok">DJ</span><span class="tag warn">TIERS</span></div>
+</a>
+<a class="glass tile" href="label-hub.html">
+  <div class="tileK">Label</div>
+  <div class="tileH">Label Hub</div>
+  <div class="tileP">Member-only label workflows.</div>
+  <div class="tags"><span class="tag ok">LABEL</span><span class="tag lock">GATED</span></div>
+</a>
+<a class="glass tile" href="feature-engine.html">
+  <div class="tileK">Engines</div>
+  <div class="tileH">Feature Engine</div>
+  <div class="tileP">Paid placements + lanes.</div>
+  <div class="tags"><span class="tag ok">ENGINE</span><span class="tag warn">PAID</span></div>
+</a>
+<a class="glass tile" href="sponsors.html">
+  <div class="tileK">Sponsors</div>
+  <div class="tileH">Sponsor Pages</div>
+  <div class="tileP">Public sponsor inventory + rotation pages.</div>
+  <div class="tags"><span class="tag ok">PUBLIC</span><span class="tag warn">REVIEW</span></div>
+</a>
+      </div>
+
+      
+<div class="divider"></div>
+<div class="k">Local Storage Snapshot</div>
+<div class="p" style="margin-top:6px">Quick view of feature flags and member tier stored on this device.</div>
+<div class="box mono" id="lsBox">Loading…</div>
+<div class="btnRow">
+  <button class="btn btnHot" id="copyBtn" type="button">Copy Snapshot</button>
+  <button class="btn" id="clearUnlocksBtn" type="button">Clear Unlocks</button>
+</div>
+<script>
+  (function(){
+    function safeJson(s){ try{return JSON.parse(s)}catch(e){return null} }
+    function snapshot(){
+      const keys = [
+        'tkfm_user_features','tkfm_memberTier','tkfm_creatorStatus','tkfm_chatName',
+        'tkfm_owner_token','tkfm_owner_token_exp'
+      ];
+      const out = {};
+      keys.forEach(k=>{ try{ out[k] = localStorage.getItem(k); }catch(e){ out[k]=null } });
+      const parsed = safeJson(out.tkfm_user_features);
+      if(parsed) out.tkfm_user_features = parsed;
+      return out;
+    }
+    function render(){
+      const box = document.getElementById('lsBox');
+      if(!box) return;
+      box.textContent = JSON.stringify(snapshot(), null, 2);
+    }
+    render();
+    const copyBtn = document.getElementById('copyBtn');
+    if(copyBtn){
+      copyBtn.addEventListener('click', async function(){
+        try{ await navigator.clipboard.writeText(document.getElementById('lsBox').textContent); }catch(e){}
+      });
+    }
+    const clr = document.getElementById('clearUnlocksBtn');
+    if(clr){
+      clr.addEventListener('click', function(){
+        try{
+          localStorage.removeItem('tkfm_user_features');
+          localStorage.removeItem('tkfm_memberTier');
+          localStorage.removeItem('tkfm_creatorStatus');
+        }catch(e){}
+        render();
+        alert('Cleared member unlocks on this device.');
+      });
+    }
+  })();
+</script>
+
+    </section>
+  </main>
+
+  
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script>
+    (function(){
+      async function go(){
+        if(window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.requireOwner){
+          await window.TKFM_OWNER_GUARD.requireOwner();
+        } else {
+          location.href = 'owner-login.html?next=' + encodeURIComponent(location.pathname + location.search + location.hash);
+        }
+      }
+      go();
+    })();
+  </script>
+
+
+  <script>
+    (function(){
+      var l = document.getElementById('logoutLink');
+      if(l){
+        l.addEventListener('click', function(e){
+          e.preventDefault();
+          try{ if(window.TKFM_OWNER_GUARD) window.TKFM_OWNER_GUARD.clearOwner(); }catch(_e){}
+          location.href = 'owner-login.html';
+        });
+      }
+    })();
+  </script>
+  <script type="module" src="/js/tkfm-logo-resolver.js"></script>
+<script src="/js/tkfm-checkout.js"></script>
+</body>
+</html>

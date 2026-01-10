@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Radio Sponsor Engine Room</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,.96);
+      --border-soft: rgba(56,189,248,.8);
+      --accent-cyan: #22d3ee;
+      --accent-pink: #ec4899;
+      --accent-purple: #a855f7;
+      --accent-gold: #facc15;
+      --accent-lime: #a3e635;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0,#22d3ee22,transparent 60%),
+        radial-gradient(circle at 100% 0,#ec489933,transparent 55%),
+        radial-gradient(circle at 50% 120%,#0f172a,#020617 70%);
+      color:#e5e7eb;
+      min-height:100vh;
+      overflow-x:hidden;
+      cursor:crosshair;
+    }
+
+    main {
+      max-width:1180px;
+      margin:0 auto;
+      padding:1.8rem .9rem 3rem;
+      position:relative;
+    }
+
+    /* CURSOR PARTICLE */
+    .cursor-orb {
+      position:fixed;
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      background:radial-gradient(circle,#22d3ee,#ec4899);
+      box-shadow:
+        0 0 18px rgba(34,211,238,.9),
+        0 0 32px rgba(236,72,153,.9);
+      pointer-events:none;
+      mix-blend-mode:screen;
+      opacity:.75;
+      transform:translate(-50%, -50%);
+      z-index:90;
+      transition:transform .08s linear;
+    }
+
+    /* HERO */
+    .hero {
+      position:relative;
+      border-radius:28px;
+      padding:1.6rem 1.4rem 1.9rem;
+      border:1px solid rgba(56,189,248,.8);
+      background:
+        radial-gradient(circle at 0 0,#22d3ee33,#020617),
+        radial-gradient(circle at 100% 0,#ec489933,transparent 55%);
+      box-shadow:
+        0 0 40px rgba(8,47,73,.9),
+        0 0 80px rgba(236,72,153,.5);
+      overflow:hidden;
+    }
+    .hero-fx {
+      position:absolute;
+      inset:-35%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(34,211,238,.35),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,.4),transparent 60%),
+        radial-gradient(circle at 50% 15%,rgba(168,85,247,.3),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .hero-inner { position:relative; z-index:1; }
+
+    h1 {
+      margin:0;
+      font-size:2.3rem;
+      font-weight:800;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      color:#f9fafb;
+      text-shadow:
+        0 0 20px rgba(34,211,238,.9),
+        0 0 32px rgba(236,72,153,.9);
+    }
+
+    .hero-sub {
+      margin-top:.45rem;
+      max-width:740px;
+      font-size:.95rem;
+      color:#dbeafe;
+    }
+
+    .hero-band {
+      margin-top:.7rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      font-size:.8rem;
+    }
+    .chip {
+      border-radius:999px;
+      padding:.25rem .7rem;
+      border:1px solid rgba(191,219,254,.9);
+      background:rgba(15,23,42,.96);
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .chip span {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--accent-cyan);
+      box-shadow:0 0 10px var(--accent-cyan);
+    }
+
+    .hero-bottom {
+      margin-top:1rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.7rem;
+      align-items:center;
+    }
+
+    .btn-main {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      border-radius:999px;
+      padding:.6rem 1.15rem;
+      border:none;
+      cursor:pointer;
+      font-size:.86rem;
+      font-weight:700;
+      background:linear-gradient(135deg,#22d3ee,#ec4899);
+      color:#0b1120;
+      box-shadow:0 0 26px rgba(236,72,153,.85);
+      transition:transform .18s;
+      white-space:nowrap;
+    }
+    .btn-main:hover { transform:scale(1.03); }
+
+    .hero-note {
+      font-size:.8rem;
+      color:#e5e7eb;
+      max-width:320px;
+    }
+
+    .status-pill {
+      margin-left:auto;
+      font-size:.78rem;
+      padding:.26rem .7rem;
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.9);
+      background:rgba(15,23,42,.96);
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+      white-space:nowrap;
+    }
+    .status-dot {
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 10px #22c55e;
+    }
+
+    @media (max-width:768px){
+      .status-pill { margin-left:0; }
+    }
+
+    /* GRID LAYOUT */
+    .grid {
+      margin-top:1.7rem;
+      display:grid;
+      grid-template-columns:2fr 1.4fr;
+      gap:1.4rem;
+    }
+    @media (max-width:960px){
+      .grid { grid-template-columns:1fr; }
+    }
+
+    .panel {
+      position:relative;
+      border-radius:22px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card);
+      padding:1.1rem 1.05rem 1.35rem;
+      overflow:hidden;
+      box-shadow:0 0 30px rgba(15,23,42,.9);
+    }
+    .panel::before {
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 0 0,#22d3ee20,transparent 60%),
+        radial-gradient(circle at 100% 0,#ec489920,transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .panel-inner { position:relative; z-index:1; }
+
+    .panel h2 {
+      margin:0 0 .2rem;
+      font-size:1.14rem;
+      font-weight:700;
+    }
+    .panel small {
+      font-size:.8rem;
+      color:#9ca3af;
+    }
+
+    .section-title {
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#a5b4fc;
+      margin:.9rem 0 .4rem;
+    }
+
+    /* SPONSOR TIERS */
+    .tier-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:.9rem;
+    }
+
+    .tier {
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.85);
+      background:rgba(15,23,42,.97);
+      padding:.85rem .8rem 1.1rem;
+      overflow:hidden;
+      transition:transform .18s, box-shadow .18s, border-color .18s;
+      cursor:pointer;
+    }
+    .tier:hover {
+      transform:translateY(-3px) scale(1.01);
+      box-shadow:
+        0 0 20px rgba(34,211,238,.6),
+        0 0 30px rgba(236,72,153,.55);
+      border-color:var(--accent-cyan);
+    }
+    .tier.hot {
+      border-color:var(--accent-gold);
+      box-shadow:
+        0 0 24px rgba(250,204,21,.8),
+        0 0 40px rgba(250,204,21,.45);
+    }
+
+    .tier-label {
+      font-size:.74rem;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:#22d3ee;
+      margin-bottom:.14rem;
+    }
+    .tier-title {
+      font-size:.98rem;
+      font-weight:700;
+    }
+    .tier-price {
+      margin-top:.25rem;
+      font-size:.94rem;
+      color:#fefce8;
+    }
+    .tier-price span {
+      font-size:.75rem;
+      color:#9ca3af;
+    }
+
+    .tier-meta {
+      margin-top:.22rem;
+      font-size:.76rem;
+      color:#a5b4fc;
+    }
+
+    .tier-list {
+      list-style:none;
+      padding:0;
+      margin-top:.45rem;
+      font-size:.8rem;
+      color:#dbeafe;
+    }
+    .tier-list li {
+      display:flex;
+      gap:.4rem;
+      margin-bottom:.22rem;
+    }
+    .tier-list li::before {
+      content:"◆";
+      font-size:.6rem;
+      color:var(--accent-cyan);
+      margin-top:.18rem;
+    }
+
+    .tier-cta {
+      margin-top:.55rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      align-items:center;
+    }
+
+    .btn-tier {
+      border-radius:999px;
+      padding:.42rem .9rem;
+      border:none;
+      cursor:pointer;
+      font-size:.78rem;
+      font-weight:700;
+      background:linear-gradient(135deg,#22d3ee,#ec4899);
+      color:#0b1120;
+      box-shadow:0 0 18px rgba(236,72,153,.85);
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+    }
+
+    .lookup-tag {
+      font-size:.72rem;
+      color:#e5e7eb;
+      background:rgba(15,23,42,.96);
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,.75);
+      padding:.18rem .55rem;
+    }
+
+    .heat-pill {
+      font-size:.74rem;
+      border-radius:999px;
+      padding:.18rem .5rem;
+      border:1px solid rgba(148,163,184,.85);
+      color:#fef9c3;
+      background:linear-gradient(135deg,rgba(234,179,8,.2),rgba(30,64,175,.9));
+    }
+
+    .tier-fx-orbit {
+      position:absolute;
+      right:-40px;
+      top:-30px;
+      width:120px;
+      height:120px;
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,.7);
+      opacity:.6;
+      pointer-events:none;
+      animation:orbitSpin 16s linear infinite;
+    }
+    .tier-fx-orbit::before {
+      content:"";
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:#22d3ee;
+      box-shadow:0 0 10px #22d3ee;
+      left:-5px;
+      top:50%;
+      transform:translateY(-50%);
+    }
+    .tier-fx-orbit::after {
+      content:"";
+      position:absolute;
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:#ec4899;
+      box-shadow:0 0 10px #ec4899;
+      right:18px;
+      top:18px;
+    }
+
+    @keyframes orbitSpin {
+      to { transform:rotate(360deg); }
+    }
+
+    .tier-eq-row {
+      position:absolute;
+      left:.8rem;
+      bottom:.75rem;
+      display:flex;
+      gap:3px;
+      height:16px;
+      align-items:flex-end;
+      opacity:.8;
+    }
+    .tier-eq {
+      width:3px;
+      border-radius:999px;
+      background:linear-gradient(to top,#0f172a,#22d3ee,#ec4899);
+      transform-origin:bottom;
+      animation:eqBounce 1.2s ease-in-out infinite;
+    }
+    .tier-eq:nth-child(2){animation-delay:.1s;}
+    .tier-eq:nth-child(3){animation-delay:.2s;}
+    .tier-eq:nth-child(4){animation-delay:.3s;}
+    .tier-eq:nth-child(5){animation-delay:.4s;}
+
+    @keyframes eqBounce {
+      0%,100%{height:20%;}
+      40%{height:90%;}
+      65%{height:45%;}
+    }
+
+    /* RIGHT SIDE: AUTOPILOT PANEL */
+    .mini-grid {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:.8rem;
+      margin-top:.8rem;
+      font-size:.8rem;
+    }
+    .mini {
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,.85);
+      background:rgba(15,23,42,.97);
+      padding:.6rem .75rem;
+    }
+    .mini-title {
+      font-size:.84rem;
+      font-weight:600;
+      margin-bottom:.16rem;
+    }
+    .mini-body { color:#9ca3af; }
+
+    .heat-meter {
+      margin-top:.5rem;
+    }
+    .heat-bar-wrap {
+      height:10px;
+      border-radius:999px;
+      background:rgba(15,23,42,.96);
+      border:1px solid rgba(148,163,184,.8);
+      overflow:hidden;
+      position:relative;
+    }
+    .heat-fill {
+      height:100%;
+      width:40%;
+      background:linear-gradient(90deg,#22c55e,#facc15,#ef4444);
+      box-shadow:0 0 16px rgba(248,250,252,.6);
+      transition:width .35s ease-out;
+    }
+    .heat-label-row {
+      margin-top:.3rem;
+      display:flex;
+      justify-content:space-between;
+      font-size:.74rem;
+      color:#a5b4fc;
+    }
+
+    .summary-list {
+      margin:.3rem 0 0;
+      padding-left:1.1rem;
+      list-style:disc;
+      font-size:.8rem;
+      color:#cbd5f5;
+    }
+
+    .note {
+      font-size:.78rem;
+      color:#9ca3af;
+      margin-top:.65rem;
+    }
+
+    .toast {
+      position:fixed;
+      right:1rem;
+      bottom:1rem;
+      background:rgba(15,23,42,.98);
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.85);
+      padding:.55rem .9rem;
+      font-size:.78rem;
+      display:none;
+      z-index:95;
+      box-shadow:0 0 20px rgba(56,189,248,.9);
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+<div class="cursor-orb" id="cursorOrb"></div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <h1>TKFM SPONSOR ENGINE ROOM</h1>
+      <p class="hero-sub">
+        Radio-side **sponsor control deck**. Design your Bronze / Silver / Gold / Neon Takeover
+        lanes for TKFMradio.com — then let Autopilot heat signals tell you which lane is cooking.
+        Label-side sponsors stay on the black/gold world.
+      </p>
+
+      <div class="hero-band">
+        <div class="chip"><span></span> TKFM Neon GraphFX • Station only</div>
+        <div class="chip"><span></span> Stripe lookup keys for sponsor tiers</div>
+        <div class="chip"><span></span> Autopilot heat meter (local only, Phase 1)</div>
+      </div>
+
+      <div class="hero-bottom">
+        <button class="btn-main" id="scrollTiers">
+          ⚡ View sponsor lanes
+        </button>
+        <p class="hero-note">
+          No live billing here yet — this page is your map + Stripe lookup guide + local heat
+          tracker.
+        </p>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          <span id="heatStatus">Autopilot heat: neutral (no selections yet)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRID -->
+  <section class="grid" id="tierSection">
+    <!-- LEFT: TIERS -->
+    <article class="panel">
+      <div class="panel-inner">
+        <div class="section-title">Sponsor Lanes for TKFMradio.com</div>
+        <p style="font-size:.8rem;color:#9ca3af;margin:.05rem 0 .6rem;">
+          These are **radio-side sponsor products** only. Label-side sponsor decks (for
+          They Krave For Me Records) live in your black/gold label sponsor engine.
+        </p>
+
+        <div class="tier-grid">
+
+          <!-- BRONZE -->
+          <div class="tier" data-tier="bronze">
+            <div class="tier-label">Level 1 • Entry Lane</div>
+            <div class="tier-title">Bronze Sponsor</div>
+            <div class="tier-price">
+              $149 / month <span>• light intro presence</span>
+            </div>
+            <div class="tier-meta">
+              Stripe lookup key:
+              <span class="lookup-tag">radio_sponsor_bronze_monthly</span>
+            </div>
+            <ul class="tier-list">
+              <li>Logo placement on TKFM radio live page + sponsor rail.</li>
+              <li>1x on-air shoutout per day (scripted).</li>
+              <li>Listed under “Friends of TKFM” on site.</li>
+            </ul>
+            <div class="tier-cta">
+              <button class="btn-tier" data-lookup="radio_sponsor_bronze_monthly">
+                ⚙️ Mark Bronze as hot lane
+              </button>
+              <span class="heat-pill" data-heat-label="bronze">
+                Heat score: 0
+              </span>
+            </div>
+            <div class="tier-fx-orbit"></div>
+            <div class="tier-eq-row">
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div>
+            </div>
+          </div>
+
+          <!-- SILVER -->
+          <div class="tier" data-tier="silver">
+            <div class="tier-label" style="color:#a5b4fc;">Level 2 • Active Lane</div>
+            <div class="tier-title">Silver Sponsor</div>
+            <div class="tier-price">
+              $299 / month <span>• real motion</span>
+            </div>
+            <div class="tier-meta">
+              Stripe lookup key:
+              <span class="lookup-tag">radio_sponsor_silver_monthly</span>
+            </div>
+            <ul class="tier-list">
+              <li>Logo on live page + schedule + mixtape hosting studio.</li>
+              <li>2x on-air shoutouts per day (rotating copy).</li>
+              <li>Logo on DJ Mixtape Hosting &amp; TKFM Radio Hub pages.</li>
+            </ul>
+            <div class="tier-cta">
+              <button class="btn-tier" data-lookup="radio_sponsor_silver_monthly">
+                ⚙️ Mark Silver as hot lane
+              </button>
+              <span class="heat-pill" data-heat-label="silver">
+                Heat score: 0
+              </span>
+            </div>
+            <div class="tier-fx-orbit"></div>
+            <div class="tier-eq-row">
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div>
+            </div>
+          </div>
+
+          <!-- GOLD -->
+          <div class="tier hot" data-tier="gold">
+            <div class="tier-label" style="color:var(--accent-gold);">Level 3 • Prime Lane</div>
+            <div class="tier-title">Gold Sponsor</div>
+            <div class="tier-price">
+              $499 / month <span>• prime radio presence</span>
+            </div>
+            <div class="tier-meta">
+              Stripe lookup key:
+              <span class="lookup-tag">radio_sponsor_gold_monthly</span>
+            </div>
+            <ul class="tier-list">
+              <li>Logo on homepage, Live Studio, radio hub, leaderboards.</li>
+              <li>3x on-air shoutouts per day + feature mention in DJ reads.</li>
+              <li>First rights to sponsor special TKFM events &amp; contests.</li>
+            </ul>
+            <div class="tier-cta">
+              <button class="btn-tier" data-lookup="radio_sponsor_gold_monthly">
+                ⚙️ Mark Gold as hot lane
+              </button>
+              <span class="heat-pill" data-heat-label="gold">
+                Heat score: 0
+              </span>
+            </div>
+            <div class="tier-fx-orbit"></div>
+            <div class="tier-eq-row">
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div>
+            </div>
+          </div>
+
+          <!-- NEON TAKEOVER -->
+          <div class="tier" data-tier="neon">
+            <div class="tier-label" style="color:#ecfeff;">Level 4 • Neon Takeover</div>
+            <div class="tier-title">Neon Takeover Sponsor</div>
+            <div class="tier-price">
+              $999 / month <span>• full neon domination</span>
+            </div>
+            <div class="tier-meta">
+              Stripe lookup key:
+              <span class="lookup-tag">radio_sponsor_neon_takeover</span>
+            </div>
+            <ul class="tier-list">
+              <li>Branded blocks on schedule + Live Studio + Mixtape Hosting.</li>
+              <li>Custom voiced IDs and sweeps recorded “brought to you by…”</li>
+              <li>First dibs on **Autopilot feature bundles** and takeovers.</li>
+            </ul>
+            <div class="tier-cta">
+              <button class="btn-tier" data-lookup="radio_sponsor_neon_takeover">
+                ⚙️ Mark Neon Takeover as hot lane
+              </button>
+              <span class="heat-pill" data-heat-label="neon">
+                Heat score: 0
+              </span>
+            </div>
+            <div class="tier-fx-orbit"></div>
+            <div class="tier-eq-row">
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div><div class="tier-eq"></div>
+              <div class="tier-eq"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="note" id="stripeNote">
+          When you set up Stripe products, use these lookup keys:<br>
+          <code>radio_sponsor_bronze_monthly</code>,
+          <code>radio_sponsor_silver_monthly</code>,
+          <code>radio_sponsor_gold_monthly</code>,
+          <code>radio_sponsor_neon_takeover</code>.<br>
+          Later, your Netlify functions can look these up and send sponsors into real checkout.
+        </p>
+      </div>
+    </article>
+
+    <!-- RIGHT: AUTOPILOT PANEL -->
+    <aside class="panel">
+      <div class="panel-inner">
+        <h2>Autopilot Sponsors — Phase 1</h2>
+        <small>
+          This is the **radio-side** sponsor brain. For now it just saves a simple heat profile
+          into <code>localStorage["tkfm_sponsor_heat"]</code> so you can feel which lane is
+          “winning” before wiring Supabase + Stripe analytics.
+        </small>
+
+        <div class="mini-grid">
+          <div class="mini">
+            <div class="mini-title">Heat Meter</div>
+            <div class="mini-body">
+              Every time you mark a lane as hot, the meter nudges toward that tier. Later this can
+              be powered by real data (clicks, conversions, renewals).
+              <div class="heat-meter">
+                <div class="heat-bar-wrap">
+                  <div class="heat-fill" id="heatFill"></div>
+                </div>
+                <div class="heat-label-row">
+                  <span>Bronze / Silver</span>
+                  <span>Gold / Neon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mini">
+            <div class="mini-title">Current Autopilot Summary</div>
+            <div class="mini-body">
+              <ul class="summary-list" id="summaryList">
+                <li>No sponsor lane clicks logged yet in this browser.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mini">
+            <div class="mini-title">How this connects to the rest of TKFM</div>
+            <div class="mini-body">
+              <ul class="summary-list">
+                <li>Link Bronze / Silver into
+                  <code>/v2/radio-live.html</code> &amp; <code>/v2/dj-schedule.html</code>.</li>
+                <li>Link Gold / Neon into
+                  <code>/v2/feature-revenue-engine.html</code> &amp; <code>/v2/leaderboards.html</code>
+                  as top-tier slots.</li>
+                <li>Mirror Neon Takeover into your label-side black/gold sponsor engine if you
+                  want full empire deals.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <p class="note" id="heatNote">
+          Autopilot heat is completely local right now — safe on Netlify free tier. Once you like the
+          behavior, you can swap this out for real metrics from Supabase or Stripe.
+        </p>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<div class="toast" id="toast">Saved.</div>
+
+<script>
+  const HEAT_KEY = "tkfm_sponsor_heat";
+
+  function getHeat() {
+    try {
+      const raw = localStorage.getItem(HEAT_KEY);
+      if (!raw) return { bronze: 0, silver: 0, gold: 0, neon: 0 };
+      const parsed = JSON.parse(raw);
+      return Object.assign({ bronze: 0, silver: 0, gold: 0, neon: 0 }, parsed);
+    } catch (e) {
+      return { bronze: 0, silver: 0, gold: 0, neon: 0 };
+    }
+  }
+
+  function setHeat(h) {
+    try {
+      localStorage.setItem(HEAT_KEY, JSON.stringify(h));
+    } catch (e) {}
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, 1600);
+  }
+
+  function updateUI() {
+    const heat = getHeat();
+    const total = heat.bronze + heat.silver + heat.gold + heat.neon;
+    const status = document.getElementById("heatStatus");
+    const fill = document.getElementById("heatFill");
+    const summaryList = document.getElementById("summaryList");
+
+    // Update per-tier heat labels
+    ["bronze","silver","gold","neon"].forEach(key => {
+      const el = document.querySelector('[data-heat-label="' + key + '"]');
+      if (el) {
+        el.textContent = "Heat score: " + (heat[key] || 0);
+      }
+    });
+
+    if (!total) {
+      status.textContent = "Autopilot heat: neutral (no selections yet)";
+      fill.style.width = "40%";
+      summaryList.innerHTML = "<li>No sponsor lane clicks logged yet in this browser.</li>";
+      return;
+    }
+
+    // Compute "hotness" leaning towards higher tiers
+    const weighted =
+      heat.bronze * 1 +
+      heat.silver * 2 +
+      heat.gold * 3 +
+      heat.neon * 4;
+
+    const maxWeighted = total * 4;
+    const ratio = maxWeighted ? weighted / maxWeighted : 0.5;
+    const widthPercent = 20 + ratio * 60; // between 20% and 80%
+    fill.style.width = widthPercent + "%";
+
+    // Who's leading?
+    let winner = "bronze";
+    let winnerScore = heat.bronze;
+    ["silver","gold","neon"].forEach(k => {
+      if (heat[k] > winnerScore) {
+        winner = k;
+        winnerScore = heat[k];
+      }
+    });
+
+    const labelMap = {
+      bronze: "Bronze",
+      silver: "Silver",
+      gold: "Gold",
+      neon: "Neon Takeover"
+    };
+
+    status.textContent =
+      "Autopilot heat: " + labelMap[winner] + " (local sample, " + total + " clicks)";
+
+    summaryList.innerHTML = `
+      <li>Bronze: <strong>${heat.bronze}</strong> selections (entry lane).</li>
+      <li>Silver: <strong>${heat.silver}</strong> selections (active lane).</li>
+      <li>Gold: <strong>${heat.gold}</strong> selections (prime lane).</li>
+      <li>Neon Takeover: <strong>${heat.neon}</strong> selections (domination lane).</li>
+      <li>Current leader: <strong>${labelMap[winner]}</strong> based on your tests.</li>
+    `;
+  }
+
+  // Button handlers
+  document.querySelectorAll(".btn-tier").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const tierEl = btn.closest(".tier");
+      if (!tierEl) return;
+      const tier = tierEl.getAttribute("data-tier") || "bronze";
+      const lookupKey = btn.getAttribute("data-lookup") || "";
+
+      const heat = getHeat();
+      heat[tier] = (heat[tier] || 0) + 1;
+      setHeat(heat);
+      updateUI();
+      showToast("Marked " + tier.toUpperCase() + " as hot (lookup_key: " + lookupKey + ").");
+    });
+  });
+
+  // Clicking whole card also bumps heat
+  document.querySelectorAll(".tier").forEach(tier => {
+    tier.addEventListener("click", () => {
+      const key = tier.getAttribute("data-tier") || "bronze";
+      const heat = getHeat();
+      heat[key] = (heat[key] || 0) + 1;
+      setHeat(heat);
+      updateUI();
+      showToast("Sponsor interest pinged for " + key.toUpperCase() + " lane.");
+    });
+  });
+
+  // Scroll button
+  document.getElementById("scrollTiers").addEventListener("click", () => {
+    const el = document.getElementById("tierSection");
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // Cursor orb
+  const orb = document.getElementById("cursorOrb");
+  window.addEventListener("pointermove", (e) => {
+    orb.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px)";
+  });
+
+  // Init
+  updateUI();
+</script>
+
+</body>
+</html>

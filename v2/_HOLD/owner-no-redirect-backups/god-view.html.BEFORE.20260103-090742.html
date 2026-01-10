@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM God View — Owner Command Center</title>
+  <meta name="robots" content="noindex,nofollow"/>
+
+  <!-- IMPORTANT:
+       This page is SELF-CONTAINED on purpose to stop redirect loops.
+       We DO NOT load tkfm-shell.js / access-gates.js on this page. -->
+
+  <style>
+    :root{
+      --bg:#020617;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1); --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.78);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-5}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(59,130,246,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.95;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(34,211,238,.05) 0px, rgba(34,211,238,.05) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(168,85,247,.04) 0px, rgba(168,85,247,.04) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.18;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+
+    .wrap{max-width:1240px;margin:0 auto;padding:22px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .h1{margin:10px 0 0;font-size:40px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+
+    header{
+      position:sticky;top:0;z-index:90;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{display:flex;align-items:center;gap:12px;padding:12px 22px}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+      cursor:pointer;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
+    .pill.ok{border-color:rgba(16,185,129,.55);box-shadow:0 0 0 1px rgba(16,185,129,.10),0 0 22px rgba(16,185,129,.06)}
+
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}}
+    .tile{padding:16px;border-radius:22px;position:relative;overflow:hidden}
+    .tile:before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(560px 240px at 12% 12%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(560px 240px at 86% 16%, rgba(236,72,153,.10), transparent 60%),
+        radial-gradient(560px 240px at 48% 90%, rgba(168,85,247,.08), transparent 60%);
+      opacity:.95;pointer-events:none;
+    }
+    .tile>*{position:relative}
+    .tileK{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,.95)}
+    .tileH{margin-top:8px;font-size:18px;font-weight:950}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(2,6,23,.55);
+      font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)
+    }
+    .tag.lock{border-color:rgba(236,72,153,.26)}
+    .tag.ok{border-color:rgba(16,185,129,.28)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .hidden{display:none !important}
+  </style>
+</head>
+
+<body>
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">Owner Command Center</div>
+        <div style="font-weight:950;letter-spacing:.06em">TKFM • God View</div>
+      </div>
+
+      <div class="nav">
+        <a class="pill" href="index.html">Public Site</a>
+        <a class="pill" href="radio-hub.html">Radio Hub</a>
+        <a class="pill hot" id="loginBtn" href="owner-login.html">Owner Login</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:18px">
+    <!-- LOCKED STATE (NO AUTO REDIRECT - stops blinking forever) -->
+    <section id="locked" class="glass card">
+      <div class="k">Owner Gate</div>
+      <div class="h1"><span class="grad">Access Locked</span></div>
+      <p class="p">
+        This page no longer auto-redirects (to prevent loops). Click Owner Login, then come back to God View.
+      </p>
+      <div class="divider"></div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <a class="pill hot" id="goLogin" href="owner-login.html">Go to Owner Login</a>
+        <button class="pill" id="clear">Clear Owner Session</button>
+      </div>
+
+      <p class="p" style="margin-top:14px">
+        Debug keys found on this device:
+        <span class="mono" id="keys">checking…</span>
+      </p>
+    </section>
+
+    <!-- UNLOCKED OWNER VIEW -->
+    <section id="unlocked" class="glass card hidden">
+      <div class="k">Status • Controls • Engines</div>
+      <div class="h1"><span class="grad">God View</span> — Owner Control</div>
+      <p class="p">Owner-only command center. If you ever get stuck, use “Clear Owner Session” then login again.</p>
+      <div class="divider"></div>
+
+      <div class="grid">
+        <a class="glass tile" href="tkfm-dev-console.html">
+          <div class="tileK">Owner</div>
+          <div class="tileH">Dev Console</div>
+          <div class="tileP">Feature flags, unlock testing, and internal controls.</div>
+          <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
+        </a>
+
+        <a class="glass tile" href="owner-ops-dashboard.html">
+          <div class="tileK">Owner</div>
+          <div class="tileH">Ops Dashboard</div>
+          <div class="tileP">Operational overview and admin lanes.</div>
+          <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
+        </a>
+
+        <a class="glass tile" href="ai-dj-engine.html">
+          <div class="tileK">Owner</div>
+          <div class="tileH">AI DJ Engine</div>
+          <div class="tileP">Automation engine (owner-only).</div>
+          <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
+        </a>
+
+        <a class="glass tile" href="autopilot-engine.html">
+          <div class="tileK">Engines</div>
+          <div class="tileH">Autopilot Engine</div>
+          <div class="tileP">Scheduling + automation routing (monitor + control).</div>
+          <div class="tags"><span class="tag ok">ENGINE</span><span class="tag lock">CONTROL</span></div>
+        </a>
+
+        <a class="glass tile" href="label-home.html">
+          <div class="tileK">Label</div>
+          <div class="tileH">TKFM Records</div>
+          <div class="tileP">Label workflows (member gated + paid tiers).</div>
+          <div class="tags"><span class="tag ok">LABEL</span><span class="tag lock">GATED</span></div>
+        </a>
+
+        <button class="glass tile" id="logoutTile" style="text-align:left;border:none;cursor:pointer">
+          <div class="tileK">Security</div>
+          <div class="tileH">Clear Owner Session</div>
+          <div class="tileP">Logout / reset token on this device.</div>
+          <div class="tags"><span class="tag lock">RESET</span><span class="tag lock">TOKEN</span></div>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function(){
+      // Detect owner state WITHOUT redirecting.
+      // This prevents the blink loop even if other pages bounce.
+      const KEY_CANDIDATES = [
+        'tkfm_owner_token',
+        'tkfm_owner_key',
+        'TKFM_OWNER_KEY',
+        'tkfm_owner_authed',
+        'owner_authed',
+        'TKFM_OWNER_AUTH',
+        'ownerEmail',
+        'tkfm_owner_email'
+      ];
+
+      function presentKeys(){
+        const found = [];
+        for (const k of KEY_CANDIDATES){
+          const v = localStorage.getItem(k);
+          if (v && String(v).trim()) found.push(k);
+        }
+        document.getElementById('keys').textContent = found.length ? found.join(', ') : 'none';
+        return found;
+      }
+
+      function isOwner(){
+        const found = presentKeys();
+        return found.length > 0;
+      }
+
+      function setNextOnLoginLinks(){
+        const next = location.pathname + location.search + location.hash;
+        const u = 'owner-login.html?next=' + encodeURIComponent(next);
+        document.getElementById('goLogin').setAttribute('href', u);
+        document.getElementById('loginBtn').setAttribute('href', u);
+      }
+
+      function clearOwner(){
+        for (const k of KEY_CANDIDATES) localStorage.removeItem(k);
+        // Also clear common app keys that sometimes store owner state
+        localStorage.removeItem('tkfm_owner');
+        localStorage.removeItem('tkfm_owner_session');
+        localStorage.removeItem('tkfm_owner_access');
+        presentKeys();
+      }
+
+      function render(){
+        setNextOnLoginLinks();
+        const locked = document.getElementById('locked');
+        const unlocked = document.getElementById('unlocked');
+        if (isOwner()){
+          locked.classList.add('hidden');
+          unlocked.classList.remove('hidden');
+        } else {
+          unlocked.classList.add('hidden');
+          locked.classList.remove('hidden');
+        }
+      }
+
+      document.getElementById('clear').addEventListener('click', function(){
+        clearOwner();
+        render();
+      });
+
+      document.getElementById('logoutTile').addEventListener('click', function(){
+        clearOwner();
+        render();
+        location.href = document.getElementById('goLogin').getAttribute('href') || 'owner-login.html';
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

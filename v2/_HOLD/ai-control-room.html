@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI CONTROL ROOM — TKFM & They Krave For Me</title>
+
+<link rel="stylesheet" href="/v2/label-theme.css">
+
+<style>
+  body {
+    background: radial-gradient(circle at 50% 0%, #0d0d0d, #000 60%);
+    color: #e5e7eb;
+  }
+  .room-wrap {
+    max-width:1240px;
+    margin:0 auto;
+    padding:2rem 1.2rem 4rem;
+    display:flex;
+    flex-direction:column;
+    gap:2rem;
+  }
+  .ai-panel {
+    background:rgba(20,20,30,.55);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,215,0,.25);
+    border-radius:22px;
+    padding:1.8rem;
+    box-shadow:0 0 28px rgba(255,215,0,.15);
+    transition:.25s;
+    position:relative;
+    overflow:hidden;
+  }
+  .ai-panel::before{
+    content:"";
+    position:absolute;
+    inset:-30%;
+    background:
+      radial-gradient(circle at 0 0,#fde68a22,transparent 60%),
+      radial-gradient(circle at 100% 0,#4ade8022,transparent 60%);
+    opacity:.7;
+    mix-blend-mode:screen;
+    pointer-events:none;
+  }
+  .ai-panel-inner{
+    position:relative;
+    z-index:1;
+  }
+  h1{
+    font-size:3rem;
+    font-weight:700;
+    color:#e5e7eb;
+    text-shadow:0 0 20px gold;
+  }
+  h2{
+    color:gold;
+    font-size:1.3rem;
+    margin-bottom:.2rem;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:1.3rem;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    background:linear-gradient(135deg,#ffb900,#ff0077);
+    border-radius:14px;
+    padding:.7rem 1rem;
+    font-weight:700;
+    text-align:center;
+    color:#fff;
+    transition:.25s;
+    border:none;
+    cursor:pointer;
+    margin-top:.5rem;
+    font-size:.9rem;
+  }
+  .btn:hover{transform:scale(1.03);}
+  .btn.secondary{
+    background:linear-gradient(135deg,#111827,#1f2937);
+    border:1px solid rgba(148,163,184,.5);
+    color:#e5e7eb;
+  }
+  .status-dot{
+    display:inline-block;
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 10px #22c55e;
+    margin-right:.3rem;
+  }
+  .room-sub{
+    color:#9ca3af;
+    max-width:680px;
+    font-size:.9rem;
+  }
+  .mini-pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.35rem;
+    margin-top:.4rem;
+  }
+  .mini-pill{
+    font-size:.7rem;
+    padding:.18rem .45rem;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,.6);
+    background:rgba(15,23,42,.95);
+    color:#e5e7eb;
+  }
+</style>
+</head>
+<body>
+<div class="room-wrap">
+
+  <header>
+    <h1>👁️ AI CONTROL ROOM</h1>
+    <p class="room-sub">
+      Master Control for TKFM Radio + They Krave For Me Records. Owner Key secured.
+      Route into AI engines, pricing brains, sponsor engines, and now the **AI Roster Radar**.
+    </p>
+    <p style="margin-top:.6rem;">
+      <span class="status-dot"></span> Systems Online
+    </p>
+  </header>
+
+  <section class="grid">
+
+    <!-- TKFM RADIO -->
+    <div class="ai-panel">
+      <div class="ai-panel-inner">
+        <h2>📡 TKFM RADIO — Systems</h2>
+        <p class="room-sub">
+          Radio engines: AI DJ brain, feature revenue, DJ schedule and sponsor room.
+        </p>
+        <button class="btn" onclick="go('/v2/ai-dj-engine.html')">🎧 AI DJ Engine</button>
+        <button class="btn" onclick="go('/v2/feature-revenue-engine.html')">💸 Feature Revenue Engine</button>
+        <button class="btn" onclick="go('/v2/dj-schedule.html')">🗓️ DJ Schedule</button>
+        <button class="btn" onclick="go('/v2/sponsors-engine.html')">🤝 Sponsor Engine Room</button>
+        <button class="btn" onclick="go('/v2/leaderboards.html')">🏆 Feature Leaderboards</button>
+      </div>
+    </div>
+
+    <!-- RECORD LABEL -->
+    <div class="ai-panel">
+      <div class="ai-panel-inner">
+        <h2>👑 THEY KRAVE FOR ME RECORDS — Label Systems</h2>
+        <p class="room-sub">
+          Label brain: packs, contracts, AI deal wizard, A&amp;R radar, uploads.
+        </p>
+        <button class="btn" onclick="go('/v2/label-home.html')">🏛️ Label HQ</button>
+        <button class="btn" onclick="go('/v2/label-pack-builder.html')">📦 Pack Builder</button>
+        <button class="btn" onclick="go('/v2/label-contract-lab.html')">📑 Contract Lab</button>
+        <button class="btn" onclick="go('/v2/label-ai-deal-wizard.html')">🧠 AI Deal Wizard</button>
+        <button class="btn" onclick="go('/v2/label-ar-radar.html')">📊 A&amp;R Radar</button>
+        <button class="btn" onclick="go('/v2/artist-upload.html')">🎵 Artist Uploads</button>
+      </div>
+    </div>
+
+    <!-- MONEY + PRICING -->
+    <div class="ai-panel">
+      <div class="ai-panel-inner">
+        <h2>💳 MONEY + PRICING</h2>
+        <p class="room-sub">
+          All money lanes: TKFM public pricing, label packs, AI pricing suggestions.
+        </p>
+        <button class="btn" onclick="go('/v2/pricing.html')">💰 TKFM Pricing Matrix</button>
+        <button class="btn" onclick="go('/v2/label-pack-builder.html')">🛠️ Label Pack Pricing</button>
+        <button class="btn" onclick="go('/v2/label-revenue-engine.html')">⚙️ Label Revenue Engine</button>
+        <button class="btn secondary" onclick="go('/v2/autopilot-pricing.html')">
+          🤖 AI Autopilot Pricing (Phase 1)
+        </button>
+        <button class="btn secondary" onclick="go('/v2/autopilot-sponsors.html')">
+          🤝 Autopilot Sponsors Engine
+        </button>
+      </div>
+    </div>
+
+    <!-- ACCESS + ANALYTICS -->
+    <div class="ai-panel">
+      <div class="ai-panel-inner">
+        <h2>🔐 ACCESS + ANALYTICS</h2>
+        <p class="room-sub">
+          Who’s in your universe + how hot each lane is. GOD VIEW and AI Roster Radar live here.
+        </p>
+        <button class="btn" onclick="go('/v2/owner-login.html')">🌀 Owner Logins &amp; GOD VIEW</button>
+        <button class="btn" onclick="go('/v2/label-accounts.html')">🧾 Label Accounts</button>
+        <button class="btn" onclick="go('/v2/dj-accounts.html')">🎚️ DJ Accounts</button>
+        <button class="btn" onclick="go('/v2/artist-accounts.html')">🎤 Artist Accounts</button>
+        <button class="btn secondary" onclick="go('/v2/ai-roster-radar.html')">
+          🌐 AI Roster Radar / Insight Wall
+        </button>
+        <div class="mini-pill-row">
+          <span class="mini-pill">Reads local metrics only</span>
+          <span class="mini-pill">No API calls, safe on free tier</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="ai-panel" style="margin-top:2rem;">
+    <div class="ai-panel-inner">
+      <h2>📡 AI CONNECTIONS — Status</h2>
+      <p id="ai-status" class="room-sub">Checking keys…</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  function go(path){ window.location.href = path; }
+
+  (function(){
+    const hasStripe = !!localStorage.getItem("stripe_public_key");
+    const hasSupabase = !!localStorage.getItem("supabase_url");
+    const hasOwnerKey = !!localStorage.getItem("tkfm_owner_key");
+    const el = document.getElementById("ai-status");
+    let out = "";
+    out += `Stripe: ${hasStripe ? "🔋 Ready" : "⛔ Missing"}<br>`;
+    out += `Supabase: ${hasSupabase ? "🔋 Ready" : "⛔ Missing"}<br>`;
+    out += `Owner Key: ${hasOwnerKey ? "🔋 Active" : "⛔ NONE SET"}<br>`;
+    el.innerHTML = out;
+  })();
+</script>
+</body>
+</html>

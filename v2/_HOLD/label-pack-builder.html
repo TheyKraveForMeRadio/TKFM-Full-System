@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>They Krave For Me Records • AI Pack Builder</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(10,10,10,0.98);
+      --accent-gold: #facc15;
+      --accent-amber: #f59e0b;
+      --accent-orange: #fb923c;
+      --accent-teal: #22d3ee;
+      --accent-rose: #fb7185;
+      --accent-lime: #a3e635;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.2), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(251,146,60,0.18), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-orbit {
+      position: fixed;
+      width: 540px;
+      height: 540px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.8);
+      inset: -150px -180px auto auto;
+      opacity: .85;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 140px rgba(250,204,21,1),
+        0 0 200px rgba(0,0,0,1);
+      animation: spin 34s linear infinite;
+      pointer-events: none;
+    }
+    .bg-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 20%;
+      border-radius: inherit;
+      border: 1px solid rgba(251,146,60,0.9);
+      box-shadow:
+        0 0 95px rgba(251,146,60,1),
+        0 0 150px rgba(0,0,0,1);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.55) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    main {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 1.7rem .9rem 2.6rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* NAV */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      margin-bottom: 1.4rem;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .nav-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fefce8;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.38), transparent 60%),
+        radial-gradient(circle at 100% 100%, #020617, #000000 65%);
+      box-shadow:
+        0 0 28px rgba(250,204,21,1),
+        0 0 44px rgba(0,0,0,1);
+    }
+    .nav-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-main {
+      font-size: .95rem;
+      font-weight: 900;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: #fef9c3;
+    }
+    .nav-sub {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .nav-spacer {
+      margin-left: auto;
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+    }
+    .nav-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.98);
+      padding: .22rem .7rem;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .nav-chip--gold {
+      border-color: rgba(250,204,21,0.9);
+      color: #fef9c3;
+      box-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 32px rgba(0,0,0,1);
+    }
+
+    /* SHELL */
+    .shell {
+      border-radius: 30px;
+      border: 1px solid rgba(250,204,21,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.22), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(251,146,60,0.18), transparent 60%),
+        radial-gradient(circle at 50% 130%, #020617, #000000 75%);
+      padding: 1.6rem 1.5rem 1.9rem;
+      box-shadow:
+        0 0 100px rgba(15,23,42,1),
+        0 0 170px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.6rem;
+    }
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(251,113,133,0.25), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .shell-inner { position: relative; z-index: 1; }
+
+    .kicker {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #fde68a;
+      margin-bottom: .4rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#fef3c7,#facc15,#fb923c,#f97316);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 46px rgba(250,204,21,0.9),
+        0 0 80px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .7rem;
+      font-size: .9rem;
+      color: #e5e7eb;
+      max-width: 640px;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.1rem;
+      margin-top: 1.1rem;
+    }
+    @media (max-width: 880px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      margin-top: .7rem;
+      font-size: .72rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .22rem .75rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .pill span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 15px rgba(250,204,21,1);
+    }
+    .pill--radio span {
+      background: var(--accent-teal);
+      box-shadow: 0 0 15px rgba(34,211,238,1);
+    }
+    .pill--social span {
+      background: var(--accent-rose);
+      box-shadow: 0 0 15px rgba(251,113,133,1);
+    }
+
+    /* FORM SIDE */
+    .builder-card {
+      border-radius: 22px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.15), transparent 60%),
+        rgba(10,10,10,0.98);
+      padding: .9rem 1.05rem 1.1rem;
+      box-shadow: 0 0 32px rgba(0,0,0,1);
+      font-size: .8rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .7rem;
+      margin-top: .7rem;
+    }
+    @media (max-width: 680px) {
+      .field-grid { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .field-grid-wide {
+      display: grid;
+      grid-template-columns: minmax(0,1fr);
+      gap: .6rem;
+      margin-top: .7rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: .18rem;
+    }
+    label {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+      padding: .08rem .55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.98);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #e5e7eb;
+    }
+
+    input[type="text"],
+    select {
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,1);
+      background: rgba(10,10,10,0.98);
+      color: var(--text-main);
+      padding: .5rem .8rem;
+      font-size: .8rem;
+      outline: none;
+      width: 100%;
+    }
+    input:focus,
+    select:focus {
+      border-color: rgba(250,204,21,1);
+      box-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 30px rgba(0,0,0,1);
+    }
+
+    .hint {
+      font-size: .7rem;
+      color: var(--text-muted);
+    }
+
+    .pack-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .6rem;
+      margin-top: .4rem;
+    }
+    @media (max-width: 680px) {
+      .pack-grid { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .pack-item {
+      border-radius: 16px;
+      border: 1px solid rgba(75,85,99,1);
+      background: rgba(15,15,15,0.98);
+      padding: .55rem .6rem .6rem;
+      display: grid;
+      grid-template-columns: auto minmax(0,1fr);
+      gap: .5rem;
+      align-items: flex-start;
+    }
+
+    .pack-toggle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .18rem;
+      font-size: .7rem;
+    }
+    .pack-toggle input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-gold);
+    }
+    .pack-label {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+    }
+
+    .pack-body {
+      font-size: .78rem;
+      color: var(--text-muted);
+    }
+    .pack-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: .25rem;
+      font-size: .72rem;
+    }
+    .pack-tag {
+      border-radius: 999px;
+      padding: .08rem .5rem;
+      border: 1px solid rgba(55,65,81,1);
+      background: rgba(15,23,42,0.96);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-gold);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .9rem;
+    }
+    .btn-main {
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      padding: .52rem 1.4rem;
+      font-size: .82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #020617;
+      background: linear-gradient(120deg,#facc15,#f97316,#fbbf24);
+      box-shadow:
+        0 0 26px rgba(250,204,21,1),
+        0 0 40px rgba(0,0,0,1);
+    }
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .48rem 1.1rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      cursor: pointer;
+    }
+
+    /* OUTPUT SIDE */
+    .output-card {
+      border-radius: 22px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: .9rem .95rem 1.05rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .output-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .output-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-kicker {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+    .card-title {
+      font-size: .92rem;
+      font-weight: 600;
+      margin: 0 0 .4rem;
+    }
+
+    .tagline {
+      font-size: .82rem;
+      margin-bottom: .45rem;
+      color: #fef9c3;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: .5rem;
+      margin-bottom: .5rem;
+    }
+    .price-main {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fef9c3;
+    }
+    .price-sub {
+      font-size: .76rem;
+      color: var(--text-muted);
+    }
+
+    .breakdown {
+      border-radius: 16px;
+      border: 1px solid rgba(55,65,81,1);
+      background: #020617;
+      padding: .55rem .65rem;
+      font-size: .78rem;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .breakdown ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .breakdown li {
+      display: flex;
+      justify-content: space-between;
+      gap: .5rem;
+      margin-bottom: .22rem;
+    }
+    .breakdown-left {
+      display: flex;
+      flex-direction: column;
+      gap: .05rem;
+    }
+    .bd-label {
+      font-size: .78rem;
+    }
+    .bd-tag {
+      font-size: .7rem;
+      color: var(--text-muted);
+    }
+    .bd-price {
+      font-size: .8rem;
+      color: #bbf7d0;
+      white-space: nowrap;
+    }
+
+    .ai-note {
+      margin-top: .45rem;
+      font-size: .74rem;
+      color: var(--text-muted);
+    }
+
+    .footer-note {
+      margin-top: .8rem;
+      font-size: .74rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orbit { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbit"></div>
+<div class="scanline"></div>
+
+<main>
+  <header class="nav-bar">
+    <div class="nav-logo">
+      <div class="nav-pill">KR</div>
+      <div class="nav-text">
+        <div class="nav-main">They Krave For Me Records</div>
+        <div class="nav-sub">AI Pack Builder</div>
+      </div>
+    </div>
+    <div class="nav-spacer">
+      <div class="nav-chip nav-chip--gold">Owner / Label only</div>
+      <div class="nav-chip">Build label & TKFM packs</div>
+    </div>
+  </header>
+
+  <section class="shell">
+    <div class="shell-inner">
+      <div class="kicker">Bundles for artists, DJs & sponsors</div>
+      <h1>Build a full motion pack in seconds.</h1>
+      <p class="hero-sub">
+        Mix TKFM radio spins, interviews, label marketing and social pushes into one
+        <strong>They Krave For Me Records</strong> pack. The engine suggests a price band,
+        a clean breakdown, and a one-line pitch you can drop into DMs or contracts.
+      </p>
+
+      <div class="hero-grid">
+        <!-- LEFT: CONTROLS -->
+        <div class="builder-card">
+          <div class="pill-row">
+            <div class="pill"><span></span> Artist launch pack</div>
+            <div class="pill pill--radio"><span></span> TKFM feature pack</div>
+            <div class="pill pill--social"><span></span> Social / visual boost</div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="packType">Pack type</label>
+              <select id="packType">
+                <option value="artist">Artist Release Pack</option>
+                <option value="dj">DJ / Mixtape Push Pack</option>
+                <option value="label">Label Priority Push</option>
+                <option value="sponsor">Sponsor Campaign Pack</option>
+              </select>
+              <p class="hint">This changes the language and suggested mix.</p>
+            </div>
+            <div class="field">
+              <label for="tier">
+                Tier
+                <span class="badge">Suggested range</span>
+              </label>
+              <select id="tier">
+                <option value="lite">Lite (Entry)</option>
+                <option value="standard" selected>Standard</option>
+                <option value="premium">Premium</option>
+                <option value="god">God Tier / White Glove</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-grid-wide">
+            <div class="field">
+              <label for="packName">Pack name</label>
+              <input id="packName" type="text" placeholder="Example: KRAVE LAUNCH PACK, TKFM GOD MODE FEATURE" />
+              <p class="hint">This shows up in the breakdown and pitch line.</p>
+            </div>
+          </div>
+
+          <div class="field-grid-wide">
+            <div class="field">
+              <label>What’s inside</label>
+              <div class="pack-grid">
+                <div class="pack-item">
+                  <div class="pack-toggle">
+                    <input type="checkbox" id="includeRadio" checked />
+                    <span class="pack-label">Radio</span>
+                  </div>
+                  <div class="pack-body">
+                    TKFM rotation (light → heavy), playlist adds, and on-air mentions.
+                    <div class="pack-meta">
+                      <span class="pack-tag">Base: $250</span>
+                      <span class="pack-tag">
+                        Intensity: <span id="radioLevelLabel">3</span>x
+                      </span>
+                    </div>
+                    <input id="radioLevel" type="range" min="1" max="5" step="1" value="3" />
+                  </div>
+                </div>
+
+                <div class="pack-item">
+                  <div class="pack-toggle">
+                    <input type="checkbox" id="includeInterview" checked />
+                    <span class="pack-label">Interview</span>
+                  </div>
+                  <div class="pack-body">
+                    Station or label interview slots, clip content, and homepage highlight.
+                    <div class="pack-meta">
+                      <span class="pack-tag">Base: $150</span>
+                      <span class="pack-tag">
+                        Depth: <span id="interviewLevelLabel">2</span>x
+                      </span>
+                    </div>
+                    <input id="interviewLevel" type="range" min="1" max="4" step="1" value="2" />
+                  </div>
+                </div>
+
+                <div class="pack-item">
+                  <div class="pack-toggle">
+                    <input type="checkbox" id="includeSocial" checked />
+                    <span class="pack-label">Social</span>
+                  </div>
+                  <div class="pack-body">
+                    IG/TikTok/FB pushes from TKFM + label pages, story reposts & carousels.
+                    <div class="pack-meta">
+                      <span class="pack-tag">Base: $200</span>
+                      <span class="pack-tag">
+                        Blast: <span id="socialLevelLabel">3</span>x
+                      </span>
+                    </div>
+                    <input id="socialLevel" type="range" min="1" max="5" step="1" value="3" />
+                  </div>
+                </div>
+
+                <div class="pack-item">
+                  <div class="pack-toggle">
+                    <input type="checkbox" id="includeVisuals" />
+                    <span class="pack-label">Visuals</span>
+                  </div>
+                  <div class="pack-body">
+                    Cover art, visualizers, snippets and GraphFX promo graphics.
+                    <div class="pack-meta">
+                      <span class="pack-tag">Base: $300</span>
+                      <span class="pack-tag">
+                        Scope: <span id="visualLevelLabel">1</span>x
+                      </span>
+                    </div>
+                    <input id="visualLevel" type="range" min="1" max="4" step="1" value="1" />
+                  </div>
+                </div>
+
+                <div class="pack-item">
+                  <div class="pack-toggle">
+                    <input type="checkbox" id="includeConsult" />
+                    <span class="pack-label">Strategy</span>
+                  </div>
+                  <div class="pack-body">
+                    1:1 rollout strategy calls, content calendar, and ad advice.
+                    <div class="pack-meta">
+                      <span class="pack-tag">Base: $200</span>
+                      <span class="pack-tag">
+                        Depth: <span id="consultLevelLabel">1</span>x
+                      </span>
+                    </div>
+                    <input id="consultLevel" type="range" min="1" max="3" step="1" value="1" />
+                  </div>
+                </div>
+
+                <div class="pack-item">
+                  <div class="pack-toggle">
+                    <input type="checkbox" id="includeExtras" />
+                    <span class="pack-label">Extras</span>
+                  </div>
+                  <div class="pack-body">
+                    Optional: remix packs, live show promo, bonus placements, surprises.
+                    <div class="pack-meta">
+                      <span class="pack-tag">Base: $150</span>
+                      <span class="pack-tag">
+                        Weight: <span id="extrasLevelLabel">1</span>x
+                      </span>
+                    </div>
+                    <input id="extrasLevel" type="range" min="1" max="3" step="1" value="1" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-main" type="button" id="calcBtn">Generate price band</button>
+            <button class="btn-ghost" type="button" id="copySummaryBtn">Copy summary</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: OUTPUT -->
+        <aside class="output-card">
+          <div class="output-inner">
+            <div class="card-kicker">Pack preview</div>
+            <h2 class="card-title" id="packTitlePreview">No pack generated yet</h2>
+
+            <p class="tagline" id="taglinePreview">
+              Pick your ingredients on the left and generate a pack.
+            </p>
+
+            <div class="price-row">
+              <div>
+                <div class="price-main" id="priceMain">$0–$0</div>
+                <div class="price-sub" id="priceSub">Suggested label-side range • not final</div>
+              </div>
+              <div class="price-sub" id="priceNotes">Waiting for pack configuration…</div>
+            </div>
+
+            <div class="breakdown" id="breakdownBox">
+              <ul id="breakdownList">
+                <!-- items injected by JS -->
+              </ul>
+            </div>
+
+            <p class="ai-note">
+              Later, this can sync with your **Autopilot Pricing Engine**, Stripe lookup keys,
+              and contract generator so the same pack name + price flows all the way through.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    They Krave For Me Records • AI Pack Builder • Build the bundle once, reuse it across TKFM + label.
+  </p>
+</main>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+  import { protectPage } from "./auth-gateway.js";
+  import { suggestPriceBand } from "./ai-core.js";
+
+  // Owner + label only
+  protectPage(["owner", "label"]);
+
+  const packTypeEl = document.getElementById("packType");
+  const tierEl = document.getElementById("tier");
+  const packNameEl = document.getElementById("packName");
+
+  const includeRadioEl = document.getElementById("includeRadio");
+  const includeInterviewEl = document.getElementById("includeInterview");
+  const includeSocialEl = document.getElementById("includeSocial");
+  const includeVisualsEl = document.getElementById("includeVisuals");
+  const includeConsultEl = document.getElementById("includeConsult");
+  const includeExtrasEl = document.getElementById("includeExtras");
+
+  const radioLevelEl = document.getElementById("radioLevel");
+  const interviewLevelEl = document.getElementById("interviewLevel");
+  const socialLevelEl = document.getElementById("socialLevel");
+  const visualLevelEl = document.getElementById("visualLevel");
+  const consultLevelEl = document.getElementById("consultLevel");
+  const extrasLevelEl = document.getElementById("extrasLevel");
+
+  const radioLevelLabel = document.getElementById("radioLevelLabel");
+  const interviewLevelLabel = document.getElementById("interviewLevelLabel");
+  const socialLevelLabel = document.getElementById("socialLevelLabel");
+  const visualLevelLabel = document.getElementById("visualLevelLabel");
+  const consultLevelLabel = document.getElementById("consultLevelLabel");
+  const extrasLevelLabel = document.getElementById("extrasLevelLabel");
+
+  const packTitlePreview = document.getElementById("packTitlePreview");
+  const taglinePreview = document.getElementById("taglinePreview");
+  const priceMain = document.getElementById("priceMain");
+  const priceSub = document.getElementById("priceSub");
+  const priceNotes = document.getElementById("priceNotes");
+  const breakdownList = document.getElementById("breakdownList");
+
+  const calcBtn = document.getElementById("calcBtn");
+  const copySummaryBtn = document.getElementById("copySummaryBtn");
+
+  const BASE_PRICES = {
+    radio: 250,
+    interview: 150,
+    social: 200,
+    visuals: 300,
+    consult: 200,
+    extras: 150
+  };
+
+  function tierMultiplier(tier) {
+    switch (tier) {
+      case "lite": return 0.85;
+      case "standard": return 1.0;
+      case "premium": return 1.3;
+      case "god": return 1.7;
+      default: return 1.0;
+    }
+  }
+
+  function packFlavor(type) {
+    switch (type) {
+      case "artist":
+        return {
+          line: "All-in-one launch pad to move from ‘unknown’ to ‘everybody’s talking’ in one run.",
+          target: "artist"
+        };
+      case "dj":
+        return {
+          line: "Turn a DJ name into a full-blown residency brand across TKFM and the label.",
+          target: "dj"
+        };
+      case "label":
+        return {
+          line: "Lock in a priority wave for your top roster picks with TKFM and label muscle.",
+          target: "label"
+        };
+      case "sponsor":
+        return {
+          line: "Bundle radio, social and visuals into a clean, sponsor-friendly media pack.",
+          target: "sponsor"
+        };
+      default:
+        return {
+          line: "A tailored motion pack built for the way you actually move.",
+          target: "artist"
+        };
+    }
+  }
+
+  function levelLabel(level) {
+    if (level <= 1) return "light";
+    if (level === 2) return "standard";
+    if (level === 3) return "heavy";
+    return "max";
+  }
+
+  function updateLevelLabels() {
+    radioLevelLabel.textContent = radioLevelEl.value;
+    interviewLevelLabel.textContent = interviewLevelEl.value;
+    socialLevelLabel.textContent = socialLevelEl.value;
+    visualLevelLabel.textContent = visualLevelEl.value;
+    consultLevelLabel.textContent = consultLevelEl.value;
+    extrasLevelLabel.textContent = extrasLevelEl.value;
+  }
+
+  function computePack() {
+    const type = packTypeEl.value;
+    const tier = tierEl.value;
+    const name = packNameEl.value.trim() || "KRAVE PACK";
+
+    const items = [];
+
+    if (includeRadioEl.checked) {
+      const intensity = Number(radioLevelEl.value);
+      const price = BASE_PRICES.radio * intensity;
+      items.push({
+        key: "radio",
+        label: "TKFM radio & rotation",
+        detail: `${levelLabel(intensity)} rotation + playlisting`,
+        base: BASE_PRICES.radio,
+        level: intensity,
+        price
+      });
+    }
+
+    if (includeInterviewEl.checked) {
+      const depth = Number(interviewLevelEl.value);
+      const price = BASE_PRICES.interview * depth;
+      items.push({
+        key: "interview",
+        label: "Interview + homepage feature",
+        detail: `${depth}x interview segment / clip`,
+        base: BASE_PRICES.interview,
+        level: depth,
+        price
+      });
+    }
+
+    if (includeSocialEl.checked) {
+      const blast = Number(socialLevelEl.value);
+      const price = BASE_PRICES.social * blast;
+      items.push({
+        key: "social",
+        label: "Social / platform blast",
+        detail: `${blast}x cycles of IG/TikTok/FB pushes`,
+        base: BASE_PRICES.social,
+        level: blast,
+        price
+      });
+    }
+
+    if (includeVisualsEl.checked) {
+      const scope = Number(visualLevelEl.value);
+      const price = BASE_PRICES.visuals * scope;
+      items.push({
+        key: "visuals",
+        label: "Visuals & GraphFX",
+        detail: `${scope}x cover/visual asset cycles`,
+        base: BASE_PRICES.visuals,
+        level: scope,
+        price
+      });
+    }
+
+    if (includeConsultEl.checked) {
+      const depth = Number(consultLevelEl.value);
+      const price = BASE_PRICES.consult * depth;
+      items.push({
+        key: "consult",
+        label: "Strategy sessions",
+        detail: `${depth}x rollout / content strategy calls`,
+        base: BASE_PRICES.consult,
+        level: depth,
+        price
+      });
+    }
+
+    if (includeExtrasEl.checked) {
+      const weight = Number(extrasLevelEl.value);
+      const price = BASE_PRICES.extras * weight;
+      items.push({
+        key: "extras",
+        label: "Extras / surprises",
+        detail: `${weight}x bonus touches (remixes, shows, etc.)`,
+        base: BASE_PRICES.extras,
+        level: weight,
+        price
+      });
+    }
+
+    const rawTotal = items.reduce((sum, item) => sum + item.price, 0);
+    const tierMult = tierMultiplier(tier);
+    const adjustedTotal = rawTotal * tierMult;
+
+    // Use a small band around adjustedTotal
+    const low = Math.round(adjustedTotal * 0.9);
+    const high = Math.round(adjustedTotal * 1.15);
+
+    // AI-like flavor from suggestPriceBand if available
+    let suggested = { low, high, tone: "balanced" };
+    try {
+      if (typeof suggestPriceBand === "function") {
+        suggested = suggestPriceBand({
+          packType: type,
+          tier,
+          baseline: adjustedTotal,
+          itemsCount: items.length
+        }) || suggested;
+      }
+    } catch (e) {
+      console.warn("suggestPriceBand failed, using fallback", e);
+    }
+
+    return {
+      type,
+      tier,
+      name,
+      items,
+      low: suggested.low || low,
+      high: suggested.high || high,
+      tone: suggested.tone || "balanced"
+    };
+  }
+
+  function applyPack() {
+    const data = computePack();
+    const flavor = packFlavor(data.type);
+
+    packTitlePreview.textContent = data.name;
+    taglinePreview.textContent = flavor.line;
+
+    priceMain.textContent = `$${data.low.toLocaleString()}–$${data.high.toLocaleString()}`;
+    priceSub.textContent = `Suggested ${data.tier.toUpperCase()} band — adjust as needed.`;
+
+    let toneText = "Balanced push for serious motion.";
+    if (data.tone === "aggressive") {
+      toneText = "Aggressive pricing for heavy pressure and bigger upside.";
+    } else if (data.tone === "entry") {
+      toneText = "Entry-level pricing to make it easy to lock in.";
+    } else if (data.tone === "elite") {
+      toneText = "Premium band reserved for white glove and God-level attention.";
+    }
+
+    priceNotes.textContent = toneText;
+
+    breakdownList.innerHTML = "";
+    if (!data.items.length) {
+      const li = document.createElement("li");
+      li.innerHTML = `<div class="breakdown-left"><span class="bd-label">No components selected</span><span class="bd-tag">Toggle at least one module on the left.</span></div>`;
+      breakdownList.appendChild(li);
+      return;
+    }
+
+    data.items.forEach(item => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="breakdown-left">
+          <span class="bd-label">${item.label}</span>
+          <span class="bd-tag">${item.detail}</span>
+        </div>
+        <div class="bd-price">$${item.price.toLocaleString()}</div>
+      `;
+      breakdownList.appendChild(li);
+    });
+
+    const totalLi = document.createElement("li");
+    totalLi.innerHTML = `
+      <div class="breakdown-left">
+        <span class="bd-label"><strong>Internal base total</strong></span>
+        <span class="bd-tag">Before tier multiplier & negotiations.</span>
+      </div>
+      <div class="bd-price">
+        $${data.items.reduce((s, i) => s + i.price, 0).toLocaleString()}
+      </div>
+    `;
+    breakdownList.appendChild(totalLi);
+
+    return data;
+  }
+
+  function buildSummaryText(pack) {
+    if (!pack) pack = computePack();
+    const target = packFlavor(pack.type).target;
+    const line = flavorLine(pack.type, pack.tier);
+
+    const itemsText = pack.items.map(i => `- ${i.label} — ${i.detail}`).join("\n");
+    const priceLine = `Suggested range: $${pack.low.toLocaleString()}–$${pack.high.toLocaleString()} (${pack.tier.toUpperCase()} tier).`;
+
+    return `${pack.name} — ${capitalize(target)} pack
+
+${line}
+
+What’s inside:
+${itemsText || "- (no components selected yet)"}
+
+${priceLine}
+
+Note: This is a label-side / TKFM internal band. Final price can move based on scope, timing and long-term plans.`;
+  }
+
+  function flavorLine(type, tier) {
+    const tierLabel = tier.toUpperCase();
+    switch (type) {
+      case "artist":
+        return `Artist-focused ${tierLabel} pack designed to turn a project cycle into a full wave — radio, visuals and social in one move.`;
+      case "dj":
+        return `DJ / mixtape ${tierLabel} pack meant to brand the DJ as a must-hear resident, not just another name on the flyer.`;
+      case "label":
+        return `Label ${tierLabel} priority pack to lock your top picks into heavy motion across TKFM and your full ecosystem.`;
+      case "sponsor":
+        return `Sponsor-facing ${tierLabel} media pack bundling TKFM inventory, visuals and social to make the offer simple and premium.`;
+      default:
+        return `${tierLabel} pack tuned for the way They Krave For Me moves — no fluff, all motion.`;
+    }
+  }
+
+  function capitalize(str) {
+    return (str || "").charAt(0).toUpperCase() + (str || "").slice(1);
+  }
+
+  function attachLevelListeners() {
+    radioLevelEl.addEventListener("input", updateLevelLabels);
+    interviewLevelEl.addEventListener("input", updateLevelLabels);
+    socialLevelEl.addEventListener("input", updateLevelLabels);
+    visualLevelEl.addEventListener("input", updateLevelLabels);
+    consultLevelEl.addEventListener("input", updateLevelLabels);
+    extrasLevelEl.addEventListener("input", updateLevelLabels);
+  }
+
+  calcBtn.addEventListener("click", () => {
+    updateLevelLabels();
+    applyPack();
+  });
+
+  copySummaryBtn.addEventListener("click", async () => {
+    updateLevelLabels();
+    const pack = applyPack();
+    const summary = buildSummaryText(pack);
+    try {
+      await navigator.clipboard.writeText(summary);
+      copySummaryBtn.textContent = "Copied!";
+      setTimeout(() => {
+        copySummaryBtn.textContent = "Copy summary";
+      }, 1400);
+    } catch (err) {
+      console.error("Clipboard error", err);
+      copySummaryBtn.textContent = "Copy failed";
+      setTimeout(() => {
+        copySummaryBtn.textContent = "Copy summary";
+      }, 1600);
+    }
+  });
+
+  attachLevelListeners();
+  updateLevelLabels();
+</script>
+</body>
+</html>

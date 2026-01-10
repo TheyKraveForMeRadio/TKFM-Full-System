@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM DJ Accounts — They Krave For Me Radio</title>
+
+  <style>
+    :root {
+      --pink:#ff007f;
+      --cyan:#06b6d4;
+      --gold:#facc15;
+      --bg:radial-gradient(circle at 10% 0%,#020014,#020617 55%,#000000 100%);
+      --cardbg:rgba(15,23,42,0.97);
+      --border:rgba(148,163,184,0.35);
+    }
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:var(--bg);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:#e5e7eb;
+      padding:1.5rem .9rem 2.5rem;
+      position:relative;
+      overflow-x:hidden;
+    }
+
+    .bg-orbit {
+      position:fixed;
+      inset:-40%;
+      z-index:-3;
+      pointer-events:none;
+      background:conic-gradient(
+        from 230deg,
+        rgba(255,0,128,.35),
+        rgba(56,189,248,.32),
+        rgba(250,204,21,.3),
+        rgba(129,140,248,.34),
+        rgba(255,0,128,.35)
+      );
+      filter:blur(40px);
+      mix-blend-mode:screen;
+      animation:orbit 36s linear infinite;
+    }
+    .bg-glow {
+      position:fixed;
+      inset:-20%;
+      z-index:-4;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 0 0,rgba(255,0,128,.4),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(56,189,248,.4),transparent 60%),
+        radial-gradient(circle at 50% 0,rgba(250,204,21,.35),transparent 60%);
+      filter:blur(14px);
+      animation:glow 26s ease-in-out infinite alternate;
+    }
+    @keyframes orbit {
+      0% { transform:rotate(0deg) scale(1.05); }
+      100% { transform:rotate(360deg) scale(1.05); }
+    }
+    @keyframes glow {
+      0% { transform:translate3d(0,0,0); }
+      100% { transform:translate3d(-4%,2%,0); }
+    }
+
+    main {
+      max-width:1100px;
+      margin:0 auto;
+      position:relative;
+      z-index:1;
+    }
+
+    header {
+      display:flex;
+      justify-content:space-between;
+      gap:1rem;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .kicker {
+      font-size:.78rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:rgba(191,219,254,.95);
+      margin-bottom:.25rem;
+    }
+    h1 {
+      margin:0;
+      font-size:2.1rem;
+      font-weight:900;
+      background:linear-gradient(120deg,var(--pink),var(--gold),var(--cyan));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 18px rgba(255,0,128,.9),0 0 30px rgba(56,189,248,.9);
+    }
+    .subtitle {
+      margin-top:.35rem;
+      font-size:.9rem;
+      color:rgba(203,213,225,.98);
+      max-width:34rem;
+    }
+    .subtitle span { color:var(--gold); }
+
+    .header-right {
+      min-width:230px;
+      text-align:right;
+      font-size:.8rem;
+    }
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      padding:.25rem .65rem;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.95);
+      background:rgba(113,63,18,.98);
+      color:#fef3c7;
+      margin-bottom:.35rem;
+    }
+    .badge span {
+      color:var(--gold);
+      font-weight:700;
+    }
+    .chip-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      justify-content:flex-end;
+    }
+    .chip {
+      font-size:.74rem;
+      padding:.22rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.98);
+      color:rgba(226,232,240,.98);
+      text-decoration:none;
+    }
+
+    .grid {
+      display:grid;
+      gap:1rem;
+      grid-template-columns:1.2fr 1fr;
+      margin-top:1.2rem;
+    }
+    @media (max-width:900px){ .grid{grid-template-columns:1fr;} }
+
+    .card {
+      background:var(--cardbg);
+      border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:0 20px 45px rgba(15,23,42,.95);
+      padding:1rem .95rem 1.1rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-50%;
+      background:conic-gradient(
+        from 210deg,
+        rgba(255,0,128,.34),
+        rgba(56,189,248,.25),
+        rgba(250,204,21,.22),
+        rgba(129,140,248,.25),
+        rgba(255,0,128,.34)
+      );
+      filter:blur(32px);
+      opacity:.3;
+      z-index:-1;
+    }
+    .card h2 {
+      margin:.1rem 0 .2rem;
+      font-size:1.05rem;
+      font-weight:800;
+    }
+    .card-sub {
+      font-size:.8rem;
+      color:rgba(148,163,184,.96);
+      margin-bottom:.55rem;
+    }
+
+    label {
+      display:block;
+      margin-bottom:.18rem;
+      font-size:.75rem;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      color:rgba(148,163,184,.98);
+    }
+    input, select, textarea {
+      width:100%;
+      border-radius:11px;
+      border:1px solid rgba(51,65,85,.95);
+      background:rgba(15,23,42,.98);
+      color:#e5e7eb;
+      padding:.6rem .7rem;
+      font-size:.86rem;
+      outline:none;
+      margin-bottom:.65rem;
+      transition:border-color .18s,box-shadow .18s,background .18s;
+    }
+    textarea {
+      min-height:70px;
+      resize:vertical;
+      font-family:inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color:rgba(56,189,248,1);
+      box-shadow:0 0 0 1px rgba(56,189,248,.8),0 0 18px rgba(56,189,248,.8);
+      background:rgba(15,23,42,1);
+    }
+    .hint {
+      margin:-.45rem 0 .7rem;
+      font-size:.72rem;
+      color:rgba(148,163,184,.9);
+    }
+
+    button {
+      width:100%;
+      border-radius:999px;
+      border:none;
+      padding:.75rem;
+      font-size:.9rem;
+      font-weight:700;
+      cursor:pointer;
+      color:#020617;
+      background:linear-gradient(120deg,#22c55e,#f97316,var(--pink),var(--cyan));
+      text-shadow:0 0 10px rgba(255,255,255,.9);
+      box-shadow:0 20px 40px rgba(15,23,42,.98);
+      transition:transform .16s,box-shadow .16s,filter .16s;
+    }
+    button:hover {
+      transform:translateY(-1px) scale(1.02);
+      filter:brightness(1.04);
+      box-shadow:0 24px 50px rgba(15,23,42,1);
+    }
+
+    .metrics-row {
+      display:grid;
+      gap:.5rem;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      margin-bottom:.45rem;
+    }
+    @media(max-width:700px){ .metrics-row{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media(max-width:520px){ .metrics-row{grid-template-columns:1fr;}}
+
+    .metric {
+      border-radius:13px;
+      border:1px solid rgba(30,64,175,.85);
+      background:rgba(15,23,42,.98);
+      padding:.5rem .55rem;
+      font-size:.78rem;
+    }
+    .metric-label {
+      color:rgba(148,163,184,.96);
+      font-size:.74rem;
+      margin-bottom:.1rem;
+    }
+    .metric-value {
+      font-size:1rem;
+      font-weight:700;
+    }
+    .metric-sub {
+      font-size:.72rem;
+      color:rgba(148,163,184,.92);
+    }
+
+    .list {
+      margin-top:.4rem;
+      font-size:.78rem;
+    }
+    .dj-row {
+      display:flex;
+      justify-content:space-between;
+      gap:.4rem;
+      padding:.35rem .45rem;
+      border-radius:11px;
+      border:1px solid rgba(31,41,55,.95);
+      background:rgba(15,23,42,.98);
+      margin-bottom:.3rem;
+    }
+    .pill-mini {
+      font-size:.7rem;
+      border-radius:999px;
+      padding:.12rem .5rem;
+      border:1px solid rgba(148,163,184,.9);
+      color:rgba(226,232,240,.98);
+      white-space:nowrap;
+    }
+    .pill-mini.hot {
+      border-color:var(--cyan);
+      color:#e0f2fe;
+    }
+    .note {
+      margin-top:.4rem;
+      font-size:.74rem;
+      color:rgba(148,163,184,.96);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-orbit"></div>
+  <div class="bg-glow"></div>
+
+  <main>
+    <header>
+      <div>
+        <div class="kicker">They Krave For Me Radio · Label & Station</div>
+        <h1>DJ Accounts — residencies, hosting, and radio motion.</h1>
+        <p class="subtitle">
+          Add DJs, assign hosting packages, and track who’s locked in for
+          <span>TKFM Radio</span> vs <span>They Krave For Me Records</span>
+          label moves. Owner-only view.
+        </p>
+      </div>
+      <div class="header-right">
+        <div class="badge">
+          👑 <span>Owner Console</span>
+        </div>
+        <div class="chip-row">
+          <a href="/v2/god-view.html" class="chip">GOD VIEW</a>
+          <a href="/v2/app-hub.html" class="chip">App Hub</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <!-- LEFT: Add DJ -->
+      <div class="card">
+        <h2>Add DJ to TKFM System</h2>
+        <p class="card-sub">
+          This is your scratchpad for DJ residencies, mixtape hosting, and label-linked DJs.
+          Later we can wire it to Supabase + Netlify functions.
+        </p>
+
+        <label for="dj_name">DJ Name / Show Name</label>
+        <input id="dj_name" placeholder="Example: DJ Midnight / TKFM After Hours"/>
+
+        <label for="dj_email">Email</label>
+        <input id="dj_email" placeholder="dj@example.com"/>
+
+        <label for="dj_package">Hosting Package</label>
+        <select id="dj_package">
+          <option value="Mixtape Host – $49/month">Mixtape Host – $49/month</option>
+          <option value="Show Resident – $99/month">Show Resident – $99/month</option>
+          <option value="TKFM Prime Slot – $199/month">TKFM Prime Slot – $199/month</option>
+        </select>
+
+        <label for="dj_label_link">Label link (optional)</label>
+        <input id="dj_label_link" placeholder="They Krave For Me Records / Independent DJ"/>
+
+        <label for="dj_slot">Preferred slot (for your eyes)</label>
+        <input id="dj_slot" placeholder="Example: Fridays 10PM–12AM / Late-night rotation"/>
+
+        <label for="dj_notes">Notes</label>
+        <textarea id="dj_notes" placeholder="Example: Heavy club mixes, strong following in ATL, good for sponsor reads."></textarea>
+
+        <div class="hint">
+          These packages align with your future Stripe DJ products. Once wired,
+          adding a DJ here can also create their subscription.
+        </div>
+
+        <button id="addDjBtn">➕ Add DJ</button>
+      </div>
+
+      <!-- RIGHT: Metrics + List -->
+      <div class="card">
+        <h2>DJ Snapshot</h2>
+        <p class="card-sub">
+          See how many DJs you have, what they’re paying, and who is locked into prime slots.
+        </p>
+
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-label">Total DJs</div>
+            <div class="metric-value" id="m_total_djs">0</div>
+            <div class="metric-sub">In TKFM system</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Projected monthly DJ revenue</div>
+            <div class="metric-value" id="m_dj_mrr">$0</div>
+            <div class="metric-sub">Mixtape host + resident + prime slots</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Prime slot count</div>
+            <div class="metric-value" id="m_prime_count">0</div>
+            <div class="metric-sub">TKFM Prime Slot packages</div>
+          </div>
+        </div>
+
+        <div class="list" id="dj_list">
+          <div style="font-size:.78rem;color:rgba(148,163,184,.96);">
+            No DJs added yet. As you add DJs, you’ll see their packages,
+            label links, and preferred time slots here.
+          </div>
+        </div>
+
+        <div class="note">
+          This page currently uses <code>localStorage</code> only (key:
+          <code>tkfm_djs</code>). Later, you can save this to Supabase and
+          secure it behind owner-only Netlify functions.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // OWNER GUARD
+    (function guardOwner(){
+      const role = localStorage.getItem("tkfm_role");
+      if (role !== "owner") {
+        alert("Owner access only. Redirecting to owner login.");
+        window.location.href = "/v2/owner-login.html";
+      }
+    })();
+
+    const DJS_KEY = "tkfm_djs";
+
+    function loadDjs() {
+      try {
+        const raw = localStorage.getItem(DJS_KEY);
+        if (!raw) return [];
+        const list = JSON.parse(raw);
+        return Array.isArray(list) ? list : [];
+      } catch (e) {
+        console.warn("Failed to parse tkfm_djs:", e);
+        return [];
+      }
+    }
+
+    function saveDjs(list) {
+      localStorage.setItem(DJS_KEY, JSON.stringify(list));
+    }
+
+    function computeDjMetrics(list) {
+      let mrr = 0;
+      let primeCount = 0;
+
+      list.forEach(dj => {
+        const pkg = dj.package || "";
+        if (pkg.includes("Mixtape Host"))   mrr += 49;
+        if (pkg.includes("Show Resident"))  mrr += 99;
+        if (pkg.includes("TKFM Prime Slot")) {
+          mrr += 199;
+          primeCount++;
+        }
+      });
+
+      document.getElementById("m_total_djs").textContent = list.length;
+      document.getElementById("m_prime_count").textContent = primeCount;
+      document.getElementById("m_dj_mrr").textContent = "$" + mrr.toLocaleString();
+    }
+
+    function renderDjs() {
+      const list = loadDjs();
+      const container = document.getElementById("dj_list");
+      container.innerHTML = "";
+
+      if (!list.length) {
+        container.innerHTML = "<div style='font-size:.78rem;color:rgba(148,163,184,.96);'>No DJs added yet.</div>";
+        computeDjMetrics(list);
+        return;
+      }
+
+      list.forEach(dj => {
+        const row = document.createElement("div");
+        row.className = "dj-row";
+
+        const left = document.createElement("div");
+        left.innerHTML = `
+          <strong>${dj.name || "Unknown DJ"}</strong><br/>
+          <span style="color:rgba(148,163,184,.96);">${dj.email || "no-email"}</span><br/>
+          <span style="color:rgba(148,163,184,.9);font-size:.75rem;">${dj.slot || ""}</span><br/>
+          <span style="color:rgba(148,163,184,.85);font-size:.73rem;">${dj.notes || ""}</span>
+        `;
+
+        const right = document.createElement("div");
+        right.style.textAlign = "right";
+        right.style.fontSize = ".74rem";
+
+        const pkg = document.createElement("div");
+        pkg.className = "pill-mini hot";
+        pkg.textContent = dj.package || "No package";
+
+        const labelPill = document.createElement("div");
+        labelPill.className = "pill-mini";
+        labelPill.style.marginTop = ".18rem";
+        labelPill.textContent = dj.labelLink || "Independent DJ";
+
+        right.appendChild(pkg);
+        right.appendChild(labelPill);
+        row.appendChild(left);
+        row.appendChild(right);
+
+        container.appendChild(row);
+      });
+
+      computeDjMetrics(list);
+    }
+
+    function addDj() {
+      const name  = document.getElementById("dj_name").value.trim();
+      const email = document.getElementById("dj_email").value.trim();
+      const pkg   = document.getElementById("dj_package").value;
+      const label = document.getElementById("dj_label_link").value.trim();
+      const slot  = document.getElementById("dj_slot").value.trim();
+      const notes = document.getElementById("dj_notes").value.trim();
+
+      if (!name || !email) {
+        alert("Please enter at least DJ name and email.");
+        return;
+      }
+
+      const list = loadDjs();
+      list.push({
+        id: Date.now().toString(),
+        name,
+        email,
+        package: pkg,
+        labelLink: label || "Independent DJ",
+        slot,
+        notes,
+        createdAt: new Date().toISOString()
+      });
+      saveDjs(list);
+
+      document.getElementById("dj_name").value = "";
+      document.getElementById("dj_email").value = "";
+      document.getElementById("dj_label_link").value = "";
+      document.getElementById("dj_slot").value = "";
+      document.getElementById("dj_notes").value = "";
+
+      alert("✅ DJ added to TKFM snapshot.");
+      renderDjs();
+    }
+
+    document.getElementById("addDjBtn").addEventListener("click", addDj);
+
+    // Initial render
+    renderDjs();
+  </script>
+</body>
+</html>

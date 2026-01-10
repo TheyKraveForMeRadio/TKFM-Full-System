@@ -28,8 +28,11 @@
     .frame{aspect-ratio:16/9;width:100%;border-radius:1rem;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:rgba(0,0,0,.35)}
   </style>
 
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
 </head>
 <body class="text-slate-50 min-h-screen">
+  <div id="tkfmOwnerLock"></div>
 
   <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
@@ -195,7 +198,6 @@
       <div class="flex gap-2 flex-wrap">
         <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
         <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a><span>•</span>
-        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
       </div>
     </div>
   </footer>

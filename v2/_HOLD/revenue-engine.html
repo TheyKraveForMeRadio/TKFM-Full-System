@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Revenue Engine — Autopilot Pricing</title>
+
+  <script type="module">
+  import { TKFM_Gateway } from "./auth-gateway.js";
+  TKFM_Gateway();
+</script>
+
+  <style>
+    :root {
+      --pink:#ff007f;
+      --cyan:#06b6d4;
+      --gold:#facc15;
+      --bg:radial-gradient(circle at 10% 0%,#020014,#020617 55%,#000000 100%);
+      --cardbg:rgba(15,23,42,0.97);
+      --border:rgba(148,163,184,0.35);
+    }
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:var(--bg);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:#e5e7eb;
+      padding:1.5rem .9rem 2.5rem;
+      position:relative;
+      overflow-x:hidden;
+    }
+
+    .bg-orbit {
+      position:fixed;
+      inset:-40%;
+      z-index:-3;
+      pointer-events:none;
+      background:conic-gradient(
+        from 230deg,
+        rgba(255,0,128,.35),
+        rgba(56,189,248,.32),
+        rgba(250,204,21,.3),
+        rgba(129,140,248,.34),
+        rgba(255,0,128,.35)
+      );
+      filter:blur(40px);
+      mix-blend-mode:screen;
+      animation:orbit 36s linear infinite;
+    }
+    .bg-glow {
+      position:fixed;
+      inset:-20%;
+      z-index:-4;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 0 0,rgba(255,0,128,.4),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(56,189,248,.4),transparent 60%),
+        radial-gradient(circle at 50% 0,rgba(250,204,21,.35),transparent 60%);
+      filter:blur(14px);
+      animation:glow 26s ease-in-out infinite alternate;
+    }
+    @keyframes orbit {
+      0% { transform:rotate(0deg) scale(1.05); }
+      100% { transform:rotate(360deg) scale(1.05); }
+    }
+    @keyframes glow {
+      0% { transform:translate3d(0,0,0); }
+      100% { transform:translate3d(-4%,2%,0); }
+    }
+
+    main {
+      max-width:1150px;
+      margin:0 auto;
+      position:relative;
+      z-index:1;
+    }
+
+    header {
+      display:flex;
+      justify-content:space-between;
+      gap:1rem;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .kicker {
+      font-size:.78rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:rgba(191,219,254,.95);
+      margin-bottom:.25rem;
+    }
+    h1 {
+      margin:0;
+      font-size:2.1rem;
+      font-weight:900;
+      background:linear-gradient(120deg,var(--pink),var(--gold),var(--cyan));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 18px rgba(255,0,128,.9),0 0 30px rgba(56,189,248,.9);
+    }
+    .subtitle {
+      margin-top:.35rem;
+      font-size:.9rem;
+      color:rgba(203,213,225,.98);
+      max-width:40rem;
+    }
+    .subtitle span { color:var(--gold); }
+
+    .header-right {
+      min-width:230px;
+      text-align:right;
+      font-size:.8rem;
+    }
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      padding:.25rem .65rem;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.95);
+      background:rgba(113,63,18,.98);
+      color:#fef3c7;
+      margin-bottom:.35rem;
+    }
+    .badge span {
+      color:var(--gold);
+      font-weight:700;
+    }
+    .chip-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      justify-content:flex-end;
+    }
+    .chip {
+      font-size:.74rem;
+      padding:.22rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.98);
+      color:rgba(226,232,240,.98);
+      text-decoration:none;
+    }
+
+    .grid-top {
+      display:grid;
+      gap:1rem;
+      grid-template-columns:2fr 1.3fr;
+      margin-top:1.2rem;
+    }
+    @media (max-width:960px){ .grid-top{grid-template-columns:1fr;} }
+
+    .grid-bottom {
+      display:grid;
+      gap:1rem;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      margin-top:1rem;
+    }
+
+    .card {
+      background:var(--cardbg);
+      border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:0 20px 45px rgba(15,23,42,.95);
+      padding:1rem .95rem 1.1rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-50%;
+      background:conic-gradient(
+        from 210deg,
+        rgba(255,0,128,.34),
+        rgba(56,189,248,.25),
+        rgba(250,204,21,.22),
+        rgba(129,140,248,.25),
+        rgba(255,0,128,.34)
+      );
+      filter:blur(32px);
+      opacity:.3;
+      z-index:-1;
+    }
+    .card h2 {
+      margin:.1rem 0 .2rem;
+      font-size:1.05rem;
+      font-weight:800;
+    }
+    .card-sub {
+      font-size:.8rem;
+      color:rgba(148,163,184,.96);
+      margin-bottom:.55rem;
+    }
+
+    .mrr-main {
+      font-size:2rem;
+      font-weight:900;
+      margin-bottom:.1rem;
+    }
+    .mrr-caption {
+      font-size:.8rem;
+      color:rgba(148,163,184,.96);
+      margin-bottom:.7rem;
+    }
+
+    .pill-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      margin-bottom:.4rem;
+    }
+    .pill {
+      font-size:.74rem;
+      padding:.22rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.98);
+      color:rgba(226,232,240,.98);
+    }
+    .pill.highlight {
+      border-color:var(--cyan);
+      color:#e0f2fe;
+    }
+
+    .breakdown-grid {
+      display:grid;
+      gap:.5rem;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    }
+    .metric {
+      border-radius:13px;
+      border:1px solid rgba(30,64,175,.85);
+      background:rgba(15,23,42,.98);
+      padding:.5rem .55rem;
+      font-size:.78rem;
+    }
+    .metric-label {
+      color:rgba(148,163,184,.96);
+      font-size:.74rem;
+      margin-bottom:.1rem;
+    }
+    .metric-value {
+      font-size:1rem;
+      font-weight:700;
+    }
+    .metric-sub {
+      font-size:.72rem;
+      color:rgba(148,163,184,.92);
+    }
+
+    .projection {
+      margin-top:.6rem;
+      border-radius:13px;
+      border:1px dashed rgba(148,163,184,.85);
+      background:rgba(15,23,42,.98);
+      padding:.5rem .6rem;
+      font-size:.78rem;
+      color:rgba(226,232,240,.98);
+    }
+
+    .list {
+      font-size:.78rem;
+    }
+    .row {
+      padding:.35rem .45rem;
+      border-radius:11px;
+      border:1px solid rgba(31,41,55,.95);
+      background:rgba(15,23,42,.98);
+      margin-bottom:.3rem;
+      display:flex;
+      justify-content:space-between;
+      gap:.4rem;
+    }
+    .row-title {
+      font-weight:600;
+    }
+    .row-sub { font-size:.74rem;color:rgba(148,163,184,.9); }
+    .row-amount { font-size:.86rem;font-weight:700; }
+
+    .note {
+      margin-top:.4rem;
+      font-size:.74rem;
+      color:rgba(148,163,184,.96);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-orbit"></div>
+  <div class="bg-glow"></div>
+
+  <main>
+    <header>
+      <div>
+        <div class="kicker">They Krave For Me · Revenue Engine</div>
+        <h1>Autopilot revenue radar for TKFM Radio + Label.</h1>
+        <p class="subtitle">
+          This is your money map. Pulls from your artist, DJ, and sponsor snapshots
+          to show rough monthly revenue and what happens if you nudge the right
+          people into higher tiers. <span>Owner-only eyes.</span>
+        </p>
+      </div>
+      <div class="header-right">
+        <div class="badge">
+          👑 <span>Owner Console</span>
+        </div>
+        <div class="chip-row">
+          <a href="/v2/god-view.html" class="chip">GOD VIEW</a>
+          <a href="/v2/app-hub.html" class="chip">App Hub</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid-top">
+      <!-- LEFT: Main MRR + breakdown -->
+      <div class="card">
+        <h2>Current Month Snapshot</h2>
+        <p class="card-sub">
+          Uses simple rules based on the plans you chose when adding artists, DJs,
+          and sponsors. This is not Stripe live yet — it’s your planning board.
+        </p>
+
+        <div class="mrr-main" id="mrr_total">$0</div>
+        <div class="mrr-caption" id="mrr_caption">
+          Waiting on your first artist, DJ, or sponsor snapshot.
+        </div>
+
+        <div class="pill-row">
+          <div class="pill highlight" id="pill_artists">Artists: $0</div>
+          <div class="pill highlight" id="pill_djs">DJs: $0</div>
+          <div class="pill highlight" id="pill_sponsors">Sponsors: $0</div>
+        </div>
+
+        <div class="breakdown-grid">
+          <div class="metric">
+            <div class="metric-label">Artist subscriptions</div>
+            <div class="metric-value" id="m_artists_mrr">$0</div>
+            <div class="metric-sub" id="m_artists_count">0 Motion + Elite</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">DJ hosting & residency</div>
+            <div class="metric-value" id="m_djs_mrr">$0</div>
+            <div class="metric-sub" id="m_djs_count">0 active DJs</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Sponsor packs</div>
+            <div class="metric-value" id="m_sponsors_mrr">$0</div>
+            <div class="metric-sub" id="m_sponsors_count">0 sponsors mapped</div>
+          </div>
+        </div>
+
+        <div class="projection" id="projection_text">
+          Tip: Add at least 1 artist, 1 DJ, and 1 sponsor in their pages to see
+          your revenue engine wake up.
+        </div>
+      </div>
+
+      <!-- RIGHT: Autopilot scenarios -->
+      <div class="card">
+        <h2>Autopilot Upsell Scenarios</h2>
+        <p class="card-sub">
+          Rough, fast “what if” projections. When you wire this to Stripe, these
+          levers become very real.
+        </p>
+
+        <div class="list" id="scenario_list">
+          <div class="row">
+            <div>
+              <div class="row-title">Scenario preview</div>
+              <div class="row-sub">Waiting for base numbers…</div>
+            </div>
+            <div class="row-amount" id="scenario_delta">$0</div>
+          </div>
+        </div>
+
+        <div class="note">
+          Logic (for now):<br/>
+          • Artist Motion = $199/mo · Elite = $399/mo<br/>
+          • Mixtape Host = $49/mo · Show Resident = $99/mo · Prime Slot = $199/mo<br/>
+          • Street Pack ≈ $500/mo · Block Pack ≈ $1,200/mo · City Takeover ≈ $2,500/mo<br/>
+          Later, we’ll replace this with real Stripe prices via <code>lookup_keys</code>.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-bottom">
+      <!-- Artists detail -->
+      <div class="card">
+        <h2>Artist Revenue Detail</h2>
+        <p class="card-sub">
+          Based on entries from your Artist Accounts page.
+        </p>
+        <div class="list" id="artist_detail">
+          <div class="row">
+            <div>
+              <div class="row-title">No data yet</div>
+              <div class="row-sub">Add artists in Artist Accounts to populate this.</div>
+            </div>
+            <div class="row-amount">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DJs detail -->
+      <div class="card">
+        <h2>DJ Revenue Detail</h2>
+        <p class="card-sub">
+          Based on entries from your DJ Accounts page.
+        </p>
+        <div class="list" id="dj_detail">
+          <div class="row">
+            <div>
+              <div class="row-title">No data yet</div>
+              <div class="row-sub">Add DJs in DJ Accounts to populate this.</div>
+            </div>
+            <div class="row-amount">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sponsors detail -->
+      <div class="card">
+        <h2>Sponsor Revenue Detail</h2>
+        <p class="card-sub">
+          Based on entries from your Sponsor Engine Room page.
+        </p>
+        <div class="list" id="sponsor_detail">
+          <div class="row">
+            <div>
+              <div class="row-title">No data yet</div>
+              <div class="row-sub">Add sponsors in Sponsor Engine Room to populate this.</div>
+            </div>
+            <div class="row-amount">$0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // OWNER GUARD
+    (function guardOwner(){
+      const role = localStorage.getItem("tkfm_role");
+      if (role !== "owner") {
+        alert("Owner access only. Redirecting to owner login.");
+        window.location.href = "/v2/owner-login.html";
+      }
+    })();
+
+    // Helpers to load from localStorage
+    function safeLoad(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return [];
+        const list = JSON.parse(raw);
+        return Array.isArray(list) ? list : [];
+      } catch (e) {
+        console.warn("Failed to parse", key, e);
+        return [];
+      }
+    }
+
+    function computeArtistMRR(artists) {
+      let mrr = 0;
+      let countMotionElite = 0;
+      const detail = [];
+
+      artists.forEach(a => {
+        const plan = (a.plan || "").toLowerCase();
+        let amt = 0;
+        if (plan.includes("motion monthly")) {
+          amt = 199;
+          countMotionElite++;
+        } else if (plan.includes("elite takeover")) {
+          amt = 399;
+          countMotionElite++;
+        }
+        if (amt > 0) {
+          mrr += amt;
+          detail.push({
+            label: a.name || "Artist",
+            plan: a.plan || "Unknown plan",
+            amount: amt
+          });
+        }
+      });
+
+      return { mrr, countMotionElite, detail };
+    }
+
+    function computeDjMRR(djs) {
+      let mrr = 0;
+      let countDjs = 0;
+      const detail = [];
+
+      djs.forEach(dj => {
+        const pkg = (dj.package || "").toLowerCase();
+        let amt = 0;
+        if (pkg.includes("mixtape host")) amt = 49;
+        if (pkg.includes("show resident")) amt = 99;
+        if (pkg.includes("prime slot")) amt = 199;
+        if (amt > 0) {
+          mrr += amt;
+          countDjs++;
+          detail.push({
+            label: dj.name || "DJ",
+            plan: dj.package || "Unknown package",
+            amount: amt
+          });
+        }
+      });
+
+      return { mrr, countDjs, detail };
+    }
+
+    function computeSponsorMRR(sponsors) {
+      let mrr = 0;
+      let count = 0;
+      const detail = [];
+
+      sponsors.forEach(s => {
+        const pack = (s.package || "").toLowerCase();
+        let amt = 0;
+        if (pack.includes("street pack")) amt = 500;
+        if (pack.includes("block pack")) amt = 1200;
+        if (pack.includes("city takeover")) amt = 2500;
+        if (amt > 0) {
+          mrr += amt;
+          count++;
+          detail.push({
+            label: s.name || "Sponsor",
+            plan: s.package || "Unknown pack",
+            amount: amt
+          });
+        }
+      });
+
+      return { mrr, count, detail };
+    }
+
+    function renderList(targetId, detail, emptyLabel) {
+      const container = document.getElementById(targetId);
+      container.innerHTML = "";
+      if (!detail.length) {
+        container.innerHTML = `
+          <div class="row">
+            <div>
+              <div class="row-title">No data yet</div>
+              <div class="row-sub">${emptyLabel}</div>
+            </div>
+            <div class="row-amount">$0</div>
+          </div>
+        `;
+        return;
+      }
+      detail.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <div>
+            <div class="row-title">${item.label}</div>
+            <div class="row-sub">${item.plan}</div>
+          </div>
+          <div class="row-amount">$${item.amount.toLocaleString()}</div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderScenarios(totalMRR, artistInfo, djInfo, sponsorInfo) {
+      const listEl = document.getElementById("scenario_list");
+      const deltaEl = document.getElementById("scenario_delta");
+      listEl.innerHTML = "";
+
+      if (totalMRR === 0) {
+        listEl.innerHTML = `
+          <div class="row">
+            <div>
+              <div class="row-title">No base MRR yet</div>
+              <div class="row-sub">Add at least one paying plan so we can run the math.</div>
+            </div>
+            <div class="row-amount">$0</div>
+          </div>
+        `;
+        deltaEl.textContent = "$0";
+        return;
+      }
+
+      const artistUpsellCount = Math.floor(artistInfo.countMotionElite * 0.25);
+      const djUpsellCount = Math.floor(djInfo.countDjs * 0.3);
+      const sponsorUpsellCount = Math.floor(sponsorInfo.count * 0.25);
+
+      const deltaArtists = artistUpsellCount * 200; // assume Motion -> Elite +$200
+      const deltaDjs = djUpsellCount * 100;         // assume Host/Resident -> Prime +$100
+      const deltaSponsors = sponsorUpsellCount * 700; // Street -> Block, Block -> City approx
+
+      const totalDelta = deltaArtists + deltaDjs + deltaSponsors;
+      deltaEl.textContent = "+$" + totalDelta.toLocaleString();
+
+      const scenarios = [];
+
+      if (artistUpsellCount > 0) {
+        scenarios.push({
+          title: "Upgrade artists into Elite Takeover",
+          sub: `If ${artistUpsellCount} Motion/Elite artists move up one tier, that’s about +$${deltaArtists.toLocaleString()}/month.`,
+          amt: deltaArtists
+        });
+      }
+      if (djUpsellCount > 0) {
+        scenarios.push({
+          title: "Push DJs into TKFM Prime Slots",
+          sub: `If ${djUpsellCount} hosting/resident DJs lock in Prime slots, that’s around +$${deltaDjs.toLocaleString()}/month.`,
+          amt: deltaDjs
+        });
+      }
+      if (sponsorUpsellCount > 0) {
+        scenarios.push({
+          title: "Step sponsors into bigger packs",
+          sub: `If ${sponsorUpsellCount} sponsors level up one pack (Street → Block or Block → City), that’s roughly +$${deltaSponsors.toLocaleString()}/month.`,
+          amt: deltaSponsors
+        });
+      }
+
+      if (!scenarios.length) {
+        scenarios.push({
+          title: "Stabilize current base",
+          sub: "Right now the engine sees paying accounts, but not enough to model clear tier jumps yet. Focus on filling Artist Motion, DJ Host, and Street Packs.",
+          amt: 0
+        });
+      }
+
+      scenarios.forEach(s => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <div>
+            <div class="row-title">${s.title}</div>
+            <div class="row-sub">${s.sub}</div>
+          </div>
+          <div class="row-amount">${s.amt > 0 ? "+$"+s.amt.toLocaleString() : "$0"}</div>
+        `;
+        listEl.appendChild(row);
+      });
+    }
+
+    function runEngine() {
+      const artists = safeLoad("tkfm_artists");
+      const djs     = safeLoad("tkfm_djs");
+      const sponsors= safeLoad("tkfm_sponsors");
+
+      const artistInfo = computeArtistMRR(artists);
+      const djInfo     = computeDjMRR(djs);
+      const sponsorInfo= computeSponsorMRR(sponsors);
+
+      const totalMRR = artistInfo.mrr + djInfo.mrr + sponsorInfo.mrr;
+
+      document.getElementById("mrr_total").textContent = "$" + totalMRR.toLocaleString();
+      document.getElementById("mrr_caption").textContent =
+        totalMRR === 0
+          ? "No recurring plans detected yet. This will light up as you add paying tiers."
+          : "Estimated monthly recurring revenue across artists, DJs, and sponsor packs.";
+
+      document.getElementById("m_artists_mrr").textContent = "$" + artistInfo.mrr.toLocaleString();
+      document.getElementById("m_artists_count").textContent =
+        artistInfo.countMotionElite + " Motion + Elite";
+
+      document.getElementById("m_djs_mrr").textContent = "$" + djInfo.mrr.toLocaleString();
+      document.getElementById("m_djs_count").textContent =
+        djInfo.countDjs + " active DJs";
+
+      document.getElementById("m_sponsors_mrr").textContent = "$" + sponsorInfo.mrr.toLocaleString();
+      document.getElementById("m_sponsors_count").textContent =
+        sponsorInfo.count + " sponsor packs";
+
+      document.getElementById("pill_artists").textContent =
+        "Artists: $" + artistInfo.mrr.toLocaleString();
+      document.getElementById("pill_djs").textContent =
+        "DJs: $" + djInfo.mrr.toLocaleString();
+      document.getElementById("pill_sponsors").textContent =
+        "Sponsors: $" + sponsorInfo.mrr.toLocaleString();
+
+      if (totalMRR === 0) {
+        document.getElementById("projection_text").textContent =
+          "Once you have at least a few Motion/Elite artists, active DJs, and sponsor packs, this area will explain how much extra you earn if a slice of them level up.";
+      } else {
+        document.getElementById("projection_text").textContent =
+          "Autopilot idea: pick one lane at a time (artists, DJs, or sponsors) and run a focused upgrade campaign. The scenarios on the right show what those jumps could add each month.";
+      }
+
+      renderList("artist_detail", artistInfo.detail,
+        "Add artists with Motion or Elite plans in Artist Accounts.");
+      renderList("dj_detail", djInfo.detail,
+        "Add DJs with hosting, resident, or prime slot packages in DJ Accounts.");
+      renderList("sponsor_detail", sponsorInfo.detail,
+        "Add sponsors in Sponsor Engine Room and assign Street/Block/City packs.");
+
+      renderScenarios(totalMRR, artistInfo, djInfo, sponsorInfo);
+    }
+
+    runEngine();
+  </script>
+</body>
+</html>

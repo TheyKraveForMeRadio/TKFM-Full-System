@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AI Access Onboarding — TKFM + Label</title>
+
+  <link rel="stylesheet" href="/v2/label-theme.css">
+</head>
+<body class="label-body">
+  <main style="max-width:1180px;margin:0 auto;padding:1.4rem .9rem 2.4rem;">
+    <header class="label-header">
+      <div class="label-logo-row">
+        <img src="/v2/tkfm-records-logo.png" alt="TKFM / They Krave For Me" class="label-logo">
+        <div class="label-title-block">
+          <div class="label-kicker">TKFM · They Krave For Me Records</div>
+          <div class="label-title">AI Access Onboarding</div>
+          <p class="label-subtitle">
+            Decide who gets which AI tools — contracts, pricing copilots, sponsor engines,
+            and (optionally) AI DJ Engine. Stored locally until we wire real roles.
+          </p>
+        </div>
+      </div>
+      <div class="label-badges">
+        <div class="label-pill">👑 Owner-only planning screen</div>
+        <div class="label-pill">🧠 Defines future role presets</div>
+      </div>
+    </header>
+
+    <nav class="label-nav">
+      <a href="/v2/app-hub.html"><span>🎛️</span>App Hub</a>
+      <a href="/v2/god-view.html"><span>🌀</span>God View</a>
+      <a href="/v2/label-accounts.html"><span>🧾</span>Label Accounts</a>
+      <a href="/v2/artist-accounts.html"><span>🎤</span>Artist Accounts</a>
+      <a href="/v2/dj-accounts.html"><span>🎧</span>DJ Accounts</a>
+    </nav>
+
+    <section class="label-grid label-grid-2">
+      <div class="label-card">
+        <h2>Configure AI access</h2>
+        <p class="label-help">
+          Use this to sketch which users should be tied to which AI tools. Later, this can map
+          straight into Supabase roles and Netlify functions.
+        </p>
+
+        <form id="aiForm" style="margin-top:.6rem;font-size:.8rem;">
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+            <div>
+              <label for="aiName">Name</label>
+              <input id="aiName" placeholder="Artist, DJ, staff or sponsor">
+            </div>
+            <div>
+              <label for="aiType">Type</label>
+              <select id="aiType" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+                <option value="artist">Artist</option>
+                <option value="dj">DJ</option>
+                <option value="staff">Staff</option>
+                <option value="sponsor">Sponsor</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:.6rem;">
+            <div style="font-size:.78rem;color:var(--label-muted);margin-bottom:.3rem;">AI tools</div>
+            <div style="display:grid;gap:.35rem;font-size:.8rem;">
+              <label style="display:flex;align-items:center;gap:.45rem;cursor:pointer;">
+                <input type="checkbox" id="aiContracts">
+                <span>AI Contract Lab (generate & explain deals)</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:.45rem;cursor:pointer;">
+                <input type="checkbox" id="aiPricing">
+                <span>AI Pricing Copilot (pack suggestions, upsells)</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:.45rem;cursor:pointer;">
+                <input type="checkbox" id="aiSponsor">
+                <span>AI Sponsor Engine (pitch ideas, campaign layouts)</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:.45rem;cursor:pointer;">
+                <input type="checkbox" id="aiRoster">
+                <span>AI Roster Copilot (who to push, when, and how)</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:.45rem;cursor:pointer;">
+                <input type="checkbox" id="aiDjEngine">
+                <span>AI DJ Engine (mix assistance, script prompts, playlists)</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top:.6rem;">
+            <label for="aiNotes">Notes / rules</label>
+            <textarea id="aiNotes" placeholder="Example: only owner uses AI DJ Engine; this artist only sees contract summaries; sponsor sees AI brief drafts."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <button type="submit" class="label-btn">
+              💾 Save AI profile
+            </button>
+            <button type="button" id="aiClearAll" class="label-btn secondary" style="margin-left:.45rem;">
+              🧹 Clear all profiles
+            </button>
+          </div>
+
+          <p class="label-help" style="margin-top:.7rem;">
+            Profiles live in <code>localStorage["tkfm_ai_profiles"]</code>. Later we can convert
+            each row into real role + feature flags.
+          </p>
+        </form>
+      </div>
+
+      <div class="label-card">
+        <h2>AI overview</h2>
+        <p class="label-help">
+          See how many people are wired into each AI lane.
+        </p>
+
+        <div style="display:grid;gap:.7rem;margin-top:.7rem;font-size:.85rem;">
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div><strong>Total profiles</strong></div>
+            <div style="text-align:right;">
+              <div id="aiTotal" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">profiles</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div><strong>Contract Lab</strong></div>
+            <div style="text-align:right;">
+              <div id="aiContractsCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">users</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div><strong>Pricing Copilot</strong></div>
+            <div style="text-align:right;">
+              <div id="aiPricingCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">users</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div><strong>Sponsor Engine</strong></div>
+            <div style="text-align:right;">
+              <div id="aiSponsorCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">users</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div><strong>Roster Copilot</strong></div>
+            <div style="text-align:right;">
+              <div id="aiRosterCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">users</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div><strong>AI DJ Engine</strong></div>
+            <div style="text-align:right;">
+              <div id="aiDjCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">users</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="label-help" style="margin-top:.8rem;">
+          For now, keep AI DJ Engine <strong>owner-only</strong>. Tag any DJs you decide to upgrade later.
+        </p>
+      </div>
+    </section>
+
+    <section style="margin-top:1.2rem;">
+      <div class="label-card">
+        <h2>AI profile list</h2>
+        <p class="label-help">
+          Click a row to load it back into the form and tweak access.
+        </p>
+
+        <div style="margin-top:.6rem;max-height:420px;overflow:auto;">
+          <table class="label-table" id="aiTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>AI tools</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="aiTableBody">
+              <!-- rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="label-toast" id="labelToast">Saved.</div>
+
+  <script>
+    const AI_KEY = "tkfm_ai_profiles";
+    let AI_EDIT_INDEX = "";
+
+    function showToast(msg){
+      const el = document.getElementById("labelToast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(()=>{ el.style.display = "none"; }, 2000);
+    }
+
+    function loadProfiles(){
+      try{
+        const raw = localStorage.getItem(AI_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){
+        console.warn("ai load error", e);
+        return [];
+      }
+    }
+
+    function saveProfiles(list){
+      try{
+        localStorage.setItem(AI_KEY, JSON.stringify(list));
+      }catch(e){
+        console.warn("ai save error", e);
+      }
+    }
+
+    function computeBadges(p){
+      const tools = [];
+      if(p.contracts) tools.push("Contracts");
+      if(p.pricing) tools.push("Pricing");
+      if(p.sponsor) tools.push("Sponsor");
+      if(p.roster) tools.push("Roster");
+      if(p.aiDj) tools.push("AI DJ");
+      return tools.join(" · ");
+    }
+
+    function renderProfiles(){
+      const list = loadProfiles();
+      const body = document.getElementById("aiTableBody");
+      body.innerHTML = "";
+
+      let total = list.length;
+      let contracts=0, pricing=0, sponsor=0, roster=0, aiDj=0;
+
+      list.forEach((p, idx)=>{
+        if(p.contracts) contracts++;
+        if(p.pricing)   pricing++;
+        if(p.sponsor)   sponsor++;
+        if(p.roster)    roster++;
+        if(p.aiDj)      aiDj++;
+
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+
+        const cells = [
+          p.name || "",
+          p.type || "",
+          computeBadges(p),
+          p.notes || ""
+        ];
+
+        cells.forEach(val=>{
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        tr.addEventListener("click", ()=>{
+          loadProfileIntoForm(idx);
+        });
+
+        body.appendChild(tr);
+      });
+
+      document.getElementById("aiTotal").textContent = total.toString();
+      document.getElementById("aiContractsCount").textContent = contracts.toString();
+      document.getElementById("aiPricingCount").textContent = pricing.toString();
+      document.getElementById("aiSponsorCount").textContent = sponsor.toString();
+      document.getElementById("aiRosterCount").textContent = roster.toString();
+      document.getElementById("aiDjCount").textContent = aiDj.toString();
+    }
+
+    function loadProfileIntoForm(index){
+      const list = loadProfiles();
+      const p = list[index];
+      if(!p) return;
+
+      AI_EDIT_INDEX = String(index);
+      document.getElementById("aiName").value = p.name || "";
+      document.getElementById("aiType").value = p.type || "artist";
+      document.getElementById("aiContracts").checked = !!p.contracts;
+      document.getElementById("aiPricing").checked = !!p.pricing;
+      document.getElementById("aiSponsor").checked = !!p.sponsor;
+      document.getElementById("aiRoster").checked = !!p.roster;
+      document.getElementById("aiDjEngine").checked = !!p.aiDj;
+      document.getElementById("aiNotes").value = p.notes || "";
+
+      showToast("Loaded AI profile into form. Saving will update that row.");
+    }
+
+    document.getElementById("aiForm").addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const name = document.getElementById("aiName").value.trim();
+      const type = document.getElementById("aiType").value;
+      const contracts = document.getElementById("aiContracts").checked;
+      const pricing = document.getElementById("aiPricing").checked;
+      const sponsor = document.getElementById("aiSponsor").checked;
+      const roster = document.getElementById("aiRoster").checked;
+      const aiDj = document.getElementById("aiDjEngine").checked;
+      const notes = document.getElementById("aiNotes").value.trim();
+
+      if(!name){
+        showToast("Name required.");
+        return;
+      }
+
+      const list = loadProfiles();
+      const payload = { name, type, contracts, pricing, sponsor, roster, aiDj, notes };
+
+      if(AI_EDIT_INDEX !== "" && list[Number(AI_EDIT_INDEX)]){
+        list[Number(AI_EDIT_INDEX)] = payload;
+      } else {
+        list.push(payload);
+      }
+
+      AI_EDIT_INDEX = "";
+      saveProfiles(list);
+      renderProfiles();
+      showToast("AI profile saved.");
+    });
+
+    document.getElementById("aiClearAll").addEventListener("click", ()=>{
+      if(!confirm("Clear all AI profiles from this browser?")) return;
+      saveProfiles([]);
+      renderProfiles();
+      showToast("All AI profiles cleared.");
+    });
+
+    renderProfiles();
+  </script>
+</body>
+</html>

@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM DJ Mixtape Hosting Studio</title>
+
+  <!-- Shared neon theme -->
+  <link rel="stylesheet" href="/v2/label-theme.css">
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,.96);
+      --border-soft: rgba(56,189,248,.7);
+      --accent-cyan: #22d3ee;
+      --accent-mag: #e879f9;
+      --accent-gold: #facc15;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 0 0, #22d3ee22, transparent 55%),
+        radial-gradient(circle at 100% 0, #e879f933, transparent 55%),
+        radial-gradient(circle at 50% 120%, #0f172a, #020617 70%);
+      color:#e5e7eb;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    main {
+      max-width:1180px;
+      margin:0 auto;
+      padding:1.8rem .9rem 3rem;
+    }
+
+    /* HERO */
+    .hero {
+      position:relative;
+      border-radius:26px;
+      padding:1.6rem 1.4rem 1.8rem;
+      overflow:hidden;
+      border:1px solid var(--border-soft);
+      background:radial-gradient(circle at 0 0,#22d3ee33,#020617),
+                 radial-gradient(circle at 100% 0,#e879f933,transparent 55%);
+      box-shadow:
+        0 0 40px rgba(8,47,73,.9),
+        0 0 80px rgba(232,121,249,.45);
+    }
+    .hero-fx {
+      position:absolute;
+      inset:-35%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(34,211,238,.4),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(232,121,249,.4),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.85;
+      pointer-events:none;
+    }
+    .hero-inner { position:relative; z-index:1; }
+
+    h1 {
+      font-size:2.35rem;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#f9fafb;
+      text-shadow:
+        0 0 18px rgba(34,211,238,.85),
+        0 0 28px rgba(232,121,249,.8);
+    }
+    .hero-sub {
+      margin-top:.45rem;
+      color:#dbeafe;
+      max-width:760px;
+      font-size:.95rem;
+    }
+    .hero-band {
+      margin-top:.7rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      font-size:.8rem;
+    }
+    .hero-chip {
+      border-radius:999px;
+      padding:.25rem .7rem;
+      border:1px solid rgba(191,219,254,.85);
+      background:rgba(15,23,42,.95);
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .hero-chip span {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--accent-cyan);
+      box-shadow:0 0 10px var(--accent-cyan);
+    }
+
+    .hero-bottom {
+      margin-top:1rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.7rem;
+      align-items:center;
+    }
+
+    .btn-main {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      border-radius:999px;
+      padding:.6rem 1.1rem;
+      border:none;
+      cursor:pointer;
+      font-size:.86rem;
+      font-weight:700;
+      background:linear-gradient(135deg,#22d3ee,#e879f9);
+      color:#0b1120;
+      box-shadow:0 0 26px rgba(232,121,249,.8);
+      transition:.18s;
+    }
+    .btn-main:hover { transform:scale(1.03); }
+
+    .hero-note {
+      font-size:.8rem;
+      color:#e5e7eb;
+      max-width:320px;
+    }
+
+    .status-pill {
+      margin-left:auto;
+      font-size:.78rem;
+      padding:.25rem .7rem;
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.8);
+      background:rgba(15,23,42,.92);
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+    }
+    .status-dot {
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 10px #22c55e;
+    }
+
+    @media (max-width:768px) {
+      .status-pill { margin-left:0; }
+    }
+
+    /* LAYOUT */
+    .layout {
+      display:grid;
+      grid-template-columns:2.1fr 1.6fr;
+      gap:1.4rem;
+      margin-top:1.8rem;
+    }
+    @media (max-width:960px) {
+      .layout {
+        grid-template-columns:1fr;
+      }
+    }
+
+    .panel {
+      background:var(--bg-card);
+      border-radius:22px;
+      border:1px solid var(--border-soft);
+      padding:1.2rem 1.05rem 1.4rem;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 30px rgba(15,23,42,.9);
+    }
+    .panel::before {
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 0 0,#22d3ee26,transparent 60%),
+        radial-gradient(circle at 100% 0,#e879f926,transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .panel-inner { position:relative; z-index:1; }
+
+    .panel h2 {
+      font-size:1.14rem;
+      font-weight:700;
+      margin-bottom:.2rem;
+    }
+    .panel small {
+      font-size:.8rem;
+      color:#9ca3af;
+    }
+
+    /* TIERS */
+    .tiers {
+      margin-top:.9rem;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:.9rem;
+    }
+    .tier {
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.75);
+      background:rgba(15,23,42,.97);
+      padding:.9rem .8rem 1rem;
+      overflow:hidden;
+    }
+    .tier.hot {
+      border-color:var(--accent-gold);
+      box-shadow:0 0 26px rgba(250,204,21,.75);
+    }
+
+    .tier-label {
+      font-size:.74rem;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:var(--accent-cyan);
+      margin-bottom:.15rem;
+    }
+    .tier-title {
+      font-size:1.02rem;
+      font-weight:700;
+    }
+    .tier-price {
+      margin-top:.3rem;
+      font-size:.95rem;
+      color:#fefce8;
+    }
+    .tier-price span {
+      font-size:.75rem;
+      color:#9ca3af;
+    }
+
+    .tier-meta {
+      margin-top:.25rem;
+      font-size:.75rem;
+      color:#a5b4fc;
+    }
+
+    .tier-list {
+      margin-top:.45rem;
+      list-style:none;
+      padding:0;
+      font-size:.8rem;
+      color:#dbeafe;
+    }
+    .tier-list li {
+      display:flex;
+      gap:.4rem;
+      margin-bottom:.22rem;
+    }
+    .tier-list li::before {
+      content:"◆";
+      font-size:.6rem;
+      color:var(--accent-cyan);
+      margin-top:.18rem;
+    }
+
+    .tier-cta {
+      margin-top:.6rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem;
+      align-items:center;
+    }
+
+    .btn-tier {
+      border-radius:999px;
+      padding:.45rem .9rem;
+      border:none;
+      cursor:pointer;
+      font-size:.78rem;
+      font-weight:700;
+      background:linear-gradient(135deg,#22d3ee,#e879f9);
+      color:#0b1120;
+      box-shadow:0 0 18px rgba(232,121,249,.8);
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+    }
+
+    .btn-ghost {
+      font-size:.74rem;
+      color:#9ca3af;
+    }
+
+    .lookup-tag {
+      font-size:.72rem;
+      color:#e5e7eb;
+      background:rgba(15,23,42,.96);
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,.75);
+      padding:.18rem .55rem;
+    }
+
+    .tape-fx {
+      position:absolute;
+      right:.8rem;
+      bottom:.75rem;
+      display:flex;
+      gap:10px;
+      opacity:.6;
+    }
+    .reel {
+      width:26px;
+      height:26px;
+      border-radius:999px;
+      border:2px solid rgba(248,250,252,.8);
+      box-shadow:0 0 14px rgba(248,250,252,.9);
+      position:relative;
+      overflow:hidden;
+      animation:spinReel 5s linear infinite;
+    }
+    .reel::before,
+    .reel::after {
+      content:"";
+      position:absolute;
+      inset:5px;
+      border-radius:999px;
+      border:1px solid rgba(15,23,42,.9);
+    }
+    .reel::after {
+      inset:9px;
+      background:rgba(15,23,42,.98);
+    }
+    .reel:nth-child(2) {
+      animation-duration:7s;
+    }
+    @keyframes spinReel {
+      to { transform:rotate(360deg); }
+    }
+
+    /* RIGHT SIDE / INFO */
+    .info-grid {
+      display:grid;
+      grid-template-columns:1.1fr;
+      gap:.7rem;
+      margin-top:.8rem;
+      font-size:.8rem;
+    }
+    .info-block {
+      border-radius:15px;
+      border:1px solid rgba(148,163,184,.7);
+      background:rgba(15,23,42,.97);
+      padding:.6rem .75rem;
+    }
+    .info-title {
+      font-size:.82rem;
+      font-weight:600;
+      margin-bottom:.18rem;
+    }
+    .info-body {
+      color:#9ca3af;
+    }
+
+    .note {
+      font-size:.78rem;
+      color:#9ca3af;
+      margin-top:.7rem;
+    }
+
+    .toast {
+      position:fixed;
+      right:1rem;
+      bottom:1rem;
+      background:rgba(15,23,42,.98);
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.85);
+      padding:.55rem .9rem;
+      font-size:.78rem;
+      display:none;
+      z-index:80;
+      box-shadow:0 0 20px rgba(56,189,248,.85);
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <h1>DJ MIXTAPE HOSTING STUDIO</h1>
+      <p class="hero-sub">
+        Lock your tapes into **TKFM’s neon grid**. Professional hosting for DJs who want their
+        series to live on a real station — not just a random link. You bring the heat; TKFM
+        handles the home.
+      </p>
+
+      <div class="hero-band">
+        <div class="hero-chip"><span></span> Hosted on TKFMradio.com</div>
+        <div class="hero-chip"><span></span> Feature &amp; sponsor-ready slots</div>
+        <div class="hero-chip"><span></span> Designed for series, takeovers &amp; packs</div>
+      </div>
+
+      <div class="hero-bottom">
+        <button class="btn-main" id="jumpTiers">
+          🎚️ View hosting packages
+        </button>
+        <p class="hero-note">
+          Real Stripe checkout will wire up later. For now this page is your official **package map**
+          + Stripe lookup guide.
+        </p>
+        <div class="status-pill" id="mixStatus">
+          <span class="status-dot"></span>
+          <span id="mixStatusText">Local interest: none logged yet</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAYOUT -->
+  <section class="layout" id="tiersSection">
+    <!-- LEFT: PACKAGES -->
+    <div class="panel">
+      <div class="panel-inner">
+        <h2>Choose your hosting lane</h2>
+        <small>
+          These are **DJ-facing packages** for mixtape hosting only. Upload rights for the
+          mixtape store stay with you as the owner.
+        </small>
+
+        <div class="tiers">
+
+          <!-- SINGLE DROP -->
+          <article class="tier" data-plan="single">
+            <div class="tier-label">Level 1 • Single Drop</div>
+            <div class="tier-title">One Hosted Mixtape</div>
+            <div class="tier-price">
+              $79 / tape <span>• push a special set</span>
+            </div>
+            <div class="tier-meta">
+              Stripe lookup key: <span class="lookup-tag">dj_mixtape_hosting_single</span>
+            </div>
+            <ul class="tier-list">
+              <li>1 hosted mixtape page on TKFMradio.com (GraphFX layout).</li>
+              <li>Basic placement in TKFM mixtape section.</li>
+              <li>Cover art + description + track list slot.</li>
+              <li>Option to upgrade later into a series lane.</li>
+            </ul>
+            <div class="tier-cta">
+              <button
+                class="btn-tier"
+                data-lookup-key="dj_mixtape_hosting_single"
+              >
+                ⚡ I want Single Drop
+              </button>
+              <span class="btn-ghost">
+                Saves interest locally, Stripe wiring comes next.
+              </span>
+            </div>
+            <div class="tape-fx">
+              <div class="reel"></div>
+              <div class="reel"></div>
+            </div>
+          </article>
+
+          <!-- SERIES -->
+          <article class="tier hot" data-plan="series">
+            <div class="tier-label" style="color:var(--accent-gold);">Level 2 • Series</div>
+            <div class="tier-title">Monthly Mixtape Series</div>
+            <div class="tier-price">
+              $149 / month <span>• for recurring shows</span>
+            </div>
+            <div class="tier-meta">
+              Stripe lookup key: <span class="lookup-tag">dj_mixtape_hosting_series</span>
+            </div>
+            <ul class="tier-list">
+              <li>Up to 2 hosted mixtapes per month (rolling window).</li>
+              <li>Series banner + playlist rail on TKFMradio.com.</li>
+              <li>Priority placement inside TKFM DJ schedule &amp; promo slots.</li>
+              <li>Feature-ready: easy add-on for paid record placements later.</li>
+            </ul>
+            <div class="tier-cta">
+              <button
+                class="btn-tier"
+                data-lookup-key="dj_mixtape_hosting_series"
+              >
+                🚀 I want Monthly Series
+              </button>
+              <span class="btn-ghost">
+                Ideal for DJs who drop consistently and want a real home.
+              </span>
+            </div>
+            <div class="tape-fx">
+              <div class="reel"></div>
+              <div class="reel"></div>
+            </div>
+          </article>
+
+          <!-- TAKEOVER -->
+          <article class="tier" data-plan="takeover">
+            <div class="tier-label" style="color:#f97316;">Level 3 • Takeover</div>
+            <div class="tier-title">Station Takeover Pack</div>
+            <div class="tier-price">
+              $299 / month <span>• heavy hitters only</span>
+            </div>
+            <div class="tier-meta">
+              Stripe lookup key: <span class="lookup-tag">dj_mixtape_hosting_takeover</span>
+            </div>
+            <ul class="tier-list">
+              <li>Up to 4 hosted mixtapes per month + “Takeover” flag.</li>
+              <li>Homepage-level mixtape spotlight when available.</li>
+              <li>Bundle hooks into Feature Revenue Engine (priority upsell lanes).</li>
+              <li>Ideal for DJ crews, labels or collectives taking over blocks.</li>
+            </ul>
+            <div class="tier-cta">
+              <button
+                class="btn-tier"
+                data-lookup-key="dj_mixtape_hosting_takeover"
+              >
+                🔥 I want Takeover Pack
+              </button>
+              <span class="btn-ghost">
+                Designed to tie into sponsor &amp; feature leaderboards later.
+              </span>
+            </div>
+            <div class="tape-fx">
+              <div class="reel"></div>
+              <div class="reel"></div>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="note">
+          When you build Stripe products, use these lookup keys:
+          <code>dj_mixtape_hosting_single</code>,
+          <code>dj_mixtape_hosting_series</code>,
+          <code>dj_mixtape_hosting_takeover</code>.
+          Later, your Netlify functions can read those keys and send DJs into checkout directly.
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT: HOW IT CONNECTS -->
+    <div class="panel">
+      <div class="panel-inner">
+        <h2>How mixtape hosting ties into TKFM</h2>
+        <small>
+          The Studio isn’t just “pricing”. It’s wired to your **feature engine**, **sponsor slots**
+          and **AI DJ lanes** in your universe.
+        </small>
+
+        <div class="info-grid">
+          <div class="info-block">
+            <div class="info-title">Feature Revenue Engine</div>
+            <div class="info-body">
+              Each hosting tier can unlock specific **feature lanes** (front-of-mix placement,
+              mid-roll, outro slots). Your Feature Revenue Engine can treat these as
+              “bundled perks” when it calculates upsell options.
+            </div>
+          </div>
+          <div class="info-block">
+            <div class="info-title">Autopilot Pricing &amp; Sponsors</div>
+            <div class="info-body">
+              Once you have real data, Autopilot Pricing can watch which hosting tier is getting
+              the most signups and adjust pricing. Autopilot Sponsors can overlay sponsor slots on
+              top of your hottest series.
+            </div>
+          </div>
+          <div class="info-block">
+            <div class="info-title">AI DJ Engine hooks</div>
+            <div class="info-body">
+              Series / Takeover tiers can unlock deeper AI DJ powers for that DJ (e.g. AI set
+              templates built specifically around their hosted series and sponsor deals).
+            </div>
+          </div>
+        </div>
+
+        <div class="info-block" style="margin-top:.7rem;">
+          <div class="info-title">Local-only interest tracking (safe on free tier)</div>
+          <div class="info-body">
+            When you click a package, this page saves a small note into
+            <code>localStorage["tkfm_mix_host_interest"]</code>. No checkout yet — just a signal
+            so you can test flows and later wire it into Stripe + Supabase.
+          </div>
+        </div>
+
+        <p class="note" id="interestNote">
+          No selections yet. Try clicking one of the hosting packages to see how it logs interest.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast">Saved.</div>
+
+<script>
+  const MIX_KEY = "tkfm_mix_host_interest";
+
+  function getInterest() {
+    try {
+      const raw = localStorage.getItem(MIX_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setInterest(planCode, lookupKey) {
+    const payload = {
+      planCode,
+      lookupKey,
+      ts: new Date().toISOString()
+    };
+    try {
+      localStorage.setItem(MIX_KEY, JSON.stringify(payload));
+    } catch (e) {}
+    renderInterest();
+    showToast("Selected " + planCode.toUpperCase() + " (local only for now).");
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, 1800);
+  }
+
+  function renderInterest() {
+    const data = getInterest();
+    const statusText = document.getElementById("mixStatusText");
+    const note = document.getElementById("interestNote");
+
+    if (!data) {
+      statusText.textContent = "Local interest: none logged yet";
+      note.textContent =
+        "No selections yet. Try clicking one of the hosting packages to see how it logs interest locally for testing.";
+      document.querySelectorAll(".tier").forEach(t => t.classList.remove("hot"));
+      document.querySelector('[data-plan="series"]').classList.add("hot");
+      return;
+    }
+
+    const planName = data.planCode || "unknown";
+    statusText.textContent =
+      "Local interest: " + planName.toUpperCase() +
+      " (" + (data.lookupKey || "no key") + ")";
+
+    note.textContent =
+      "Last selected: " + planName.toUpperCase() +
+      " • lookup_key = " + (data.lookupKey || "n/a") +
+      " • " + (data.ts || "");
+
+    document.querySelectorAll(".tier").forEach(t => t.classList.remove("hot"));
+    const active = document.querySelector('[data-plan="' + planName + '"]');
+    if (active) active.classList.add("hot");
+  }
+
+  document.getElementById("jumpTiers").addEventListener("click", () => {
+    const el = document.getElementById("tiersSection");
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  document.querySelectorAll(".btn-tier").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const lookupKey = btn.getAttribute("data-lookup-key");
+      const tierEl = btn.closest(".tier");
+      const planCode = tierEl ? (tierEl.getAttribute("data-plan") || "unknown") : "unknown";
+      setInterest(planCode, lookupKey);
+    });
+  });
+
+  renderInterest();
+</script>
+
+  <script type="module" src="/js/tkfm-checkout.js"></script>
+</body>
+</html>

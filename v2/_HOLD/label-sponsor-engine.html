@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sponsor Engine — They Krave For Me Records</title>
+
+  <!-- LABEL THEME -->
+  <link rel="stylesheet" href="/v2/label-theme.css">
+</head>
+<body class="label-body">
+  <main style="max-width:1180px;margin:0 auto;padding:1.4rem .9rem 2.4rem;">
+    <header class="label-header">
+      <div class="label-logo-row">
+        <img src="/v2/tkfm-records-logo.png" alt="They Krave For Me Records" class="label-logo">
+        <div class="label-title-block">
+          <div class="label-kicker">They Krave For Me · Label Division</div>
+          <div class="label-title">Sponsor Engine Room</div>
+          <p class="label-subtitle">
+            Turn brands into long-term partners — track who’s active, who’s negotiating,
+            and who’s still on the radar for future campaigns.
+          </p>
+        </div>
+      </div>
+      <div class="label-badges">
+        <div class="label-pill">
+          🤝 Sponsor CRM (manual)
+        </div>
+        <div class="label-pill">
+          🔮 Future: auto contract + pricing from label packs
+        </div>
+      </div>
+    </header>
+
+    <nav class="label-nav">
+      <a href="/v2/label-home.html"><span>🏛️</span>Label Home</a>
+      <a href="/v2/label-hub.html"><span>🧬</span>Label Hub</a>
+      <a href="/v2/label-revenue-engine.html"><span>💰</span>Revenue Engine</a>
+      <a href="/v2/label-pack-builder.html"><span>📦</span>Pack Builder</a>
+      <a href="/v2/label-contract-lab.html"><span>📑</span>Contract Lab</a>
+      <a href="/v2/app-hub.html"><span>🎛️</span>App Hub</a>
+    </nav>
+
+    <section class="label-grid label-grid-2">
+      <!-- LEFT: FORM -->
+      <div class="label-card">
+        <h2>Add / update sponsor</h2>
+        <p class="label-help">
+          One row per sponsor or brand. Later we can tie these into actual Stripe invoices,
+          label packs and AI contract templates.
+        </p>
+
+        <form id="sponsorForm" style="margin-top:.6rem;font-size:.8rem;">
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+            <div>
+              <label for="sponsorName">Sponsor / brand</label>
+              <input id="sponsorName" placeholder="e.g. Energy Drink Co.">
+            </div>
+            <div>
+              <label for="sponsorTier">Tier</label>
+              <input id="sponsorTier" placeholder="e.g. Headline, Support, In-kind">
+            </div>
+          </div>
+
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-top:.5rem;">
+            <div>
+              <label for="sponsorValue">Est. value (USD)</label>
+              <input id="sponsorValue" type="number" min="0" step="100" placeholder="0">
+            </div>
+            <div>
+              <label for="sponsorStatus">Status</label>
+              <select id="sponsorStatus" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+                <option value="prospect">Prospect</option>
+                <option value="negotiating">Negotiating</option>
+                <option value="active">Active</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:.5rem;">
+            <label for="sponsorNotes">Notes / what they want</label>
+            <textarea id="sponsorNotes" placeholder="Example: wants logo on all flyers + host one branded TKFM special each quarter."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <button type="submit" class="label-btn">
+              ➕ Save sponsor
+            </button>
+            <button type="button" id="clearSponsorsBtn" class="label-btn secondary" style="margin-left:.45rem;">
+              🧹 Clear all
+            </button>
+          </div>
+        </form>
+
+        <p class="label-help" style="margin-top:.7rem;">
+          Data saves to <code>localStorage["tkfm_label_sponsors"]</code> so it stays on this machine only.
+        </p>
+      </div>
+
+      <!-- RIGHT: COUNTS -->
+      <div class="label-card">
+        <h2>Pipeline overview</h2>
+        <p class="label-help">
+          High level read on your sponsor funnel — how many brands, and rough value by lane.
+        </p>
+
+        <div style="display:grid;gap:.7rem;margin-top:.7rem;font-size:.85rem;">
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Active sponsors</strong>
+              <div class="label-help">Signed & plugged into campaigns.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="sActiveCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">brands</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Negotiating</strong>
+              <div class="label-help">In talks, not closed yet.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="sNegotiatingCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">brands</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Prospects</strong>
+              <div class="label-help">On the radar; need outreach.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="sProspectCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">brands</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Est. total value</strong>
+              <div class="label-help">Sum of value for non-prospect sponsors.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="sTotalValue" style="font-weight:800;color:var(--label-gold-soft);">$0</div>
+              <div class="label-help">USD</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="label-help" style="margin-top:.8rem;">
+          Later we can auto-build **sponsor contracts** from these rows using Contract Lab +
+          a dedicated sponsor template.
+        </p>
+      </div>
+    </section>
+
+    <section style="margin-top:1.2rem;">
+      <div class="label-card">
+        <h2>Sponsor board</h2>
+        <p class="label-help">
+          Click a sponsor row to load it back into the form and update. Use status to move them
+          from Prospect → Negotiating → Active.
+        </p>
+
+        <div style="margin-top:.6rem;max-height:360px;overflow:auto;">
+          <table class="label-table" id="sponsorTable">
+            <thead>
+              <tr>
+                <th>Sponsor / brand</th>
+                <th>Tier</th>
+                <th>Status</th>
+                <th>Est. value</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="sponsorTableBody">
+              <!-- rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="label-toast" id="labelToast">Saved.</div>
+
+  <script>
+    const SPONSOR_KEY = "tkfm_label_sponsors";
+
+    function showToast(msg){
+      const el = document.getElementById("labelToast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(()=>{ el.style.display = "none"; }, 1800);
+    }
+
+    function loadSponsors(){
+      try{
+        const raw = localStorage.getItem(SPONSOR_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){
+        console.warn("sponsor load error", e);
+        return [];
+      }
+    }
+
+    function saveSponsors(list){
+      try{
+        localStorage.setItem(SPONSOR_KEY, JSON.stringify(list));
+      }catch(e){
+        console.warn("sponsor save error", e);
+      }
+    }
+
+    function formatMoney(n){
+      const num = Number(n||0);
+      if(isNaN(num) || num <= 0) return "$0";
+      return "$" + num.toLocaleString();
+    }
+
+    function renderSponsors(){
+      const sponsors = loadSponsors();
+      const body = document.getElementById("sponsorTableBody");
+      body.innerHTML = "";
+
+      let active = 0, negotiating = 0, prospect = 0, totalValue = 0;
+
+      sponsors.forEach((s, idx)=>{
+        if(s.status === "active") active++;
+        if(s.status === "negotiating") negotiating++;
+        if(s.status === "prospect") prospect++;
+        if(s.status === "active" || s.status === "negotiating"){
+          totalValue += Number(s.value||0);
+        }
+
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+
+        const tdName = document.createElement("td");
+        tdName.textContent = s.name || "";
+
+        const tdTier = document.createElement("td");
+        tdTier.textContent = s.tier || "";
+
+        const tdStatus = document.createElement("td");
+        tdStatus.textContent = s.status || "";
+
+        const tdValue = document.createElement("td");
+        tdValue.textContent = formatMoney(s.value);
+
+        const tdNotes = document.createElement("td");
+        tdNotes.textContent = s.notes || "";
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdTier);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdValue);
+        tr.appendChild(tdNotes);
+
+        tr.addEventListener("click", ()=>{
+          loadSponsorIntoForm(idx);
+        });
+
+        body.appendChild(tr);
+      });
+
+      document.getElementById("sActiveCount").textContent = active.toString();
+      document.getElementById("sNegotiatingCount").textContent = negotiating.toString();
+      document.getElementById("sProspectCount").textContent = prospect.toString();
+      document.getElementById("sTotalValue").textContent = formatMoney(totalValue);
+    }
+
+    function loadSponsorIntoForm(index){
+      const sponsors = loadSponsors();
+      const s = sponsors[index];
+      if(!s) return;
+
+      document.getElementById("sponsorName").value = s.name || "";
+      document.getElementById("sponsorTier").value = s.tier || "";
+      document.getElementById("sponsorValue").value = s.value || "";
+      document.getElementById("sponsorStatus").value = s.status || "prospect";
+      document.getElementById("sponsorNotes").value = s.notes || "";
+
+      document.getElementById("sponsorForm").dataset.editIndex = String(index);
+      showToast("Loaded sponsor into form. Saving will update that row.");
+    }
+
+    document.getElementById("sponsorForm").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const name = document.getElementById("sponsorName").value.trim();
+      const tier = document.getElementById("sponsorTier").value.trim();
+      const value = Number(document.getElementById("sponsorValue").value || 0);
+      const status = document.getElementById("sponsorStatus").value;
+      const notes = document.getElementById("sponsorNotes").value.trim();
+
+      if(!name){
+        showToast("Sponsor / brand name required.");
+        return;
+      }
+
+      const sponsors = loadSponsors();
+      const editIndex = document.getElementById("sponsorForm").dataset.editIndex;
+      const payload = { name, tier, value, status, notes };
+
+      if(editIndex !== undefined && editIndex !== "" && sponsors[Number(editIndex)]){
+        sponsors[Number(editIndex)] = payload;
+      } else {
+        sponsors.push(payload);
+      }
+
+      document.getElementById("sponsorForm").dataset.editIndex = "";
+      saveSponsors(sponsors);
+      renderSponsors();
+      showToast("Sponsor saved.");
+    });
+
+    document.getElementById("clearSponsorsBtn").addEventListener("click", ()=>{
+      if(!confirm("Clear all sponsors from this browser?")) return;
+      saveSponsors([]);
+      renderSponsors();
+      showToast("All sponsors cleared.");
+    });
+
+    renderSponsors();
+  </script>
+</body>
+</html>

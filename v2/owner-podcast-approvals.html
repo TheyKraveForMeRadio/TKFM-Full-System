@@ -24,6 +24,7 @@
   </style>
 </head>
 <body class="text-slate-50 min-h-screen">
+  <div id="tkfmOwnerLock"></div>
   <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
       <a href="god-view.html" class="flex items-center gap-3">
@@ -55,7 +56,6 @@
     <div id="locked" class="card rounded-2xl p-6 hidden">
       <h2 class="text-2xl font-extrabold">Access Locked</h2>
       <p class="text-slate-200/85 mt-2">Login as owner, then return here.</p>
-      <a class="btn inline-block mt-4 border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15" id="goLogin" href="owner-login.html">Owner Login</a>
     </div>
 
     <div id="app" class="grid gap-4 hidden">
@@ -118,7 +118,6 @@
 
       function setLoginHref(){
         const next = location.pathname + location.search + location.hash;
-        $('goLogin').href = 'owner-login.html?next=' + encodeURIComponent(next);
       }
 
       function isFeaturedActive(p){
@@ -278,7 +277,6 @@
 
         $('clearOwner').addEventListener('click', ()=>{
           if (window.TKFM_OWNER_GUARD && window.TKFM_OWNER_GUARD.clearOwner) window.TKFM_OWNER_GUARD.clearOwner();
-          location.replace('owner-login.html?next=' + encodeURIComponent(location.pathname));
         });
       }
 
@@ -304,7 +302,6 @@
       <p>© <span id="year"></span> They Krave For Me Radio</p>
       <div class="flex gap-2 flex-wrap">
         <a class="hover:text-slate-200" href="god-view.html">God View</a><span>•</span>
-        <a class="hover:text-slate-200" href="owner-login.html">Owner Login</a>
       </div>
     </div>
   </footer>

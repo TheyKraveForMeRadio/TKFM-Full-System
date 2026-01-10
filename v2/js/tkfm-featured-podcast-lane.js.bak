@@ -1,0 +1,292 @@
+/* TKFM Featured Podcast Lane — TV Embed Target
+   - Fetches featured podcast items from Netlify function
+   - Renders a horizontal rail at #tkfmFeaturedPodcastLane
+   - Click loads the selected item into iframe#tvFrame (main TV screen)
+   - Fallback: open in new tab if tvFrame missing
+*/
+
+(function () {
+  const API_URL = '/.netlify/functions/media-feature-get?type=podcast';
+
+  function qs(sel, root = document) { return root.querySelector(sel); }
+  function qsa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+
+  function safeUrl(u) {
+    if (!u) return '';
+    const s = String(u).trim();
+    if (!s) return '';
+    if (/^https?:\/\//i.test(s)) return s;
+    // allow protocol-relative or bare domain
+    if (s.startsWith('//')) return 'https:' + s;
+    return 'https://' + s.replace(/^\/+/, '');
+  }
+
+  function ytId(url) {
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) return u.pathname.replace('/', '') || '';
+      if (u.hostname.includes('youtube.com')) {
+        const v = u.searchParams.get('v');
+        if (v) return v;
+        // /embed/<id> or /shorts/<id>
+        const parts = u.pathname.split('/').filter(Boolean);
+        const idx = parts.indexOf('embed');
+        if (idx >= 0 && parts[idx + 1]) return parts[idx + 1];
+        const sidx = parts.indexOf('shorts');
+        if (sidx >= 0 && parts[sidx + 1]) return parts[sidx + 1];
+      }
+    } catch (_) {}
+    return '';
+  }
+
+  function toEmbedUrl(raw) {
+    const url = safeUrl(raw);
+    if (!url) return '';
+
+    // YouTube
+    const id = ytId(url);
+    if (id) return `https://www.youtube.com/embed/${encodeURIComponent(id)}`;
+
+    // Spotify (episode/show/track)
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes('open.spotify.com')) {
+        const parts = u.pathname.split('/').filter(Boolean);
+        // /episode/<id>, /show/<id>, /track/<id>, etc.
+        if (parts.length >= 2) {
+          return `https://open.spotify.com/embed/${parts[0]}/${parts[1]}`;
+        }
+        return `https://open.spotify.com/embed`;
+      }
+
+      // SoundCloud
+      if (u.hostname.includes('soundcloud.com') || u.hostname.includes('snd.sc')) {
+        return `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=false`;
+      }
+    } catch (_) {}
+
+    // Default: try direct URL (may be blocked by X-Frame-Options — user can use Open button)
+    return url;
+  }
+
+  function normalizeItem(it) {
+    // tolerate a few shapes coming from the function / older patches
+    const title = it.title || it.name || 'Featured Podcast';
+    const subtitle = it.subtitle || it.creator || it.artist || it.show || '';
+    const image = it.image || it.cover || it.artwork || '';
+    const url = it.url || it.link || it.href || it.target || '';
+    const embed = it.embed_url || it.embedUrl || it.embed || '';
+    const cta = it.cta || 'Play';
+    return { title, subtitle, image, url, embed, cta, raw: it };
+  }
+
+  function buildCard(item) {
+    const wrap = document.createElement('div');
+    wrap.className = 'tkfmFeatCard';
+
+    const img = document.createElement('div');
+    img.className = 'tkfmFeatImg';
+    if (item.image) img.style.backgroundImage = `url("${item.image}")`;
+    wrap.appendChild(img);
+
+    const meta = document.createElement('div');
+    meta.className = 'tkfmFeatMeta';
+
+    const h = document.createElement('div');
+    h.className = 'tkfmFeatTitle';
+    h.textContent = item.title;
+    meta.appendChild(h);
+
+    if (item.subtitle) {
+      const sub = document.createElement('div');
+      sub.className = 'tkfmFeatSub';
+      sub.textContent = item.subtitle;
+      meta.appendChild(sub);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'tkfmFeatActions';
+
+    const play = document.createElement('button');
+    play.type = 'button';
+    play.className = 'tkfmFeatBtn tkfmFeatBtnPrimary';
+    play.textContent = item.cta || 'Play';
+    play.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      loadIntoTV(item);
+    });
+
+    const open = document.createElement('a');
+    open.className = 'tkfmFeatBtn tkfmFeatBtnGhost';
+    open.textContent = 'Open';
+    open.href = safeUrl(item.url || item.embed);
+    open.target = '_blank';
+    open.rel = 'noopener noreferrer';
+
+    actions.appendChild(play);
+    actions.appendChild(open);
+    meta.appendChild(actions);
+
+    wrap.appendChild(meta);
+
+    // whole card click also plays
+    wrap.addEventListener('click', () => loadIntoTV(item));
+
+    return wrap;
+  }
+
+  function loadIntoTV(item) {
+    const frame = document.getElementById('tvFrame');
+    const target = item.embed || item.url;
+    const embedUrl = toEmbedUrl(target);
+
+    if (!embedUrl) return;
+
+    if (frame) {
+      // Hard-wire: always load into the TV iframe
+      frame.setAttribute('allow', 'autoplay; encrypted-media; fullscreen; picture-in-picture');
+      frame.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+      frame.src = embedUrl;
+
+      // Optional: scroll the TV into view (nice UX when lane is at top)
+      const tvWrap = frame.closest('#tvWrap') || frame.closest('.tvWrap') || frame.closest('section') || frame;
+      setTimeout(() => {
+        try { tvWrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+      }, 50);
+
+      // Soft fallback message if the provider blocks iframes
+      const hint = document.getElementById('tkfmFeaturedPodcastHint');
+      if (hint) {
+        hint.style.display = 'block';
+        hint.innerHTML = `If it doesn't play here, click <span style="text-decoration:underline">Open</span> on the card (some platforms block in-page playback).`;
+      }
+      return;
+    }
+
+    // Fallback: open new tab
+    window.open(safeUrl(target), '_blank', 'noopener,noreferrer');
+  }
+
+  function injectStyles(root) {
+    if (document.getElementById('tkfmFeaturedPodcastLaneStyles')) return;
+    const style = document.createElement('style');
+    style.id = 'tkfmFeaturedPodcastLaneStyles';
+    style.textContent = `
+      #tkfmFeaturedPodcastLane {
+        width: 100%;
+        padding: 16px 16px 10px 16px;
+        background: linear-gradient(180deg, rgba(34,211,238,0.10), rgba(168,85,247,0.06), rgba(2,6,23,0));
+        border-bottom: 1px solid rgba(34,211,238,0.20);
+      }
+      .tkfmFeatHeader {
+        display:flex; align-items:center; justify-content:space-between;
+        gap:12px; margin-bottom:10px;
+      }
+      .tkfmFeatHeader h2 {
+        margin:0; font-size:14px; letter-spacing:0.12em; text-transform:uppercase;
+        color: rgba(34,211,238,0.95);
+      }
+      .tkfmFeatHeader .tkfmFeatTag {
+        font-size:12px; color: rgba(236,72,153,0.95);
+        border: 1px solid rgba(236,72,153,0.35);
+        padding: 4px 10px; border-radius:999px;
+        background: rgba(236,72,153,0.08);
+        white-space:nowrap;
+      }
+      .tkfmFeatRail {
+        display:flex; gap:12px; overflow:auto; padding-bottom:8px;
+        scrollbar-width: thin;
+      }
+      .tkfmFeatCard {
+        min-width: 320px; max-width: 360px;
+        display:flex; gap:12px;
+        background: rgba(2,6,23,0.85);
+        border: 1px solid rgba(168,85,247,0.22);
+        border-radius: 16px;
+        box-shadow: 0 0 0 1px rgba(34,211,238,0.12) inset;
+        cursor:pointer;
+        transition: transform .12s ease, border-color .12s ease;
+      }
+      .tkfmFeatCard:hover {
+        transform: translateY(-1px);
+        border-color: rgba(34,211,238,0.40);
+      }
+      .tkfmFeatImg {
+        width: 88px; height: 88px; border-radius: 14px;
+        margin: 12px 0 12px 12px;
+        background: rgba(59,130,246,0.12);
+        background-size: cover;
+        background-position: center;
+        border: 1px solid rgba(59,130,246,0.20);
+        flex: 0 0 auto;
+      }
+      .tkfmFeatMeta { padding: 12px 12px 12px 0; display:flex; flex-direction:column; gap:6px; width:100%; }
+      .tkfmFeatTitle { font-size: 14px; font-weight: 800; color: rgba(226,232,240,0.98); line-height:1.2; }
+      .tkfmFeatSub { font-size: 12px; color: rgba(148,163,184,0.95); line-height:1.2; }
+      .tkfmFeatActions { display:flex; gap:8px; margin-top: 6px; }
+      .tkfmFeatBtn { font-size: 12px; padding: 7px 10px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.25); background: rgba(15,23,42,0.55); color: rgba(226,232,240,0.96); text-decoration:none; }
+      .tkfmFeatBtnPrimary { border-color: rgba(34,211,238,0.35); background: rgba(34,211,238,0.10); }
+      .tkfmFeatBtnGhost { border-color: rgba(168,85,247,0.25); background: rgba(168,85,247,0.07); }
+      #tkfmFeaturedPodcastHint { margin-top: 8px; font-size: 12px; color: rgba(148,163,184,0.95); display:none; }
+    `;
+    document.head.appendChild(style);
+
+    // Ensure hint element exists (non-destructive)
+    if (!document.getElementById('tkfmFeaturedPodcastHint')) {
+      const hint = document.createElement('div');
+      hint.id = 'tkfmFeaturedPodcastHint';
+      root.appendChild(hint);
+    }
+  }
+
+  async function load() {
+    const root = document.getElementById('tkfmFeaturedPodcastLane');
+    if (!root) return;
+
+    injectStyles(root);
+
+    // header
+    if (!qs('.tkfmFeatHeader', root)) {
+      const header = document.createElement('div');
+      header.className = 'tkfmFeatHeader';
+      header.innerHTML = `<h2>Featured Podcasts</h2><div class="tkfmFeatTag">Pinned Lane</div>`;
+      root.appendChild(header);
+    }
+
+    // rail
+    let rail = qs('.tkfmFeatRail', root);
+    if (!rail) {
+      rail = document.createElement('div');
+      rail.className = 'tkfmFeatRail';
+      root.appendChild(rail);
+    }
+
+    // loading state
+    rail.innerHTML = `<div style="padding:10px 2px;color:rgba(148,163,184,.95);font-size:12px;">Loading featured podcasts…</div>`;
+
+    try {
+      const res = await fetch(API_URL, { credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      const items = Array.isArray(data.items) ? data.items : (Array.isArray(data) ? data : []);
+      const normalized = items.map(normalizeItem).filter(it => (it.url || it.embed));
+
+      rail.innerHTML = '';
+      if (!normalized.length) {
+        rail.innerHTML = `<div style="padding:10px 2px;color:rgba(148,163,184,.95);font-size:12px;">No featured podcasts yet.</div>`;
+        return;
+      }
+
+      normalized.forEach((it) => rail.appendChild(buildCard(it)));
+    } catch (e) {
+      rail.innerHTML = `<div style="padding:10px 2px;color:rgba(248,113,113,.95);font-size:12px;">Failed to load featured podcasts.</div>`;
+      console.error('[TKFM Featured Podcasts] load error', e);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', load);
+  } else {
+    load();
+  }
+})();

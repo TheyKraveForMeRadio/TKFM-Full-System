@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Radio Hub — Neon Control Deck</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,.96);
+      --border-soft: rgba(56,189,248,.8);
+      --accent-cyan: #22d3ee;
+      --accent-pink: #ec4899;
+      --accent-purple: #a855f7;
+      --accent-lime: #a3e635;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin:0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0,#22d3ee22,transparent 60%),
+        radial-gradient(circle at 100% 0,#ec489933,transparent 55%),
+        radial-gradient(circle at 50% 120%,#0f172a,#020617 70%);
+      color:#e5e7eb;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    main {
+      max-width:1180px;
+      margin:0 auto;
+      padding:1.8rem .9rem 3rem;
+    }
+
+    /* HERO */
+    .hero {
+      position:relative;
+      border-radius:28px;
+      padding:1.6rem 1.4rem 1.9rem;
+      border:1px solid rgba(56,189,248,.8);
+      background:
+        radial-gradient(circle at 0 0,#22d3ee33,#020617),
+        radial-gradient(circle at 100% 0,#ec489933,transparent 55%);
+      box-shadow:
+        0 0 40px rgba(8,47,73,.9),
+        0 0 80px rgba(236,72,153,.5);
+      overflow:hidden;
+    }
+    .hero-fx {
+      position:absolute;
+      inset:-35%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(34,211,238,.35),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,.4),transparent 60%),
+        radial-gradient(circle at 50% 15%,rgba(168,85,247,.3),transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .hero-inner { position:relative; z-index:1; }
+
+    h1 {
+      margin:0;
+      font-size:2.4rem;
+      font-weight:800;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      color:#f9fafb;
+      text-shadow:
+        0 0 20px rgba(34,211,238,.9),
+        0 0 32px rgba(236,72,153,.9);
+    }
+
+    .hero-sub {
+      margin-top:.45rem;
+      max-width:740px;
+      font-size:.95rem;
+      color:#dbeafe;
+    }
+
+    .hero-band {
+      margin-top:.7rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      font-size:.8rem;
+    }
+    .chip {
+      border-radius:999px;
+      padding:.25rem .7rem;
+      border:1px solid rgba(191,219,254,.9);
+      background:rgba(15,23,42,.96);
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .chip span {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--accent-cyan);
+      box-shadow:0 0 10px var(--accent-cyan);
+    }
+
+    .hero-bottom {
+      margin-top:1rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.7rem;
+      align-items:center;
+    }
+
+    .btn-main {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      border-radius:999px;
+      padding:.6rem 1.15rem;
+      border:none;
+      cursor:pointer;
+      font-size:.86rem;
+      font-weight:700;
+      background:linear-gradient(135deg,#22d3ee,#ec4899);
+      color:#0b1120;
+      box-shadow:0 0 26px rgba(236,72,153,.85);
+      transition:transform .18s;
+      white-space:nowrap;
+    }
+    .btn-main:hover { transform:scale(1.03); }
+
+    .hero-note {
+      font-size:.8rem;
+      color:#e5e7eb;
+      max-width:320px;
+    }
+
+    .status-pill {
+      margin-left:auto;
+      font-size:.78rem;
+      padding:.26rem .7rem;
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.9);
+      background:rgba(15,23,42,.96);
+      display:inline-flex;
+      align-items:center;
+      gap:.3rem;
+      white-space:nowrap;
+    }
+    .status-dot {
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 10px #22c55e;
+    }
+
+    @media (max-width:768px){
+      .status-pill { margin-left:0; }
+    }
+
+    /* GRID */
+    .grid {
+      margin-top:1.7rem;
+      display:grid;
+      grid-template-columns:2fr 1.4fr;
+      gap:1.4rem;
+    }
+    @media (max-width:960px){
+      .grid { grid-template-columns:1fr; }
+    }
+
+    .panel {
+      position:relative;
+      border-radius:22px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card);
+      padding:1.1rem 1.05rem 1.35rem;
+      overflow:hidden;
+      box-shadow:0 0 30px rgba(15,23,42,.9);
+    }
+    .panel::before {
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 0 0,#22d3ee20,transparent 60%),
+        radial-gradient(circle at 100% 0,#ec489920,transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .panel-inner { position:relative; z-index:1; }
+
+    .panel h2 {
+      margin:0 0 .2rem;
+      font-size:1.14rem;
+      font-weight:700;
+    }
+    .panel small {
+      font-size:.8rem;
+      color:#9ca3af;
+    }
+
+    /* CARDS */
+    .section-title {
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#a5b4fc;
+      margin:.9rem 0 .4rem;
+    }
+
+    .card-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:.9rem;
+    }
+
+    .tile {
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.85);
+      background:rgba(15,23,42,.97);
+      padding:.85rem .8rem .95rem;
+      cursor:pointer;
+      overflow:hidden;
+      transition:transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .tile:hover {
+      transform:translateY(-3px) scale(1.01);
+      box-shadow:
+        0 0 20px rgba(34,211,238,.6),
+        0 0 30px rgba(236,72,153,.55);
+      border-color:var(--accent-cyan);
+    }
+
+    .tile-role-owner { border-color:var(--accent-lime); }
+    .tile-role-dj { border-color:var(--accent-pink); }
+    .tile-role-artist { border-color:var(--accent-purple); }
+
+    .tile-label {
+      font-size:.74rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#22d3ee;
+      margin-bottom:.12rem;
+    }
+    .tile-title {
+      font-size:.98rem;
+      font-weight:700;
+    }
+    .tile-desc {
+      margin-top:.25rem;
+      font-size:.8rem;
+      color:#cbd5f5;
+    }
+    .tile-meta {
+      margin-top:.3rem;
+      font-size:.75rem;
+      color:#a5b4fc;
+    }
+
+    .tile-tag-row {
+      margin-top:.45rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.28rem;
+      font-size:.7rem;
+    }
+    .tile-tag {
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.8);
+      padding:.18rem .5rem;
+      background:rgba(15,23,42,.96);
+      color:#e5e7eb;
+    }
+
+    .tile-fx-orbit {
+      position:absolute;
+      right:-40px;
+      top:-30px;
+      width:120px;
+      height:120px;
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,.7);
+      opacity:.6;
+      pointer-events:none;
+      animation:orbitSpin 16s linear infinite;
+    }
+    .tile-fx-orbit::before {
+      content:"";
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:#22d3ee;
+      box-shadow:0 0 10px #22d3ee;
+      left:-5px;
+      top:50%;
+      transform:translateY(-50%);
+    }
+    .tile-fx-orbit::after {
+      content:"";
+      position:absolute;
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:#ec4899;
+      box-shadow:0 0 10px #ec4899;
+      right:18px;
+      top:18px;
+    }
+
+    @keyframes orbitSpin {
+      to { transform:rotate(360deg); }
+    }
+
+    .tile-eq-row {
+      position:absolute;
+      left:.8rem;
+      bottom:.75rem;
+      display:flex;
+      gap:3px;
+      height:16px;
+      align-items:flex-end;
+      opacity:.8;
+    }
+    .tile-eq {
+      width:3px;
+      border-radius:999px;
+      background:linear-gradient(to top,#0f172a,#22d3ee,#ec4899);
+      transform-origin:bottom;
+      animation:eqBounce 1.2s ease-in-out infinite;
+    }
+    .tile-eq:nth-child(2){animation-delay:.1s;}
+    .tile-eq:nth-child(3){animation-delay:.2s;}
+    .tile-eq:nth-child(4){animation-delay:.3s;}
+    .tile-eq:nth-child(5){animation-delay:.4s;}
+
+    @keyframes eqBounce {
+      0%,100%{height:20%;}
+      40%{height:90%;}
+      65%{height:45%;}
+    }
+
+    /* RIGHT SIDE MINI PANELS */
+    .mini-grid {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:.8rem;
+      margin-top:.7rem;
+      font-size:.8rem;
+    }
+    .mini {
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,.85);
+      background:rgba(15,23,42,.97);
+      padding:.6rem .75rem;
+    }
+    .mini-title {
+      font-size:.84rem;
+      font-weight:600;
+      margin-bottom:.16rem;
+    }
+    .mini-body { color:#9ca3af; }
+
+    .role-toggle-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      margin-top:.45rem;
+    }
+    .role-pill {
+      border-radius:999px;
+      padding:.2rem .6rem;
+      font-size:.76rem;
+      border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.96);
+      color:#e5e7eb;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .role-pill span {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:#6b7280;
+    }
+    .role-pill.active-owner span { background:var(--accent-lime); box-shadow:0 0 8px var(--accent-lime); }
+    .role-pill.active-dj span { background:var(--accent-pink); box-shadow:0 0 8px var(--accent-pink); }
+    .role-pill.active-artist span { background:var(--accent-purple); box-shadow:0 0 8px var(--accent-purple); }
+
+    .note {
+      font-size:.78rem;
+      color:#9ca3af;
+      margin-top:.65rem;
+    }
+
+    .toast {
+      position:fixed;
+      right:1rem;
+      bottom:1rem;
+      background:rgba(15,23,42,.98);
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.85);
+      padding:.55rem .9rem;
+      font-size:.78rem;
+      display:none;
+      z-index:80;
+      box-shadow:0 0 20px rgba(56,189,248,.9);
+    }
+  </style>
+</head>
+<body>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <h1>TKFM RADIO HUB</h1>
+      <p class="hero-sub">
+        Your **neon control deck** for the station side. From Live365 to AI DJ, mixtape hosting,
+        feature revenue, sponsors and schedule — everything TKFM lives here for the radio universe
+        only (label runs on its own black/gold side).
+      </p>
+
+      <div class="hero-band">
+        <div class="chip"><span></span> TKFM Radio • Neon GraphFX locked in</div>
+        <div class="chip"><span></span> Live365 • AI DJ • Mixtape hosting</div>
+        <div class="chip"><span></span> Feature revenue • Sponsors • Leaderboards</div>
+      </div>
+
+      <div class="hero-bottom">
+        <button class="btn-main" id="quickLive">
+          🎧 Go to TKFM Live Studio
+        </button>
+        <p class="hero-note">
+          This doesn’t hit any APIs by itself. It’s just your **front-end command center** so
+          everything feels like one studio.
+        </p>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          <span id="roleStatus">Viewing as: OWNER (local only)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN GRID -->
+  <section class="grid">
+    <!-- LEFT: BIG TILE GRID -->
+    <article class="panel">
+      <div class="panel-inner">
+        <div class="section-title">Station Flow</div>
+        <p style="font-size:.8rem;color:#9ca3af;margin:.1rem 0 .6rem;">
+          Start from this hub when you run TKFM: go live, route DJs, host mixtapes, sell features,
+          move sponsors and watch the board.
+        </p>
+
+        <div class="card-grid">
+
+          <!-- LIVE STUDIO -->
+          <div class="tile tile-role-owner tile-role-dj" data-link="/v2/radio-live.html">
+            <div class="tile-label">Live365 • Studio View</div>
+            <div class="tile-title">TKFM Live Neon Studio</div>
+            <div class="tile-desc">
+              The official live page wrapping your Live365 player in GraphFX — EQ bars, orbit
+              particles and “Now Playing” energy.
+            </div>
+            <div class="tile-meta">
+              Best used when you’re live or pushing listeners to the station.
+            </div>
+            <div class="tile-tag-row">
+              <span class="tile-tag">/v2/radio-live.html</span>
+              <span class="tile-tag">Live365</span>
+              <span class="tile-tag">Neon player</span>
+            </div>
+            <div class="tile-fx-orbit"></div>
+            <div class="tile-eq-row">
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div>
+            </div>
+          </div>
+
+          <!-- MIXTAPE HOSTING -->
+          <div class="tile tile-role-owner tile-role-dj" data-link="/v2/mixtape-hosting.html">
+            <div class="tile-label">DJ Monetization</div>
+            <div class="tile-title">Mixtape Hosting Studio</div>
+            <div class="tile-desc">
+              Single drops, monthly series and takeover packs for DJs who want their tapes hosted
+              on TKFMradio.com with real shine.
+            </div>
+            <div class="tile-meta">
+              Connect this later to Stripe lookup keys for full autopilot.
+            </div>
+            <div class="tile-tag-row">
+              <span class="tile-tag">/v2/mixtape-hosting.html</span>
+              <span class="tile-tag">DJ revenue</span>
+              <span class="tile-tag">Series / Takeovers</span>
+            </div>
+            <div class="tile-fx-orbit"></div>
+            <div class="tile-eq-row">
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div>
+            </div>
+          </div>
+
+          <!-- AI DJ ACCESS -->
+          <div class="tile tile-role-owner tile-role-dj" data-link="/v2/ai-dj-gateway.html">
+            <div class="tile-label">AI Access</div>
+            <div class="tile-title">AI DJ Access Gateway</div>
+            <div class="tile-desc">
+              The DJ-facing page that explains AI DJ tiers (Core / Pro) and controls who can see
+              the deeper AI DJ engine tools.
+            </div>
+            <div class="tile-meta">
+              Owner-only God Mode stays locked. DJs climb as far as they pay.
+            </div>
+            <div class="tile-tag-row">
+              <span class="tile-tag">/v2/ai-dj-gateway.html</span>
+              <span class="tile-tag">Core / Pro</span>
+              <span class="tile-tag">Access logic</span>
+            </div>
+            <div class="tile-fx-orbit"></div>
+            <div class="tile-eq-row">
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div>
+            </div>
+          </div>
+
+          <!-- AI DJ ENGINE (OWNER) -->
+          <div class="tile tile-role-owner" data-link="/v2/ai-dj-engine.html">
+            <div class="tile-label">Owner Only</div>
+            <div class="tile-title">AI DJ Engine (Master)</div>
+            <div class="tile-desc">
+              The brain behind the curtain. Only you touch this: global presets, AI crates,
+              set skeletons, sponsor-aware flows.
+            </div>
+            <div class="tile-meta">
+              Gate with your owner key and DJ tier flags so nobody else sees the real knobs.
+            </div>
+            <div class="tile-tag-row">
+              <span class="tile-tag">/v2/ai-dj-engine.html</span>
+              <span class="tile-tag">Owner console</span>
+            </div>
+            <div class="tile-fx-orbit"></div>
+            <div class="tile-eq-row">
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div>
+            </div>
+          </div>
+
+          <!-- FEATURE REVENUE -->
+          <div class="tile tile-role-owner tile-role-artist" data-link="/v2/feature-revenue-engine.html">
+            <div class="tile-label">Features &amp; Slots</div>
+            <div class="tile-title">Feature Revenue Engine</div>
+            <div class="tile-desc">
+              Where record money flows: feature tiers, bundles, carts and upgrade paths across
+              the TKFM ecosystem.
+            </div>
+            <div class="tile-meta">
+              Connect this to pricing, leaderboards and label side when you’re ready.
+            </div>
+            <div class="tile-tag-row">
+              <span class="tile-tag">/v2/feature-revenue-engine.html</span>
+              <span class="tile-tag">Upsell logic</span>
+            </div>
+            <div class="tile-fx-orbit"></div>
+            <div class="tile-eq-row">
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div>
+            </div>
+          </div>
+
+          <!-- LEADERBOARDS / SCHEDULE / SPONSORS -->
+          <div class="tile tile-role-owner tile-role-dj tile-role-artist" data-link="/v2/leaderboards.html">
+            <div class="tile-label">Heat Map</div>
+            <div class="tile-title">Leaderboards &amp; Motion</div>
+            <div class="tile-desc">
+              Where the hottest records, mixtapes and packs show up. Use this to decide who you
+              push, who you upsell and who you sign.
+            </div>
+            <div class="tile-meta">
+              Also pair this with DJ schedule and sponsor engine for serious runs.
+            </div>
+            <div class="tile-tag-row">
+              <span class="tile-tag">/v2/leaderboards.html</span>
+              <span class="tile-tag">/v2/dj-schedule.html</span>
+              <span class="tile-tag">/v2/sponsors-engine.html</span>
+            </div>
+            <div class="tile-fx-orbit"></div>
+            <div class="tile-eq-row">
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div>
+            </div>
+          </div>
+
+          <!-- ARTIST UPLOAD -->
+          <div class="tile tile-role-owner tile-role-artist" data-link="/v2/artist-upload.html">
+            <div class="tile-label">Artist Lane</div>
+            <div class="tile-title">Artist Upload Portal (Radio)</div>
+            <div class="tile-desc">
+              TKFM-side upload page for artists submitting records, singles and packs into your
+              station pipeline (not label contracts).
+            </div>
+            <div class="tile-meta">
+              Later, you can mirror winning records into the label side if the fit is perfect.
+            </div>
+            <div class="tile-tag-row">
+              <span class="tile-tag">/v2/artist-upload.html</span>
+              <span class="tile-tag">TKFM submissions</span>
+            </div>
+            <div class="tile-fx-orbit"></div>
+            <div class="tile-eq-row">
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div><div class="tile-eq"></div>
+              <div class="tile-eq"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- RIGHT: ROLE VIEW + NOTES -->
+    <aside class="panel">
+      <div class="panel-inner">
+        <h2>Who are you viewing as?</h2>
+        <small>
+          This doesn’t log users; it just sets a **local role filter** so you can mentally see the
+          hub as Owner, DJ or Artist. Real auth will come from Supabase later.
+        </small>
+
+        <div class="role-toggle-row" id="roleRow">
+          <button class="role-pill" data-role="owner">
+            <span></span> Owner view
+          </button>
+          <button class="role-pill" data-role="dj">
+            <span></span> DJ view
+          </button>
+          <button class="role-pill" data-role="artist">
+            <span></span> Artist view
+          </button>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini">
+            <div class="mini-title">Owner View</div>
+            <div class="mini-body">
+              Shows everything: AI DJ Engine, Feature Revenue, sponsors, leaderboards and Live
+              Studio. Think of this as your **radio-side god view**, separate from the black/gold
+              label GOD VIEW.
+            </div>
+          </div>
+          <div class="mini">
+            <div class="mini-title">DJ View</div>
+            <div class="mini-body">
+              Focuses on **Live Studio**, **Mixtape Hosting**, **AI DJ Access Gateway** and
+              whatever DJ tools / schedule pages you wire into the hub.
+            </div>
+          </div>
+          <div class="mini">
+            <div class="mini-title">Artist View</div>
+            <div class="mini-body">
+              Focuses on **Artist Upload**, **pricing**, and public-facing **leaderboards**.
+              Perfect for when you want to see the station from their POV.
+            </div>
+          </div>
+        </div>
+
+        <p class="note" id="roleNote">
+          Current local role: <strong>owner</strong>.
+          Stored in <code>localStorage["tkfm_radio_role"]</code>. This is totally separate from any
+          label roles you use on the black/gold side.
+        </p>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<div class="toast" id="toast">Updated.</div>
+
+<script>
+  const ROLE_KEY = "tkfm_radio_role";
+
+  function getRole(){
+    try {
+      return localStorage.getItem(ROLE_KEY) || "owner";
+    } catch(e){
+      return "owner";
+    }
+  }
+
+  function setRole(role){
+    try {
+      localStorage.setItem(ROLE_KEY, role);
+    } catch(e){}
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(()=>{ t.style.display = "none"; }, 1700);
+  }
+
+  function applyRole(){
+    const role = getRole();
+    const status = document.getElementById("roleStatus");
+    const note = document.getElementById("roleNote");
+
+    status.textContent = "Viewing as: " + role.toUpperCase() + " (local only)";
+    note.innerHTML =
+      'Current local role: <strong>' + role + "</strong>. " +
+      'Stored in <code>localStorage["tkfm_radio_role"]</code>. This is separate from any label roles.';
+
+    // Toggle pills
+    document.querySelectorAll(".role-pill").forEach(p => {
+      p.classList.remove("active-owner","active-dj","active-artist");
+      const r = p.getAttribute("data-role");
+      if(r === role){
+        if(r === "owner") p.classList.add("active-owner");
+        if(r === "dj") p.classList.add("active-dj");
+        if(r === "artist") p.classList.add("active-artist");
+      }
+    });
+
+    // Dim tiles that aren't for this role
+    document.querySelectorAll(".tile").forEach(tile => {
+      const isOwner = tile.classList.contains("tile-role-owner");
+      const isDj = tile.classList.contains("tile-role-dj");
+      const isArtist = tile.classList.contains("tile-role-artist");
+      let active = false;
+      if(role === "owner" && isOwner) active = true;
+      if(role === "dj" && isDj) active = true;
+      if(role === "artist" && isArtist) active = true;
+
+      tile.style.opacity = active ? "1" : "0.4";
+      tile.style.pointerEvents = active ? "auto" : "auto"; // still clickable, just visually dimmed
+    });
+  }
+
+  // Click handlers
+  document.getElementById("quickLive").addEventListener("click", () => {
+    window.location.href = "/v2/radio-live.html";
+  });
+
+  document.querySelectorAll(".tile").forEach(tile => {
+    tile.addEventListener("click", () => {
+      const link = tile.getAttribute("data-link");
+      if(link){
+        window.location.href = link;
+      }
+    });
+  });
+
+  document.querySelectorAll(".role-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      const role = pill.getAttribute("data-role") || "owner";
+      setRole(role);
+      applyRole();
+      showToast("Switched TKFM radio hub to " + role.toUpperCase() + " view (local).");
+    });
+  });
+
+  // Init
+  applyRole();
+</script>
+
+</body>
+</html>

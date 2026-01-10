@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Label DJ & Mixtape Deals — They Krave For Me Records</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-panel: #050816;
+      --bg-card: rgba(10,10,15,0.96);
+      --bg-card-soft: rgba(10,10,15,0.9);
+      --accent-gold: #facc15;
+      --accent-gold-soft: rgba(250,204,21,0.2);
+      --accent-amber: #f97316;
+      --accent-red: #ef4444;
+      --accent-emerald: #22c55e;
+      --accent-blue: #38bdf8;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.8);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(248,250,252,0.06), transparent 60%),
+        radial-gradient(circle at 50% 120%, #020617, #020617 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 3rem;
+      position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* HALOS */
+    .halo-left,
+    .halo-right {
+      position: fixed;
+      width: 280px;
+      height: 280px;
+      border-radius: 999px;
+      border: 1px dashed rgba(250,204,21,0.6);
+      top: 6%;
+      opacity: 0.45;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      animation: haloSpin 26s linear infinite;
+    }
+    .halo-left {
+      left: -8%;
+      box-shadow: 0 0 60px rgba(250,204,21,0.4);
+    }
+    .halo-right {
+      right: -8%;
+      animation-duration: 32s;
+      box-shadow: 0 0 60px rgba(248,250,252,0.2);
+    }
+    .halo-left::before,
+    .halo-right::before {
+      content: "";
+      position: absolute;
+      inset: 16%;
+      border-radius: 999px;
+    }
+    .halo-left::before {
+      border: 1px solid rgba(250,204,21,0.95);
+      box-shadow:
+        0 0 36px rgba(250,204,21,0.95),
+        0 0 50px rgba(250,204,21,0.7);
+    }
+    .halo-right::before {
+      border: 1px solid rgba(248,250,252,0.6);
+      box-shadow:
+        0 0 32px rgba(248,250,252,0.4),
+        0 0 40px rgba(15,23,42,1);
+    }
+
+    @keyframes haloSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* NAV — LABEL SIDE */
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(20px);
+      background: linear-gradient(to bottom,
+        rgba(3,7,18,0.98),
+        rgba(3,7,18,0.55),
+        transparent
+      );
+      border-bottom: 1px solid rgba(148,163,184,0.35);
+      margin: -1.6rem -0.9rem 1.4rem;
+      padding: .45rem .9rem .55rem;
+    }
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .nav-logo {
+      font-size: .97rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#facc15,#f97316,#fef9c3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 40px rgba(0,0,0,0.9);
+      white-space: nowrap;
+    }
+    .nav-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      font-size: .78rem;
+    }
+    .nav-link {
+      padding: .26rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #e5e7eb;
+      background: transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        color .16s,
+        transform .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.96);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color: rgba(250,204,21,0.95);
+      background: radial-gradient(circle at 0 0,rgba(250,204,21,0.3),transparent 60%);
+      color: #fef9c3;
+      box-shadow:
+        0 0 22px rgba(250,204,21,0.8),
+        0 0 36px rgba(0,0,0,0.95);
+    }
+    .nav-link-radio {
+      border-color: rgba(56,189,248,0.7);
+      background: radial-gradient(circle at 100% 0,rgba(56,189,248,0.2),transparent 60%);
+      color: #e0f2fe;
+    }
+
+    @media (max-width:840px){ .nav-tag{display:none;} }
+    @media (max-width:720px){ .nav-links{justify-content:flex-end;} }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 30px;
+      padding: 1.7rem 1.4rem 2rem;
+      border: 1px solid rgba(250,204,21,0.85);
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.22),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(248,250,252,0.06),transparent 60%),
+        radial-gradient(circle at 50% 120%,rgba(3,7,18,1),rgba(3,7,18,1) 70%);
+      box-shadow:
+        0 0 50px rgba(0,0,0,1),
+        0 0 70px rgba(0,0,0,0.9);
+      overflow: hidden;
+      margin-bottom: 1.9rem;
+    }
+    .hero-fx {
+      position: absolute;
+      inset: -32%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(250,204,21,0.35),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(248,250,252,0.16),transparent 60%),
+        radial-gradient(circle at 50% 0,rgba(15,23,42,1),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.35fr 1.05fr;
+      gap: 1.1rem;
+    }
+    @media (max-width:960px){ .hero-inner{grid-template-columns:1fr;} }
+
+    .hero-kicker {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #e5e7eb;
+      margin-bottom: .25rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#facc15,#f97316,#fef9c3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 30px rgba(250,204,21,0.95),
+        0 0 50px rgba(0,0,0,0.9);
+    }
+    .hero-sub {
+      margin-top: .4rem;
+      font-size: .95rem;
+      max-width: 580px;
+      color: #e5e7eb;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-pills {
+      margin-top: .7rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .78rem;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: .28rem .8rem;
+      border: 1px solid rgba(248,250,252,0.26);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .pill span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(250,204,21,0.9);
+    }
+    .pill-alt span {
+      background: var(--accent-blue);
+      box-shadow: 0 0 12px rgba(56,189,248,0.9);
+    }
+
+    .hero-note {
+      margin-top: .7rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 260px;
+    }
+
+    /* RIGHT HERO PANEL */
+    .hero-panel {
+      border-radius: 22px;
+      border: 1px solid rgba(250,204,21,0.7);
+      background: radial-gradient(circle at 0 0,rgba(250,204,21,0.12),transparent 60%),
+                  radial-gradient(circle at 100% 100%,rgba(15,23,42,1),rgba(3,7,18,0.96));
+      padding: .9rem .9rem 1rem;
+      box-shadow:
+        0 0 26px rgba(250,204,21,0.6),
+        0 0 40px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-panel-inner { position: relative; z-index: 1; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      border-radius: 999px;
+      padding: .18rem .7rem;
+      border: 1px solid rgba(248,250,252,0.28);
+      background: rgba(15,23,42,0.96);
+      margin-bottom: .4rem;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+    .hero-panel-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .18rem;
+      color: #fef3c7;
+    }
+    .hero-panel-body {
+      font-size: .8rem;
+      color: #e5e7eb;
+      margin-bottom: .4rem;
+    }
+    .hero-panel-list {
+      margin: 0 0 .6rem;
+      padding-left: 1.1rem;
+      font-size: .78rem;
+      color: #e5e7eb;
+    }
+    .hero-panel-footer {
+      font-size: .76rem;
+      color: var(--text-muted);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .45rem 1rem;
+      border: 1px solid rgba(250,204,21,0.8);
+      background: rgba(15,23,42,0.98);
+      color: #fef3c7;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+    .btn-ghost:hover {
+      box-shadow:
+        0 0 18px rgba(250,204,21,0.8),
+        0 0 26px rgba(0,0,0,1);
+    }
+
+    /* GENERIC SECTION */
+    .section {
+      margin-bottom: 1.7rem;
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.1rem 1rem 1.25rem;
+      box-shadow: 0 0 32px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.16),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(24,24,27,0.7),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .section-inner { position: relative; z-index: 1; }
+
+    .section-title {
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 0 0 .2rem;
+    }
+    .section-sub {
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 0 .85rem;
+    }
+
+    /* GRID + CARDS */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      gap: .9rem;
+    }
+
+    .card {
+      border-radius: 20px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: var(--bg-card-soft);
+      padding: .9rem .85rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 26px rgba(0,0,0,0.95);
+      transition:
+        transform .16s,
+        border-color .16s,
+        box-shadow .16s,
+        background .16s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.13),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(24,24,27,0.7),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .card-inner { position: relative; z-index: 1; }
+
+    .card-highlight {
+      border-image: linear-gradient(120deg,#facc15,#f97316,#fef9c3) 1;
+      border-width: 1px;
+      border-style: solid;
+      box-shadow:
+        0 0 28px rgba(250,204,21,0.8),
+        0 0 36px rgba(0,0,0,1);
+    }
+    .card-elite {
+      border-image: linear-gradient(120deg,#facc15,#ef4444,#f97316) 1;
+      border-width: 1px;
+      border-style: solid;
+      box-shadow:
+        0 0 32px rgba(248,113,113,0.8),
+        0 0 40px rgba(0,0,0,1);
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      background: rgba(10,10,15,1);
+    }
+
+    .card-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      color: #e5e7eb;
+      margin-bottom: .18rem;
+    }
+    .card-title {
+      font-size: .98rem;
+      font-weight: 600;
+      margin-bottom: .16rem;
+      color: #fef3c7;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: .25rem;
+      margin-bottom: .4rem;
+    }
+    .price-main {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      color: #facc15;
+    }
+    .price-main span {
+      font-size: .9rem;
+      opacity: .9;
+      margin-right: .08rem;
+    }
+    .price-sub {
+      font-size: .76rem;
+      color: var(--text-muted);
+    }
+
+    .card-body {
+      font-size: .8rem;
+      color: #e5e7eb;
+      margin-bottom: .5rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 .6rem;
+      font-size: .78rem;
+    }
+    .feature-list li {
+      display: flex;
+      gap: .35rem;
+      align-items: flex-start;
+      margin-bottom: .24rem;
+    }
+    .feature-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      margin-top: .2rem;
+      background: var(--accent-gold);
+      box-shadow: 0 0 10px var(--accent-gold);
+    }
+    .feature-dot-alt {
+      background: var(--accent-blue);
+      box-shadow: 0 0 10px var(--accent-blue);
+    }
+
+    .plan-meta {
+      font-size: .72rem;
+      color: var(--text-muted);
+      margin-bottom: .45rem;
+    }
+
+    .btn-main {
+      border-radius: 999px;
+      padding: .5rem 1.15rem;
+      border: none;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      background: linear-gradient(135deg,#facc15,#f97316,#fef9c3);
+      color: #020617;
+      box-shadow:
+        0 0 22px rgba(250,204,21,0.85),
+        0 0 32px rgba(0,0,0,1);
+    }
+
+    .btn-secondary {
+      border-radius: 999px;
+      padding: .4rem .95rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,15,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      border-color: #facc15;
+      box-shadow:
+        0 0 18px rgba(250,204,21,0.8),
+        0 0 26px rgba(0,0,0,1);
+    }
+
+    .stripe-note {
+      margin-top: .6rem;
+      font-size: .76rem;
+      color: var(--text-muted);
+    }
+
+    .footer-note {
+      margin-top: 1.1rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .halo-left,.halo-right{animation:none;}
+      .card{transition:none;}
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+<div class="halo-left"></div>
+<div class="halo-right"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">They Krave For Me Records</div>
+    <div class="nav-tag">Label • Black &amp; Gold Universe</div>
+    <div class="nav-links">
+      <a href="label-home.html" class="nav-link">Label Home</a>
+      <a href="label-hub.html" class="nav-link">Label Hub</a>
+      <a href="label-accounts.html" class="nav-link">Label Accounts</a>
+      <a href="artist-accounts.html" class="nav-link">Artist</a>
+      <a href="dj-accounts.html" class="nav-link nav-link-primary">DJ</a>
+      <a href="god-view.html" class="nav-link">God View</a>
+      <a href="index.html" class="nav-link nav-link-radio">Go To TKFM Radio</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-fx"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">LABEL SIDE • DJ & MIXTAPE PARTNERSHIPS</div>
+        <h1>Turn tapes into label assets</h1>
+        <p class="hero-sub">
+          This page is for **They Krave For Me Records** — the black &amp; gold label universe.
+          These are not just radio uploads. These are **label-aligned DJ &amp; mixtape deals** that
+          plug into contracts, revenue splits and sponsor plays.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Label-sanctioned mixtape &amp; show deals</div>
+          <div class="pill pill-alt"><span></span> Built to connect with contracts &amp; God View</div>
+          <div class="pill"><span></span> Separate from TKFM neon DJ hosting</div>
+        </div>
+
+        <p class="hero-note">
+          Front-end only for now. Later, buttons here can talk to your **label-contract-lab** and
+          Stripe label products.
+        </p>
+      </div>
+
+      <aside class="hero-panel">
+        <div class="hero-panel-inner">
+          <div class="badge">
+            <span class="badge-dot"></span> Quick separation
+          </div>
+          <div class="hero-panel-title">Label vs station DJ plays</div>
+          <p class="hero-panel-body">
+            TKFM (neon) = exposure and station slots.  
+            They Krave For Me Records (black &amp; gold) = **equity, splits and brand alignment**.
+          </p>
+          <ul class="hero-panel-list">
+            <li>Label deals can include % splits, sponsor revenue and backend points.</li>
+            <li>These packs can trigger **AI contracts** and roster flags.</li>
+            <li>Radio-only DJs still live on the TKFM side.</li>
+          </ul>
+          <p class="hero-panel-footer">
+            If a DJ is just buying hosted slots, they stay on TKFM. If they’re partnering with the
+            label brand, they live here.
+          </p>
+          <div style="margin-top:.6rem;display:flex;gap:.4rem;flex-wrap:wrap;">
+            <button class="btn-ghost" onclick="window.location.href='dj-mixtape-hosting.html'">
+              View TKFM DJ Hosting
+            </button>
+            <button class="btn-ghost" onclick="window.location.href='label-onboarding.html'">
+              Label Onboarding
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- LABEL DJ & MIXTAPE PACKS -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">They Krave For Me Records — DJ &amp; Mixtape Packs</h2>
+      <p class="section-sub">
+        Think of these as **label-level collaborations**, not simple uploads. Final numbers and
+        splits will run through your **AI contract generator** and **label-account** system — this
+        page is the front-of-house shell.
+      </p>
+
+      <div class="pricing-grid">
+        <!-- AFFILIATE -->
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Entry partnership</div>
+            <h3 class="card-title">Affiliate Tape Partner</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>497</div>
+              <div class="price-sub">per campaign</div>
+            </div>
+            <p class="card-body">
+              For DJs whose brand already moves but wants to tap into **They Krave For Me Records**
+              as a co-sign on select tapes and shows.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Co-branded tape: DJ name x They Krave For Me Records</li>
+              <li><span class="feature-dot"></span> Label-side feature on black &amp; gold hub</li>
+              <li><span class="feature-dot"></span> Light backend split options (no full roster tie)</li>
+              <li><span class="feature-dot-alt"></span> Optional upsell into TKFM residency bundles</li>
+            </ul>
+            <p class="plan-meta">
+              Stripe lookup key idea (label side):
+              <strong>label_dj_affiliate_tape</strong>
+            </p>
+            <button class="btn-main">
+              Start Affiliate Tape
+            </button>
+          </div>
+        </article>
+
+        <!-- LABEL DJ PARTNER -->
+        <article class="card card-highlight">
+          <div class="card-inner">
+            <div class="badge">
+              <span class="badge-dot"></span> Core label DJ tier
+            </div>
+            <div class="card-kicker">Ongoing relationship</div>
+            <h3 class="card-title">Label DJ Partner</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>997</div>
+              <div class="price-sub">per quarter</div>
+            </div>
+            <p class="card-body">
+              For key DJs the label wants to **actively move with**: recurring tapes, appearances
+              and potential roster integration for artists they break.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Quarterly tape series under label branding</li>
+              <li><span class="feature-dot"></span> Priority placement on label hub &amp; A&amp;R radar</li>
+              <li><span class="feature-dot"></span> Custom contract preset in AI contract lab</li>
+              <li><span class="feature-dot-alt"></span> Option for % on select artist signings you help source</li>
+            </ul>
+            <p class="plan-meta">
+              Stripe lookup key idea:
+              <strong>label_dj_partner_quarterly</strong>
+              (you can wire as subscription or invoice-style later).
+            </p>
+            <button class="btn-main">
+              Become Label DJ Partner
+            </button>
+          </div>
+        </article>
+
+        <!-- FLAGSHIP DEAL -->
+        <article class="card card-elite">
+          <div class="card-inner">
+            <div class="card-kicker">Flagship play</div>
+            <h3 class="card-title">Flagship Show &amp; Tape Deal</h3>
+            <div class="price-row">
+              <div class="price-main"><span>$</span>2497</div>
+              <div class="price-sub">deal baseline</div>
+            </div>
+            <p class="card-body">
+              For that **one DJ** or platform the label wants to build a real flagship with: show,
+              tape series, sponsor play and potential roster pipeline.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Co-owned flagship show concept with the label</li>
+              <li><span class="feature-dot"></span> Tape series tied to label projects &amp; drops</li>
+              <li><span class="feature-dot"></span> Sponsor rev share possibilities baked into contracts</li>
+              <li><span class="feature-dot-alt"></span> Deep integration into **God View** analytics &amp; A&amp;R radar</li>
+            </ul>
+            <p class="plan-meta">
+              Stripe lookup key idea:
+              <strong>label_dj_flagship_deal</strong>
+              — most likely used as a high-ticket, owner-only flow with manual approval.
+            </p>
+            <button class="btn-main">
+              Discuss Flagship Deal
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <p class="stripe-note">
+        All numbers above are **label side** — completely separate from your TKFM radio neon prices.
+        Later, these buttons can either open a **“apply first” flow** or trigger a Stripe checkout
+        tied to your label accounts.
+      </p>
+    </div>
+  </section>
+
+  <!-- HOW IT CONNECTS: CONTRACTS + GOD VIEW -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">Plugged into AI Contracts, Label Accounts &amp; God View</h2>
+      <p class="section-sub">
+        This page is just the **front desk**. The real power kicks in when you connect it to the
+        rest of your label stack: <strong>label-accounts, AI contract generator, sponsor engine,
+        artist roster hub and God View</strong>.
+      </p>
+
+      <div class="pricing-grid">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Contracts &amp; accounts</div>
+            <div class="card-title">AI Contract Lab + Label Accounts</div>
+            <p class="card-body">
+              Every DJ pack can be wired into contract templates in **ai-onboarding / label-contract
+              flows**, and tracked through **label-accounts** like a real roster partner.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Use your AI contract generator to spin up terms</li>
+              <li><span class="feature-dot"></span> Map each DJ to a label account profile</li>
+              <li><span class="feature-dot-alt"></span> Connect their tapes &amp; shows to artist funnels</li>
+            </ul>
+            <p class="plan-meta">
+              Routes you already have on label side:
+              <code>label-onboarding.html</code>, <code>label-accounts.html</code>,
+              <code>ai-onboarding.html</code>.
+            </p>
+            <button class="btn-secondary" onclick="window.location.href='label-accounts.html'">
+              Open Label Accounts
+            </button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Owner visibility</div>
+            <div class="card-title">God View + Sponsor Engine Room</div>
+            <p class="card-body">
+              Your **owner-only God View** can see which DJs and tapes move real numbers, then feed
+              that into **sponsor engine room** and future label decisions.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Track DJ deals, tape performance, artist outcomes</li>
+              <li><span class="feature-dot"></span> Surface candidates for sponsor-backed campaigns</li>
+              <li><span class="feature-dot-alt"></span> Sync with feature leaderboards &amp; revenue engine logic</li>
+            </ul>
+            <p class="plan-meta">
+              Routes: <code>god-view.html</code>, <code>label-revenue-engine.html</code>,
+              <code>label-sponsor-engine.html</code>.
+            </p>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+              <button class="btn-secondary" onclick="window.location.href='god-view.html'">
+                Open God View
+              </button>
+              <button class="btn-secondary" onclick="window.location.href='label-sponsor-engine.html'">
+                Sponsor Engine Room
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRIDGE BACK TO TKFM -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">Bridge: TKFM Neon vs They Krave For Me Records</h2>
+      <p class="section-sub">
+        To keep your empire clean: **neon TKFM** handles radio features, hosting and DJ residencies.
+        **Black &amp; gold label** handles deals, splits and long-term partnerships.
+      </p>
+
+      <div class="pricing-grid">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Neon side</div>
+            <div class="card-title">TKFM DJ Hosting (Radio)</div>
+            <p class="card-body">
+              Use TKFM’s DJ hosting for:
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot-alt"></span> Quick hosted tapes &amp; show slots</li>
+              <li><span class="feature-dot-alt"></span> Station exposure without label entanglements</li>
+              <li><span class="feature-dot-alt"></span> A funnel into this label page once they prove value</li>
+            </ul>
+            <button class="btn-secondary" onclick="window.location.href='dj-mixtape-hosting.html'">
+              See TKFM DJ Page
+            </button>
+          </div>
+        </article>
+
+        <article class="card card-highlight">
+          <div class="card-inner">
+            <div class="card-kicker">Label side</div>
+            <div class="card-title">They Krave For Me Records (You are the gate)</div>
+            <p class="card-body">
+              This page is where you turn the **best DJ relationships** into **long-term black &amp;
+              gold assets** — tied into contracts, roster, sponsors and God View.
+            </p>
+            <ul class="feature-list">
+              <li><span class="feature-dot"></span> Only hand-picked DJs get here</li>
+              <li><span class="feature-dot"></span> You set the rules, AI helps write the paperwork</li>
+              <li><span class="feature-dot"></span> Every move can roll up to label KPIs in God View</li>
+            </ul>
+            <button class="btn-main">
+              Lock In Label DJ Strategy
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    Label-side only • Black &amp; gold universe.  
+    Later we’ll wire this into your **AI contract generator, label accounts, Stripe label products,
+    sponsor engine and God View** without touching the visuals.
+  </p>
+</main>
+
+</body>
+</html>

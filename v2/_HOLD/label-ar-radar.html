@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>A&R Radar — They Krave For Me Records</title>
+
+  <!-- LABEL THEME -->
+  <link rel="stylesheet" href="/v2/label-theme.css">
+</head>
+<body class="label-body">
+  <main style="max-width:1180px;margin:0 auto;padding:1.4rem .9rem 2.4rem;">
+    <header class="label-header">
+      <div class="label-logo-row">
+        <img src="/v2/tkfm-records-logo.png" alt="They Krave For Me Records" class="label-logo">
+        <div class="label-title-block">
+          <div class="label-kicker">They Krave For Me · Label Division</div>
+          <div class="label-title">A&amp;R Radar</div>
+          <p class="label-subtitle">
+            Keep track of artists you’re watching from TikTok, IG, playlists, live shows
+            and TKFM submissions — so you always know who’s almost ready to sign.
+          </p>
+        </div>
+      </div>
+      <div class="label-badges">
+        <div class="label-pill">
+          📡 Watchlist
+        </div>
+        <div class="label-pill">
+          🧠 Feeds Slot Suggestions &amp; Roster
+        </div>
+      </div>
+    </header>
+
+    <nav class="label-nav">
+      <a href="/v2/label-home.html"><span>🏛️</span>Label Home</a>
+      <a href="/v2/label-hub.html"><span>🧬</span>Label Hub</a>
+      <a href="/v2/label-artist-roster-hub.html"><span>📜</span>Artist Roster</a>
+      <a href="/v2/label-slot-suggestions.html"><span>🎯</span>Slot Suggestions</a>
+      <a href="/v2/app-hub.html"><span>🎛️</span>App Hub</a>
+    </nav>
+
+    <section class="label-grid label-grid-2">
+      <!-- LEFT: FORM -->
+      <div class="label-card">
+        <h2>Add a radar artist</h2>
+        <p class="label-help">
+          Use this for **pre-signing** artists. Once they’re locked in, move them to
+          your artist roster hub.
+        </p>
+
+        <form id="radarForm" style="margin-top:.6rem;font-size:.8rem;">
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+            <div>
+              <label for="radarName">Artist name</label>
+              <input id="radarName" placeholder="Stage name">
+            </div>
+            <div>
+              <label for="radarSource">Source</label>
+              <input id="radarSource" placeholder="TikTok, IG, Playlist, TKFM submit, Live show">
+            </div>
+          </div>
+
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:.5rem;">
+            <div>
+              <label for="radarHeat">Heat (1–10)</label>
+              <input id="radarHeat" type="number" min="1" max="10" step="1" placeholder="7">
+            </div>
+            <div>
+              <label for="radarFit">Label fit (1–10)</label>
+              <input id="radarFit" type="number" min="1" max="10" step="1" placeholder="8">
+            </div>
+            <div>
+              <label for="radarStage">Stage</label>
+              <select id="radarStage" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+                <option value="cold">Cold</option>
+                <option value="warm">Warm</option>
+                <option value="hot">Hot / talking</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:.5rem;">
+            <label for="radarNotes">Notes</label>
+            <textarea id="radarNotes" placeholder="Example: viral sound; strong visuals; potential collab with TKFM DJ."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <button type="submit" class="label-btn">
+              ➕ Save radar
+            </button>
+            <button type="button" id="clearRadarBtn" class="label-btn secondary" style="margin-left:.45rem;">
+              🧹 Clear all
+            </button>
+          </div>
+
+          <p class="label-help" style="margin-top:.7rem;">
+            Score = Heat + Fit. You can tweak formula later. Move “Hot” picks into roster when ready.
+          </p>
+        </form>
+      </div>
+
+      <!-- RIGHT: SUMMARY -->
+      <div class="label-card">
+        <h2>Radar summary</h2>
+        <p class="label-help">
+          High-level view of how many artists are on each temperature.
+        </p>
+
+        <div style="display:grid;gap:.7rem;margin-top:.7rem;font-size:.85rem;">
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Hot / talking</strong>
+              <div class="label-help">Already in motion.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="radarHotCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">artists</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Warm</strong>
+              <div class="label-help">Interested, watching closely.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="radarWarmCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">artists</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Cold</strong>
+              <div class="label-help">On the radar, needs more data.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="radarColdCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">artists</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="label-help" style="margin-top:.8rem;">
+          Later, this can auto-suggest **slot priorities** by pushing “Hot” radar artists into Slot Suggestions.
+        </p>
+      </div>
+    </section>
+
+    <section style="margin-top:1.2rem;">
+      <div class="label-card">
+        <h2>Radar board</h2>
+        <p class="label-help">
+          Click a row to load it back into the form and update. Highest score floats to the top.
+        </p>
+
+        <div style="margin-top:.6rem;max-height:380px;overflow:auto;">
+          <table class="label-table" id="radarTable">
+            <thead>
+              <tr>
+                <th>Artist</th>
+                <th>Source</th>
+                <th>Heat</th>
+                <th>Fit</th>
+                <th>Stage</th>
+                <th>Score</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="radarTableBody">
+              <!-- rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="label-toast" id="labelToast">Saved.</div>
+
+  <script>
+    const RADAR_KEY = "tkfm_label_ar_radar";
+
+    function showToast(msg){
+      const el = document.getElementById("labelToast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(()=>{ el.style.display = "none"; }, 1800);
+    }
+
+    function loadRadar(){
+      try{
+        const raw = localStorage.getItem(RADAR_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){
+        console.warn("radar load error", e);
+        return [];
+      }
+    }
+
+    function saveRadar(list){
+      try{
+        localStorage.setItem(RADAR_KEY, JSON.stringify(list));
+      }catch(e){
+        console.warn("radar save error", e);
+      }
+    }
+
+    function calcScore(heat, fit){
+      const h = Number(heat || 0);
+      const f = Number(fit || 0);
+      return h + f;
+    }
+
+    function renderRadar(){
+      const list = loadRadar().map(r => ({
+        ...r,
+        score: calcScore(r.heat, r.fit)
+      })).sort((a,b)=>b.score - a.score);
+
+      const body = document.getElementById("radarTableBody");
+      body.innerHTML = "";
+
+      let hot=0, warm=0, cold=0;
+      list.forEach((r, idx)=>{
+        if(r.stage === "hot") hot++;
+        else if(r.stage === "warm") warm++;
+        else cold++;
+
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+
+        const cells = [
+          r.name || "",
+          r.source || "",
+          r.heat ?? "",
+          r.fit ?? "",
+          r.stage || "",
+          r.score ?? "",
+          r.notes || ""
+        ];
+
+        cells.forEach(val=>{
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        tr.addEventListener("click", ()=>{
+          loadRadarIntoForm(idx);
+        });
+
+        body.appendChild(tr);
+      });
+
+      document.getElementById("radarHotCount").textContent = hot.toString();
+      document.getElementById("radarWarmCount").textContent = warm.toString();
+      document.getElementById("radarColdCount").textContent = cold.toString();
+    }
+
+    function loadRadarIntoForm(index){
+      const list = loadRadar();
+      const r = list[index];
+      if(!r) return;
+
+      document.getElementById("radarName").value = r.name || "";
+      document.getElementById("radarSource").value = r.source || "";
+      document.getElementById("radarHeat").value = r.heat ?? "";
+      document.getElementById("radarFit").value = r.fit ?? "";
+      document.getElementById("radarStage").value = r.stage || "cold";
+      document.getElementById("radarNotes").value = r.notes || "";
+
+      document.getElementById("radarForm").dataset.editIndex = String(index);
+      showToast("Loaded radar artist into form. Saving will update that row.");
+    }
+
+    document.getElementById("radarForm").addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const name = document.getElementById("radarName").value.trim();
+      const source = document.getElementById("radarSource").value.trim();
+      const heat = Number(document.getElementById("radarHeat").value || 0);
+      const fit = Number(document.getElementById("radarFit").value || 0);
+      const stage = document.getElementById("radarStage").value;
+      const notes = document.getElementById("radarNotes").value.trim();
+
+      if(!name){
+        showToast("Artist name required.");
+        return;
+      }
+
+      const list = loadRadar();
+      const editIndex = document.getElementById("radarForm").dataset.editIndex;
+      const payload = { name, source, heat, fit, stage, notes };
+
+      if(editIndex !== undefined && editIndex !== "" && list[Number(editIndex)]){
+        list[Number(editIndex)] = payload;
+      } else {
+        list.push(payload);
+      }
+
+      document.getElementById("radarForm").dataset.editIndex = "";
+      saveRadar(list);
+      renderRadar();
+      showToast("Radar saved.");
+    });
+
+    document.getElementById("clearRadarBtn").addEventListener("click", ()=>{
+      if(!confirm("Clear all radar entries from this browser?")) return;
+      saveRadar([]);
+      renderRadar();
+      showToast("All radar entries cleared.");
+    });
+
+    renderRadar();
+  </script>
+</body>
+</html>

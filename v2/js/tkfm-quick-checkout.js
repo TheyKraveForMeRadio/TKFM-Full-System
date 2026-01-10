@@ -1,97 +1,94 @@
-/* TKFM Quick Checkout
-   - Handles clicks on buttons/links that include data-plan or data-feature.
-   - Works even when markup doesn't have .js-checkout class (delegated handler).
-   - Writes tkfm_last_planId before redirect so post-checkout routing can work.
-*/
-(() => {
-  const ENDPOINT = "/.netlify/functions/create-checkout-session";
-
-  function getEmail() {
-    const saved =
-      localStorage.getItem("tkfm_email") ||
-      localStorage.getItem("ownerEmail") ||
-      localStorage.getItem("tkfm_owner_email") ||
-      "";
-    return (saved || "").trim();
+/* TKFM QUICK CHECKOUT (patched): loads /tkfm-price-map.json to avoid Netlify env bloat */
+let __tkfmPriceMap = null;
+async function __tkfmLoadPriceMap(){
+  if (__tkfmPriceMap) return __tkfmPriceMap;
+  try {
+    const r = await fetch('/tkfm-price-map.json', { cache: 'no-cache' });
+    if (!r.ok) throw new Error('map http '+r.status);
+    __tkfmPriceMap = await r.json();
+  } catch (e) {
+    __tkfmPriceMap = null;
   }
+  return __tkfmPriceMap;
+}
+// TKFM Quick Checkout (sitewide) — stable delegated handler
+// - Works with ANY element containing data-plan or data-feature
+// - Stores last selected plan in sessionStorage so post-checkout can auto-route
+// - Redirects to Stripe Checkout URL returned by /.netlify/functions/create-checkout-session
+(function(){
+  if (window.__TKFM_QUICK_CHECKOUT_V2__) return;
+  window.__TKFM_QUICK_CHECKOUT_V2__ = true;
 
-  function setLastPlan(planId) {
-    try {
-      localStorage.setItem("tkfm_last_planId", String(planId || ""));
-      localStorage.setItem("tkfm_last_checkout_at", String(Date.now()));
-    } catch {}
-  }
-
-  async function startCheckout(planId, featureId, emailOverride) {
-    const email = (emailOverride || getEmail() || "").trim();
-    setLastPlan(planId || featureId || "");
-
-    const payload = {
-      planId: planId || null,
-      featureId: featureId || null,
-      email: email || null
-    };
-
-    const res = await fetch(ENDPOINT, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    let data = {};
-    try { data = await res.json(); } catch {}
-
-    if (!data || data.ok !== true || !data.url) {
-      const msg = (data && (data.error || data.message)) ? (data.error || data.message) : "Checkout failed.";
-      alert(msg);
-      throw new Error(msg);
-    }
-
-    window.location.href = data.url;
-  }
-
-  function findPlanTarget(el) {
-    if (!el) return null;
-
-    // click may be on inner span; walk up to 4 levels
-    let cur = el;
-    for (let i = 0; i < 6 && cur; i++) {
-      if (cur.getAttribute) {
-        const plan = cur.getAttribute("data-plan") || cur.getAttribute("data-planid") || "";
-        const feat = cur.getAttribute("data-feature") || cur.getAttribute("data-featureid") || "";
-        if (plan || feat) return { planId: plan || null, featureId: feat || null, node: cur };
+  function toast(msg){
+    try{
+      let t = document.querySelector('.toast');
+      if(!t){
+        t = document.createElement('div');
+        t.className = 'toast';
+        t.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:9999;max-width:92vw;';
+        document.body.appendChild(t);
       }
-      cur = cur.parentElement;
-    }
-    return null;
+      t.innerHTML = '<div style="background:rgba(2,6,23,.85);border:1px solid rgba(34,211,238,.25);padding:10px 12px;border-radius:14px;color:#e2e8f0;font:600 12px system-ui,Segoe UI,Roboto,sans-serif;">'+
+        String(msg).replace(/[<>&]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))+
+      '</div>';
+      clearTimeout(window.__TKFM_TOAST_T__);
+      window.__TKFM_TOAST_T__ = setTimeout(()=>{ if(t) t.innerHTML=''; }, 3200);
+    }catch(e){}
   }
 
-  // Delegated handler covers ALL pages (even if markup has no js-checkout class)
-  document.addEventListener("click", (e) => {
-    const t = findPlanTarget(e.target);
-    if (!t) return;
+  async function startCheckout(planId, meta){
+    if(!planId) return;
+    try{
+      sessionStorage.setItem('tkfm_last_plan', planId);
+      if (meta && typeof meta === 'object') {
+        sessionStorage.setItem('tkfm_last_meta', JSON.stringify(meta));
+      }
 
-    // prevent normal navigation for <a>
+      toast('Opening secure checkout…');
+      const res = await fetch('/.netlify/functions/create-checkout-session', {
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify({ planId, ...meta })
+      });
+      const j = await res.json().catch(()=>null);
+      if(!j || !j.ok || !j.url){
+        toast((j && (j.error || j.message)) ? (j.error || j.message) : 'Checkout error. Please try again.');
+        console.error('TKFM checkout error', j);
+        return;
+      }
+      window.location.href = j.url;
+    }catch(err){
+      toast('Checkout failed. Please try again.');
+      console.error(err);
+    }
+  }
+
+  function resolvePlanFromEl(el){
+    if(!el) return null;
+    return el.getAttribute('data-plan') || el.getAttribute('data-feature') || el.dataset.plan || el.dataset.feature || null;
+  }
+
+  // Delegate clicks anywhere
+  document.addEventListener('click', function(e){
+    const target = e.target && e.target.closest ? e.target.closest('[data-plan],[data-feature],.js-checkout') : null;
+    if(!target) return;
+
+    const planId = resolvePlanFromEl(target);
+    if(!planId) return; // allow other click handlers if no plan
+
+    // Prevent default nav if this is a link/button meant to checkout
     e.preventDefault();
 
-    // Disable double-click spam
-    try {
-      t.node.disabled = true;
-      t.node.setAttribute("data-busy", "1");
-      t.node.style.opacity = "0.75";
-      t.node.style.pointerEvents = "none";
-    } catch {}
+    // Optional meta: allow page to set return path or lane hint
+    const meta = {};
+    try{
+      // Where the user clicked from (helps post-checkout)
+      meta.from = window.location.pathname || '';
+    }catch(_){}
 
-    startCheckout(t.planId, t.featureId).catch(() => {
-      try {
-        t.node.disabled = false;
-        t.node.removeAttribute("data-busy");
-        t.node.style.opacity = "";
-        t.node.style.pointerEvents = "";
-      } catch {}
-    });
-  }, { passive: false });
+    startCheckout(planId, meta);
+  }, true);
 
-  // Optional: expose a global for advanced pages
-  window.TKFMCheckout = { startCheckout };
+  // Expose manual call if needed
+  window.tkfmStartCheckout = startCheckout;
 })();

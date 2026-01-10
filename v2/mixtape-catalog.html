@@ -28,8 +28,11 @@
   <script src="/js/tkfm-quick-checkout.js"></script>
   <script src="/js/tkfm-paid-lane-modal.js" defer></script>
   <script src="/js/tkfm-paid-lane-submit.js" defer></script>
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
 </head>
 <body class="bg-gradient-to-b from-black via-slate-950 to-black text-purple-100 min-h-screen font-mono" data-tkfm-theme="radio">
+  <div id="tkfmOwnerLock"></div>
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
   <!-- HEADER -->
   <header class="border-b border-purple-800/70 px-4 md:px-8 py-4 flex items-center justify-between bg-black/70 backdrop-blur sticky top-0 z-20">

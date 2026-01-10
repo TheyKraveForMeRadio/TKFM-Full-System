@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AI Deal Wizard — They Krave For Me Records</title>
+
+  <link rel="stylesheet" href="/v2/label-theme.css">
+</head>
+<body class="label-body">
+  <main style="max-width:1180px;margin:0 auto;padding:1.4rem .9rem 2.4rem;">
+    <header class="label-header">
+      <div class="label-logo-row">
+        <img src="/v2/tkfm-records-logo.png" alt="They Krave For Me Records" class="label-logo">
+        <div class="label-title-block">
+          <div class="label-kicker">They Krave For Me · Label Division · AI Helper</div>
+          <div class="label-title">AI Deal Wizard</div>
+          <p class="label-subtitle">
+            Pull an artist / DJ / sponsor, attach a pack + template, add your goals —
+            and get a pre-built AI prompt you can drop straight into ChatGPT to generate a full deal.
+          </p>
+        </div>
+      </div>
+      <div class="label-badges">
+        <div class="label-pill">📑 Uses Packs + Contracts</div>
+        <div class="label-pill">🧠 AI-ready deal prompt</div>
+      </div>
+    </header>
+
+    <nav class="label-nav">
+      <a href="/v2/label-home.html"><span>🏛️</span>Label Home</a>
+      <a href="/v2/label-hub.html"><span>🧬</span>Label Hub</a>
+      <a href="/v2/label-pack-builder.html"><span>📦</span>Pack Builder</a>
+      <a href="/v2/label-contract-lab.html"><span>📑</span>Contract Lab</a>
+      <a href="/v2/label-accounts.html"><span>🧾</span>Label Accounts</a>
+      <a href="/v2/app-hub.html"><span>🎛️</span>App Hub</a>
+    </nav>
+
+    <section class="label-grid label-grid-2">
+      <!-- LEFT: INPUTS -->
+      <div class="label-card">
+        <h2>1. Choose who this deal is for</h2>
+        <p class="label-help">
+          We’ll pull from the same <code>tkfm_label_accounts</code> store used by Label Accounts,
+          Artist Accounts, and DJ Accounts.
+        </p>
+
+        <form id="wizardForm" style="margin-top:.7rem;font-size:.8rem;">
+          <div class="field-row">
+            <label for="wAccount">Artist / DJ / Sponsor</label>
+            <select id="wAccount" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+              <option value="">Select from label accounts…</option>
+            </select>
+            <p class="label-help" style="margin-top:.35rem;">
+              Data source: <code>localStorage["tkfm_label_accounts"]</code>.
+            </p>
+          </div>
+
+          <div class="field-row" style="margin-top:.7rem;">
+            <label for="wPack">Attach label pack (optional)</label>
+            <select id="wPack" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+              <option value="">No pack / custom deal</option>
+            </select>
+            <p class="label-help" style="margin-top:.35rem;">
+              Data source: <code>localStorage["tkfm_label_packs"]</code>.
+            </p>
+          </div>
+
+          <div class="field-row" style="margin-top:.7rem;">
+            <label for="wContract">Base contract template (optional)</label>
+            <select id="wContract" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+              <option value="">No template / raw AI draft</option>
+            </select>
+            <p class="label-help" style="margin-top:.35rem;">
+              Data source: <code>localStorage["tkfm_label_contracts"]</code>.
+            </p>
+          </div>
+
+          <div style="margin-top:.8rem;">
+            <label for="wGoals">Deal goals / context</label>
+            <textarea id="wGoals" placeholder="Example: We want to lock this artist into a 6 month flagship push, heavy TKFM rotation, interview, and sponsor-ready visuals. We care about keeping them happy on splits but want room to recoup marketing."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <label for="wNonNegos">Non-negotiables</label>
+            <textarea id="wNonNegos" placeholder="Example: We must retain brand ownership of TKFM campaigns. Artist must deliver clean versions. Sponsor posts cannot conflict with station sponsors."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <label for="wTone">Tone / style</label>
+            <textarea id="wTone" placeholder="Example: Keep it simple and friendly but real. No crazy legalese. 2–3 pages max."></textarea>
+          </div>
+
+          <div style="margin-top:.9rem;display:flex;flex-wrap:wrap;gap:.5rem;">
+            <button type="button" class="label-btn" id="btnGenerate">
+              🧠 Generate AI prompt
+            </button>
+            <button type="button" class="label-btn secondary" id="btnSummary">
+              📄 Generate one-page summary
+            </button>
+          </div>
+
+          <p class="label-help" style="margin-top:.8rem;">
+            This page does <strong>not</strong> call any external APIs. It just assembles your data
+            into a clean prompt / summary you can use with your AI tools or lawyers.
+          </p>
+        </form>
+      </div>
+
+      <!-- RIGHT: OUTPUT -->
+      <div class="label-card">
+        <h2>2. AI-ready prompt &amp; summary</h2>
+        <p class="label-help">
+          Copy these into ChatGPT (or another model) to generate a full contract or a simple language version.
+        </p>
+
+        <div style="margin-top:.7rem;">
+          <label for="wPrompt" style="font-size:.8rem;font-weight:600;color:#e5e7eb;">AI contract prompt</label>
+          <textarea id="wPrompt" placeholder="Click “Generate AI prompt” to build this." style="min-height:180px;"></textarea>
+        </div>
+
+        <div style="margin-top:.7rem;">
+          <label for="wSummaryOut" style="font-size:.8rem;font-weight:600;color:#e5e7eb;">One-page deal summary</label>
+          <textarea id="wSummaryOut" placeholder="Click “Generate one-page summary” to build this." style="min-height:140px;"></textarea>
+        </div>
+
+        <div style="margin-top:.9rem;display:flex;flex-wrap:wrap;gap:.5rem;">
+          <button type="button" class="label-btn secondary" onclick="copyField('wPrompt')">
+            📋 Copy AI prompt
+          </button>
+          <button type="button" class="label-btn secondary" onclick="copyField('wSummaryOut')">
+            📋 Copy summary
+          </button>
+        </div>
+
+        <p class="label-help" style="margin-top:.8rem;">
+          When you’re happy with a deal, you can take the final text and paste it back into
+          <strong>Contract Lab</strong> as a saved template or attach it to a specific artist account.
+        </p>
+      </div>
+    </section>
+
+    <section style="margin-top:1.2rem;">
+      <div class="label-card">
+        <h2>How this will evolve</h2>
+        <p class="label-help" style="margin-top:.4rem;">
+          Right now this is an internal <strong>prompt builder</strong>. Later, we can:
+        </p>
+        <ul style="margin:.4rem 0 0 1rem;font-size:.8rem;color:var(--label-muted);line-height:1.5;">
+          <li>Wire this into a secured AI backend so deals generate directly in-app.</li>
+          <li>Auto-attach generated contracts to specific label accounts.</li>
+          <li>Feed pricing + pack data into a true AI “what should we charge” copilot.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <div class="label-toast" id="labelToast">Saved.</div>
+
+  <script>
+    const ACC_KEY = "tkfm_label_accounts";
+    const PACK_KEY = "tkfm_label_packs";
+    const CONTRACT_KEY = "tkfm_label_contracts";
+
+    function showToast(msg){
+      const el = document.getElementById("labelToast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(()=>{ el.style.display = "none"; }, 1800);
+    }
+
+    function safeParse(key){
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){
+        console.warn("parse err", key, e);
+        return [];
+      }
+    }
+
+    function populateSelects(){
+      const accounts = safeParse(ACC_KEY);
+      const packs = safeParse(PACK_KEY);
+      const contracts = safeParse(CONTRACT_KEY);
+
+      const accSel = document.getElementById("wAccount");
+      const packSel = document.getElementById("wPack");
+      const cSel = document.getElementById("wContract");
+
+      // accounts
+      accSel.innerHTML = "";
+      const accBase = document.createElement("option");
+      accBase.value = "";
+      accBase.textContent = "Select from label accounts…";
+      accSel.appendChild(accBase);
+
+      accounts.forEach((a, idx)=>{
+        const opt = document.createElement("option");
+        opt.value = String(idx);
+        const tag = a.type ? ` (${a.type})` : "";
+        opt.textContent = (a.name || "Unnamed") + tag;
+        accSel.appendChild(opt);
+      });
+
+      // packs
+      packSel.innerHTML = "";
+      const packBase = document.createElement("option");
+      packBase.value = "";
+      packBase.textContent = "No pack / custom deal";
+      packSel.appendChild(packBase);
+
+      packs.forEach((p, idx)=>{
+        const opt = document.createElement("option");
+        opt.value = String(idx);
+        const label = p.name || "Unnamed pack";
+        const code = p.code ? ` [${p.code}]` : "";
+        opt.textContent = label + code;
+        packSel.appendChild(opt);
+      });
+
+      // contracts
+      cSel.innerHTML = "";
+      const cBase = document.createElement("option");
+      cBase.value = "";
+      cBase.textContent = "No template / raw AI draft";
+      cSel.appendChild(cBase);
+
+      contracts.forEach((c, idx)=>{
+        const opt = document.createElement("option");
+        opt.value = String(idx);
+        const type = c.partyType ? ` (${c.partyType})` : "";
+        opt.textContent = (c.name || "Unnamed template") + type;
+        cSel.appendChild(opt);
+      });
+    }
+
+    function getSelectedData(){
+      const accounts = safeParse(ACC_KEY);
+      const packs = safeParse(PACK_KEY);
+      const contracts = safeParse(CONTRACT_KEY);
+
+      const accIndex = document.getElementById("wAccount").value;
+      const packIndex = document.getElementById("wPack").value;
+      const cIndex = document.getElementById("wContract").value;
+
+      const account = accIndex !== "" ? accounts[Number(accIndex)] : null;
+      const pack = packIndex !== "" ? packs[Number(packIndex)] : null;
+      const contract = cIndex !== "" ? contracts[Number(cIndex)] : null;
+
+      return { account, pack, contract };
+    }
+
+    function buildAiPrompt(){
+      const { account, pack, contract } = getSelectedData();
+      const goals = document.getElementById("wGoals").value.trim();
+      const nonNegos = document.getElementById("wNonNegos").value.trim();
+      const tone = document.getElementById("wTone").value.trim();
+
+      let prompt = "You are a contracts expert helping a hybrid radio platform and record label called \"They Krave For Me Records\" and TKFM.\n\n";
+
+      if(account){
+        prompt += "PARTY DETAILS\n";
+        prompt += `- Internal name: ${account.name || "N/A"}\n`;
+        prompt += `- Type: ${account.type || "unknown"} (artist / dj / sponsor / staff)\n`;
+        if(account.email) prompt += `- Email: ${account.email}\n`;
+        if(account.role) prompt += `- Role / lane: ${account.role}\n`;
+        if(account.notes) prompt += `- Internal notes: ${account.notes}\n`;
+        prompt += "\n";
+      } else {
+        prompt += "PARTY DETAILS\n- No specific account selected. Assume a general artist / DJ / sponsor deal.\n\n";
+      }
+
+      if(pack){
+        prompt += "ATTACHED LABEL PACK\n";
+        prompt += `- Pack name: ${pack.name || "N/A"}\n`;
+        if(pack.code) prompt += `- Internal code: ${pack.code}\n`;
+        if(pack.type) prompt += `- Type: ${pack.type}\n`;
+        if(pack.level) prompt += `- Level: ${pack.level}\n`;
+        if(pack.billing) prompt += `- Billing: ${pack.billing}\n`;
+        if(pack.monthly) prompt += `- Monthly: $${Number(pack.monthly).toLocaleString()}\n`;
+        if(pack.upfront) prompt += `- Upfront: $${Number(pack.upfront).toLocaleString()}\n`;
+        if(pack.term) prompt += `- Term / commitment: ${pack.term}\n`;
+
+        const includes = [];
+        if(pack.incRadio) includes.push("TKFM radio rotation");
+        if(pack.incHomepage) includes.push("Homepage / site features");
+        if(pack.incInterview) includes.push("Interview");
+        if(pack.incSocial) includes.push("Social pushes");
+        if(pack.incPlaylist) includes.push("Playlist / mixtape placements");
+        if(pack.incLabelServices) includes.push("Label services / strategy");
+        if(pack.incSponsorLane) includes.push("Sponsor-facing visibility");
+
+        if(includes.length){
+          prompt += `- Included lanes: ${includes.join(", ")}\n`;
+        }
+        if(pack.notes){
+          prompt += `- Pack notes: ${pack.notes}\n`;
+        }
+        prompt += "\n";
+      } else {
+        prompt += "ATTACHED LABEL PACK\n- No specific pack selected. Treat this as a custom deal but optimized for what a serious independent label would typically offer.\n\n";
+      }
+
+      if(contract){
+        prompt += "CONTRACT BLUEPRINT (INTERNAL)\n";
+        prompt += `- Template label: ${contract.name || "N/A"}\n`;
+        if(contract.partyType) prompt += `- Party type: ${contract.partyType}\n`;
+        if(contract.pack) prompt += `- Linked pack code/name: ${contract.pack}\n`;
+        if(contract.term) prompt += `- Term: ${contract.term}\n`;
+        if(contract.revSplit) prompt += `- Revenue split: ${contract.revSplit}\n`;
+        if(contract.territory) prompt += `- Territory: ${contract.territory}\n`;
+        if(contract.deliverables) prompt += `- Deliverables: ${contract.deliverables}\n`;
+        if(contract.obligations) prompt += `- Partner obligations: ${contract.obligations}\n`;
+        if(contract.special) prompt += `- Special clauses: ${contract.special}\n`;
+        if(contract.summary){
+          prompt += `\nPLAIN SUMMARY DRAFT:\n${contract.summary}\n`;
+        }
+        prompt += "\n";
+      } else {
+        prompt += "CONTRACT BLUEPRINT (INTERNAL)\n- No template selected. Draft something from scratch based on the context.\n\n";
+      }
+
+      prompt += "DEAL GOALS / CONTEXT\n";
+      prompt += (goals || "We want a fair, simple deal that protects the company but feels artist- and brand-friendly.") + "\n\n";
+
+      prompt += "NON-NEGOTIABLES\n";
+      prompt += (nonNegos || "Add reasonable non-negotiables around brand safety, clean content, and respecting timelines / deliverables.") + "\n\n";
+
+      prompt += "TONE AND FORMAT\n";
+      prompt += (tone || "Keep the contract modern, readable, and not overly legalese. 2–3 pages, with clear section headings and bullet points where possible.") + "\n\n";
+
+      prompt += "TASK\n";
+      prompt += "Using all of the above, draft a full contract in English between the company and the party. Make sure the deal structure, money, and responsibilities are consistent with industry norms for indie labels and radio / media platforms.";
+
+      document.getElementById("wPrompt").value = prompt;
+      showToast("AI prompt generated.");
+    }
+
+    function buildSummary(){
+      const { account, pack, contract } = getSelectedData();
+      const goals = document.getElementById("wGoals").value.trim();
+      const nonNegos = document.getElementById("wNonNegos").value.trim();
+
+      let summary = "";
+
+      if(account){
+        summary += `This deal is for ${account.name || "an artist / DJ / sponsor"} (${account.type || "role unknown"}).`;
+        if(account.role) summary += ` They’re considered: ${account.role}.`;
+        if(account.notes) summary += ` Internal notes: ${account.notes}.`;
+        summary += "\n\n";
+      } else {
+        summary += "This is a general deal (no specific account selected yet).\n\n";
+      }
+
+      if(pack){
+        summary += `We are basing this on the "${pack.name || "Unnamed"}" pack`;
+        if(pack.code) summary += ` [${pack.code}]`;
+        summary += ".\n";
+
+        const moneyBits = [];
+        if(pack.billing) moneyBits.push(`billing: ${pack.billing}`);
+        if(pack.monthly) moneyBits.push(`monthly: $${Number(pack.monthly).toLocaleString()}`);
+        if(pack.upfront) moneyBits.push(`upfront: $${Number(pack.upfront).toLocaleString()}`);
+        if(moneyBits.length) summary += "- Money: " + moneyBits.join(", ") + ".\n";
+
+        if(pack.term) summary += `- Term: ${pack.term}.\n`;
+
+        const includes = [];
+        if(pack.incRadio) includes.push("TKFM radio rotation");
+        if(pack.incHomepage) includes.push("homepage / feature placement");
+        if(pack.incInterview) includes.push("interview");
+        if(pack.incSocial) includes.push("social pushes");
+        if(pack.incPlaylist) includes.push("playlist / mixtape placements");
+        if(pack.incLabelServices) includes.push("label services / strategy");
+        if(pack.incSponsorLane) includes.push("sponsor-facing visibility");
+
+        if(includes.length){
+          summary += "- Includes: " + includes.join(", ") + ".\n";
+        }
+        if(pack.notes){
+          summary += `- Pack notes: ${pack.notes}\n`;
+        }
+        summary += "\n";
+      }
+
+      if(contract){
+        summary += `We want the contract to follow the spirit of template "${contract.name || "Unnamed"}".\n`;
+        if(contract.revSplit) summary += `- Revenue split: ${contract.revSplit}.\n`;
+        if(contract.territory) summary += `- Territory: ${contract.territory}.\n`;
+        if(contract.term) summary += `- Term: ${contract.term}.\n`;
+        if(contract.deliverables) summary += `- What we provide: ${contract.deliverables}.\n`;
+        if(contract.obligations) summary += `- What they must do: ${contract.obligations}.\n`;
+        if(contract.special) summary += `- Special clauses: ${contract.special}.\n`;
+        summary += "\n";
+      }
+
+      if(goals){
+        summary += "Goals: " + goals + "\n\n";
+      }
+      if(nonNegos){
+        summary += "Non-negotiables: " + nonNegos + "\n\n";
+      }
+
+      summary += "This summary is for internal eyes or to quickly explain the deal to the artist / DJ / sponsor before sending full paperwork.";
+
+      document.getElementById("wSummaryOut").value = summary;
+      showToast("Summary generated.");
+    }
+
+    function copyField(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.select();
+      el.setSelectionRange(0, 99999);
+      try{
+        document.execCommand("copy");
+        showToast("Copied to clipboard.");
+      }catch(e){
+        showToast("Could not auto-copy — select and copy manually.");
+      }
+    }
+
+    document.getElementById("btnGenerate").addEventListener("click", buildAiPrompt);
+    document.getElementById("btnSummary").addEventListener("click", buildSummary);
+
+    populateSelects();
+  </script>
+</body>
+</html>

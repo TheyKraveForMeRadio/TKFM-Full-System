@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM Owner Login – They Krave For Me Radio</title>
+
+  <style>
+    :root {
+      --tkfm-bg: radial-gradient(circle at top left,#020014,#020617 55%,#000000 100%);
+      --tkfm-card-bg: rgba(15,23,42,0.98);
+      --tkfm-border-soft: rgba(148,163,184,0.35);
+      --tkfm-neon-pink: #ff007f;
+      --tkfm-neon-cyan: #06b6d4;
+      --tkfm-neon-gold: #facc15;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--tkfm-bg);
+      color:#e2e8f0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:1.5rem .75rem;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .tkfm-bg-orbit {
+      position:fixed;
+      inset:-40%;
+      pointer-events:none;
+      z-index:-2;
+      background:conic-gradient(
+        from 240deg,
+        rgba(255,0,128,0.38),
+        rgba(56,189,248,0.32),
+        rgba(250,204,21,0.3),
+        rgba(94,234,212,0.3),
+        rgba(147,51,234,0.35)
+      );
+      filter:blur(40px);
+      mix-blend-mode:screen;
+      animation:orbit 36s linear infinite;
+    }
+
+    .tkfm-bg-glow {
+      position:fixed;
+      inset:-20%;
+      pointer-events:none;
+      z-index:-3;
+      background:
+        radial-gradient(circle at 0 0,rgba(255,0,128,0.4),transparent 65%),
+        radial-gradient(circle at 100% 100%,rgba(56,189,248,0.4),transparent 65%);
+      filter:blur(12px);
+      animation:glow 26s ease-in-out infinite alternate;
+    }
+
+    @keyframes orbit {
+      0% { transform:rotate(0deg) scale(1.08); }
+      100% { transform:rotate(360deg) scale(1.08); }
+    }
+    @keyframes glow {
+      0% { transform:translate3d(0,0,0); }
+      100% { transform:translate3d(-3%,2%,0); }
+    }
+
+    .tkfm-card {
+      position:relative;
+      width:100%;
+      max-width:420px;
+      background:var(--tkfm-card-bg);
+      border-radius:20px;
+      padding:1.4rem 1.35rem 1.6rem;
+      border:1px solid var(--tkfm-border-soft);
+      box-shadow:0 25px 60px rgba(15,23,42,0.95);
+      overflow:hidden;
+    }
+    .tkfm-card::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:conic-gradient(
+        from 200deg,
+        rgba(255,0,128,0.3),
+        rgba(56,189,248,0.22),
+        rgba(250,204,21,0.18),
+        rgba(147,51,234,0.24),
+        rgba(255,0,128,0.3)
+      );
+      filter:blur(32px);
+      opacity:.36;
+      z-index:-1;
+    }
+
+    .tkfm-logo {
+      font-weight:900;
+      font-size:1.05rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:rgba(148,163,184,0.96);
+      margin-bottom:.45rem;
+    }
+
+    .tkfm-title {
+      font-size:1.65rem;
+      font-weight:900;
+      margin:0;
+      background:linear-gradient(120deg,var(--tkfm-neon-pink),var(--tkfm-neon-gold),var(--tkfm-neon-cyan));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 18px rgba(255,0,128,0.9),0 0 28px rgba(56,189,248,0.9);
+    }
+
+    .tkfm-subtitle {
+      margin-top:.4rem;
+      font-size:.86rem;
+      color:rgba(203,213,225,0.98);
+    }
+    .tkfm-subtitle span { color:var(--tkfm-neon-gold); }
+
+    .tkfm-badge {
+      margin-top:.7rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      border-radius:999px;
+      padding:.25rem .7rem;
+      border:1px solid rgba(250,204,21,0.95);
+      background:rgba(113,63,18,0.98);
+      color:#fef3c7;
+      font-size:.75rem;
+    }
+    .tkfm-badge span {
+      font-weight:700;
+      color:var(--tkfm-neon-gold);
+    }
+
+    form {
+      margin-top:1rem;
+    }
+
+    label {
+      display:block;
+      margin-bottom:.18rem;
+      font-size:.76rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(148,163,184,0.98);
+    }
+
+    input, select {
+      width:100%;
+      border-radius:11px;
+      border:1px solid rgba(51,65,85,0.95);
+      background:rgba(15,23,42,0.98);
+      color:#e5e7eb;
+      padding:.7rem .75rem;
+      font-size:.86rem;
+      outline:none;
+      transition:border-color .18s,box-shadow .18s,background .18s;
+      margin-bottom:.75rem;
+    }
+    input:focus, select:focus {
+      border-color:rgba(56,189,248,1);
+      box-shadow:0 0 0 1px rgba(56,189,248,0.8),0 0 18px rgba(56,189,248,0.8);
+      background:rgba(15,23,42,1);
+    }
+
+    .hint {
+      font-size:.72rem;
+      color:rgba(148,163,184,0.9);
+      margin:-.5rem 0 .7rem;
+    }
+
+    button {
+      width:100%;
+      border-radius:999px;
+      border:none;
+      padding:.75rem;
+      font-size:.9rem;
+      font-weight:700;
+      cursor:pointer;
+      color:#020617;
+      background:linear-gradient(120deg,#f97316,var(--tkfm-neon-pink),var(--tkfm-neon-cyan));
+      text-shadow:0 0 10px rgba(255,255,255,0.85);
+      box-shadow:0 18px 35px rgba(15,23,42,0.95);
+      transition:transform .16s,box-shadow .16s,filter .16s;
+    }
+    button:hover {
+      transform:translateY(-1px) scale(1.02);
+      filter:brightness(1.02);
+      box-shadow:0 22px 42px rgba(15,23,42,1);
+    }
+
+    .foot {
+      margin-top:.9rem;
+      font-size:.72rem;
+      color:rgba(148,163,184,0.96);
+      display:flex;
+      justify-content:space-between;
+      gap:.5rem;
+      flex-wrap:wrap;
+    }
+    .foot a {
+      color:#e5e7eb;
+      text-decoration:none;
+      border-bottom:1px dashed rgba(148,163,184,0.8);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="tkfm-bg-orbit"></div>
+  <div class="tkfm-bg-glow"></div>
+
+  <div class="tkfm-card">
+    <div class="tkfm-logo">They Krave For Me Radio</div>
+    <h1 class="tkfm-title">Owner Login · God View</h1>
+    <p class="tkfm-subtitle">
+      Log in as <span>Owner / Founder</span> to unlock God View, AI DJ Engine controls,
+      label accounts, and sponsor engines.
+    </p>
+
+    <div class="tkfm-badge">
+      🔒 <span>Private Console</span> – not for artists or DJs
+    </div>
+
+    <form id="ownerLoginForm">
+      <label for="role">Role</label>
+      <select id="role" name="role">
+        <option value="owner">Owner / Founder</option>
+        <option value="artist">Artist</option>
+        <option value="dj">DJ</option>
+        <option value="label">Label</option>
+        <option value="sponsor">Sponsor</option>
+      </select>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="you@tkfmradio.com" required />
+
+      <label for="ownerKey">Owner Key (for Owner role)</label>
+      <input id="ownerKey" type="password" placeholder="Paste TKFM_OWNER_KEY here (owner only)" />
+      <div class="hint">
+        For Owner login, this must match your secret <code>TKFM_OWNER_KEY</code> value in Netlify.
+        Artists / DJs / labels do not use this field.
+      </div>
+
+      <button type="submit">Enter Control Room</button>
+    </form>
+
+    <div class="foot">
+      <span><strong>Tip:</strong> Set TKFM_OWNER_KEY in Netlify env, then paste it here to unlock owner-only APIs.</span>
+      <span><a href="/v2/dashboard.html">Back to main dashboard</a></span>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("ownerLoginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const role = document.getElementById("role").value;
+      const email = document.getElementById("email").value.trim();
+      const ownerKey = document.getElementById("ownerKey").value.trim();
+
+      if (!email) {
+        alert("Enter your email first.");
+        return;
+      }
+
+      // Save basic identity
+      localStorage.setItem("tkfm_email", email);
+      localStorage.setItem("tkfm_role", role);
+
+      if (role === "owner") {
+        if (!ownerKey) {
+          alert("For Owner login, paste your TKFM_OWNER_KEY. This must match Netlify env.");
+          return;
+        }
+        // Store owner key for calling protected functions
+        localStorage.setItem("tkfm_owner_key", ownerKey);
+
+        alert("✅ Owner mode unlocked. Loading God View…");
+        window.location.href = "/v2/god-view.html";
+        return;
+      }
+
+      // Non-owner roles (basic front-end identity only for now)
+      localStorage.removeItem("tkfm_owner_key");
+
+      let target = "/v2/dashboard.html";
+      if (role === "label") target = "/v2/label-accounts.html";
+      if (role === "dj") target = "/v2/dashboard.html";
+      if (role === "artist") target = "/v2/dashboard.html";
+      if (role === "sponsor") target = "/v2/dashboard.html";
+
+      alert("✅ Logged in as " + role.toUpperCase() + ". Redirecting…");
+      window.location.href = target;
+    });
+  </script>
+</body>
+</html>

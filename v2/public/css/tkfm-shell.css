@@ -1,11 +1,4 @@
-:root{
-  --bg:#020617; --purple:#a855f7; --pink:#ec4899; --cyan:#22d3ee; --blue:#3b82f6; --gold:#facc15;
-}
+:root{--bg:#020617;--purple:#a855f7;--pink:#ec4899;--cyan:#22d3ee;--blue:#3b82f6;--gold:#facc15}
 html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:#e2e8f0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-}
-a{color:#93c5fd;font-weight:800;text-decoration:none}
+body{margin:0;background:var(--bg);color:#e2e8f0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:#93c5fd;font-weight:900;text-decoration:none}

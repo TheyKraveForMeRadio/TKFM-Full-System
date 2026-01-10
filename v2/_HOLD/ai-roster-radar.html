@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AI Roster Radar — TKFM & They Krave For Me Records</title>
+
+  <link rel="stylesheet" href="/v2/label-theme.css">
+
+  <style>
+    :root{
+      --bg-deep:#020617;
+      --bg-card:rgba(15,23,42,.96);
+      --border-soft:rgba(148,163,184,.6);
+      --accent-cyan:#22d3ee;
+      --accent-mag:#e879f9;
+      --accent-lime:#a3e635;
+    }
+    body{
+      background:
+        radial-gradient(circle at 50% -20%,#1e293b,#020617 60%);
+      color:#e5e7eb;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    main{
+      max-width:1180px;
+      margin:0 auto;
+      padding:1.6rem .9rem 2.8rem;
+    }
+    h1{
+      font-size:2.4rem;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:#e5e7eb;
+      text-shadow:0 0 26px rgba(56,189,248,.75);
+    }
+    .sub{
+      color:#9ca3af;
+      max-width:780px;
+      font-size:.9rem;
+    }
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      margin-top:.6rem;
+    }
+    .pill{
+      font-size:.75rem;
+      padding:.25rem .65rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.7);
+      background:rgba(15,23,42,.96);
+      color:#e5e7eb;
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .pill span{
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--accent-cyan);
+      box-shadow:0 0 10px var(--accent-cyan);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:2.1fr 1.9fr;
+      gap:1.3rem;
+      margin-top:1.5rem;
+    }
+    @media (max-width:900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .card{
+      position:relative;
+      background:var(--bg-card);
+      border-radius:22px;
+      border:1px solid rgba(56,189,248,.45);
+      padding:1.2rem 1.1rem 1.4rem;
+      overflow:hidden;
+      box-shadow:0 0 30px rgba(15,23,42,.9);
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background:
+        radial-gradient(circle at 0 0,#22d3ee1f,transparent 60%),
+        radial-gradient(circle at 100% 0,#a855f71f,transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+    }
+    .card-inner{position:relative;z-index:1;}
+    .card h2{
+      font-size:1.12rem;
+      font-weight:700;
+      color:#e5e7eb;
+      margin-bottom:.15rem;
+    }
+    .help{
+      font-size:.8rem;
+      color:#9ca3af;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:.7rem;
+      margin-top:.8rem;
+    }
+    .summary{
+      border-radius:14px;
+      border:1px solid rgba(56,189,248,.6);
+      background:radial-gradient(circle at 0 0,#22d3ee22,#020617);
+      padding:.55rem .7rem;
+      font-size:.8rem;
+    }
+    .summary-label{
+      color:#9ca3af;
+      font-size:.75rem;
+      margin-bottom:.16rem;
+    }
+    .summary-value{
+      font-weight:700;
+      font-size:.95rem;
+    }
+
+    .radar-shell{
+      position:relative;
+      margin-top:1.2rem;
+      aspect-ratio:1/1;
+      border-radius:999px;
+      background:radial-gradient(circle,#0b1120,#020617);
+      border:1px solid rgba(56,189,248,.55);
+      overflow:hidden;
+      box-shadow:
+        0 0 30px rgba(56,189,248,.5),
+        0 0 60px rgba(168,85,247,.35);
+    }
+    .radar-grid{
+      position:absolute;
+      inset:10%;
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,.5);
+    }
+    .radar-grid::before,
+    .radar-grid::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:999px;
+      border:1px dashed rgba(30,64,175,.6);
+      transform:scale(.65);
+    }
+    .radar-grid::after{
+      transform:scale(.35);
+    }
+    .radar-line{
+      position:absolute;
+      inset:0;
+      background:conic-gradient(from 0deg,rgba(56,189,248,.6),transparent 40%);
+      mix-blend-mode:screen;
+      animation:spin 10s linear infinite;
+    }
+    @keyframes spin{
+      to{transform:rotate(360deg);}
+    }
+    .radar-dot{
+      position:absolute;
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      background:var(--accent-mag);
+      box-shadow:0 0 14px var(--accent-mag);
+      transform:translate(-50%,-50%);
+    }
+    .radar-dot.hot{
+      background:var(--accent-lime);
+      box-shadow:0 0 16px var(--accent-lime);
+    }
+
+    .radar-legend{
+      margin-top:.7rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      font-size:.75rem;
+      color:#9ca3af;
+    }
+    .radar-legend span{
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .dot-swatch{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:.78rem;
+      margin-top:.7rem;
+      border-radius:14px;
+      overflow:hidden;
+    }
+    thead{
+      background:radial-gradient(circle at 0 0,#22d3ee33,#020617);
+    }
+    th,td{
+      padding:.45rem .55rem;
+      text-align:left;
+      border-bottom:1px solid rgba(30,64,175,.6);
+      vertical-align:top;
+    }
+    th{
+      font-weight:600;
+      color:#bfdbfe;
+    }
+    tbody tr:nth-child(even){
+      background:rgba(15,23,42,.8);
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      padding:.16rem .5rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.7);
+      font-size:.7rem;
+      color:#e5e7eb;
+    }
+    .tag.up{
+      border-color:#22c55e;
+      color:#bbf7d0;
+    }
+    .tag.down{
+      border-color:#fb923c;
+      color:#fed7aa;
+    }
+    .tag.hold{
+      border-color:#38bdf8;
+      color:#bae6fd;
+    }
+    .note{
+      font-size:.78rem;
+      color:#9ca3af;
+      margin-top:.6rem;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      border-radius:999px;
+      padding:.45rem .9rem;
+      border:none;
+      font-size:.8rem;
+      font-weight:700;
+      cursor:pointer;
+      background:linear-gradient(135deg,#0ea5e9,#22c55e);
+      color:#0b1120;
+      margin-top:.65rem;
+      box-shadow:0 0 20px rgba(34,197,94,.75);
+      transition:.18s;
+    }
+    .btn:hover{transform:scale(1.03);}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>AI Roster Radar</h1>
+    <p class="sub">
+      Owner-only insight wall that reads your **label accounts**, **autopilot pricing metrics** and
+      **sponsor slots** and turns them into a neon radar: who’s hot, what to raise, what to protect.
+      No external APIs — runs fully in the browser on your current Netlify tier.
+    </p>
+    <div class="pill-row">
+      <div class="pill"><span></span> Reads <code>tkfm_label_accounts</code></div>
+      <div class="pill"><span></span> Reads <code>tkfm_autopilot_metrics</code></div>
+      <div class="pill"><span></span> Reads <code>tkfm_sponsor_slots</code></div>
+    </div>
+  </header>
+
+  <section class="grid">
+    <!-- LEFT: ROSTER + RADAR -->
+    <div class="card">
+      <div class="card-inner">
+        <h2>Roster heat — artists, DJs, sponsors</h2>
+        <p class="help">
+          High level count of your people + a glowing radar of **plans/packs** with the most activity.
+          Think of this as “who’s driving the platform right now”.
+        </p>
+
+        <div class="summary-grid" id="rosterSummary">
+          <div class="summary">
+            <div class="summary-label">Artists</div>
+            <div class="summary-value" id="sumArtists">0</div>
+          </div>
+          <div class="summary">
+            <div class="summary-label">DJs</div>
+            <div class="summary-value" id="sumDJs">0</div>
+          </div>
+          <div class="summary">
+            <div class="summary-label">Sponsors</div>
+            <div class="summary-value" id="sumSponsors">0</div>
+          </div>
+          <div class="summary">
+            <div class="summary-label">Total label accounts</div>
+            <div class="summary-value" id="sumAccounts">0</div>
+          </div>
+        </div>
+
+        <div class="radar-shell" id="radarShell">
+          <div class="radar-grid"></div>
+          <div class="radar-line"></div>
+          <!-- dots injected -->
+        </div>
+
+        <div class="radar-legend">
+          <span><span class="dot-swatch" style="background:var(--accent-lime);box-shadow:0 0 12px var(--accent-lime);"></span> High heat (raise / strong lane)</span>
+          <span><span class="dot-swatch" style="background:var(--accent-mag);box-shadow:0 0 12px var(--accent-mag);"></span> Normal lane</span>
+        </div>
+
+        <p class="note">
+          Heat is estimated from **Autopilot Pricing metrics**: signups, churn, and signals.
+          As your Feature Revenue Engine and Stripe data grow, this radar becomes more accurate.
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT: MONEY SIGNALS -->
+    <div class="card">
+      <div class="card-inner">
+        <h2>Money signals — pricing + sponsors</h2>
+        <p class="help">
+          Snapshot of what your engines want to do with money: raise, hold, or lower. Pulls
+          directly from <strong>Autopilot Pricing</strong> and <strong>Autopilot Sponsors</strong>.
+        </p>
+
+        <div class="summary-grid">
+          <div class="summary">
+            <div class="summary-label">Plans / packs — Raise</div>
+            <div class="summary-value" id="sumPlansUp">0</div>
+          </div>
+          <div class="summary">
+            <div class="summary-label">Plans / packs — Lower</div>
+            <div class="summary-value" id="sumPlansDown">0</div>
+          </div>
+          <div class="summary">
+            <div class="summary-label">Sponsor slots — Raise</div>
+            <div class="summary-value" id="sumSlotsUp">0</div>
+          </div>
+          <div class="summary">
+            <div class="summary-label">Sponsor slots — Lower</div>
+            <div class="summary-value" id="sumSlotsDown">0</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Lane</th>
+              <th>Signal</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="hotTable">
+            <!-- rows injected -->
+          </tbody>
+        </table>
+
+        <button class="btn" id="toEngines">
+          ⚙️ Open Autopilot engines
+        </button>
+
+        <p class="note">
+          Use this list as your “boardroom snapshot” before you change any Stripe price or sponsor
+          number. If it’s glowing green, it’s telling you: **you’re allowed to charge more**.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM: QUICK FLAGS -->
+  <section class="card" style="margin-top:1.4rem;">
+    <div class="card-inner">
+      <h2>AI flags — simple language summary</h2>
+      <p class="help">
+        One-paragraph explanation of what your universe looks like right now in plain English.
+      </p>
+      <p class="note" id="plainSummary">
+        Loading roster + metrics…
+      </p>
+    </div>
+  </section>
+</main>
+
+<script>
+  const ACC_KEY = "tkfm_label_accounts";
+  const METRIC_KEY = "tkfm_autopilot_metrics";
+  const SLOT_KEY = "tkfm_sponsor_slots";
+
+  function safeParse(key){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return [];
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed)) return parsed;
+      if(key === METRIC_KEY && parsed && typeof parsed === "object") return parsed;
+      return [];
+    }catch(e){
+      return key === METRIC_KEY ? {} : [];
+    }
+  }
+
+  function loadRosterSummary(){
+    const accounts = safeParse(ACC_KEY) || [];
+    let artists = 0, djs = 0, sponsors = 0;
+    accounts.forEach(a=>{
+      const t = (a.type || a.role || "").toLowerCase();
+      if(t.includes("artist")) artists++;
+      else if(t.includes("dj")) djs++;
+      else if(t.includes("sponsor") || t.includes("brand")) sponsors++;
+    });
+    document.getElementById("sumArtists").textContent = String(artists);
+    document.getElementById("sumDJs").textContent = String(djs);
+    document.getElementById("sumSponsors").textContent = String(sponsors);
+    document.getElementById("sumAccounts").textContent = String(accounts.length);
+    return { artists, djs, sponsors, total: accounts.length };
+  }
+
+  function loadMoneySignals(){
+    const metrics = safeParse(METRIC_KEY) || {};
+    const slots = safeParse(SLOT_KEY) || [];
+
+    let plansUp = 0, plansDown = 0;
+    const hotPlans = [];
+
+    if(metrics && typeof metrics === "object"){
+      Object.entries(metrics).forEach(([key, m])=>{
+        if(!m) return;
+        const sig = m.signal || "hold";
+        const signups = Number(m.signups || 0);
+        const churn = Number(m.churn || 0);
+        const demand = m.demand || "just_right";
+        if(sig === "up") plansUp++;
+        if(sig === "down") plansDown++;
+
+        const heat = signups - churn + (sig === "up" ? 3 : sig === "down" ? -2 : 0);
+        hotPlans.push({
+          name:key,
+          lane:"pricing",
+          signal:sig,
+          heat,
+          signups,
+          churn,
+          demand
+        });
+      });
+    }
+
+    let slotsUp = 0, slotsDown = 0;
+    const hotSlots = [];
+
+    slots.forEach(s=>{
+      const sig = s.signal || "hold";
+      if(sig === "up") slotsUp++;
+      if(sig === "down") slotsDown++;
+
+      const sold = Number(s.sold || 0);
+      const total = Number(s.totalSlots || 0);
+      const fillRate = total > 0 ? sold/total : 0;
+      const quality = s.quality || "medium";
+      const heat = (fillRate*10) + (sig === "up" ? 4 : sig === "down" ? -2 : 0) + (quality === "high" ? 2 : quality === "low" ? -1 : 0);
+
+      hotSlots.push({
+        name:s.name || s.code || "Sponsor slot",
+        lane:"sponsor",
+        signal:sig,
+        heat,
+        info:`Fill ${(fillRate*100).toFixed(0)}%, quality ${quality}`
+      });
+    });
+
+    document.getElementById("sumPlansUp").textContent = String(plansUp);
+    document.getElementById("sumPlansDown").textContent = String(plansDown);
+    document.getElementById("sumSlotsUp").textContent = String(slotsUp);
+    document.getElementById("sumSlotsDown").textContent = String(slotsDown);
+
+    return { hotPlans, hotSlots, plansUp, plansDown, slotsUp, slotsDown };
+  }
+
+  function renderRadar(hotPlans){
+    const shell = document.getElementById("radarShell");
+    Array.from(shell.querySelectorAll(".radar-dot")).forEach(el=>el.remove());
+
+    if(!hotPlans.length) return;
+
+    const maxHeat = hotPlans.reduce((max, p)=>Math.max(max, p.heat), hotPlans[0].heat || 1) || 1;
+
+    hotPlans.forEach((p, idx)=>{
+      const dot = document.createElement("div");
+      dot.className = "radar-dot";
+
+      if(p.signal === "up") dot.classList.add("hot");
+
+      const angle = (idx / hotPlans.length) * Math.PI * 2;
+      const radiusNorm = Math.min(Math.max((p.heat || 1) / maxHeat, 0.2), 1);
+      const center = 50;
+      const r = 35 * radiusNorm;
+      const x = center + r * Math.cos(angle);
+      const y = center + r * Math.sin(angle);
+
+      dot.style.left = x + "%";
+      dot.style.top = y + "%";
+      dot.title = `${p.name}\nSignal: ${p.signal || "hold"}\nSignups: ${p.signups || 0}, Churn: ${p.churn || 0}`;
+
+      shell.appendChild(dot);
+    });
+  }
+
+  function renderHotTable(hotPlans, hotSlots){
+    const body = document.getElementById("hotTable");
+    body.innerHTML = "";
+
+    const combined = [
+      ...hotPlans,
+      ...hotSlots
+    ].sort((a,b)=> (b.heat || 0) - (a.heat || 0)).slice(0,8);
+
+    if(!combined.length){
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 4;
+      td.style.fontSize = ".8rem";
+      td.style.color = "#9ca3af";
+      td.textContent = "No metrics found yet. Run Autopilot Pricing and Autopilot Sponsors at least once, then refresh.";
+      tr.appendChild(td);
+      body.appendChild(tr);
+      return;
+    }
+
+    combined.forEach(item=>{
+      const tr = document.createElement("tr");
+
+      const nameTd = document.createElement("td");
+      nameTd.textContent = item.name || "Unnamed";
+      tr.appendChild(nameTd);
+
+      const laneTd = document.createElement("td");
+      laneTd.textContent = item.lane === "sponsor" ? "Sponsor slot" : "Plan / pack";
+      tr.appendChild(laneTd);
+
+      const sigTd = document.createElement("td");
+      const tag = document.createElement("span");
+      const sig = item.signal || "hold";
+      tag.className = "tag " + (sig === "up" ? "up" : sig === "down" ? "down" : "hold");
+      tag.textContent =
+        sig === "up" ? "Raise" :
+        sig === "down" ? "Lower" : "Hold";
+      sigTd.appendChild(tag);
+      tr.appendChild(sigTd);
+
+      const infoTd = document.createElement("td");
+      if(item.lane === "sponsor"){
+        infoTd.textContent = item.info || "";
+      }else{
+        infoTd.textContent = `Signups: ${item.signups || 0}, Churn: ${item.churn || 0}, Demand: ${item.demand || "n/a"}`;
+      }
+      tr.appendChild(infoTd);
+
+      body.appendChild(tr);
+    });
+  }
+
+  function renderPlainSummary(roster, money){
+    const totalHot = (money.plansUp || 0) + (money.slotsUp || 0);
+    const totalProtect = (money.plansDown || 0) + (money.slotsDown || 0);
+
+    let text = "";
+
+    if(roster.total === 0){
+      text += "No label accounts are loaded yet. Once you start adding artists, DJs and sponsors into Label Accounts, this wall becomes your high-level control screen. ";
+    }else{
+      text += `You currently have ${roster.total} label accounts in the system (${roster.artists} artists, ${roster.djs} DJs, ${roster.sponsors} sponsors). `;
+    }
+
+    if(totalHot === 0 && totalProtect === 0){
+      text += "No active price or sponsor signals yet — run Autopilot Pricing and Autopilot Sponsors at least once to see what lanes want to move.";
+    }else{
+      text += `Across pricing and sponsors, ${totalHot} lanes are candidates to raise, while ${totalProtect} lanes should be protected or lowered. `;
+      if(money.plansUp > 0){
+        text += `The pricing engine sees ${money.plansUp} plan/pack lanes that could safely increase. `;
+      }
+      if(money.slotsUp > 0){
+        text += `The sponsor engine sees ${money.slotsUp} sponsor slots with strong fill or renewal rates. `;
+      }
+    }
+
+    document.getElementById("plainSummary").textContent = text;
+  }
+
+  document.getElementById("toEngines").addEventListener("click", ()=>{
+    // Quick route back to Control Room pricing cluster
+    window.location.href = "/v2/ai-control-room.html";
+  });
+
+  (function init(){
+    const roster = loadRosterSummary();
+    const money = loadMoneySignals();
+    renderRadar(money.hotPlans || []);
+    renderHotTable(money.hotPlans || [], money.hotSlots || []);
+    renderPlainSummary(roster, money);
+  })();
+</script>
+</body>
+</html>

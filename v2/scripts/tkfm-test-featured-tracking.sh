@@ -8,12 +8,14 @@ set -euo pipefail
 #
 # Usage:
 #   ./scripts/tkfm-set-owner-key.sh --clipboard
+#   ./scripts/tkfm-sync-owner-key-to-dotenv.sh
+#   netlify dev --port 8888
 #   ./scripts/tkfm-test-featured-tracking.sh [id]
 
 ID="${1:-tkfm_test_featured_$(date +%s)}"
 BASE="http://localhost:8888"
 
-KEY="$(./scripts/tkfm-owner-key.sh | tr -d '\r\n' | xargs)"
+KEY="$(./scripts/tkfm-owner-key.sh | tr -d '\r\n' | xargs || true)"
 if [ -z "${KEY}" ]; then
   echo "FAIL: set owner key first:"
   echo "  ./scripts/tkfm-set-owner-key.sh --clipboard"
@@ -32,27 +34,26 @@ curl -sS -X POST "${BASE}/.netlify/functions/featured-media-track" \
   --data "{\"id\":\"${ID}\",\"event\":\"click\"}" | cat
 echo
 
-echo "== FETCH stats (owner) =="
-curl -sS -X GET "${BASE}/.netlify/functions/featured-media-stats-admin" \
-  -H "x-tkfm-owner-key: ${KEY}" | python - <<'PY'
-import sys, json
-data = json.load(sys.stdin)
-if not data.get("ok"):
-  print("FAIL:", data.get("error","stats failed"))
-  raise SystemExit(3)
-stats = data.get("stats") or []
-print("stats_count:", len(stats))
-print("top_5_ids:", [s.get("id") for s in stats[:5]])
-PY
+echo "== FETCH stats (owner raw) =="
+STATS_JSON="$(curl -sS -X GET "${BASE}/.netlify/functions/featured-media-stats-admin" \
+  -H "x-tkfm-owner-key: ${KEY}" || true)"
+
+echo "${STATS_JSON}" | head -c 5000
 echo
 
-echo "== GREP your id =="
-ID="${ID}" KEY="${KEY}" curl -sS -X GET "${BASE}/.netlify/functions/featured-media-stats-admin" \
-  -H "x-tkfm-owner-key: ${KEY}" | python - <<PY
-import sys, json, os
-ID = os.environ.get("ID","")
-data = json.load(sys.stdin)
-stats = data.get("stats") or []
-hit = [s for s in stats if str(s.get("id","")) == ID]
-print(json.dumps(hit[0] if hit else {"not_found": ID}, indent=2))
-PY
+echo "== PARSE id from stats (node) =="
+ID="${ID}" STATS_JSON="${STATS_JSON}" node - <<'NODE'
+const ID = process.env.ID || '';
+const raw = process.env.STATS_JSON || '';
+let data;
+try { data = JSON.parse(raw); } catch (e) { console.log('FAIL: stats not JSON'); process.exit(3); }
+
+if (!data.ok) {
+  console.log('FAIL:', data.error || 'stats failed');
+  process.exit(4);
+}
+
+const stats = data.stats || [];
+const hit = stats.find(s => String(s.id||'') === String(ID));
+console.log(JSON.stringify(hit || { not_found: ID }, null, 2));
+NODE

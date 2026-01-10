@@ -1,7 +1,6 @@
-// TKFM Subscription Guard (Server-Verified)
-// Requires: netlify/functions/subscription-check.js
-// Reads customer email from localStorage (tkfm_customer_email)
-// Confirms active/trialing subscriptions, then syncs tkfm_user_features
+// TKFM Subscription Guard (Client helper)
+// Depends on: /.netlify/functions/subscription-check?email=...
+// Syncs tkfm_user_features to match active Stripe subscriptions (active/trialing)
 
 (function () {
   const LS_FEATURES = 'tkfm_user_features';
@@ -16,20 +15,6 @@
     localStorage.setItem(LS_FEATURES, JSON.stringify(Array.from(new Set(arr || []))));
   }
 
-  function toast(msg, ok) {
-    try {
-      const el = document.createElement('div');
-      el.className = 'toast';
-      el.innerHTML = `
-        <div class="rounded-2xl border ${ok ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100' : 'border-red-500/40 bg-red-500/10 text-red-100'}
-          px-4 py-3 text-sm font-semibold shadow-xl backdrop-blur-xl">
-          ${String(msg || '')}
-        </div>`;
-      document.body.appendChild(el);
-      setTimeout(() => { el.remove(); }, 5200);
-    } catch (e) {}
-  }
-
   async function checkByEmail(email) {
     const url = '/.netlify/functions/subscription-check?email=' + encodeURIComponent(String(email || '').trim().toLowerCase());
     const res = await fetch(url);
@@ -38,26 +23,20 @@
     return { ok: true, activePlanIds: Array.isArray(out.activePlanIds) ? out.activePlanIds : [] };
   }
 
-  // Sync localStorage features against active subscriptions for the keys we care about
   async function sync(requiredPlans) {
     const email = String(localStorage.getItem(LS_EMAIL) || '').trim();
-    if (!email) {
-      return { ok: false, reason: 'missing_email', activePlanIds: [] };
-    }
+    if (!email) return { ok: false, reason: 'missing_email', activePlanIds: [] };
 
     let data;
-    try {
-      data = await checkByEmail(email);
-    } catch (e) {
-      return { ok: false, reason: 'network', activePlanIds: [] };
-    }
+    try { data = await checkByEmail(email); }
+    catch (e) { return { ok: false, reason: 'network', activePlanIds: [] }; }
 
     const active = new Set(data.activePlanIds || []);
     const req = (requiredPlans || []).filter(Boolean);
 
     const feats = getFeatures();
 
-    // Remove any required plan that is NOT active (server says canceled)
+    // Remove any required plan that is not active
     const kept = feats.filter(k => {
       if (!req.includes(k)) return true;
       return active.has(k);
@@ -69,7 +48,6 @@
     }
 
     setFeatures(kept);
-
     return { ok: true, activePlanIds: Array.from(active), email };
   }
 
@@ -79,7 +57,6 @@
     const unlockedEl = opts && opts.unlockedEl ? opts.unlockedEl : document.getElementById('unlocked');
     const msgEl = opts && opts.msgEl ? opts.msgEl : null;
 
-    // If no required plans, allow
     if (!required.length) return true;
 
     const r = await sync(required);
@@ -103,7 +80,6 @@
     return has;
   }
 
-  // Expose
   window.TKFM_SUBSCRIPTION_SYNC = sync;
   window.TKFM_REQUIRE_ANY_SUB = requireAny;
   window.TKFM_SUB_EMAIL_KEY = LS_EMAIL;

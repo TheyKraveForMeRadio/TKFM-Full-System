@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>They Krave For Me Records • Contract Generator</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(10, 10, 10, 0.98);
+      --accent-gold: #facc15;
+      --accent-gold-soft: #fbbf24;
+      --accent-gold-deep: #b45309;
+      --accent-amber: #f97316;
+      --accent-crystal: #22d3ee;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.18), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(251,146,60,0.18), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-orbit {
+      position: fixed;
+      width: 540px;
+      height: 540px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.8);
+      inset: -150px -170px auto auto;
+      opacity: .8;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 140px rgba(250,204,21,1),
+        0 0 200px rgba(0,0,0,1);
+      animation: spin 32s linear infinite;
+      pointer-events: none;
+    }
+    .bg-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: inherit;
+      border: 1px solid rgba(251,146,60,0.85);
+      box-shadow:
+        0 0 100px rgba(251,146,60,1),
+        0 0 160px rgba(0,0,0,1);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.55) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    main {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 1.7rem .9rem 2.6rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* NAV / HEADER */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      margin-bottom: 1.4rem;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .nav-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fefce8;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.35), transparent 60%),
+        radial-gradient(circle at 100% 100%, #020617, #000000 65%);
+      box-shadow:
+        0 0 28px rgba(250,204,21,1),
+        0 0 44px rgba(0,0,0,1);
+    }
+    .nav-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-main {
+      font-size: .95rem;
+      font-weight: 900;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: #fef9c3;
+    }
+    .nav-sub {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .nav-spacer {
+      margin-left: auto;
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+    }
+    .nav-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      padding: .22rem .7rem;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .nav-chip--gold {
+      border-color: rgba(250,204,21,0.9);
+      color: #fef9c3;
+      box-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 32px rgba(0,0,0,1);
+    }
+
+    /* HERO / SHELL */
+    .shell {
+      border-radius: 30px;
+      border: 1px solid rgba(250,204,21,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.22), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(251,146,60,0.18), transparent 60%),
+        radial-gradient(circle at 50% 130%, #020617, #000000 75%);
+      padding: 1.6rem 1.5rem 1.9rem;
+      box-shadow:
+        0 0 100px rgba(15,23,42,1),
+        0 0 170px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.6rem;
+    }
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(251,113,133,0.25), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .shell-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .kicker {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #fde68a;
+      margin-bottom: .4rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#fef3c7,#facc15,#fb923c,#f97316);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 46px rgba(250,204,21,0.9),
+        0 0 80px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .7rem;
+      font-size: .9rem;
+      color: #e5e7eb;
+      max-width: 640px;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 1.1rem;
+      margin-top: 1.1rem;
+    }
+    @media (max-width: 880px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      margin-top: .7rem;
+      font-size: .72rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .22rem .75rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .pill span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-gold);
+      box-shadow: 0 0 15px rgba(250,204,21,1);
+    }
+    .pill--radio span {
+      background: var(--accent-crystal);
+      box-shadow: 0 0 15px rgba(34,211,238,1);
+    }
+
+    /* FORM SIDE */
+    .form-card {
+      border-radius: 22px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.15), transparent 60%),
+        rgba(10,10,10,0.98);
+      padding: .9rem 1rem 1.1rem;
+      box-shadow: 0 0 32px rgba(0,0,0,1);
+      font-size: .8rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .7rem;
+      margin-top: .4rem;
+    }
+    @media (max-width: 640px) {
+      .field-grid { grid-template-columns: minmax(0,1fr); }
+    }
+    .field-grid-wide {
+      display: grid;
+      grid-template-columns: minmax(0,1fr);
+      gap: .7rem;
+      margin-top: .7rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: .18rem;
+    }
+    label {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+      padding: .08rem .55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #e5e7eb;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,1);
+      background: rgba(10,10,10,0.98);
+      color: var(--text-main);
+      padding: .5rem .8rem;
+      font-size: .8rem;
+      outline: none;
+      width: 100%;
+    }
+    textarea {
+      border-radius: 18px;
+      resize: vertical;
+      min-height: 64px;
+      line-height: 1.4;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(250,204,21,1);
+      box-shadow:
+        0 0 20px rgba(250,204,21,0.9),
+        0 0 30px rgba(0,0,0,1);
+    }
+
+    .hint {
+      font-size: .7rem;
+      color: var(--text-muted);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      margin-top: .55rem;
+      font-size: .76rem;
+    }
+    .checkbox-row input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .8rem;
+    }
+    .btn-main {
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      padding: .52rem 1.4rem;
+      font-size: .82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #020617;
+      background: linear-gradient(120deg,#facc15,#f97316,#fbbf24);
+      box-shadow:
+        0 0 26px rgba(250,204,21,1),
+        0 0 40px rgba(0,0,0,1);
+    }
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .48rem 1.1rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(10,10,10,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      cursor: pointer;
+    }
+
+    /* OUTPUT SIDE */
+    .output-card {
+      border-radius: 22px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: .9rem .95rem 1.1rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .output-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .output-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-kicker {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+    .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin: 0 0 .4rem;
+    }
+
+    .summary-list {
+      list-style: none;
+      padding: 0;
+      margin: .2rem 0 .7rem;
+      font-size: .78rem;
+    }
+    .summary-list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .2rem;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      margin-top: .25rem;
+      flex-shrink: 0;
+      background: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(250,204,21,1);
+    }
+
+    .clause-note {
+      font-size: .76rem;
+      color: var(--text-muted);
+      margin-bottom: .5rem;
+    }
+
+    .contract-output {
+      border-radius: 18px;
+      border: 1px solid rgba(75,85,99,1);
+      background: #020617;
+      padding: .65rem .75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .75rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    .grid-bottom {
+      display: grid;
+      grid-template-columns: minmax(0,1.05fr) minmax(0,1fr);
+      gap: .9rem;
+      margin-top: .2rem;
+    }
+    @media (max-width: 880px) {
+      .grid-bottom { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 22px;
+      border: 1px solid var(--border-soft);
+      background: rgba(10,10,10,0.98);
+      padding: .9rem .95rem 1.1rem;
+      font-size: .8rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 28px rgba(0,0,0,1);
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.18), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .85;
+      pointer-events: none;
+    }
+
+    .footer-note {
+      margin-top: .8rem;
+      font-size: .74rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orbit { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbit"></div>
+<div class="scanline"></div>
+
+<main>
+  <header class="nav-bar">
+    <div class="nav-logo">
+      <div class="nav-pill">KR</div>
+      <div class="nav-text">
+        <div class="nav-main">They Krave For Me Records</div>
+        <div class="nav-sub">Contract Generator Lab</div>
+      </div>
+    </div>
+    <div class="nav-spacer">
+      <div class="nav-chip nav-chip--gold">Owner / Label only</div>
+      <div class="nav-chip">Drafts • Not legal advice</div>
+    </div>
+  </header>
+
+  <section class="shell">
+    <div class="shell-inner">
+      <div class="kicker">AI-style label paperwork</div>
+      <h1>Turn ideas into contracts in one pass.</h1>
+      <p class="hero-sub">
+        Instead of starting every deal from a blank page, fill in the key levers
+        — artist, splits, term, territory, masters — and let the system draft a
+        clean **They Krave For Me Records** style contract you can paste into Docs
+        or send to your lawyer to finalize.
+      </p>
+
+      <div class="hero-grid">
+        <!-- LEFT: FORM -->
+        <div class="form-card">
+          <div class="pill-row">
+            <div class="pill"><span></span> Artist label deal</div>
+            <div class="pill"><span></span> DJ residency / mixtapes</div>
+            <div class="pill pill--radio"><span></span> Sponsor / brand packs</div>
+          </div>
+
+          <div class="field-grid" style="margin-top:.75rem;">
+            <div class="field">
+              <label for="dealType">Deal type</label>
+              <select id="dealType">
+                <option value="artist">Artist Recording / Label Deal</option>
+                <option value="dj">DJ Residency / Mixtape Hosting Agreement</option>
+                <option value="sponsor">Sponsor / Brand Partnership Agreement</option>
+                <option value="producer">Producer / Beat Agreement</option>
+                <option value="service">Service Pack (Mixing / Promo / Placement)</option>
+              </select>
+              <p class="hint">This changes the language and focus of the draft.</p>
+            </div>
+
+            <div class="field">
+              <label for="dealName">Deal / project name</label>
+              <input id="dealName" type="text" placeholder="Example: Neon Season EP, TKFM DJ Pack 2026" />
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="partyA">Party A — label / platform</label>
+              <input id="partyA" type="text" value="They Krave For Me Records / TKFM" />
+              <p class="hint">Usually your imprint + TKFM platform.</p>
+            </div>
+
+            <div class="field">
+              <label for="partyB">Party B — artist / DJ / sponsor</label>
+              <input id="partyB" type="text" placeholder="Artist, DJ, brand or producer name" />
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="termLength">
+                Term length
+                <span class="badge">Months</span>
+              </label>
+              <input id="termLength" type="number" min="1" max="120" value="12" />
+              <p class="hint">Example: 12 months, 24 months, or project-based.</p>
+            </div>
+
+            <div class="field">
+              <label for="territory">
+                Territory
+                <span class="badge">Default: World</span>
+              </label>
+              <input id="territory" type="text" value="Worldwide" />
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="royalty">
+                Royalty / revenue split
+                <span class="badge">% to artist / creator</span>
+              </label>
+              <input id="royalty" type="number" min="0" max="100" value="50" />
+              <p class="hint">Example: 50 means 50% to artist, 50% to label/platform.</p>
+            </div>
+
+            <div class="field">
+              <label for="advance">
+                Advance (optional)
+                <span class="badge">USD</span>
+              </label>
+              <input id="advance" type="number" min="0" step="100" value="0" />
+            </div>
+          </div>
+
+          <div class="field-grid-wide">
+            <div class="field">
+              <label for="mastersControl">
+                Masters / rights language
+              </label>
+              <textarea id="mastersControl" placeholder="Example: Label controls master recordings during the term; artist retains underlying composition rights."></textarea>
+              <p class="hint">
+                You can leave this empty and the system will use a default clause based on deal type.
+              </p>
+            </div>
+          </div>
+
+          <div class="field-grid-wide">
+            <div class="field">
+              <label for="deliverables">
+                Deliverables &amp; obligations
+              </label>
+              <textarea id="deliverables" placeholder="Example: 1 EP (5–7 songs), 2 promo videos, 3 social posts per month tagged with @theykraveformeradio."></textarea>
+            </div>
+          </div>
+
+          <div class="checkbox-row">
+            <input id="exclusive" type="checkbox" checked />
+            <label for="exclusive" style="margin:0;">
+              Exclusive within this lane (no competing deals for the same project during the term)
+            </label>
+          </div>
+
+          <div class="field-grid-wide">
+            <div class="field">
+              <label for="extraNotes">Extra notes / special clauses</label>
+              <textarea id="extraNotes" placeholder="Any bonuses, early reversion options, content restrictions, moral clauses, etc."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-main" type="button" id="generateBtn">Generate contract draft</button>
+            <button class="btn-ghost" type="button" id="copyBtn">Copy to clipboard</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: OUTPUT -->
+        <div class="output-card">
+          <div class="output-inner">
+            <div class="card-kicker">Draft preview</div>
+            <h2 class="card-title" id="previewTitle">No contract generated yet</h2>
+
+            <ul class="summary-list" id="summaryList">
+              <li><span class="dot"></span><span>Fill in the left side and hit “Generate contract draft”.</span></li>
+              <li><span class="dot"></span><span>The system will create a TKFM-flavored contract you can paste into Docs or send to a lawyer.</span></li>
+            </ul>
+
+            <p class="clause-note">
+              This is a drafting tool only — always have a licensed attorney review before signatures.
+            </p>
+
+            <div class="contract-output" id="contractOutput">
+[Contract text will appear here once generated.]
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-bottom">
+    <article class="card">
+      <div class="card-kicker">What this page is for</div>
+      <h2 class="card-title">Label templates that match your ecosystem</h2>
+      <ul class="summary-list">
+        <li><span class="dot"></span><span><strong>Artist deals:</strong> recording + marketing support across TKFM and They Krave For Me Records.</span></li>
+        <li><span class="dot"></span><span><strong>DJ / mixtape hosting:</strong> upload rights, rotation commitments and branding rules.</span></li>
+        <li><span class="dot"></span><span><strong>Sponsors:</strong> clear deliverables, term lengths and content boundaries for brand partners.</span></li>
+      </ul>
+      <p class="clause-note">
+        Over time, you can save your favorite drafts into Supabase as templates, or tie them into your label onboarding flow so contracts generate automatically when you approve new artists or DJs.
+      </p>
+    </article>
+
+    <article class="card">
+      <div class="card-kicker">Access control</div>
+      <h2 class="card-title">Who should touch the paperwork?</h2>
+      <ul class="summary-list">
+        <li><span class="dot"></span><span><strong>Owner:</strong> always has full access.</span></li>
+        <li><span class="dot"></span><span><strong>Label / A&amp;R roles:</strong> can help prepare drafts, but don’t sign without you.</span></li>
+        <li><span class="dot"></span><span><strong>Artists / DJs / sponsors:</strong> should only see the final PDF or Doc, not this lab.</span></li>
+      </ul>
+      <p class="clause-note">
+        This page is locked behind your <code>auth-gateway.js</code> so only <strong>owner</strong> and <strong>label</strong> roles can open it once auth wiring is complete.
+      </p>
+    </article>
+  </section>
+
+  <p class="footer-note">
+    They Krave For Me Records • Contract Generator Lab • Drafts first, lawyers second.
+  </p>
+</main>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+  import { protectPage } from "./auth-gateway.js";
+
+  // Owner + label only
+  protectPage(["owner", "label"]);
+
+  const dealTypeEl = document.getElementById("dealType");
+  const dealNameEl = document.getElementById("dealName");
+  const partyAEl = document.getElementById("partyA");
+  const partyBEl = document.getElementById("partyB");
+  const termLengthEl = document.getElementById("termLength");
+  const territoryEl = document.getElementById("territory");
+  const royaltyEl = document.getElementById("royalty");
+  const advanceEl = document.getElementById("advance");
+  const mastersControlEl = document.getElementById("mastersControl");
+  const deliverablesEl = document.getElementById("deliverables");
+  const exclusiveEl = document.getElementById("exclusive");
+  const extraNotesEl = document.getElementById("extraNotes");
+
+  const generateBtn = document.getElementById("generateBtn");
+  const copyBtn = document.getElementById("copyBtn");
+  const previewTitleEl = document.getElementById("previewTitle");
+  const summaryListEl = document.getElementById("summaryList");
+  const contractOutputEl = document.getElementById("contractOutput");
+
+  function defaultMastersClause(type) {
+    switch (type) {
+      case "artist":
+        return "Label shall control the master recordings delivered under this Agreement during the Term and any agreed recoupment period. Artist retains ownership of underlying compositions (where applicable) unless otherwise agreed in writing.";
+      case "dj":
+        return "Label/Platform is granted the non-exclusive right to host, broadcast and archive the DJ’s mixes and shows for the Term across TKFM and related channels.";
+      case "producer":
+        return "Producer grants Label and Artist the right to commercially exploit the master recordings created under this Agreement. Ownership and publishing splits shall be captured in a separate split sheet or addendum.";
+      case "sponsor":
+        return "Sponsor is granted promotional rights to use TKFM and They Krave For Me Records branding solely in connection with the agreed campaign for the Term.";
+      case "service":
+      default:
+        return "Service Provider grants Label/Client the right to use delivered services and assets for commercial exploitation related to the Project, subject to the payment terms and credits outlined herein.";
+    }
+  }
+
+  function dealLabel(type) {
+    switch (type) {
+      case "artist": return "Artist Recording / Label Deal";
+      case "dj": return "DJ Residency / Mixtape Hosting Agreement";
+      case "sponsor": return "Sponsor / Brand Partnership Agreement";
+      case "producer": return "Producer / Beat Agreement";
+      case "service": return "Service Pack Agreement";
+      default: return "Label Agreement";
+    }
+  }
+
+  function buildSummaryLines(params) {
+    const {
+      dealType, dealName, partyA, partyB,
+      termLength, territory, royalty, advance, exclusive
+    } = params;
+
+    const lines = [];
+    lines.push(`Deal type: ${dealLabel(dealType)} (${dealName || "Untitled deal"})`);
+    lines.push(`Parties: ${partyA || "Label"} ↔ ${partyB || "Counterparty"}`);
+    lines.push(`Term: ${termLength || "N/A"} months • Territory: ${territory || "N/A"}`);
+    lines.push(`Split: ${royalty || 0}% to artist/creator • ${100 - (royalty || 0)}% to label/platform`);
+
+    if (advance && Number(advance) > 0) {
+      lines.push(`Advance: $${Number(advance).toLocaleString()} recoupable from artist/creator share.`);
+    } else {
+      lines.push("No upfront advance specified — focus on revenue share.");
+    }
+
+    lines.push(exclusive ? "Exclusivity: Yes (within this lane/project)." : "Exclusivity: No (non-exclusive lane).");
+
+    return lines;
+  }
+
+  function buildContract() {
+    const dealType = dealTypeEl.value;
+    const dealName = dealNameEl.value.trim();
+    const partyA = partyAEl.value.trim() || "They Krave For Me Records / TKFM";
+    const partyB = partyBEl.value.trim() || "Counterparty";
+    const termLength = Number(termLengthEl.value) || 0;
+    const territory = territoryEl.value.trim() || "Worldwide";
+    const royalty = Number(royaltyEl.value) || 0;
+    const advance = Number(advanceEl.value) || 0;
+    const masters = (mastersControlEl.value || "").trim() || defaultMastersClause(dealType);
+    const deliverables = (deliverablesEl.value || "").trim() || "Deliverables to be mutually agreed in writing.";
+    const exclusive = exclusiveEl.checked;
+    const extraNotes = (extraNotesEl.value || "").trim();
+
+    const today = new Date().toISOString().split("T")[0] || "";
+    const title = `${dealLabel(dealType)} — ${dealName || partyB}`;
+
+    previewTitleEl.textContent = title || "Generated Label Agreement";
+
+    // Update summary bullets
+    const summaryLines = buildSummaryLines({
+      dealType, dealName, partyA, partyB,
+      termLength, territory, royalty, advance, exclusive
+    });
+
+    summaryListEl.innerHTML = "";
+    summaryLines.forEach(line => {
+      const li = document.createElement("li");
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      const text = document.createElement("span");
+      text.textContent = line;
+      li.appendChild(dot);
+      li.appendChild(text);
+      summaryListEl.appendChild(li);
+    });
+
+    const headerBlock = `${title}
+Between:
+  "${partyA}"
+and
+  "${partyB}"
+
+Effective Date: ${today}
+Term: ${termLength || "N/A"} months
+Territory: ${territory}
+`;
+
+    const grantOfRights = (() => {
+      switch (dealType) {
+        case "artist":
+          return `1. GRANT OF RIGHTS
+Artist hereby grants to Label the exclusive right, during the Term and throughout the Territory, to exploit the master sound recordings delivered under this Agreement (the "Masters") in connection with the Project "${dealName || "the Project"}". Label may exploit the Masters by any and all means now known or later developed, subject to the terms herein.`;
+        case "dj":
+          return `1. GRANT OF RIGHTS
+DJ hereby grants to TKFM / Label the right, during the Term and throughout the Territory, to host, broadcast, rebroadcast, archive and promote DJ’s mixes, radio shows and related content delivered under this Agreement in connection with TKFM and its related channels.`;
+        case "sponsor":
+          return `1. GRANT OF RIGHTS
+Label/TKFM grants Sponsor a limited, non-exclusive, non-transferable license, during the Term and in the Territory, to use TKFM and They Krave For Me Records branding, show names and approved creative assets solely in connection with the campaign described in the Deliverables section below.`;
+        case "producer":
+          return `1. GRANT OF RIGHTS
+Producer grants to Label and Artist the right, during the Term and throughout the Territory, to exploit the master recordings created under this Agreement in connection with the Project, subject to the compensation and ownership terms set forth herein.`;
+        case "service":
+        default:
+          return `1. SCOPE OF SERVICES
+Service Provider agrees to provide the services outlined under Deliverables in connection with the Project "${dealName || "the Project"}", for Label/Client, subject to the terms of this Agreement.`;
+      }
+    })();
+
+    const mastersBlock = `2. MASTERS / RIGHTS CONTROL
+${masters}
+`;
+
+    const compensationBlock = (() => {
+      let base = `3. COMPENSATION & SPLITS
+(a) Net revenues arising from commercial exploitation of the applicable recordings/services under this Agreement shall be split as follows:
+    • ${royalty}% to ${partyB}
+    • ${100 - royalty}% to ${partyA}
+"Net revenues" shall be defined in reasonable good-faith detail by Label and may include reasonable costs, fees and platform expenses.
+
+`;
+      if (advance > 0) {
+        base += `(b) Label shall pay an advance of $${advance.toLocaleString()} to ${partyB}, recoupable from ${partyB}'s share of Net revenues unless otherwise agreed in writing.\n`;
+      } else {
+        base += `(b) No upfront advance is due under this Agreement unless separately agreed in writing.\n`;
+      }
+      return base;
+    })();
+
+    const deliverablesBlock = `4. DELIVERABLES & OBLIGATIONS
+The parties agree that the following deliverables and obligations apply:
+
+${deliverables}
+
+Both parties agree to communicate in good faith and adjust deliverables if needed to meet campaign or project goals.`;
+
+    const exclusivityBlock = exclusive
+      ? `5. EXCLUSIVITY
+During the Term, and solely with respect to the Project and lane outlined in this Agreement, ${partyB} shall not enter into agreements with directly competing platforms, labels or sponsors that would materially conflict with this Agreement, without prior written consent from ${partyA}.`
+      : `5. NON-EXCLUSIVE NATURE
+The parties acknowledge this Agreement is non-exclusive. ${partyB} may enter into other agreements that do not materially interfere with the obligations and deliverables set forth here, provided those arrangements do not misuse ${partyA}'s name, brand or confidential information.`;
+
+    const marketingBlock = `6. MARKETING & CREDITS
+Each party agrees to credit the other in a commercially reasonable manner in line with industry practices (e.g., "They Krave For Me Records", "TKFM", or approved sponsor name/logo), on campaign materials, social posts, and other mutually agreed platforms.`;
+
+    const adminBlock = `7. ADMINISTRATION, REPORTING & PAYMENT
+(a) Label shall maintain commercially reasonable books and records in connection with exploitation under this Agreement.
+(b) Where applicable, Label shall provide summary reporting to ${partyB} not less than twice per year, along with any statements and payments due.
+(c) Payments shall be made within a commercially reasonable time after each statement period, subject to recoupment and applicable regulations.`;
+
+    const extraBlock = extraNotes
+      ? `8. SPECIAL TERMS / EXTRA NOTES
+The following special terms and notes also apply:
+
+${extraNotes}
+`
+      : `8. SPECIAL TERMS / EXTRA NOTES
+Any additional terms or attachments may be added in writing as an addendum signed by both parties.`;
+
+    const boilerplateBlock = `9. REPRESENTATIONS & WARRANTIES
+Each party represents and warrants that it has the full right, power and authority to enter into this Agreement, and that it will not knowingly violate the rights of third parties in performing its obligations hereunder.
+
+10. CONFIDENTIALITY
+The parties agree to keep the specific financial and strategic terms of this Agreement confidential, except as reasonably required for legal, tax, accounting or financing purposes.
+
+11. GOVERNING LAW
+The parties agree that this Agreement shall be governed by and construed in accordance with the laws of a jurisdiction to be mutually agreed in the final signed version (for example: the state/province/region where Label is registered).
+
+12. ENTIRE AGREEMENT
+This document is intended to serve as a working draft template. The final, signed Agreement (including any addenda) will constitute the entire agreement between the parties and supersede any prior discussions or understandings.
+
+IN WITNESS WHEREOF, the parties intend that this draft will be reviewed, modified as needed, and then executed by authorized representatives of both parties.
+
+______________________________
+${partyA}
+Authorized Signatory
+
+______________________________
+${partyB}
+Authorized Signatory
+`;
+
+    const fullContract =
+      headerBlock + "\n" +
+      grantOfRights + "\n\n" +
+      mastersBlock + "\n" +
+      compensationBlock + "\n" +
+      deliverablesBlock + "\n\n" +
+      exclusivityBlock + "\n\n" +
+      marketingBlock + "\n\n" +
+      adminBlock + "\n\n" +
+      extraBlock + "\n" +
+      boilerplateBlock;
+
+    contractOutputEl.textContent = fullContract;
+  }
+
+  generateBtn.addEventListener("click", buildContract);
+
+  copyBtn.addEventListener("click", async () => {
+    const text = contractOutputEl.textContent || "";
+    try {
+      await navigator.clipboard.writeText(text);
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => {
+        copyBtn.textContent = "Copy to clipboard";
+      }, 1400);
+    } catch (err) {
+      console.error("Clipboard error", err);
+      copyBtn.textContent = "Copy failed";
+      setTimeout(() => {
+        copyBtn.textContent = "Copy to clipboard";
+      }, 1600);
+    }
+  });
+</script>
+</body>
+</html>

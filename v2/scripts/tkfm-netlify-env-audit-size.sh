@@ -1,48 +1,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# TKFM: audit Netlify env var sizes (to avoid AWS Lambda 4KB env cap)
-# Requires: netlify CLI with --json support
+CTX="production"
+SCOPE="functions"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --context) CTX="$2"; shift 2;;
+    --scope) SCOPE="$2"; shift 2;;
+    *) shift;;
+  esac
+done
 
 if ! command -v netlify >/dev/null 2>&1; then
   echo "FAIL: netlify CLI not found"
   exit 2
 fi
 
-J="$(netlify env:list --json 2>/dev/null || true)"
-if [ -z "$J" ]; then
-  echo "FAIL: netlify env:list --json returned empty (update netlify-cli)"
+TMP="${TMPDIR:-/tmp}/tkfm_netlify_env_plain.txt"
+rm -f "$TMP" 2>/dev/null || true
+
+(netlify env:list --plain --context "$CTX" --scope "$SCOPE" 2>/dev/null || true) | tr -d '\r' > "$TMP" || true
+if [ ! -s "$TMP" ]; then
+  echo "FAIL: netlify env:list produced no output (are you linked?)"
+  echo "Run: netlify status && netlify link"
   exit 3
 fi
 
-node --input-type=module - <<'NODE' <<< "$J"
-let txt = '';
-process.stdin.setEncoding('utf8');
-for await (const c of process.stdin) txt += c;
-
-let arr;
-try { arr = JSON.parse(txt); } catch (e) {
-  console.error('FAIL: env:list not JSON');
-  process.exit(4);
-}
-
-const items = Array.isArray(arr) ? arr : (arr?.env || []);
-const rows = [];
-let total = 0;
-
-for (const it of items) {
-  const k = String(it.key || it.name || '');
-  const v = String(it.value || '');
-  const sz = Buffer.byteLength(k + '=' + v, 'utf8');
-  total += sz;
-  rows.push({ k, sz });
-}
-
-rows.sort((a, b) => b.sz - a.sz);
-
-console.log('TOTAL_BYTES=' + total);
-console.log('TOP20:');
-for (const r of rows.slice(0, 20)) {
-  console.log(String(r.sz).padStart(6, ' ') + '  ' + r.k);
-}
-NODE
+echo "== TKFM NETLIFY ENV AUDIT (plain) =="
+echo "Filter: context=$CTX scope=$SCOPE"
+echo "Source: $TMP"
+TOTAL="$(awk -F= 'NF>=2 && $1 ~ /^[A-Z0-9_]+$/ { line=$0; gsub(/\r/,"",line); total+=length(line);} END{print total+0}' "$TMP")"
+echo "TOTAL_BYTES=$TOTAL"
+echo
+echo "TOP40_BYTES KEY"
+awk -F= 'NF>=2 && $1 ~ /^[A-Z0-9_]+$/ { line=$0; gsub(/\r/,"",line); printf("%6d %s\n", length(line), $1); }' "$TMP" | sort -nr | head -n 40
+echo
+echo "HINT: If TOTAL_BYTES is > 4096 (functions+production), Lambda deploy can fail."

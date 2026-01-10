@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>DJ Schedule Board — TKFM Neon Grid</title>
+
+  <style>
+    :root {
+      --pink:#ff007f;
+      --cyan:#06b6d4;
+      --gold:#facc15;
+      --bg:radial-gradient(circle at 10% 0%,#020014,#020617 55%,#000000 100%);
+      --cardbg:rgba(15,23,42,0.97);
+      --border:rgba(148,163,184,0.35);
+    }
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:var(--bg);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:#e5e7eb;
+      padding:1.5rem .9rem 2.5rem;
+      position:relative;
+      overflow-x:hidden;
+    }
+
+    .bg-orbit {
+      position:fixed;
+      inset:-40%;
+      z-index:-3;
+      pointer-events:none;
+      background:conic-gradient(
+        from 230deg,
+        rgba(255,0,128,.35),
+        rgba(56,189,248,.32),
+        rgba(250,204,21,.3),
+        rgba(129,140,248,.34),
+        rgba(255,0,128,.35)
+      );
+      filter:blur(40px);
+      mix-blend-mode:screen;
+      animation:orbit 36s linear infinite;
+    }
+    .bg-glow {
+      position:fixed;
+      inset:-20%;
+      z-index:-4;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 0 0,rgba(255,0,128,.4),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(56,189,248,.4),transparent 60%),
+        radial-gradient(circle at 50% 0,rgba(250,204,21,.35),transparent 60%);
+      filter:blur(14px);
+      animation:glow 26s ease-in-out infinite alternate;
+    }
+    @keyframes orbit {
+      0% { transform:rotate(0deg) scale(1.05); }
+      100% { transform:rotate(360deg) scale(1.05); }
+    }
+    @keyframes glow {
+      0% { transform:translate3d(0,0,0); }
+      100% { transform:translate3d(-4%,2%,0); }
+    }
+
+    main {
+      max-width:1150px;
+      margin:0 auto;
+      position:relative;
+      z-index:1;
+    }
+
+    header {
+      display:flex;
+      justify-content:space-between;
+      gap:1rem;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .kicker {
+      font-size:.78rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:rgba(191,219,254,.95);
+      margin-bottom:.25rem;
+    }
+    h1 {
+      margin:0;
+      font-size:2.1rem;
+      font-weight:900;
+      background:linear-gradient(120deg,var(--pink),var(--gold),var(--cyan));
+      background-clip:text;
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow:0 0 20px rgba(255,0,128,.9),0 0 34px rgba(56,189,248,.9);
+    }
+    .subtitle {
+      margin-top:.35rem;
+      font-size:.9rem;
+      color:rgba(203,213,225,.98);
+      max-width:40rem;
+    }
+    .subtitle span { color:var(--gold); }
+
+    .header-right {
+      min-width:250px;
+      text-align:right;
+      font-size:.8rem;
+    }
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      padding:.25rem .65rem;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.95);
+      background:rgba(113,63,18,.98);
+      color:#fef3c7;
+      margin-bottom:.35rem;
+    }
+    .badge span {
+      color:var(--gold);
+      font-weight:700;
+    }
+    .chip-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      justify-content:flex-end;
+    }
+    .chip {
+      font-size:.74rem;
+      padding:.22rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.98);
+      color:rgba(226,232,240,.98);
+      text-decoration:none;
+    }
+
+    .top-links {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      margin-top:.4rem;
+      font-size:.78rem;
+    }
+    .top-links a {
+      text-decoration:none;
+      color:#e5e7eb;
+      padding:.25rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.98);
+    }
+
+    .grid-main {
+      display:grid;
+      gap:1rem;
+      grid-template-columns:1.15fr 1.4fr;
+      margin-top:1.4rem;
+    }
+    @media (max-width:980px){ .grid-main{grid-template-columns:1fr;} }
+
+    .card {
+      background:var(--cardbg);
+      border-radius:20px;
+      border:1px solid var(--border);
+      box-shadow:0 24px 55px rgba(15,23,42,.98);
+      padding:1rem .95rem 1.05rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-55%;
+      background:conic-gradient(
+        from 210deg,
+        rgba(255,0,128,.34),
+        rgba(56,189,248,.25),
+        rgba(250,204,21,.22),
+        rgba(129,140,248,.25),
+        rgba(255,0,128,.34)
+      );
+      filter:blur(32px);
+      opacity:.3;
+      z-index:-1;
+    }
+    .card h2 {
+      margin:.1rem 0 .25rem;
+      font-size:1.05rem;
+      font-weight:800;
+    }
+    .card-sub {
+      font-size:.8rem;
+      color:rgba(148,163,184,.96);
+      margin-bottom:.6rem;
+    }
+
+    label {
+      display:block;
+      margin-bottom:.18rem;
+      font-size:.75rem;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      color:rgba(148,163,184,.98);
+    }
+    input, select, textarea {
+      width:100%;
+      border-radius:11px;
+      border:1px solid rgba(51,65,85,.95);
+      background:rgba(15,23,42,.98);
+      color:#e5e7eb;
+      padding:.6rem .7rem;
+      font-size:.86rem;
+      outline:none;
+      margin-bottom:.65rem;
+      transition:border-color .18s,box-shadow .18s,background .18s;
+    }
+    textarea {
+      min-height:80px;
+      resize:vertical;
+      font-family:inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color:rgba(56,189,248,1);
+      box-shadow:0 0 0 1px rgba(56,189,248,.8),0 0 18px rgba(56,189,248,.8);
+      background:rgba(15,23,42,1);
+    }
+
+    .mini-grid {
+      display:grid;
+      gap:.45rem;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      margin-bottom:.4rem;
+    }
+    .mini-box {
+      border-radius:13px;
+      border:1px solid rgba(30,64,175,.85);
+      background:rgba(15,23,42,.98);
+      padding:.5rem .55rem;
+      font-size:.78rem;
+    }
+    .mini-label {
+      color:rgba(148,163,184,.96);
+      font-size:.74rem;
+      margin-bottom:.1rem;
+    }
+    .mini-value {
+      font-size:.9rem;
+      font-weight:700;
+    }
+
+    .hint {
+      margin:-.45rem 0 .7rem;
+      font-size:.72rem;
+      color:rgba(148,163,184,.9);
+    }
+
+    .pill-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.35rem;
+      margin-top:.2rem;
+      margin-bottom:.35rem;
+    }
+    .pill {
+      font-size:.74rem;
+      padding:.2rem .55rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.9);
+      background:rgba(15,23,42,.98);
+      color:rgba(226,232,240,.98);
+    }
+
+    .btn {
+      width:100%;
+      border-radius:999px;
+      border:none;
+      padding:.75rem;
+      font-size:.9rem;
+      font-weight:700;
+      cursor:pointer;
+      color:#020617;
+      background:linear-gradient(120deg,#22c55e,#f97316,var(--pink),var(--cyan));
+      text-shadow:0 0 10px rgba(255,255,255,.9);
+      box-shadow:0 20px 40px rgba(15,23,42,.98);
+      transition:transform .16s,box-shadow .16s,filter .16s;
+      margin-top:.1rem;
+    }
+    .btn:hover {
+      transform:translateY(-1px) scale(1.02);
+      filter:brightness(1.04);
+      box-shadow:0 24px 50px rgba(15,23,42,1);
+    }
+
+    .schedule-grid {
+      display:grid;
+      gap:.4rem;
+      grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+      margin-top:.4rem;
+    }
+    .day-column {
+      border-radius:16px;
+      border:1px solid rgba(31,41,55,.96);
+      background:rgba(15,23,42,.98);
+      padding:.5rem .55rem;
+      font-size:.78rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .day-column::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:radial-gradient(circle at 100% 0,rgba(255,0,128,.3),transparent 60%);
+      opacity:0;
+      transition:opacity .18s;
+      mix-blend-mode:screen;
+    }
+    .day-column:hover::before { opacity:1; }
+    .day-title {
+      font-size:.8rem;
+      font-weight:700;
+      margin-bottom:.25rem;
+    }
+
+    .slot-tile {
+      border-radius:12px;
+      border:1px solid rgba(30,64,175,.85);
+      padding:.35rem .4rem;
+      margin-bottom:.3rem;
+      background:rgba(15,23,42,.98);
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+      transition:transform .12s,box-shadow .12s,border-color .12s;
+    }
+    .slot-tile::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:linear-gradient(120deg,rgba(255,0,128,.5),rgba(6,182,212,.4));
+      opacity:0;
+      transition:opacity .18s;
+      mix-blend-mode:screen;
+    }
+    .slot-tile:hover {
+      transform:translateY(-1px) scale(1.02);
+      border-color:rgba(56,189,248,.95);
+      box-shadow:0 12px 30px rgba(15,23,42,1);
+    }
+    .slot-tile:hover::before { opacity:.4; }
+
+    .slot-head {
+      display:flex;
+      justify-content:space-between;
+      gap:.35rem;
+      font-size:.78rem;
+      margin-bottom:.1rem;
+    }
+    .slot-dj {
+      font-weight:600;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .slot-time {
+      font-size:.72rem;
+      color:rgba(148,163,184,.96);
+      white-space:nowrap;
+    }
+    .slot-meta {
+      font-size:.72rem;
+      color:rgba(148,163,184,.96);
+    }
+
+    .intensity-bar {
+      margin-top:.15rem;
+      height:7px;
+      border-radius:999px;
+      background:rgba(15,23,42,.98);
+      border:1px solid rgba(30,64,175,.75);
+      overflow:hidden;
+    }
+    .intensity-fill {
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--pink),var(--gold),var(--cyan));
+      background-size:200% 100%;
+      width:var(--w,40%);
+      box-shadow:0 0 14px rgba(56,189,248,.9);
+      animation:barPulse 2.8s ease-in-out infinite,barShift 7s linear infinite;
+    }
+    @keyframes barPulse {
+      0% { filter:brightness(.9); }
+      50% { filter:brightness(1.25); }
+      100% { filter:brightness(.9); }
+    }
+    @keyframes barShift {
+      0% { background-position:0% 0; }
+      100% { background-position:200% 0; }
+    }
+
+    .footer-note {
+      margin-top:1rem;
+      font-size:.75rem;
+      color:rgba(148,163,184,.95);
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-orbit"></div>
+  <div class="bg-glow"></div>
+
+  <main>
+    <header>
+      <div>
+        <div class="kicker">TKFM Radio · Neon Studio</div>
+        <h1>DJ Schedule Board — build the weekly grid.</h1>
+        <p class="subtitle">
+          Map out <span>residencies</span>, <span>prime-time shows</span>, and
+          <span>late-night takeovers</span>. This grid reads from your <span>DJ accounts</span>
+          and <span>Pack Builder</span> ideas, and saves a neon schedule in
+          <code>tkfm_dj_schedule</code>.
+        </p>
+        <div class="top-links">
+          <a href="/v2/app-hub.html">🛰 App Hub</a>
+          <a href="/v2/god-view.html">👑 GOD VIEW</a>
+          <a href="/v2/ai-dj-engine.html">🤖 AI DJ Engine</a>
+          <a href="/v2/label-home.html">🏠 Label Home</a>
+          <a href="/v2/label-pack-builder.html">🎛 AI Pack Builder</a>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="badge">
+          📡 <span>Schedule Engine</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip">localStorage: tkfm_djs</span>
+          <span class="chip">localStorage: tkfm_packs</span>
+          <span class="chip">localStorage: tkfm_dj_schedule</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid-main">
+      <!-- LEFT: Builder -->
+      <div class="card">
+        <h2>Create / update a slot</h2>
+        <p class="card-sub">
+          Choose a DJ, day, and block. The board will suggest intensity based on
+          <strong>price band</strong> and <strong>pack type</strong> from your Pack Builder.
+        </p>
+
+        <label for="dj_select">DJ</label>
+        <select id="dj_select">
+          <option value="">Select a DJ from tkfm_djs…</option>
+        </select>
+
+        <div class="mini-grid">
+          <div class="mini-box">
+            <div class="mini-label">Day</div>
+            <select id="day_select">
+              <option value="Mon">Mon</option>
+              <option value="Tue">Tue</option>
+              <option value="Wed">Wed</option>
+              <option value="Thu">Thu</option>
+              <option value="Fri">Fri</option>
+              <option value="Sat">Sat</option>
+              <option value="Sun">Sun</option>
+            </select>
+          </div>
+          <div class="mini-box">
+            <div class="mini-label">Block</div>
+            <select id="block_select">
+              <option value="Morning">Morning (6a–12p)</option>
+              <option value="Afternoon">Afternoon (12p–6p)</option>
+              <option value="Evening">Evening (6p–10p)</option>
+              <option value="Late Night">Late Night (10p–3a)</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="pack_hint">Attach pack (optional)</label>
+        <select id="pack_hint">
+          <option value="">Use any DJ pack from tkfm_packs…</option>
+        </select>
+
+        <label for="slot_label">Show name / vibes</label>
+        <input id="slot_label" placeholder="Example: Krave After Hours, Neon Block Party"/>
+
+        <label for="slot_notes">Internal notes (owner-only)</label>
+        <textarea id="slot_notes" placeholder="Example: test residency, high-energy club sets, focus on premieres."></textarea>
+
+        <div class="pill-row">
+          <span class="pill" id="pill_band">Band: —</span>
+          <span class="pill" id="pill_energy">Energy: —</span>
+          <span class="pill" id="pill_hint">Suggested: —</span>
+        </div>
+
+        <div class="intensity-bar">
+          <div class="intensity-fill" id="intensity_fill"></div>
+        </div>
+
+        <button class="btn" id="saveSlotBtn">💾 Save / Update Slot</button>
+
+        <p class="hint">
+          Click any tile on the right to load it back into the builder, tweak, and re-save.
+          You can also create duplicate blocks for weekly specials.
+        </p>
+      </div>
+
+      <!-- RIGHT: Weekly grid -->
+      <div class="card">
+        <h2>Neon weekly grid</h2>
+        <p class="card-sub">
+          This is your private studio view for now. Later, we can turn this into a public
+          schedule page and wire it to your Live365 + AI DJ personas.
+        </p>
+
+        <div class="mini-grid">
+          <div class="mini-box">
+            <div class="mini-label">Total scheduled slots</div>
+            <div class="mini-value" id="kpi_slots">0</div>
+          </div>
+          <div class="mini-box">
+            <div class="mini-label">Unique DJs</div>
+            <div class="mini-value" id="kpi_djs">0</div>
+          </div>
+          <div class="mini-box">
+            <div class="mini-label">Prime-time blocks</div>
+            <div class="mini-value" id="kpi_prime">0</div>
+          </div>
+        </div>
+
+        <div class="schedule-grid" id="schedule_grid">
+          <!-- columns injected here -->
+        </div>
+
+        <p class="hint">
+          Prime-time is counted as <strong>Evening</strong> + <strong>Late Night</strong>.
+          Band and energy are borrowed from attached DJ packs when possible.
+        </p>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      DJ Schedule Board reads from <code>tkfm_djs</code>, <code>tkfm_packs</code>, and
+      <code>tkfm_dj_schedule</code>. No billing, no API — just your neon studio map.
+    </div>
+  </main>
+
+  <script>
+    // OWNER / STAFF GUARD
+    (function guardRole(){
+      const role = localStorage.getItem("tkfm_role");
+      if (role !== "owner" && role !== "staff") {
+        alert("Owner / staff-only DJ Schedule Board. Redirecting to owner login.");
+        window.location.href = "/v2/owner-login.html";
+      }
+    })();
+
+    const SCHEDULE_KEY = "tkfm_dj_schedule";
+
+    function safeLoadArray(key){
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch(e){
+        console.warn("Failed to parse", key, e);
+        return [];
+      }
+    }
+
+    function saveSchedule(slots){
+      localStorage.setItem(SCHEDULE_KEY, JSON.stringify(slots));
+    }
+
+    function classifyBandFromPack(pack){
+      if (!pack) return "—";
+      const price = typeof pack.price === "number" ? pack.price : Number(pack.price || 0);
+      if (!price || isNaN(price)) return pack.band || "Entry";
+      if (price < 150) return "Entry";
+      if (price < 400) return "Core";
+      return "Flagship";
+    }
+
+    function energyFromPack(pack){
+      if (!pack) return "Standard";
+      if (pack.energy) return pack.energy;
+      const type = pack.type || "";
+      const price = typeof pack.price === "number" ? pack.price : Number(pack.price || 0);
+      if (type === "DJ" && price >= 300) return "Prime-time heater";
+      if (type === "DJ") return "Residency / mix block";
+      return "Standard";
+    }
+
+    function hintFromBlock(block){
+      if (block === "Evening") return "Prime drive / showtime";
+      if (block === "Late Night") return "After hours / club energy";
+      if (block === "Morning") return "Wake-up / commute";
+      if (block === "Afternoon") return "Daytime flow";
+      return "Mixed";
+    }
+
+    function intensityWidth(band, block){
+      let base = 40;
+      if (band === "Core") base = 60;
+      if (band === "Flagship") base = 80;
+      if (block === "Evening" || block === "Late Night") base += 10;
+      if (base > 95) base = 95;
+      if (base < 25) base = 25;
+      return base;
+    }
+
+    function loadSelects(){
+      const djs   = safeLoadArray("tkfm_djs");
+      const packs = safeLoadArray("tkfm_packs");
+
+      const djSelect   = document.getElementById("dj_select");
+      const packSelect = document.getElementById("pack_hint");
+
+      // DJs
+      djSelect.innerHTML = '<option value="">Select a DJ from tkfm_djs…</option>';
+      djs.forEach((dj, idx) => {
+        const opt = document.createElement("option");
+        opt.value = dj.id || ("dj_" + idx);
+        opt.textContent = dj.name || dj.stageName || dj.djName || ("DJ " + (idx+1));
+        djSelect.appendChild(opt);
+      });
+
+      // Packs (only DJ packs)
+      packSelect.innerHTML = '<option value="">Use any DJ pack from tkfm_packs…</option>';
+      packs.filter(p => (p.type === "DJ")).forEach((pack, idx) => {
+        const opt = document.createElement("option");
+        const id = pack.id || ("pack_" + idx);
+        opt.value = id;
+        opt.textContent = (pack.name || "DJ Pack") + (pack.price ? (" — $" + pack.price + "/mo") : "");
+        packSelect.appendChild(opt);
+      });
+    }
+
+    function loadSchedule(){
+      return safeLoadArray(SCHEDULE_KEY);
+    }
+
+    function saveSlot(){
+      const djs   = safeLoadArray("tkfm_djs");
+      const packs = safeLoadArray("tkfm_packs");
+      const slots = loadSchedule();
+
+      const djId   = document.getElementById("dj_select").value;
+      const day    = document.getElementById("day_select").value;
+      const block  = document.getElementById("block_select").value;
+      const packId = document.getElementById("pack_hint").value;
+      const label  = document.getElementById("slot_label").value.trim();
+      const notes  = document.getElementById("slot_notes").value.trim();
+
+      if (!djId) {
+        alert("Pick a DJ first.");
+        return;
+      }
+
+      const dj = djs.find(d => (d.id && d.id === djId)) || djs.find((_, idx) => ("dj_" + idx) === djId);
+      const pack = packs.find(p => (p.id && p.id === packId)) || packs.find((p, idx) => ("pack_" + idx) === packId);
+
+      const band   = classifyBandFromPack(pack);
+      const energy = energyFromPack(pack);
+      const hint   = hintFromBlock(block);
+      const width  = intensityWidth(band, block);
+
+      // Check if slot already exists for this DJ/day/block
+      const existingIdx = slots.findIndex(s => s.djId === djId && s.day === day && s.block === block);
+      const payload = {
+        id: Date.now().toString(),
+        djId,
+        djName: dj ? (dj.name || dj.stageName || dj.djName || "DJ") : "DJ",
+        day,
+        block,
+        label,
+        notes,
+        packId: pack ? (pack.id || null) : null,
+        packName: pack ? (pack.name || "") : "",
+        band,
+        energy,
+        hint,
+        width
+      };
+
+      if (existingIdx >= 0) {
+        slots[existingIdx] = payload;
+      } else {
+        slots.push(payload);
+      }
+
+      saveSchedule(slots);
+      renderSchedule();
+      alert("✅ Slot saved to DJ schedule.");
+    }
+
+    function renderSchedule(){
+      const grid   = document.getElementById("schedule_grid");
+      const slots  = loadSchedule();
+      const days   = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+      const blocksOrder = ["Morning","Afternoon","Evening","Late Night"];
+
+      // KPIs
+      const kSlots = document.getElementById("kpi_slots");
+      const kDjs   = document.getElementById("kpi_djs");
+      const kPrime = document.getElementById("kpi_prime");
+
+      kSlots.textContent = slots.length;
+
+      const uniqueDjIds = Array.from(new Set(slots.map(s => s.djId)));
+      kDjs.textContent = uniqueDjIds.length;
+
+      const prime = slots.filter(s => s.block === "Evening" || s.block === "Late Night").length;
+      kPrime.textContent = prime;
+
+      grid.innerHTML = "";
+
+      days.forEach(day => {
+        const col = document.createElement("div");
+        col.className = "day-column";
+
+        const title = document.createElement("div");
+        title.className = "day-title";
+        title.textContent = day;
+        col.appendChild(title);
+
+        const daySlots = slots
+          .filter(s => s.day === day)
+          .sort((a,b) => blocksOrder.indexOf(a.block) - blocksOrder.indexOf(b.block));
+
+        if (!daySlots.length) {
+          const empty = document.createElement("div");
+          empty.style.fontSize = ".75rem";
+          empty.style.color = "rgba(148,163,184,.96)";
+          empty.textContent = "No slots yet.";
+          col.appendChild(empty);
+        } else {
+          daySlots.forEach(s => {
+            const tile = document.createElement("div");
+            tile.className = "slot-tile";
+
+            const head = document.createElement("div");
+            head.className = "slot-head";
+
+            const djSpan = document.createElement("div");
+            djSpan.className = "slot-dj";
+            djSpan.textContent = s.djName || "DJ";
+
+            const timeSpan = document.createElement("div");
+            timeSpan.className = "slot-time";
+            timeSpan.textContent = s.block;
+
+            head.appendChild(djSpan);
+            head.appendChild(timeSpan);
+
+            const meta = document.createElement("div");
+            meta.className = "slot-meta";
+            meta.textContent =
+              (s.label ? s.label + " · " : "") +
+              (s.packName ? s.packName + " · " : "") +
+              (s.band ? s.band + " band" : "");
+
+            const barShell = document.createElement("div");
+            barShell.className = "intensity-bar";
+            const barFill = document.createElement("div");
+            barFill.className = "intensity-fill";
+            barFill.style.setProperty("--w", (s.width || 40) + "%");
+            barShell.appendChild(barFill);
+
+            tile.appendChild(head);
+            tile.appendChild(meta);
+            tile.appendChild(barShell);
+
+            // click -> load into builder
+            tile.addEventListener("click", () => {
+              document.getElementById("dj_select").value   = s.djId;
+              document.getElementById("day_select").value  = s.day;
+              document.getElementById("block_select").value= s.block;
+              document.getElementById("pack_hint").value   = s.packId || "";
+              document.getElementById("slot_label").value  = s.label || "";
+              document.getElementById("slot_notes").value  = s.notes || "";
+
+              // update band / energy / hint visual
+              updateBandEnergyFromSelection();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+
+            col.appendChild(tile);
+          });
+        }
+
+        grid.appendChild(col);
+      });
+    }
+
+    function updateBandEnergyFromSelection(){
+      const packs = safeLoadArray("tkfm_packs");
+      const block = document.getElementById("block_select").value;
+      const packId = document.getElementById("pack_hint").value;
+      const bandEl = document.getElementById("pill_band");
+      const energyEl = document.getElementById("pill_energy");
+      const hintEl = document.getElementById("pill_hint");
+      const intensityEl = document.getElementById("intensity_fill");
+
+      const pack = packs.find(p => (p.id && p.id === packId)) || packs.find((p, idx) => ("pack_" + idx) === packId);
+
+      const band   = classifyBandFromPack(pack);
+      const energy = energyFromPack(pack);
+      const hint   = hintFromBlock(block);
+      const width  = intensityWidth(band, block);
+
+      bandEl.textContent = "Band: " + band;
+      energyEl.textContent = "Energy: " + energy;
+      hintEl.textContent = "Suggested: " + hint;
+      intensityEl.style.setProperty("--w", width + "%");
+    }
+
+    // Wire events
+    document.getElementById("block_select").addEventListener("change", updateBandEnergyFromSelection);
+    document.getElementById("pack_hint").addEventListener("change", updateBandEnergyFromSelection);
+    document.getElementById("saveSlotBtn").addEventListener("click", saveSlot);
+
+    // Init
+    (function initBoard(){
+      loadSelects();
+      updateBandEnergyFromSelection();
+      renderSchedule();
+    })();
+  </script>
+</body>
+</html>

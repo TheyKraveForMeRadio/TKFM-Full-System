@@ -1,0 +1,75 @@
+#tkfmPaidLaneModal[data-open="1"]{display:block;}
+#tkfmPaidLaneModal{display:none; position:fixed; inset:0; z-index:99999;}
+#tkfmPaidLaneModalOverlay{position:absolute; inset:0; background:rgba(2,6,23,.72); backdrop-filter: blur(6px);}
+#tkfmPaidLaneModalCard{
+  position:relative; width:min(720px, calc(100% - 24px));
+  margin: min(8vh, 72px) auto 0 auto;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(2,6,23,.98), rgba(2,6,23,.92));
+  border:1px solid rgba(34,211,238,.35);
+  box-shadow:0 30px 120px rgba(0,0,0,.55);
+  color:#e2e8f0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  overflow:hidden;
+}
+#tkfmPaidLaneModalTop{
+  padding:14px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(34,211,238,.18);
+}
+#tkfmPaidLaneBadge{
+  width:44px; height:44px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(90deg, rgba(168,85,247,.35), rgba(236,72,153,.25));
+  border:1px solid rgba(168,85,247,.35);
+  font-weight:900;
+}
+#tkfmPaidLanePlanPill{
+  font-size:12px; opacity:.9;
+  padding:6px 10px; border-radius:999px;
+  border:1px solid rgba(250,204,21,.25);
+  background:rgba(250,204,21,.08);
+  color:#fde68a;
+  white-space:nowrap;
+}
+#tkfmPaidLaneBody{padding:16px;}
+#tkfmPaidLaneBody h3{margin:0 0 6px 0; font-size:18px; letter-spacing:.02em;}
+#tkfmPaidLaneBody p{margin:0 0 14px 0; color:rgba(226,232,240,.82); line-height:1.45;}
+.tkfmPLField{display:flex; flex-direction:column; gap:6px; margin-bottom:12px;}
+.tkfmPLField label{font-size:12px; opacity:.85;}
+.tkfmPLField input,.tkfmPLField textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(34,211,238,.22);
+  background:rgba(15,23,42,.55);
+  color:#e2e8f0;
+  outline:none;
+}
+.tkfmPLField input:focus,.tkfmPLField textarea:focus{border-color:rgba(34,211,238,.55)}
+#tkfmPaidLaneActions{
+  display:flex; gap:10px; align-items:center; justify-content:flex-end;
+  padding:14px 16px;
+  border-top:1px solid rgba(34,211,238,.18);
+}
+.tkfmBtn{
+  border:1px solid rgba(34,211,238,.35);
+  background:rgba(2,6,23,.65);
+  color:#e2e8f0;
+  padding:10px 14px;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:800;
+}
+.tkfmBtnHot{
+  background:linear-gradient(90deg, rgba(168,85,247,.35), rgba(236,72,153,.25));
+  border-color:rgba(168,85,247,.35);
+}
+.tkfmBtnGold{
+  background:linear-gradient(90deg, rgba(250,204,21,.20), rgba(249,115,22,.12));
+  border-color:rgba(250,204,21,.30);
+  color:#fff7ed;
+}
+#tkfmPaidLane_status{font-size:12px; opacity:.9; margin-top:8px;}
+#tkfmPaidLane_next{display:none; margin-top:10px; padding:10px 12px; border-radius:16px; border:1px solid rgba(59,130,246,.25); background:rgba(59,130,246,.10);}
+#tkfmPaidLane_next a{color:#93c5fd; font-weight:800; text-decoration:none;}

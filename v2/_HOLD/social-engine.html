@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM Social Engine — Connect + AI Auto-Post Packs</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.96);
+      --accent-neon-pink: #ec4899;
+      --accent-neon-purple: #a855f7;
+      --accent-neon-cyan: #22d3ee;
+      --accent-neon-lime: #a3e635;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.65);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(236,72,153,0.22), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 55%),
+        radial-gradient(circle at 50% 110%, #020617, #020617 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 3rem;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV (NEON TKFM) */
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(20px);
+      background: linear-gradient(to bottom,
+        rgba(15,23,42,0.96),
+        rgba(15,23,42,0.5),
+        transparent
+      );
+      border-bottom: 1px solid rgba(148,163,184,0.35);
+      margin: -1.6rem -0.9rem 1.4rem;
+      padding: .45rem .9rem .55rem;
+    }
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#22d3ee,#a855f7,#ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 20px rgba(236,72,153,0.9),
+        0 0 40px rgba(15,23,42,1);
+      white-space: nowrap;
+    }
+    .nav-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .78rem;
+    }
+    .nav-link {
+      padding: .26rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #e5e7eb;
+      background: transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        transform .16s,
+        box-shadow .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.96);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color: rgba(236,72,153,0.9);
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.24),transparent 60%);
+      box-shadow:
+        0 0 18px rgba(236,72,153,0.9),
+        0 0 30px rgba(15,23,42,1);
+    }
+
+    @media (max-width:840px){ .nav-tag{display:none;} }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 30px;
+      padding: 1.7rem 1.4rem 2rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.18),transparent 55%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(15,23,42,1) 70%);
+      box-shadow:
+        0 0 40px rgba(15,23,42,1),
+        0 0 60px rgba(15,23,42,0.95);
+      overflow: hidden;
+      margin-bottom: 1.9rem;
+    }
+    .hero-noise {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(236,72,153,0.25),transparent 65%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.2),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.3fr 1.05fr;
+      gap: 1.1rem;
+    }
+    @media (max-width:960px){ .hero-inner{grid-template-columns:1fr;} }
+
+    .hero-kicker {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #e5e7eb;
+      margin-bottom: .3rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.05rem;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#22d3ee,#a855f7,#ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 30px rgba(236,72,153,1),
+        0 0 45px rgba(15,23,42,1);
+    }
+    .hero-sub {
+      margin-top: .5rem;
+      font-size: .95rem;
+      max-width: 580px;
+      color: #e5e7eb;
+    }
+    .hero-sub strong {
+      color: #f9a8d4;
+    }
+
+    .hero-pills {
+      margin-top: .8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .78rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .3rem .8rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .pill span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent-neon-pink);
+      box-shadow: 0 0 14px rgba(236,72,153,0.9);
+    }
+    .pill-alt span {
+      background: var(--accent-neon-cyan);
+      box-shadow: 0 0 14px rgba(34,211,238,0.9);
+    }
+
+    .hero-note {
+      margin-top: .7rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 260px;
+    }
+
+    /* RIGHT HERO CARD */
+    .hero-card {
+      border-radius: 22px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: radial-gradient(circle at 0 0,rgba(236,72,153,0.14),transparent 65%),
+                  radial-gradient(circle at 100% 100%,rgba(15,23,42,1),rgba(15,23,42,0.96));
+      padding: .9rem .9rem 1rem;
+      box-shadow:
+        0 0 26px rgba(236,72,153,0.8),
+        0 0 36px rgba(15,23,42,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .hero-card-inner { position: relative; z-index: 1; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      border-radius: 999px;
+      padding: .18rem .7rem;
+      border: 1px solid rgba(248,250,252,0.3);
+      background: rgba(15,23,42,0.96);
+      margin-bottom: .4rem;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-neon-lime);
+      box-shadow: 0 0 10px var(--accent-neon-lime);
+    }
+    .hero-card-title {
+      font-size: .92rem;
+      font-weight: 600;
+      margin-bottom: .18rem;
+    }
+    .hero-card-body {
+      margin-bottom: .35rem;
+      color: #e5e7eb;
+    }
+    .hero-card-list {
+      margin: 0 0 .6rem;
+      padding-left: 1.1rem;
+      color: var(--text-main);
+    }
+    .btn-ghost {
+      border-radius: 999px;
+      padding: .45rem 1rem;
+      border: 1px solid rgba(236,72,153,0.9);
+      background: rgba(15,23,42,0.98);
+      color: #f9a8d4;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom: 1.7rem;
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.1rem 1rem 1.3rem;
+      box-shadow: 0 0 30px rgba(15,23,42,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.16),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .section-inner { position: relative; z-index: 1; }
+    .section-title {
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 0 0 .25rem;
+    }
+    .section-sub {
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 780px;
+      margin: 0 0 .85rem;
+    }
+
+    /* GRID + CARDS */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .9rem;
+    }
+    @media (max-width:980px){
+      .grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:720px){
+      .grid-3 { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.85);
+      background: rgba(15,23,42,0.97);
+      padding: .85rem .85rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 22px rgba(15,23,42,1);
+      transition:
+        transform .16s,
+        box-shadow .16s,
+        border-color .16s,
+        background .16s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.18),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .card-inner { position: relative; z-index: 1; }
+
+    .card-basic::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(148,163,184,0.3),transparent 65%);
+    }
+    .card-plus::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.3),transparent 65%);
+    }
+    .card-elite::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.3),transparent 65%);
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(236,72,153,0.9);
+      background: rgba(15,23,42,1);
+      box-shadow:
+        0 0 26px rgba(236,72,153,0.6),
+        0 0 38px rgba(15,23,42,1);
+    }
+
+    .card-name {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .1rem;
+    }
+    .card-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+      margin-bottom: .4rem;
+    }
+    .card-price {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: .25rem;
+    }
+    .card-price span {
+      font-size: .72rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-left: .1rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: .3rem 0 .8rem;
+      font-size: .78rem;
+    }
+    .feature-list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+      align-items: flex-start;
+    }
+    .dot {
+      margin-top: .24rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-neon-cyan);
+      box-shadow: 0 0 10px rgba(34,211,238,0.9);
+      flex-shrink: 0;
+    }
+    .dot-hot {
+      background: var(--accent-neon-pink);
+      box-shadow: 0 0 10px rgba(236,72,153,0.9);
+    }
+
+    .btn-main {
+      border-radius: 999px;
+      padding: .45rem .95rem;
+      border: none;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      background: linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+      color: #020617;
+      box-shadow:
+        0 0 18px rgba(236,72,153,0.9),
+        0 0 30px rgba(15,23,42,1);
+    }
+
+    .stripe-note {
+      margin-top: .7rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.3fr 1.1fr;
+      gap: .9rem;
+    }
+    @media (max-width:960px){ .grid-2{grid-template-columns:1fr;} }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .76rem;
+      margin: .4rem 0 .6rem;
+    }
+    .pill-chip {
+      border-radius: 999px;
+      padding: .22rem .65rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.96);
+    }
+
+    .footer-note {
+      margin-top: 1.1rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .card{transition:none;}
+    }
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">TKFM RADIO</div>
+    <div class="nav-tag">Social Engine • Neon Side</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="submit.html" class="nav-link">Submit Music</a>
+      <a href="dj-mixtape-hosting.html" class="nav-link">DJ Hosting</a>
+      <a href="social-engine.html" class="nav-link nav-link-primary">Social Engine</a>
+      <a href="label-home.html" class="nav-link">Label HQ</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">TKFM SOCIAL ENGINE</div>
+        <h1>Lock in your socials with the station</h1>
+        <p class="hero-sub">
+          Two lanes:  
+          <strong>1)</strong> simple **Connect to Socials** (no auto-post, no login drama)  
+          <strong>2)</strong> **AI Auto-Post Packs** that can run your drops, clips and campaigns
+          with TKFM’s neon touch.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Safe connect option — no auto-post</div>
+          <div class="pill pill-alt"><span></span> AI-driven auto-post packs for heavy motion</div>
+          <div class="pill"><span></span> Designed for artists, DJs &amp; label clients</div>
+        </div>
+
+        <p class="hero-note">
+          All plans live on the **TKFM side**. Label-only levers stay on the **They Krave For Me
+          Records** black &amp; gold side.
+        </p>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-inner">
+          <div class="badge">
+            <span class="badge-dot"></span> No posting without consent
+          </div>
+          <div class="hero-card-title">How this works</div>
+          <p class="hero-card-body">
+            The **Connect to Socials** plan only links your pages to TKFM profiles and pages.  
+            The **AI packs** are separate opt-in upgrades — we don’t auto-post unless you buy, agree
+            and connect properly.
+          </p>
+          <ul class="hero-card-list">
+            <li>Choose your lane below.</li>
+            <li>Later, these can connect to Stripe checkout &amp; AI engines.</li>
+          </ul>
+          <button class="btn-ghost" type="button" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">
+            Scroll to plans
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PLANS GRID -->
+  <section class="section" id="plans">
+    <div class="section-inner">
+      <h2 class="section-title">Social plans for artists &amp; DJs</h2>
+      <p class="section-sub">
+        Start with a **regular connect** (no automation). When you’re ready for full motion, stack
+        an **AI Auto-Post Pack** on top. All prices here are suggestions — you already raised your
+        brand, so we’re not lowballing.
+      </p>
+
+      <div class="grid-3">
+        <!-- BASIC: CONNECT ONLY -->
+        <article class="card card-basic">
+          <div class="card-inner">
+            <div class="card-name">Social Connect Lock-In</div>
+            <div class="card-tag">No auto-post • Link only</div>
+            <div class="card-price">$99<span>one-time</span></div>
+
+            <ul class="feature-list">
+              <li><span class="dot"></span> We link your **Instagram, TikTok, YouTube, Facebook** from TKFM pages.</li>
+              <li><span class="dot"></span> Your **feature flyers, interviews, and mixtape covers** tagged correctly.</li>
+              <li><span class="dot"></span> No auto-post, no bots — pure linking + branding alignment.</li>
+              <li><span class="dot"></span> Great for artists who want presence but don’t want anyone posting for them.</li>
+            </ul>
+
+            <button class="btn-main" type="button">
+              Buy Social Connect
+            </button>
+
+            <p class="stripe-note">
+              Stripe lookup_key idea:  
+              <code>tkfm_social_connect_lockin</code>
+            </p>
+          </div>
+        </article>
+
+        <!-- MID: AI STARTER -->
+        <article class="card card-plus">
+          <div class="card-inner">
+            <div class="card-name">AI Social Pulse (Monthly)</div>
+            <div class="card-tag">Light auto-post • Clips + reminders</div>
+            <div class="card-price">$149<span>/ month</span></div>
+
+            <ul class="feature-list">
+              <li><span class="dot dot-hot"></span> Up to **8 AI-assisted posts a month** across your connected socials.</li>
+              <li><span class="dot"></span> Focus on **clips, show flyers, rotation announcements** tied to TKFM activity.</li>
+              <li><span class="dot"></span> Drafts can be reviewed before posting (owner-only toggle later).</li>
+              <li><span class="dot"></span> Designed for artists &amp; DJs who want motion without going full takeover.</li>
+            </ul>
+
+            <button class="btn-main" type="button">
+              Start AI Social Pulse
+            </button>
+
+            <p class="stripe-note">
+              Stripe lookup_key idea:  
+              <code>tkfm_ai_social_pulse_monthly</code>
+            </p>
+          </div>
+        </article>
+
+        <!-- TOP: AI TAKEOVER -->
+        <article class="card card-elite">
+          <div class="card-inner">
+            <div class="card-name">AI Campaign Takeover</div>
+            <div class="card-tag">Heavy auto-post • Campaign mode</div>
+            <div class="card-price">$499<span>/ campaign (4–6 weeks)</span></div>
+
+            <ul class="feature-list">
+              <li><span class="dot dot-hot"></span> **Full campaign run**: 4–6 weeks of AI-crafted posts around your TKFM push.</li>
+              <li><span class="dot"></span> Multi-platform: IG / TikTok / Shorts / FB tuned for **drops, clips &amp; call-to-actions**.</li>
+              <li><span class="dot"></span> Optional integration with label-side packs &amp; sponsor plays.</li>
+              <li><span class="dot"></span> Best for serious artists, DJs and brands tapping into the full TKFM ecosystem.</li>
+            </ul>
+
+            <button class="btn-main" type="button">
+              Book Campaign Takeover
+            </button>
+
+            <p class="stripe-note">
+              Stripe lookup_key idea:  
+              <code>tkfm_ai_campaign_takeover</code>
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <p class="stripe-note">
+        Later, the buttons can call your existing Netlify Stripe function with a lookup key, for
+        example:  
+        <code>/.netlify/functions/create-checkout?lookup_key=tkfm_ai_social_pulse_monthly</code>
+      </p>
+    </div>
+  </section>
+
+  <!-- EXPLAIN TKFM vs LABEL -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">TKFM vs Label — who controls what?</h2>
+      <p class="section-sub">
+        To keep the empire clean: **all customer-facing social plans live here on TKFM**. The label
+        and admin AI levers sit in the **They Krave For Me Records** black &amp; gold console.
+      </p>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-name">Artists &amp; DJs (neon side)</div>
+            <p class="section-sub" style="margin: .25rem 0 .5rem;font-size:.78rem;">
+              You can send artists and DJs straight here from TKFM:
+            </p>
+            <div class="pill-row">
+              <span class="pill-chip">Social Connect Lock-In</span>
+              <span class="pill-chip">AI Social Pulse Monthly</span>
+              <span class="pill-chip">AI Campaign Takeover</span>
+            </div>
+            <p class="stripe-note">
+              They pay TKFM. If it turns into long-term label business, **label-side pages** handle
+              that paperwork and roster logic.
+            </p>
+          </div>
+        </article>
+
+        <article class="card card-plus">
+          <div class="card-inner">
+            <div class="card-name">Label &amp; admin (black &amp; gold side)</div>
+            <p class="section-sub" style="margin: .25rem 0 .5rem;font-size:.78rem;">
+              They Krave For Me Records gets its own **AI Social Command Center**, where you can:
+            </p>
+            <ul class="feature-list">
+              <li><span class="dot"></span> See which packs each artist / DJ bought.</li>
+              <li><span class="dot"></span> Override campaigns from **God View**.</li>
+              <li><span class="dot"></span> Bundle social packs inside **label packs &amp; contracts**.</li>
+            </ul>
+            <button class="btn-main" type="button" onclick="window.location.href='label-social-engine.html'">
+              Go To Label Social Engine
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    TKFM Social Engine • Neon station side.  
+    Safe connect plan + AI autopilot packs — label controls the deeper moves from the black &amp; gold HQ.
+  </p>
+</main>
+
+</body>
+</html>

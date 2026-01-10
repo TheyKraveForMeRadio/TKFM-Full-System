@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Slot Suggestions — They Krave For Me Records</title>
+
+  <!-- LABEL THEME -->
+  <link rel="stylesheet" href="/v2/label-theme.css">
+</head>
+<body class="label-body">
+  <main style="max-width:1180px;margin:0 auto;padding:1.4rem .9rem 2.4rem;">
+    <header class="label-header">
+      <div class="label-logo-row">
+        <img src="/v2/tkfm-records-logo.png" alt="They Krave For Me Records" class="label-logo">
+        <div class="label-title-block">
+          <div class="label-kicker">They Krave For Me · Label Division</div>
+          <div class="label-title">Slot Suggestions Engine</div>
+          <p class="label-subtitle">
+            Rank which artists should get the next TKFM pushes, drops, and sponsor attention —
+            using a simple scoring model you can tweak anytime.
+          </p>
+        </div>
+      </div>
+      <div class="label-badges">
+        <div class="label-pill">
+          🎯 Prioritization Board
+        </div>
+        <div class="label-pill">
+          🧮 Local scoring (no backend yet)
+        </div>
+      </div>
+    </header>
+
+    <nav class="label-nav">
+      <a href="/v2/label-home.html"><span>🏛️</span>Label Home</a>
+      <a href="/v2/label-hub.html"><span>🧬</span>Label Hub</a>
+      <a href="/v2/label-artist-roster-hub.html"><span>📜</span>Artist Roster</a>
+      <a href="/v2/label-revenue-engine.html"><span>💰</span>Revenue Engine</a>
+      <a href="/v2/label-sponsor-engine.html"><span>🤝</span>Sponsor Engine</a>
+      <a href="/v2/label-ar-radar.html"><span>📡</span>A&amp;R Radar</a>
+      <a href="/v2/app-hub.html"><span>🎛️</span>App Hub</a>
+    </nav>
+
+    <section class="label-grid label-grid-2">
+      <!-- LEFT: INPUT FORM -->
+      <div class="label-card">
+        <h2>Add / edit priority row</h2>
+        <p class="label-help">
+          Each row represents **one artist** (or project). Score is calculated from
+          heat, reliability and revenue weight.
+        </p>
+
+        <form id="slotForm" style="margin-top:.6rem;font-size:.8rem;">
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+            <div>
+              <label for="slotArtist">Artist / project</label>
+              <input id="slotArtist" placeholder="Artist or project name">
+            </div>
+            <div>
+              <label for="slotPack">Pack / lane</label>
+              <input id="slotPack" placeholder="e.g. ALL CITY LAUNCH, Single push">
+            </div>
+          </div>
+
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:.5rem;">
+            <div>
+              <label for="slotHeat">Heat (1–10)</label>
+              <input id="slotHeat" type="number" min="1" max="10" step="1" placeholder="7">
+            </div>
+            <div>
+              <label for="slotReliability">Reliability (1–10)</label>
+              <input id="slotReliability" type="number" min="1" max="10" step="1" placeholder="8">
+            </div>
+            <div>
+              <label for="slotRevenue">Revenue weight (1–10)</label>
+              <input id="slotRevenue" type="number" min="1" max="10" step="1" placeholder="6">
+            </div>
+          </div>
+
+          <div style="margin-top:.5rem;">
+            <label for="slotNotes">Notes</label>
+            <textarea id="slotNotes" placeholder="Example: viral on TikTok, pack upgrade pending, sponsor interest for spring."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <button type="submit" class="label-btn">
+              ➕ Save row
+            </button>
+            <button type="button" id="clearSlotsBtn" class="label-btn secondary" style="margin-left:.45rem;">
+              🧹 Clear all
+            </button>
+          </div>
+
+          <p class="label-help" style="margin-top:.7rem;">
+            Score = (Heat × 2) + Reliability + Revenue weight. You can change the formula in the JS
+            if you want more aggressive label logic.
+          </p>
+        </form>
+      </div>
+
+      <!-- RIGHT: SUMMARY -->
+      <div class="label-card">
+        <h2>Top priority today</h2>
+        <p class="label-help">
+          Highest scoring artists, recalculated every time you add or edit a row.
+        </p>
+
+        <div id="slotSummary" style="margin-top:.7rem;font-size:.85rem;color:var(--label-muted);">
+          No rows yet. Add a few artists to see who rises to the top.
+        </div>
+
+        <div style="margin-top:1rem;">
+          <button class="label-btn secondary" onclick="sortByScoreDesc()">
+            🔁 Re-sort by score
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:1.2rem;">
+      <div class="label-card">
+        <h2>Priority board</h2>
+        <p class="label-help">
+          Click a row to load it back into the form above. Highest score = biggest push.
+        </p>
+
+        <div style="margin-top:.6rem;max-height:380px;overflow:auto;">
+          <table class="label-table" id="slotTable">
+            <thead>
+              <tr>
+                <th>Artist / project</th>
+                <th>Pack / lane</th>
+                <th>Heat</th>
+                <th>Reliability</th>
+                <th>Revenue</th>
+                <th>Score</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="slotTableBody">
+              <!-- rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="label-toast" id="labelToast">Saved.</div>
+
+  <script>
+    const SLOT_KEY = "tkfm_label_slot_suggestions";
+
+    function showToast(msg){
+      const el = document.getElementById("labelToast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(()=>{ el.style.display = "none"; }, 1800);
+    }
+
+    function loadSlots(){
+      try{
+        const raw = localStorage.getItem(SLOT_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){
+        console.warn("slot load error", e);
+        return [];
+      }
+    }
+
+    function saveSlots(slots){
+      try{
+        localStorage.setItem(SLOT_KEY, JSON.stringify(slots));
+      }catch(e){
+        console.warn("slot save error", e);
+      }
+    }
+
+    function calcScore(heat, reliability, revenue){
+      const h = Number(heat || 0);
+      const r = Number(reliability || 0);
+      const rev = Number(revenue || 0);
+      return (h * 2) + r + rev;
+    }
+
+    function renderSlots(){
+      const slots = loadSlots().map(s => ({
+        ...s,
+        score: calcScore(s.heat, s.reliability, s.revenue)
+      })).sort((a,b)=>b.score - a.score);
+
+      const body = document.getElementById("slotTableBody");
+      body.innerHTML = "";
+
+      if(!slots.length){
+        document.getElementById("slotSummary").textContent =
+          "No data yet. Add artists to start building your priority board.";
+        return;
+      }
+
+      const top = slots[0];
+      document.getElementById("slotSummary").innerHTML =
+        `<strong>Top priority:</strong> ${top.artist || "Unnamed"} · ` +
+        `${top.pack || "No pack"} · Score ${top.score} ` +
+        `<br><span style="font-size:.78rem;color:var(--label-muted);">${top.notes || ""}</span>`;
+
+      slots.forEach((s, idx)=>{
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+
+        const tds = [
+          s.artist || "",
+          s.pack || "",
+          s.heat ?? "",
+          s.reliability ?? "",
+          s.revenue ?? "",
+          s.score ?? "",
+          s.notes || ""
+        ];
+
+        tds.forEach(val=>{
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        tr.addEventListener("click", ()=>{
+          loadSlotIntoForm(idx);
+        });
+
+        body.appendChild(tr);
+      });
+    }
+
+    function loadSlotIntoForm(index){
+      const slots = loadSlots();
+      const s = slots[index];
+      if(!s) return;
+
+      document.getElementById("slotArtist").value = s.artist || "";
+      document.getElementById("slotPack").value = s.pack || "";
+      document.getElementById("slotHeat").value = s.heat ?? "";
+      document.getElementById("slotReliability").value = s.reliability ?? "";
+      document.getElementById("slotRevenue").value = s.revenue ?? "";
+      document.getElementById("slotNotes").value = s.notes || "";
+
+      document.getElementById("slotForm").dataset.editIndex = String(index);
+      showToast("Loaded row into form. Saving will update that entry.");
+    }
+
+    document.getElementById("slotForm").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const artist = document.getElementById("slotArtist").value.trim();
+      const pack = document.getElementById("slotPack").value.trim();
+      const heat = Number(document.getElementById("slotHeat").value || 0);
+      const reliability = Number(document.getElementById("slotReliability").value || 0);
+      const revenue = Number(document.getElementById("slotRevenue").value || 0);
+      const notes = document.getElementById("slotNotes").value.trim();
+
+      if(!artist){
+        showToast("Artist / project name required.");
+        return;
+      }
+
+      const slots = loadSlots();
+      const editIndex = document.getElementById("slotForm").dataset.editIndex;
+      const payload = { artist, pack, heat, reliability, revenue, notes };
+
+      if(editIndex !== undefined && editIndex !== "" && slots[Number(editIndex)]){
+        slots[Number(editIndex)] = payload;
+      } else {
+        slots.push(payload);
+      }
+
+      document.getElementById("slotForm").dataset.editIndex = "";
+      saveSlots(slots);
+      renderSlots();
+      showToast("Row saved.");
+    });
+
+    document.getElementById("clearSlotsBtn").addEventListener("click", ()=>{
+      if(!confirm("Clear all slot data from this browser?")) return;
+      saveSlots([]);
+      renderSlots();
+      showToast("All rows cleared.");
+    });
+
+    function sortByScoreDesc(){
+      renderSlots();
+      showToast("Re-sorted by score.");
+    }
+
+    renderSlots();
+  </script>
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM • Autopilot Sponsors Engine</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.98);
+      --accent-orange: #fb923c;
+      --accent-pink: #ec4899;
+      --accent-cyan: #22d3ee;
+      --accent-purple: #6366f1;
+      --accent-gold: #facc15;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.22), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.2), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-orbit {
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.8);
+      inset: -155px -160px auto auto;
+      opacity: .7;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 130px rgba(250,204,21,1),
+        0 0 190px rgba(0,0,0,1);
+      animation: spin 32s linear infinite;
+      pointer-events: none;
+    }
+    .bg-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: inherit;
+      border: 1px solid rgba(96,165,250,0.9);
+      box-shadow:
+        0 0 80px rgba(96,165,250,1),
+        0 0 130px rgba(0,0,0,1);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.55) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 2.4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-bottom: 1.2rem;
+    }
+    .nav-pill {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fefce8;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.35), transparent 60%),
+        radial-gradient(circle at 100% 100%, #020617, #000000 65%);
+      box-shadow:
+        0 0 24px rgba(250,204,21,1),
+        0 0 40px rgba(0,0,0,1);
+    }
+    .nav-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-main {
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #fef9c3;
+    }
+    .nav-sub {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+    }
+    .nav-spacer {
+      margin-left: auto;
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+    }
+    .nav-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      padding: .22rem .7rem;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .shell {
+      border-radius: 28px;
+      border: 1px solid rgba(250,204,21,0.8);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.18), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 60%),
+        radial-gradient(circle at 50% 130%, rgba(15,23,42,0.98), #020617 70%);
+      padding: 1.5rem 1.4rem 1.7rem;
+      box-shadow:
+        0 0 80px rgba(15,23,42,1),
+        0 0 140px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.3rem;
+    }
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%, rgba(251,113,133,0.2), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 60%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      opacity: .9;
+    }
+    .shell-inner { position: relative; z-index: 1; }
+
+    .kicker {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #fde68a;
+      margin-bottom: .4rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg,#fef3c7,#facc15,#fb923c,#22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 42px rgba(250,204,21,0.85),
+        0 0 70px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .7rem;
+      font-size: .9rem;
+      color: #e5e7eb;
+      max-width: 640px;
+    }
+    .hero-sub strong { color: #fef9c3; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .6rem;
+      font-size: .72rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .22rem .7rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .pill span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(34,211,238,1);
+    }
+    .pill-gold span {
+      background: var(--accent-gold);
+      box-shadow: 0 0 15px rgba(250,204,21,1);
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .7rem;
+      font-size: .8rem;
+      margin-top: .8rem;
+    }
+    @media (max-width: 640px) {
+      .field-grid { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .field {
+      border-radius: 16px;
+      border: 1px solid rgba(71,85,105,1);
+      background: rgba(15,23,42,0.98);
+      padding: .6rem .7rem;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: .3rem;
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .25rem;
+    }
+    .badge {
+      font-size: .68rem;
+      padding: .08rem .5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-gold);
+    }
+    .hint {
+      margin-top: .2rem;
+      font-size: .7rem;
+      color: var(--text-muted);
+    }
+    .hint strong { color: #e5e7eb; }
+
+    .sponsor-meta {
+      margin-top: .7rem;
+      border-radius: 16px;
+      border: 1px dashed rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.9);
+      padding: .6rem .75rem;
+      font-size: .8rem;
+    }
+    .sponsor-meta input[type="text"] {
+      width: 100%;
+      margin-top: .3rem;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,1);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      padding: .45rem .75rem;
+      font-size: .8rem;
+      outline: none;
+    }
+    .sponsor-meta input[type="text"]:focus {
+      border-color: rgba(96,165,250,1);
+      box-shadow:
+        0 0 18px rgba(96,165,250,0.9),
+        0 0 28px rgba(0,0,0,1);
+    }
+
+    .score-row {
+      margin-top: .7rem;
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1.1fr);
+      gap: .7rem;
+      font-size: .8rem;
+    }
+    @media (max-width: 860px) {
+      .score-row { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .score-card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%),
+        rgba(15,23,42,0.98);
+      padding: .6rem .75rem;
+    }
+    .score-label {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .15rem;
+    }
+    .score-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .score-tag {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin-top: .15rem;
+      color: #bbf7d0;
+    }
+
+    .ai-summary {
+      border-radius: 18px;
+      border: 1px dashed rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.94);
+      padding: .6rem .75rem;
+      font-size: .8rem;
+    }
+
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: .2rem 0 .6rem;
+      font-size: .78rem;
+    }
+    .list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      margin-top: .26rem;
+      flex-shrink: 0;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(34,211,238,1);
+    }
+    .dot-gold {
+      background: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(250,204,21,1);
+    }
+
+    .email-template {
+      margin-top: .5rem;
+      border-radius: 16px;
+      border: 1px solid rgba(71,85,105,1);
+      background: rgba(15,23,42,0.98);
+      padding: .55rem .7rem;
+      font-size: .77rem;
+      white-space: pre-line;
+    }
+
+    .grid-bottom {
+      display: grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+      gap: .9rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 860px) {
+      .grid-bottom { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 22px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: .9rem .95rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      font-size: .8rem;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(251,146,60,0.12), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .85;
+      pointer-events: none;
+    }
+    .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin: 0 0 .35rem;
+    }
+    .card-kicker {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      margin-bottom: .22rem;
+    }
+
+    .footer-note {
+      margin-top: .7rem;
+      font-size: .74rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orbit { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbit"></div>
+<div class="scanline"></div>
+
+<main>
+  <header class="nav-bar">
+    <div class="nav-pill">AS</div>
+    <div class="nav-text">
+      <div class="nav-main">Autopilot sponsors</div>
+      <div class="nav-sub">Lead scoring × email draft lab</div>
+    </div>
+    <div class="nav-spacer">
+      <div class="nav-chip">Owner / Label access</div>
+      <div class="nav-chip">AI core: sponsor scoring</div>
+    </div>
+  </header>
+
+  <section class="shell">
+    <div class="shell-inner">
+      <div class="kicker">AI sponsor engine</div>
+      <h1>See if the brand is really worth the call.</h1>
+      <p class="hero-sub">
+        Plug in how much money they’re bringing, how well they fit TKFM &amp; the label,
+        and how much your audiences overlap. The AI core returns a **0–100 score** and
+        a sponsor email draft you can tweak.
+      </p>
+
+      <div class="hero-grid">
+        <div>
+          <div class="pill-row">
+            <div class="pill pill-gold"><span></span> Use for TKFM show / segment sponsors</div>
+            <div class="pill"><span></span> Use for label &amp; artist brand deals</div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="budget">
+                Budget strength
+                <span class="badge"><span id="budget-value">0.7</span></span>
+              </label>
+              <input id="budget" type="range" min="0" max="100" step="5" value="70" />
+              <p class="hint">
+                0 = tiny test budget • 1 = serious bag.
+              </p>
+            </div>
+
+            <div class="field">
+              <label for="brandFit">
+                Brand fit
+                <span class="badge"><span id="brandFit-value">0.8</span></span>
+              </label>
+              <input id="brandFit" type="range" min="0" max="100" step="5" value="80" />
+              <p class="hint">
+                0 = doesn’t match the culture • 1 = feels made for TKFM.
+              </p>
+            </div>
+
+            <div class="field">
+              <label for="overlap">
+                Audience overlap
+                <span class="badge"><span id="overlap-value">0.6</span></span>
+              </label>
+              <input id="overlap" type="range" min="0" max="100" step="5" value="60" />
+              <p class="hint">
+                0 = totally different audiences • 1 = perfect alignment.
+              </p>
+            </div>
+
+            <div class="field">
+              <label for="term">
+                Term length
+                <span class="badge"><span id="term-value">0.5</span></span>
+              </label>
+              <input id="term" type="range" min="0" max="100" step="5" value="50" />
+              <p class="hint">
+                0 = one-off test • 1 = long partnership (quarter / year).
+              </p>
+            </div>
+          </div>
+
+          <div class="sponsor-meta">
+            <strong>Sponsor name &amp; notes</strong>
+            <p class="hint">
+              Optional — used to personalize the email draft (local only, not saved yet).
+            </p>
+            <input id="brandName" type="text" placeholder="Example: Gold Rush Energy, Streetwear Lab, etc." />
+          </div>
+
+          <div class="score-row">
+            <div class="score-card">
+              <div class="score-label">AI sponsor lead score</div>
+              <div class="score-value"><span id="score-value">0</span>/100</div>
+              <div class="score-tag" id="score-tag">Waiting for inputs…</div>
+            </div>
+            <div class="ai-summary">
+              <strong>AI summary:</strong>
+              <ul class="list" id="ai-summary-list">
+                <li><span class="dot"></span> Adjust the sliders to generate a sponsor score.</li>
+                <li><span class="dot-gold"></span> The AI will classify it as **cold / warm / hot** and suggest next steps.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <aside class="score-card">
+          <div class="score-label">Email draft</div>
+          <div class="score-tag" id="email-tag">Not generated yet</div>
+          <div class="email-template" id="email-template">
+Type your sponsor name and tweak the sliders to generate a starter email.
+Nothing is sent from this page — it’s just a drafting lab.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-bottom">
+    <article class="card">
+      <div class="card-kicker">How to read the scores</div>
+      <h2 class="card-title">Cold, warm, or “lock this in” hot</h2>
+      <ul class="list">
+        <li><span class="dot"></span><strong>0–39</strong> — Cold lead. Great for awareness, but don’t overbuild a custom pack.</li>
+        <li><span class="dot"></span><strong>40–69</strong> — Warm lead. Good fit, decent budget; test campaigns and measure results.</li>
+        <li><span class="dot-gold"></span><strong>70–100</strong> — Hot lead. Strong budget + fit — prioritize meetings and lock paperwork.</li>
+      </ul>
+      <p class="card-text">
+Tie this to your **label sponsor engine**, TKFM feature packs, and eventually your contract generator
+so hot leads turn into real deals faster — with less “do they even fit us?” guessing.
+      </p>
+    </article>
+
+    <article class="card">
+      <div class="card-kicker">Access control</div>
+      <h2 class="card-title">Who should use this?</h2>
+      <ul class="list">
+        <li><span class="dot-gold"></span> <strong>Owner</strong> — full control.</li>
+        <li><span class="dot"></span> <strong>Label / business staff</strong> — if you trust their deal judgement.</li>
+        <li><span class="dot"></span> Not for artists or DJs — they should only see final sponsor slots, not score logic.</li>
+      </ul>
+      <p class="card-text">
+This page is locked via <code>auth-gateway.js</code> to <strong>owner</strong> and <strong>label</strong> roles only,
+keeping deal logic in the back office while TKFM &amp; label front-ends stay clean.
+      </p>
+    </article>
+  </section>
+
+  <p class="footer-note">
+    Autopilot Sponsors Engine • Score the brand, then send the email with confidence.
+  </p>
+</main>
+
+<script type="module">
+  import { supabase } from "./src/supabaseClient.js";
+  import { protectPage } from "./auth-gateway.js";
+  import { scoreSponsorLead, generateFeatureBoostPlan } from "./ai-core.js";
+
+  // 1) Protect: owner + label only
+  protectPage(["owner", "label"]);
+
+  const budgetEl = document.getElementById("budget");
+  const brandFitEl = document.getElementById("brandFit");
+  const overlapEl = document.getElementById("overlap");
+  const termEl = document.getElementById("term");
+  const brandNameEl = document.getElementById("brandName");
+
+  const budgetVal = document.getElementById("budget-value");
+  const brandFitVal = document.getElementById("brandFit-value");
+  const overlapVal = document.getElementById("overlap-value");
+  const termVal = document.getElementById("term-value");
+
+  const scoreValueEl = document.getElementById("score-value");
+  const scoreTagEl = document.getElementById("score-tag");
+  const summaryListEl = document.getElementById("ai-summary-list");
+  const emailTagEl = document.getElementById("email-tag");
+  const emailTemplateEl = document.getElementById("email-template");
+
+  function classifyScore(score) {
+    if (score >= 70) return { label: "Hot lead — prioritize now", color: "#bbf7d0" };
+    if (score >= 40) return { label: "Warm lead — test & measure", color: "#fde68a" };
+    return { label: "Cold lead — tread lightly", color: "#fecaca" };
+  }
+
+  function buildEmail(score, brandName, planLines) {
+    const brand = brandName?.trim() || "your brand";
+
+    let toneLine;
+    if (score >= 70) {
+      toneLine = "Given how closely you align with our audience and the strength of your budget, we’d love to explore a deeper partnership.";
+    } else if (score >= 40) {
+      toneLine = "We think there’s a strong opportunity to test a focused campaign together and learn how our audiences respond.";
+    } else {
+      toneLine = "We’d be interested in exploring a light test campaign together to gauge initial response.";
+    }
+
+    const bullets = planLines.map(l => `• ${l}`).join("\n");
+
+    return `Subject: TKFM x ${brand} — Sponsor opportunity
+
+Hi ${brand},
+
+We’re reaching out from They Krave For Me Radio / They Krave For Me Records — an independent power station focused on breaking artists, DJs, and culture the streets actually respond to.
+
+${toneLine}
+
+Here are a few ways we could structure things on our side:
+${bullets}
+
+If this sounds interesting, we can hop on a quick call to walk through options, timing, and creative direction. From there we can lock in a clear package and deliverable schedule.
+
+Best,
+TKFM / They Krave For Me Records
+Sponsor & Partnerships Desk
+`;
+  }
+
+  function update() {
+    const budget = Number(budgetEl.value) / 100;
+    const brandFit = Number(brandFitEl.value) / 100;
+    const overlap = Number(overlapEl.value) / 100;
+    const term = Number(termEl.value) / 100;
+
+    budgetVal.textContent = budget.toFixed(2);
+    brandFitVal.textContent = brandFit.toFixed(2);
+    overlapVal.textContent = overlap.toFixed(2);
+    termVal.textContent = term.toFixed(2);
+
+    const score = scoreSponsorLead({
+      budget,
+      brandFit,
+      audienceOverlap: overlap,
+      termLength: term
+    });
+
+    scoreValueEl.textContent = score;
+
+    const classification = classifyScore(score);
+    scoreTagEl.textContent = classification.label;
+    scoreTagEl.style.color = classification.color;
+
+    // Use generateFeatureBoostPlan just to get some guidance-style lines
+    const planLines = generateFeatureBoostPlan({
+      readinessScore: Math.round(brandFit * 100),
+      sponsorScore: score,
+      platform: "tkfm"
+    });
+
+    summaryListEl.innerHTML = "";
+    planLines.forEach((line, index) => {
+      const li = document.createElement("li");
+      const dot = document.createElement("span");
+      dot.className = index === 0 ? "dot-gold" : "dot";
+      const text = document.createElement("span");
+      text.textContent = line;
+      li.appendChild(dot);
+      li.appendChild(text);
+      summaryListEl.appendChild(li);
+    });
+
+    const brandName = brandNameEl.value;
+    emailTagEl.textContent = "Draft ready — copy & paste into your email tool.";
+    emailTemplateEl.textContent = buildEmail(score, brandName, planLines);
+  }
+
+  budgetEl.addEventListener("input", update);
+  brandFitEl.addEventListener("input", update);
+  overlapEl.addEventListener("input", update);
+  termEl.addEventListener("input", update);
+  brandNameEl.addEventListener("input", update);
+
+  update();
+</script>
+</body>
+</html>

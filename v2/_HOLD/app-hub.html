@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TKFM Radio — Neon App Hub</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.96);
+      --neon-purple: #a855f7;
+      --neon-pink: #ec4899;
+      --neon-cyan: #22d3ee;
+      --neon-indigo: #4f46e5;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #22c55e;
+      --accent-red: #ef4444;
+      --accent-slate: #64748b;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148,163,184,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(236,72,153,0.25), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.22), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 3rem;
+      position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* BACKGROUND FX */
+    .orbit {
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      border: 1px solid rgba(236,72,153,0.55);
+      top: -110px;
+      right: -120px;
+      opacity: 0.7;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 100px rgba(236,72,153,1),
+        0 0 150px rgba(0,0,0,1);
+      animation: orbitSpin 28s linear infinite;
+    }
+    .orbit::before {
+      content: "";
+      position: absolute;
+      inset: 24%;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.95);
+      box-shadow:
+        0 0 60px rgba(56,189,248,1),
+        0 0 80px rgba(0,0,0,1);
+    }
+    @keyframes orbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .wave {
+      position: fixed;
+      inset: auto -25% -220px -25%;
+      background:
+        radial-gradient(circle at 15% 0, rgba(56,189,248,0.25), transparent 60%),
+        radial-gradient(circle at 85% 35%, rgba(236,72,153,0.23), transparent 60%);
+      opacity: 0.8;
+      pointer-events: none;
+      filter: blur(10px);
+    }
+
+    .particle {
+      position: fixed;
+      width: 3px;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom, rgba(236,72,153,0), rgba(236,72,153,0.9));
+      top: 10%;
+      left: 15%;
+      opacity: 0.65;
+      filter: blur(0.3px);
+      pointer-events: none;
+      animation: particleRain 7s linear infinite;
+    }
+    .particle:nth-child(2) { left: 40%; animation-duration: 9s; animation-delay: 1.5s; }
+    .particle:nth-child(3) { left: 68%; animation-duration: 8s; animation-delay: 0.6s; }
+    .particle:nth-child(4) { left: 82%; animation-duration: 10s; animation-delay: 2.4s; }
+
+    @keyframes particleRain {
+      0% { transform: translateY(-10vh); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.2; }
+      100% { transform: translateY(110vh); opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .orbit { opacity: 0.35; }
+      .wave { opacity: 0.6; }
+      .particle { opacity: 0.4; }
+    }
+
+    /* NAV — TKFM NEON SIDE */
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(22px);
+      background: linear-gradient(to bottom,
+        rgba(15,23,42,0.98),
+        rgba(15,23,42,0.6),
+        transparent
+      );
+      border-bottom: 1px solid rgba(129,140,248,0.5);
+      margin: -1.6rem -0.9rem 1.4rem;
+      padding: .45rem .9rem .55rem;
+    }
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: conic-gradient(from 220deg,#22d3ee,#a855f7,#ec4899,#22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 26px rgba(236,72,153,1),
+        0 0 40px rgba(0,0,0,1);
+      white-space: nowrap;
+    }
+    .nav-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .78rem;
+    }
+    .nav-link {
+      padding: .26rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #e5e7eb;
+      background: transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        transform .16s,
+        box-shadow .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.97);
+      border-color: rgba(129,140,248,0.9);
+      transform: translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color: rgba(236,72,153,0.95);
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.26),transparent 60%);
+      box-shadow:
+        0 0 26px rgba(236,72,153,1),
+        0 0 38px rgba(0,0,0,1);
+      color: #f9fafb;
+    }
+
+    @media (max-width: 960px) {
+      .nav-tag { display:none; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 32px;
+      padding: 1.9rem 1.5rem 2.2rem;
+      border: 1px solid rgba(129,140,248,0.9);
+      background:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.26),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(236,72,153,0.24),transparent 55%),
+        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(0,0,0,1) 70%);
+      box-shadow:
+        0 0 60px rgba(15,23,42,1),
+        0 0 110px rgba(0,0,0,1);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .hero-noise {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(129,140,248,0.25),transparent 65%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.23),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.4fr 1.05fr;
+      gap: 1.2rem;
+      align-items: center;
+    }
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; }
+    }
+
+    .hero-kicker {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #a5b4fc;
+      margin-bottom: .35rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      background: linear-gradient(130deg,#22d3ee,#a855f7,#ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 40px rgba(236,72,153,1),
+        0 0 68px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .8rem;
+      font-size: .97rem;
+      max-width: 640px;
+      color: #e5e7eb;
+    }
+    .hero-sub strong {
+      color: #e0f2fe;
+    }
+
+    .hero-pills {
+      margin-top: .9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      font-size: .78rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .3rem .85rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .pill span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 18px rgba(56,189,248,0.9);
+    }
+    .pill-alt span {
+      background: var(--neon-pink);
+      box-shadow: 0 0 18px rgba(236,72,153,0.9);
+    }
+
+    .hero-note {
+      margin-top: .8rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 360px;
+    }
+
+    /* LIVE PANEL */
+    .hero-card {
+      border-radius: 24px;
+      border: 1px solid rgba(129,140,248,0.9);
+      background: radial-gradient(circle at 0 0,rgba(236,72,153,0.23),transparent 65%),
+                  radial-gradient(circle at 100% 100%,rgba(15,23,42,1),rgba(0,0,0,0.96));
+      padding: 1rem 1rem 1.2rem;
+      box-shadow:
+        0 0 36px rgba(236,72,153,1),
+        0 0 50px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .hero-card-inner { position: relative; z-index: 1; }
+
+    .hero-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .8rem;
+      margin-bottom: .4rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      border-radius: 999px;
+      padding: .18rem .7rem;
+      border: 1px solid rgba(248,250,252,0.35);
+      background: rgba(15,23,42,0.96);
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 12px rgba(34,197,94,1);
+    }
+
+    .status-pill {
+      border-radius: 999px;
+      padding: .2rem .65rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .status-live {
+      border-color: rgba(34,197,94,0.95);
+      color: #bbf7d0;
+      box-shadow: 0 0 12px rgba(34,197,94,0.9);
+    }
+
+    .hero-card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .25rem;
+    }
+    .hero-card-sub {
+      font-size: .8rem;
+      color: var(--text-main);
+      margin-bottom: .6rem;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .6rem;
+      margin-bottom: .7rem;
+      font-size: .72rem;
+    }
+    @media (max-width: 480px) {
+      .mini-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    .mini-card {
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.96);
+      padding: .45rem .5rem .5rem;
+    }
+    .mini-label {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: .65rem;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+    .mini-value {
+      font-size: .8rem;
+      color: #e5e7eb;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    .btn-main {
+      border-radius: 999px;
+      padding: .48rem 1.1rem;
+      border: none;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      background: linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+      color: #f9fafb;
+      box-shadow:
+        0 0 18px rgba(236,72,153,1),
+        0 0 30px rgba(0,0,0,1);
+    }
+    .btn-secondary {
+      border-radius: 999px;
+      padding: .42rem .95rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom: 1.7rem;
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.2rem 1.05rem 1.4rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.18),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .section-inner { position: relative; z-index: 1; }
+
+    .section-title {
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 0 0 .25rem;
+      color: #e0f2fe;
+    }
+    .section-sub {
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 840px;
+      margin: 0 0 .9rem;
+    }
+
+    /* GRID + CARDS */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr;
+      gap: .9rem;
+    }
+    @media (max-width: 980px) {
+      .grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .grid-2 { grid-template-columns: minmax(0,1fr); }
+    }
+    @media (max-width: 720px) {
+      .grid-3 { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.85);
+      background: rgba(15,23,42,0.96);
+      padding: .9rem .9rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 22px rgba(0,0,0,1);
+      transition:
+        transform .18s,
+        box-shadow .18s,
+        border-color .18s,
+        background .18s;
+      cursor: pointer;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .card-pink::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(236,72,153,0.24),transparent 65%);
+    }
+    .card-purple::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(129,140,248,0.24),transparent 65%);
+    }
+    .card-gold::before {
+      background:
+        radial-gradient(circle at 0 0,rgba(245,158,11,0.25),transparent 65%);
+    }
+
+    .card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(236,72,153,0.95);
+      background: rgba(15,23,42,1);
+      box-shadow:
+        0 0 32px rgba(236,72,153,0.9),
+        0 0 46px rgba(0,0,0,1);
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .6rem;
+      margin-bottom: .3rem;
+    }
+
+    .card-name {
+      font-size: .9rem;
+      font-weight: 600;
+    }
+    .card-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+      margin-bottom: .35rem;
+    }
+
+    .badge-small {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .7rem;
+      border-radius: 999px;
+      padding: .16rem .6rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.96);
+      margin-bottom: .35rem;
+    }
+    .badge-dot-mini {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(34,211,238,0.9);
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: .25rem 0 .7rem;
+      font-size: .78rem;
+    }
+    .feature-list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+      align-items: flex-start;
+    }
+    .dot {
+      margin-top: .24rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+      flex-shrink: 0;
+    }
+    .dot-purple {
+      background: var(--neon-purple);
+      box-shadow: 0 0 10px rgba(168,85,247,1);
+    }
+    .dot-cyan {
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(34,211,238,1);
+    }
+    .dot-amber {
+      background: var(--accent-amber);
+      box-shadow: 0 0 10px rgba(245,158,11,1);
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+
+    .lookup {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .72rem;
+      background: rgba(15,23,42,0.96);
+      border-radius: 999px;
+      padding: .22rem .6rem;
+      border: 1px solid rgba(55,65,81,0.9);
+      color: #e5e7eb;
+    }
+
+    .footer-note {
+      margin-top: 1.15rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .orbit{animation:none;}
+      .particle{animation:none;}
+      .card{transition:none;}
+    }
+  </style>
+</head>
+<body>
+<div class="orbit"></div>
+<div class="wave"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo">TKFM RADIO</div>
+    <div class="nav-tag">Neon App Hub • All Engines</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="dj-mixtape-hosting.html" class="nav-link">DJ Hosting</a>
+      <a href="client-vault.html" class="nav-link">Client Vault</a>
+      <a href="tkfm-app-hub.html" class="nav-link nav-link-primary">App Hub</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">NEON STUDIO HQ</div>
+        <h1>The entire station in one glow.</h1>
+        <p class="hero-sub">
+          This is the **TKFM Radio** side. Neon, live, public-facing.  
+          Every major **engine, board and tool** is here: AI DJ console, feature flows,
+          sponsor lanes, DJ tools, client vault — all one tap away.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Radio-only tools (neon) — no label contract data</div>
+          <div class="pill pill-alt"><span></span> Links into Feature Revenue &amp; Sponsor Flight boards</div>
+          <div class="pill"><span></span> Keeps black &amp; gold label side completely separate</div>
+        </div>
+
+        <p class="hero-note">
+          Think of this as your **Neon App Drawer**. Once we wire .js and Supabase / Stripe,
+          this hub becomes the launchpad for everything TKFM.
+        </p>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-inner">
+          <div class="hero-card-header">
+            <div class="badge">
+              <span class="badge-dot"></span> Live 24/7 station brain
+            </div>
+            <span class="status-pill status-live">Neon side</span>
+          </div>
+
+          <div class="hero-card-title">Real-time control vibe (visual shell)</div>
+          <p class="hero-card-sub">
+            Later, this panel can pull real data:
+          </p>
+
+          <div class="mini-grid">
+            <div class="mini-card">
+              <div class="mini-label">Now playing</div>
+              <div class="mini-value">Track • Artist (Live365)</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">AI DJ engine</div>
+              <div class="mini-value">Owner console: ready</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Feature heat</div>
+              <div class="mini-value">Heavy tier: 80% full</div>
+            </div>
+          </div>
+
+          <div class="hero-cta-row">
+            <button class="btn-main" type="button" onclick="window.location.href='ai-dj-engine.html'">
+              Open AI DJ Engine
+            </button>
+            <button class="btn-secondary" type="button" onclick="window.location.href='feature-revenue-engine.html'">
+              View Feature Revenue
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SECTION: LIVE ENGINES -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">1. Live engines</h2>
+      <p class="section-sub">
+        Core TKFM modules that directly affect **what comes out the speakers**:  
+        AI DJ, feature flows, sponsor flights, and DJ tools. All neon, all radio.
+      </p>
+
+      <div class="grid-3">
+        <!-- AI DJ ENGINE -->
+        <article class="card card-purple" onclick="window.location.href='ai-dj-engine.html'">
+          <div class="card-header-row">
+            <div class="card-name">AI DJ Engine</div>
+            <span class="status-pill status-live">Owner Console</span>
+          </div>
+          <div class="card-tag">Owner-only AI decks</div>
+
+          <div class="badge-small">
+            <span class="badge-dot-mini"></span> blends TKFM schedule + crates + prompts
+          </div>
+
+          <ul class="feature-list">
+            <li><span class="dot-purple"></span> Owner-only advanced AI DJ console (no default DJ access).</li>
+            <li><span class="dot"></span> Can later read **schedule + feature tier + sponsor lanes**.</li>
+            <li><span class="dot-cyan"></span> Hooks into Live365 stream + neon visualizers.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Radio side only • label has separate AI contract / rights view</span>
+          </div>
+        </article>
+
+        <!-- FEATURE REVENUE ENGINE -->
+        <article class="card card-pink" onclick="window.location.href='feature-revenue-engine.html'">
+          <div class="card-header-row">
+            <div class="card-name">Feature Revenue Engine</div>
+            <span class="status-pill">Neon Board</span>
+          </div>
+          <div class="card-tag">Features → spins → motion</div>
+
+          <div class="badge-small">
+            <span class="badge-dot-mini"></span> Light / Midwave / Heavy tiers
+          </div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> Tracks which feature tiers are selling and moving.</li>
+            <li><span class="dot-amber"></span> Drives **Feature Leaderboard + Client Vault** views.</li>
+            <li><span class="dot-cyan"></span> Reads autopilot hints from label-side engines (no secrets).</li>
+          </ul>
+
+          <div class="meta-row">
+            <span class="lookup">neon_link: feature-revenue-engine.html</span>
+          </div>
+        </article>
+
+        <!-- SPONSOR FLIGHT BOARD -->
+        <article class="card card-gold" onclick="window.location.href='sponsor-flight-board.html'">
+          <div class="card-header-row">
+            <div class="card-name">Sponsor Flight Board</div>
+            <span class="status-pill">Neon Campaigns</span>
+          </div>
+          <div class="card-tag">On-air money lanes</div>
+
+          <div class="badge-small">
+            <span class="badge-dot-mini"></span> Bronze / Silver / Gold / Takeover
+          </div>
+
+          <ul class="feature-list">
+            <li><span class="dot-amber"></span> Shows sponsor flights &amp; takeovers by lane.</li>
+            <li><span class="dot"></span> Connects to Feature Engine for **money + motion** view.</li>
+            <li><span class="dot-purple"></span> Label Sponsor Engine keeps contracts on black &amp; gold side.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span class="lookup">neon_link: sponsor-flight-board.html</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: ARTIST / DJ / CLIENT FACING -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">2. Artist / DJ / client facing</h2>
+      <p class="section-sub">
+        Pages that **artists, DJs and clients** actually touch on the TKFM side.  
+        Label accounts, contracts and pack logic stay on the **They Krave For Me Records** side.
+      </p>
+
+      <div class="grid-3">
+        <!-- CLIENT VAULT -->
+        <article class="card" onclick="window.location.href='client-vault.html'">
+          <div class="card-name">Client Vault</div>
+          <div class="card-tag">Artist &amp; brand dashboard</div>
+
+          <div class="badge-small">
+            <span class="badge-dot-mini"></span> clean story — not backend math
+          </div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> Shows **feature history, spins, exposure** in plain language.</li>
+            <li><span class="dot-cyan"></span> Pulls safe metrics from Feature Engine + Sponsor Board.</li>
+            <li><span class="dot"></span> Great for artists, DJs &amp; sponsors to see their progress.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Powered later by Supabase + Stripe logs</span>
+          </div>
+        </article>
+
+        <!-- DJ MIXTAPE HOSTING -->
+        <article class="card card-purple" onclick="window.location.href='dj-mixtape-hosting.html'">
+          <div class="card-name">DJ Mixtape Hosting</div>
+          <div class="card-tag">TKFM + label-friendly hosting</div>
+
+          <div class="badge-small">
+            <span class="badge-dot-mini"></span> built for serious mix drops
+          </div>
+
+          <ul class="feature-list">
+            <li><span class="dot-purple"></span> Neon page for TKFM mixtape hosting offers.</li>
+            <li><span class="dot"></span> Can tie into **label-side DJ hosting packs** &amp; contracts.</li>
+            <li><span class="dot-cyan"></span> Later: auto-sync top hosted tapes into TKFM playlists.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>TKFM UI only • label handles deeper rights</span>
+          </div>
+        </article>
+
+        <!-- LOGIN / ACCESS -->
+        <article class="card card-pink" onclick="window.location.href='login.html'">
+          <div class="card-name">TKFM Login / Access</div>
+          <div class="card-tag">Supabase auth shell</div>
+
+          <div class="badge-small">
+            <span class="badge-dot-mini"></span> radio roles only (tkfm_role)
+          </div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> Routes users into **artist, DJ, sponsor, or owner** dashboards.</li>
+            <li><span class="dot-purple"></span> `tkfm_role` stays separate from label roles.</li>
+            <li><span class="dot-amber"></span> Owner key can unlock AI DJ Engine + God View bridge.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Label login &amp; onboarding live on black &amp; gold side</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: LINKS TO LABEL SIDE (READ ONLY FROM HERE) -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">3. Bridges to label side (read-only from neon)</h2>
+      <p class="section-sub">
+        From TKFM’s perspective, the label world is **They Krave For Me Records** in black &amp; gold.  
+        These links point outwards — they don’t pull contract or pack secrets into the radio UI.
+      </p>
+
+      <div class="grid-2">
+        <article class="card" onclick="window.location.href='label-hub.html'">
+          <div class="card-name">They Krave For Me Records Hub</div>
+          <div class="card-tag">Black &amp; gold HQ (external)</div>
+
+          <ul class="feature-list">
+            <li><span class="dot-amber"></span> Label accounts, pack builder, AI contract generator, roster tools.</li>
+            <li><span class="dot"></span> Sees TKFM metrics only as **safe signals**, not raw platform data.</li>
+            <li><span class="dot-purple"></span> TKFM neon stays about sound, feel, and front-end engines.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Visual split: neon vs black &amp; gold is locked in</span>
+          </div>
+        </article>
+
+        <article class="card card-gold" onclick="window.location.href='god-view.html'">
+          <div class="card-name">God View / Owner Master Panel</div>
+          <div class="card-tag">Top-level owner seat</div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> Bridges **TKFM engines + label engines** from owner perspective.</li>
+            <li><span class="dot-amber"></span> Sets guard rails for autopilot pricing &amp; sponsor limits.</li>
+            <li><span class="dot-red"></span> Owner-only access — DJs / artists never touch this screen.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Best used after TKFM &amp; label sides are both wired</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    TKFM Radio • Neon App Hub • This page keeps the **radio side** clean, loud and focused,  
+    while They Krave For Me Records runs the deeper label machine in black &amp; gold.
+  </p>
+</main>
+
+</body>
+</html>

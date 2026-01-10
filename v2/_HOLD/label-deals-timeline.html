@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>They Krave For Me Records — Deals Timeline</title>
+
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --bg-card: rgba(15,23,42,0.97);
+      --gold: #facc15;
+      --gold-soft: #eab308;
+      --gold-deep: #b45309;
+      --accent-cyan: #22d3ee;
+      --accent-rose: #fb7185;
+      --accent-emerald: #22c55e;
+      --accent-red: #ef4444;
+      --accent-slate: #64748b;
+      --border-soft: rgba(148,163,184,0.75);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.20), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.16), transparent 55%),
+        radial-gradient(circle at 50% 115%, #020617, #000000 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.6rem .9rem 3rem;
+      position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* BACKGROUND FX */
+    .orbit {
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.6);
+      top: -110px;
+      right: -120px;
+      opacity: 0.75;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      box-shadow:
+        0 0 120px rgba(250,204,21,0.9),
+        0 0 180px rgba(0,0,0,1);
+      animation: orbitSpin 28s linear infinite;
+    }
+    .orbit::before {
+      content: "";
+      position: absolute;
+      inset: 26%;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.9);
+      box-shadow:
+        0 0 70px rgba(56,189,248,0.9),
+        0 0 100px rgba(0,0,0,1);
+    }
+    @keyframes orbitSpin { to { transform: rotate(360deg); } }
+
+    .wave {
+      position: fixed;
+      inset: auto -25% -220px -25%;
+      background:
+        radial-gradient(circle at 15% 0, rgba(234,179,8,0.25), transparent 60%),
+        radial-gradient(circle at 85% 35%, rgba(15,23,42,0.9), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+      filter: blur(10px);
+    }
+
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0) 0px,
+        rgba(15,23,42,0.5) 1px,
+        rgba(15,23,42,0) 2px
+      );
+      background-size: 100% 3px;
+      mix-blend-mode: soft-light;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .orbit { opacity: 0.45; }
+      .wave { opacity: 0.7; }
+      .scanline { opacity: 0.25; }
+    }
+
+    /* NAV — LABEL (BLACK & GOLD) */
+    .nav-shell {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(24px);
+      background: linear-gradient(to bottom,
+        rgba(15,23,42,0.98),
+        rgba(15,23,42,0.7),
+        transparent
+      );
+      border-bottom: 1px solid rgba(250,204,21,0.55);
+      margin: -1.6rem -0.9rem 1.4rem;
+      padding: .5rem .9rem .6rem;
+    }
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+    .nav-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .nav-logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.8);
+      background:
+        radial-gradient(circle at 30% 0, rgba(250,204,21,0.35), transparent 60%),
+        radial-gradient(circle at 70% 100%, rgba(15,23,42,1), rgba(0,0,0,1));
+      box-shadow:
+        0 0 26px rgba(250,204,21,0.9),
+        0 0 40px rgba(0,0,0,1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #fefce8;
+    }
+    .nav-logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-logo-main {
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #fefce8;
+    }
+    .nav-logo-sub {
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fde68a;
+    }
+    .nav-links {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      font-size: .78rem;
+    }
+    .nav-link {
+      padding: .26rem .7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #e5e7eb;
+      background: transparent;
+      transition:
+        background .16s,
+        border-color .16s,
+        transform .16s,
+        box-shadow .16s;
+    }
+    .nav-link:hover {
+      background: rgba(15,23,42,0.98);
+      border-color: rgba(250,204,21,0.8);
+      transform: translateY(-1px);
+    }
+    .nav-link-primary {
+      border-color: rgba(250,204,21,0.95);
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.25),transparent 60%);
+      box-shadow:
+        0 0 26px rgba(250,204,21,1),
+        0 0 38px rgba(0,0,0,1);
+      color: #fefce8;
+    }
+
+    @media (max-width: 960px) {
+      .nav-links { font-size: .72rem; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      border-radius: 32px;
+      padding: 1.9rem 1.5rem 2.2rem;
+      border: 1px solid rgba(250,204,21,0.7);
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.25),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.18),transparent 55%),
+        radial-gradient(circle at 50% 120%,rgba(15,23,42,1),rgba(0,0,0,1) 70%);
+      box-shadow:
+        0 0 60px rgba(15,23,42,1),
+        0 0 120px rgba(0,0,0,1);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .hero-noise {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 100%,rgba(250,204,21,0.2),transparent 65%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.2),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .8;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.35fr 1.05fr;
+      gap: 1.2rem;
+      align-items: center;
+    }
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; }
+    }
+
+    .hero-kicker {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: #facc15;
+      margin-bottom: .35rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      background: linear-gradient(130deg,#fef9c3,#facc15,#f97316);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 40px rgba(250,204,21,0.9),
+        0 0 68px rgba(0,0,0,1);
+    }
+    .hero-sub {
+      margin-top: .85rem;
+      font-size: .96rem;
+      max-width: 640px;
+      color: #e5e7eb;
+    }
+    .hero-sub strong {
+      color: #fef9c3;
+    }
+
+    .hero-pills {
+      margin-top: .9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      font-size: .78rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: .3rem .85rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.96);
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .pill span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 0 18px rgba(250,204,21,1);
+    }
+    .pill-alt span {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 18px rgba(34,211,238,0.9);
+    }
+
+    .hero-note {
+      margin-top: .8rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 380px;
+    }
+
+    .hero-card {
+      border-radius: 24px;
+      border: 1px solid rgba(250,204,21,0.7);
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.18),transparent 65%),
+        radial-gradient(circle at 100% 100%,rgba(15,23,42,1),rgba(0,0,0,0.98));
+      padding: 1rem 1rem 1.2rem;
+      box-shadow:
+        0 0 40px rgba(250,204,21,1),
+        0 0 60px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+    }
+    .hero-card-inner { position: relative; z-index: 1; }
+    .hero-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .8rem;
+      margin-bottom: .5rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .72rem;
+      border-radius: 999px;
+      padding: .18rem .7rem;
+      border: 1px solid rgba(250,250,250,0.3);
+      background: rgba(15,23,42,0.96);
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 12px rgba(34,197,94,1);
+    }
+    .status-pill {
+      border-radius: 999px;
+      padding: .2rem .65rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .status-live {
+      border-color: rgba(250,204,21,0.95);
+      color: #fef9c3;
+      box-shadow: 0 0 14px rgba(250,204,21,1);
+    }
+    .hero-card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: .25rem;
+    }
+    .hero-card-sub {
+      font-size: .8rem;
+      color: var(--text-main);
+      margin-bottom: .7rem;
+    }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: .6rem;
+      margin-bottom: .8rem;
+      font-size: .73rem;
+    }
+    @media (max-width: 540px) {
+      .mini-grid { grid-template-columns: minmax(0,1fr); }
+    }
+    .mini-card {
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.96);
+      padding: .45rem .5rem .5rem;
+    }
+    .mini-label {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: .65rem;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+    .mini-value {
+      font-size: .8rem;
+      color: #e5e7eb;
+    }
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .btn-main {
+      border-radius: 999px;
+      padding: .48rem 1.2rem;
+      border: none;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      background: linear-gradient(135deg,#facc15,#f97316,#facc15);
+      color: #0f172a;
+      box-shadow:
+        0 0 22px rgba(250,204,21,1),
+        0 0 32px rgba(0,0,0,1);
+    }
+    .btn-secondary {
+      border-radius: 999px;
+      padding: .42rem .95rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      cursor: pointer;
+    }
+
+    /* SECTION SHELL */
+    .section {
+      margin-bottom: 1.7rem;
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      padding: 1.2rem 1.05rem 1.4rem;
+      box-shadow: 0 0 30px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.18),transparent 60%),
+        radial-gradient(circle at 100% 0,rgba(56,189,248,0.16),transparent 60%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .section-inner { position: relative; z-index: 1; }
+
+    .section-title {
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 0 0 .25rem;
+      color: #fef9c3;
+    }
+    .section-sub {
+      font-size: .8rem;
+      color: var(--text-muted);
+      max-width: 860px;
+      margin: 0 0 .9rem;
+    }
+
+    /* GRID + CARDS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 1.05fr;
+      gap: .9rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: .9rem;
+    }
+    @media (max-width: 980px) {
+      .grid-2 { grid-template-columns: minmax(0,1fr); }
+      .grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width: 720px) {
+      .grid-3 { grid-template-columns: minmax(0,1fr); }
+    }
+
+    .card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.85);
+      background: rgba(15,23,42,0.98);
+      padding: .9rem .9rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      font-size: .8rem;
+      box-shadow: 0 0 22px rgba(0,0,0,1);
+      transition:
+        transform .18s,
+        box-shadow .18s,
+        border-color .18s,
+        background .18s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0,rgba(250,204,21,0.16),transparent 65%);
+      mix-blend-mode: screen;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(250,204,21,0.95);
+      background: rgba(15,23,42,1);
+      box-shadow:
+        0 0 30px rgba(250,204,21,0.9),
+        0 0 46px rgba(0,0,0,1);
+    }
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .6rem;
+      margin-bottom: .3rem;
+    }
+    .card-name {
+      font-size: .9rem;
+      font-weight: 600;
+    }
+    .card-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+      margin-bottom: .35rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: .25rem 0 .7rem;
+      font-size: .78rem;
+    }
+    .feature-list li {
+      display: flex;
+      gap: .32rem;
+      margin-bottom: .22rem;
+      align-items: flex-start;
+    }
+    .dot {
+      margin-top: .24rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+      flex-shrink: 0;
+    }
+    .dot-gold {
+      background: var(--gold);
+      box-shadow: 0 0 10px rgba(250,204,21,1);
+    }
+    .dot-cyan {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(34,211,238,1);
+    }
+    .dot-rose {
+      background: var(--accent-rose);
+      box-shadow: 0 0 10px rgba(251,113,133,1);
+    }
+    .dot-red {
+      background: var(--accent-red);
+      box-shadow: 0 0 10px rgba(239,68,68,1);
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+    .lookup {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .72rem;
+      background: rgba(15,23,42,0.96);
+      border-radius: 999px;
+      padding: .22rem .6rem;
+      border: 1px solid rgba(55,65,81,0.95);
+      color: #e5e7eb;
+    }
+
+    /* TIMELINE */
+    .timeline-shell {
+      position: relative;
+      padding-left: 1.6rem;
+      margin-top: .4rem;
+    }
+    .timeline-line {
+      position: absolute;
+      top: .2rem;
+      bottom: .2rem;
+      left: .55rem;
+      width: 2px;
+      background: linear-gradient(
+        to bottom,
+        rgba(250,204,21,0.4),
+        rgba(56,189,248,0.4),
+        rgba(250,204,21,0.4)
+      );
+      box-shadow:
+        0 0 12px rgba(250,204,21,0.9),
+        0 0 18px rgba(0,0,0,1);
+      opacity: .9;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: .85rem;
+      padding-left: .4rem;
+    }
+    .timeline-dot {
+      position: absolute;
+      top: .15rem;
+      left: -1.03rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0,#facc15,#f97316);
+      box-shadow:
+        0 0 12px rgba(250,204,21,1),
+        0 0 18px rgba(0,0,0,1);
+      border: 1px solid #fef9c3;
+    }
+    .timeline-label {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--text-muted);
+      margin-bottom: .12rem;
+    }
+    .timeline-title {
+      font-size: .85rem;
+      color: #fefce8;
+      margin-bottom: .1rem;
+    }
+    .timeline-meta {
+      font-size: .74rem;
+      color: var(--text-muted);
+    }
+
+    .footer-note {
+      margin-top: 1.2rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .orbit{animation:none;}
+    }
+  </style>
+</head>
+<body>
+<div class="orbit"></div>
+<div class="wave"></div>
+<div class="scanline"></div>
+
+<div class="nav-shell">
+  <nav class="nav">
+    <div class="nav-logo-wrap">
+      <div class="nav-logo-mark">KR</div>
+      <div class="nav-logo-text">
+        <div class="nav-logo-main">They Krave For Me</div>
+        <div class="nav-logo-sub">Records • Label Side</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="label-home.html" class="nav-link">Label Home</a>
+      <a href="label-hub.html" class="nav-link">Label Hub</a>
+      <a href="label-accounts.html" class="nav-link">Accounts</a>
+      <a href="label-roster.html" class="nav-link">Roster</a>
+      <a href="label-contract-generator.html" class="nav-link">AI Contracts</a>
+      <a href="label-revenue-engine.html" class="nav-link">Revenue</a>
+      <a href="label-deals-timeline.html" class="nav-link nav-link-primary">Deals Timeline</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">LABEL HQ • TIME VIEW</div>
+        <h1>Every deal. On one line.</h1>
+        <p class="hero-sub">
+          This is the **Deals Timeline** for They Krave For Me Records —  
+          see **signings, renewals, expirations and key dates** in one cinematic  
+          black &amp; gold track, wired to your **AI contracts, label accounts and God View rules**.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><span></span> Label-only view • not shown on TKFM radio side</div>
+          <div class="pill pill-alt"><span></span> Reads from contracts + vault later</div>
+          <div class="pill"><span></span> Perfect surface for owner decisions</div>
+        </div>
+
+        <p class="hero-note">
+          Right now this page is a **GraphFX shell** — timelines, lanes, labels —  
+          ready for Netlify + Supabase data when you’re ready to wire it.
+        </p>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-inner">
+          <div class="hero-card-header">
+            <div class="badge">
+              <span class="badge-dot"></span> What you see here
+            </div>
+            <span class="status-pill status-live">Owner / label staff</span>
+          </div>
+
+          <div class="hero-card-title">Deals at a glance</div>
+          <p class="hero-card-sub">
+            For each artist, DJ, producer or sponsor:
+          </p>
+
+          <div class="mini-grid">
+            <div class="mini-card">
+              <div class="mini-label">When it starts</div>
+              <div class="mini-value">Sign date &amp; effective date on one line.</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">When it ends</div>
+              <div class="mini-value">Term, options, and expiration risk windows.</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Deal type</div>
+              <div class="mini-value">Single, project, producer, DJ, sponsor, etc.</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Motion</div>
+              <div class="mini-value">Short notes like “renew?”, “upsell AI pack”.</div>
+            </div>
+          </div>
+
+          <div class="hero-cta-row">
+            <button class="btn-main" type="button" onclick="window.location.href='label-contract-generator.html'">
+              Open AI contracts
+            </button>
+            <button class="btn-secondary" type="button" onclick="window.location.href='label-client-vault.html'">
+              View client vault
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 1. FILTER BAR -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">1. Time filter &amp; deal scope</h2>
+      <p class="section-sub">
+        This top strip is how you **slice the timeline**:  
+        next 30 days, quarter view, only expiring deals, or only one roster lane.
+      </p>
+
+      <article class="card">
+        <div class="card-header-row">
+          <div class="card-name">Timeline controls</div>
+          <span class="status-pill">UI shell • data later</span>
+        </div>
+        <div class="card-tag">Filters will talk to a Netlify function later</div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin-top:.4rem;">
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--text-muted);margin-bottom:.16rem;">Range</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.4rem;font-size:.74rem;">
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> Next 30 days</span>
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> This quarter</span>
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> Next 12 months</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--text-muted);margin-bottom:.16rem;">Deal type</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.4rem;font-size:.74rem;">
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> Artist / project</span>
+              <span class="pill pill-alt" style="padding:.2rem .7rem;"><span></span> DJ / mixtape</span>
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> Producer</span>
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> Sponsor</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--text-muted);margin-bottom:.16rem;">Risk focus</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.4rem;font-size:.74rem;">
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> Expiring soon</span>
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> Renewal window</span>
+              <span class="pill" style="padding:.2rem .7rem;"><span></span> New signings</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="meta-row" style="margin-top:.7rem;">
+          <span>Future data source: <span class="lookup">label_contracts</span></span>
+          <span>Logic influenced by: <span class="lookup">god_view_rules</span></span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 2. MAIN TIMELINE LANE -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">2. Label deals timeline lane</h2>
+      <p class="section-sub">
+        One **gold rail down the middle**, with each deal as a **node**.  
+        Later, clicking a node can open the **client vault** or **contract drawer**.
+      </p>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-header-row">
+            <div class="card-name">Artist &amp; DJ deals</div>
+            <span class="status-pill">Sample events</span>
+          </div>
+          <div class="card-tag">Artists, DJs and producers all on one track</div>
+
+          <div class="timeline-shell">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">Today</div>
+              <div class="timeline-title">Final review: Artist “Sample Artist” project deal</div>
+              <div class="timeline-meta">
+                AI contract draft ready • God View within safe ranges • check splits, options, and TKFM pack add-ons.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">+7 days</div>
+              <div class="timeline-title">Target sign date — DJ “Sample DJ” mixtape hosting deal</div>
+              <div class="timeline-meta">
+                Includes TKFM mixtape hosting + sponsor-ready placements.  
+                Good time to upsell AI social + AI DJ access (label-approved).
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">Next month</div>
+              <div class="timeline-title">Producer “Sample Producer” first look renewal window</div>
+              <div class="timeline-meta">
+                Review performance in label revenue engine + TKFM spins before extending.
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header-row">
+            <div class="card-name">Sponsors &amp; brands</div>
+            <span class="status-pill">Sample events</span>
+          </div>
+          <div class="card-tag">Label sponsor flights in time view</div>
+
+          <div class="timeline-shell">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">This week</div>
+              <div class="timeline-title">Sponsor “Sample Brand” TKFM + label collab flight starts</div>
+              <div class="timeline-meta">
+                Pull settings from label-sponsor-engine • confirm assets, TKFM placements and AI social cadence.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">+30 days</div>
+              <div class="timeline-title">Mid-flight review — consider renewal pitch</div>
+              <div class="timeline-meta">
+                Use feature revenue engine + TKFM data for “this is what we did for you” recap.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">+60 days</div>
+              <div class="timeline-title">Flight ends — renewal / upsell window</div>
+              <div class="timeline-meta">
+                Good time to offer VIP sponsor tier or exclusive label showcase.
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="meta-row" style="margin-top:.8rem;">
+        <span>Later, each dot can show color by risk: <span class="dot-gold" style="display:inline-block;"></span> healthy • <span class="dot-cyan" style="display:inline-block;"></span> watch • <span class="dot-red" style="display:inline-block;"></span> urgent.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. RISK & RENEWAL SNAPSHOTS -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">3. Risk radar &amp; renewal board</h2>
+      <p class="section-sub">
+        This block is where your **God View rules** and **AI engines** highlight  
+        who needs attention: expiring deals, under-performing packs, and big wins.
+      </p>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-header-row">
+            <div class="card-name">Expiring soon</div>
+            <span class="status-pill">Risk queue</span>
+          </div>
+          <div class="card-tag">Deals reaching their end date</div>
+
+          <ul class="feature-list">
+            <li><span class="dot-red"></span> Pull list of contracts with <strong>&lt; 60 days</strong> left in term.</li>
+            <li><span class="dot"></span> Show quick context: deal type, key project, TKFM motion.</li>
+            <li><span class="dot-gold"></span> Click later to jump into vault or contract generator.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Data source later: <span class="lookup">label_contracts_expiring_view</span></span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header-row">
+            <div class="card-name">Renewal / upsell ideas</div>
+            <span class="status-pill">Opportunity</span>
+          </div>
+          <div class="card-tag">Deals that deserve another push</div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> Combines label revenue + TKFM feature data.</li>
+            <li><span class="dot-cyan"></span> AI suggests: renew, adjust terms, or upsell AI / TKFM packs.</li>
+            <li><span class="dot-rose"></span> Great place to see “who’s working” for the label.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Powered later by: <span class="lookup">ai_autopilot_pricing_engine</span> + <span class="lookup">feature_revenue_engine</span></span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header-row">
+            <div class="card-name">Noisy wins</div>
+            <span class="status-pill">Flex wall</span>
+          </div>
+          <div class="card-tag">Deals that over-performed</div>
+
+          <ul class="feature-list">
+            <li><span class="dot-gold"></span> Highlight top-performing deals this quarter.</li>
+            <li><span class="dot"></span> Blend spins, sponsor money, and streaming / sales (if you add that later).</li>
+            <li><span class="dot-cyan"></span> Perfect for investor decks and “look what we did” recaps.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Source later: <span class="lookup">label_revenue_engine</span> + <span class="lookup">tkfm_motion_view</span></span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. BRIDGES -->
+  <section class="section">
+    <div class="section-inner">
+      <h2 class="section-title">4. Bridges to vault, roster &amp; God View</h2>
+      <p class="section-sub">
+        Every dot on the timeline should feel like an **entry point** into  
+        the rest of your label tools — vault, roster, accounts and master control.
+      </p>
+
+      <div class="grid-2">
+        <article class="card" onclick="window.location.href='label-client-vault.html'">
+          <div class="card-header-row">
+            <div class="card-name">Client vault</div>
+            <span class="status-pill">Full story</span>
+          </div>
+          <div class="card-tag">Jump from a deal into that client’s vault</div>
+
+          <ul class="feature-list">
+            <li><span class="dot"></span> See contacts, deals, TKFM packs and AI usage in one place.</li>
+            <li><span class="dot-cyan"></span> Great for pre-renewal prep and sponsor calls.</li>
+            <li><span class="dot-gold"></span> Keeps label-side view separate from public TKFM screens.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Target: <span class="lookup">label-client-vault.html</span> (label only)</span>
+          </div>
+        </article>
+
+        <article class="card" onclick="window.location.href='god-view.html'">
+          <div class="card-header-row">
+            <div class="card-name">God View</div>
+            <span class="status-pill">Owner rules</span>
+          </div>
+          <div class="card-tag">Top-level rules for deals &amp; timelines</div>
+
+          <ul class="feature-list">
+            <li><span class="dot-gold"></span> Set minimum / maximum terms, splits and AI actions allowed.</li>
+            <li><span class="dot-red"></span> Mark “never auto-renew” or “owner must approve” policies.</li>
+            <li><span class="dot"></span> Timeline respects God View — no deal moves outside the rails.</li>
+          </ul>
+
+          <div class="meta-row">
+            <span>Source: <span class="lookup">god_view_policy</span> → used by contracts &amp; timeline.</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    They Krave For Me Records • Deals Timeline • Black &amp; gold time view for artist, DJ, producer and sponsor deals —  
+    wired into label accounts, contracts, client vault, revenue, sponsors, AI engines and God View rules.
+  </p>
+</main>
+
+</body>
+</html>
+

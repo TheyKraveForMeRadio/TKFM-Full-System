@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# TKFM: prune Stripe env vars in Netlify to get under AWS Lambda 4KB limit
-# Keeps ONLY:
-#   STRIPE_SECRET_KEY (do NOT touch)
+# TKFM: prune Stripe PRICE/PRODUCT env vars on Netlify to get under AWS Lambda 4KB env cap.
+#
+# Keeps:
+#   STRIPE_SECRET_KEY (never touched)
 #   STRIPE_PRODUCT_ROTATION_BOOST
 #   STRIPE_PRICE_ROTATION_BOOST_7D
 #   STRIPE_PRICE_ROTATION_BOOST_30D
 #
 # Removes:
-#   STRIPE_PRICE_* (except boost)
-#   STRIPE_PRODUCT_* (except rotation boost)
-#
-# Requires: netlify env:list --json
+#   STRIPE_PRICE_*   (except the two boost vars above)
+#   STRIPE_PRODUCT_* (except STRIPE_PRODUCT_ROTATION_BOOST)
 
 KEEP_KEYS=(
   "STRIPE_PRODUCT_ROTATION_BOOST"
@@ -33,38 +32,52 @@ if ! command -v netlify >/dev/null 2>&1; then
   exit 2
 fi
 
-J="$(netlify env:list --json 2>/dev/null || true)"
-if [ -z "$J" ]; then
-  echo "FAIL: netlify env:list --json returned empty (update netlify-cli)"
+echo "== TKFM NETLIFY: PRUNE STRIPE PRICE/PRODUCT ENVS =="
+
+TMP="${TMPDIR:-/tmp}/tkfm_netlify_env_keys.txt"
+: > "$TMP"
+
+# Prefer functions scope + production context (closest to Lambda)
+(netlify env:list --plain --scope functions --context production 2>/dev/null || true) \
+  | tr -d '\r' \
+  | awk -F= 'NF>=2 && $1 ~ /^[A-Z0-9_]+$/ {print $1}' \
+  | sort -u > "$TMP" || true
+
+# Fallback: plain without scope/context (older CLI)
+if [ ! -s "$TMP" ]; then
+  (netlify env:list --plain 2>/dev/null || true) \
+    | tr -d '\r' \
+    | awk -F= 'NF>=2 && $1 ~ /^[A-Z0-9_]+$/ {print $1}' \
+    | sort -u > "$TMP" || true
+fi
+
+if [ ! -s "$TMP" ]; then
+  echo "FAIL: couldn't list env keys."
+  echo "Run: netlify status && netlify link"
   exit 3
 fi
 
-KEYS="$(node --input-type=module - <<'NODE' <<< "$J"
-let txt='';
-process.stdin.setEncoding('utf8');
-for await (const c of process.stdin) txt += c;
-let arr;
-try{ arr = JSON.parse(txt); }catch(e){ process.exit(1); }
-const items = Array.isArray(arr) ? arr : (arr?.env || []);
-for (const it of items){
-  const k = String(it.key || it.name || '');
-  if (k) console.log(k);
-}
-NODE
-)"
-
 REMOVED=0
-for k in $KEYS; do
+while IFS= read -r k; do
   if [[ "$k" == STRIPE_PRICE_* || "$k" == STRIPE_PRODUCT_* ]]; then
     if is_keep "$k"; then
       echo "KEEP: $k"
-    else
-      netlify env:unset "$k" --context all >/dev/null 2>&1 || true
-      echo "UNSET: $k"
-      REMOVED=$((REMOVED+1))
+      continue
     fi
-  fi
-done
 
-echo "OK: pruned Stripe env vars removed=$REMOVED"
-echo "NEXT: deploy again: netlify deploy --prod"
+    echo "UNSET: $k"
+
+    # Try the most specific first, then fall back (different netlify-cli versions)
+    netlify env:unset "$k" --context production --scope functions --force >/dev/null 2>&1 || \
+    netlify env:unset "$k" --context production --force >/dev/null 2>&1 || \
+    netlify env:unset "$k" --force >/dev/null 2>&1 || true
+
+    REMOVED=$((REMOVED+1))
+  fi
+done < "$TMP"
+
+echo "OK: removed=$REMOVED"
+echo
+echo "NEXT:"
+echo "  ./scripts/tkfm-netlify-env-audit-size.sh"
+echo "  netlify deploy --prod"

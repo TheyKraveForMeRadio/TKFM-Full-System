@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Label Revenue Engine — They Krave For Me Records</title>
+
+  <!-- LABEL THEME -->
+  <link rel="stylesheet" href="/v2/label-theme.css">
+</head>
+<body class="label-body">
+  <main style="max-width:1180px;margin:0 auto;padding:1.4rem .9rem 2.4rem;">
+    <header class="label-header">
+      <div class="label-logo-row">
+        <img src="/v2/tkfm-records-logo.png" alt="They Krave For Me Records" class="label-logo">
+        <div class="label-title-block">
+          <div class="label-kicker">They Krave For Me · Label Division</div>
+          <div class="label-title">Label Revenue Engine</div>
+          <p class="label-subtitle">
+            Track what each artist, pack and sponsor lane is worth — month by month.
+            Lightweight now, ready for Stripe / Supabase later.
+          </p>
+        </div>
+      </div>
+      <div class="label-badges">
+        <div class="label-pill">
+          💰 Owner View
+        </div>
+        <div class="label-pill">
+          📊 LocalStorage ledger (manual)
+        </div>
+      </div>
+    </header>
+
+    <nav class="label-nav">
+      <a href="/v2/label-home.html"><span>🏛️</span>Label Home</a>
+      <a href="/v2/label-hub.html"><span>🧬</span>Label Hub</a>
+      <a href="/v2/label-artist-roster-hub.html"><span>📜</span>Artist Roster</a>
+      <a href="/v2/label-pack-builder.html"><span>📦</span>Pack Builder</a>
+      <a href="/v2/label-contract-lab.html"><span>📑</span>Contract Lab</a>
+      <a href="/v2/label-sponsor-engine.html"><span>🤝</span>Sponsor Engine</a>
+      <a href="/v2/app-hub.html"><span>🎛️</span>App Hub</a>
+    </nav>
+
+    <section class="label-grid label-grid-2">
+      <!-- SUMMARY -->
+      <div class="label-card">
+        <h2>Snapshot</h2>
+        <p class="label-help">
+          These numbers are calculated from the table on the right. Right now it’s all manual,
+          but the structure matches what we’ll sync from Stripe later.
+        </p>
+
+        <div style="display:grid;gap:.6rem;margin-top:.7rem;font-size:.85rem;">
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Total monthly recurring</strong>
+              <div class="label-help">Sum of all active pack fees per month.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="revTotalMonthly" style="font-weight:800;color:var(--label-gold-soft);">$0</div>
+              <div class="label-help">USD / month</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Upfront / setup collected</strong>
+              <div class="label-help">Sum of one-time fees marked as paid.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="revTotalUpfront" style="font-weight:800;color:var(--label-gold-soft);">$0</div>
+              <div class="label-help">USD total</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:rgba(31,41,55,0.9);"></div>
+
+          <div style="display:flex;justify-content:space-between;gap:.6rem;">
+            <div>
+              <strong>Active label packs</strong>
+              <div class="label-help">How many signed deals are still in motion.</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="revActiveCount" style="font-weight:800;color:var(--label-gold-soft);">0</div>
+              <div class="label-help">active packs</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="label-help" style="margin-top:.8rem;">
+          When we plug in Stripe/Supabase, this panel becomes a live **God View** of label money.
+        </p>
+      </div>
+
+      <!-- ADD DEAL -->
+      <div class="label-card">
+        <h2>Log a deal / pack</h2>
+        <p class="label-help">
+          Every row is one **artist x pack** or **sponsor x campaign**. Keep it simple, but be consistent.
+        </p>
+
+        <form id="dealForm" style="margin-top:.6rem;font-size:.8rem;">
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));">
+            <div>
+              <label for="dealArtist">Artist / client</label>
+              <input id="dealArtist" placeholder="Artist name or sponsor">
+            </div>
+            <div>
+              <label for="dealPack">Pack / campaign</label>
+              <input id="dealPack" placeholder="e.g. ALL CITY ARTIST LAUNCH">
+            </div>
+          </div>
+
+          <div class="field-row" style="display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:.5rem;">
+            <div>
+              <label for="dealMonthly">Monthly fee (USD)</label>
+              <input id="dealMonthly" type="number" min="0" step="50" placeholder="0">
+            </div>
+            <div>
+              <label for="dealUpfront">Upfront fee (USD)</label>
+              <input id="dealUpfront" type="number" min="0" step="50" placeholder="0">
+            </div>
+            <div>
+              <label for="dealStatus">Status</label>
+              <select id="dealStatus" style="width:100%;border-radius:11px;border:1px solid rgba(30,64,175,.95);background:rgba(15,23,42,.95);color:#e5e7eb;padding:.45rem .55rem;font-size:.8rem;">
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:.5rem;">
+            <label for="dealNotes">Notes</label>
+            <textarea id="dealNotes" placeholder="Example: 6-month term, 80/20 split, runs alongside TKFM feature packs."></textarea>
+          </div>
+
+          <div style="margin-top:.7rem;">
+            <button type="submit" class="label-btn">
+              ➕ Add / update deal
+            </button>
+            <button type="button" id="clearAllBtn" class="label-btn secondary" style="margin-left:.45rem;">
+              🧹 Clear all rows
+            </button>
+          </div>
+        </form>
+
+        <p class="label-help" style="margin-top:.7rem;">
+          Data is stored as <code>localStorage["tkfm_label_revenue_deals"]</code> so it stays on this machine.
+        </p>
+      </div>
+    </section>
+
+    <section style="margin-top:1.2rem;">
+      <div class="label-card">
+        <h2>Deals table</h2>
+        <p class="label-help">
+          Click a row to load it back into the form above. Use this as your label money whiteboard.
+        </p>
+
+        <div style="margin-top:.6rem;max-height:360px;overflow:auto;">
+          <table class="label-table" id="dealTable">
+            <thead>
+              <tr>
+                <th>Artist / client</th>
+                <th>Pack</th>
+                <th>Monthly</th>
+                <th>Upfront</th>
+                <th>Status</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="dealTableBody">
+              <!-- rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="label-toast" id="labelToast">Saved.</div>
+
+  <script>
+    const DEAL_KEY = "tkfm_label_revenue_deals";
+
+    function showToast(msg){
+      const el = document.getElementById("labelToast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(()=>{ el.style.display = "none"; }, 1800);
+    }
+
+    function loadDeals(){
+      try{
+        const raw = localStorage.getItem(DEAL_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){
+        console.warn("deal load error", e);
+        return [];
+      }
+    }
+
+    function saveDeals(deals){
+      try{
+        localStorage.setItem(DEAL_KEY, JSON.stringify(deals));
+      }catch(e){
+        console.warn("deal save error", e);
+      }
+    }
+
+    function formatMoney(n){
+      const num = Number(n||0);
+      if(isNaN(num) || num <= 0) return "$0";
+      return "$" + num.toLocaleString();
+    }
+
+    function renderDeals(){
+      const deals = loadDeals();
+      const body = document.getElementById("dealTableBody");
+      body.innerHTML = "";
+
+      let totalMonthly = 0;
+      let totalUpfront = 0;
+      let activeCount = 0;
+
+      deals.forEach((d, idx)=>{
+        if(d.status === "active"){
+          totalMonthly += Number(d.monthly||0);
+          totalUpfront += Number(d.upfront||0);
+          activeCount++;
+        }
+
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+
+        const tdArtist = document.createElement("td");
+        tdArtist.textContent = d.artist || "";
+
+        const tdPack = document.createElement("td");
+        tdPack.textContent = d.pack || "";
+
+        const tdMonthly = document.createElement("td");
+        tdMonthly.textContent = formatMoney(d.monthly);
+
+        const tdUpfront = document.createElement("td");
+        tdUpfront.textContent = formatMoney(d.upfront);
+
+        const tdStatus = document.createElement("td");
+        tdStatus.textContent = d.status || "";
+
+        const tdNotes = document.createElement("td");
+        tdNotes.textContent = d.notes || "";
+
+        tr.appendChild(tdArtist);
+        tr.appendChild(tdPack);
+        tr.appendChild(tdMonthly);
+        tr.appendChild(tdUpfront);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdNotes);
+
+        tr.addEventListener("click", ()=>{
+          loadDealIntoForm(idx);
+        });
+
+        body.appendChild(tr);
+      });
+
+      document.getElementById("revTotalMonthly").textContent = formatMoney(totalMonthly);
+      document.getElementById("revTotalUpfront").textContent = formatMoney(totalUpfront);
+      document.getElementById("revActiveCount").textContent = activeCount.toString();
+    }
+
+    function loadDealIntoForm(index){
+      const deals = loadDeals();
+      const d = deals[index];
+      if(!d) return;
+
+      document.getElementById("dealArtist").value = d.artist || "";
+      document.getElementById("dealPack").value = d.pack || "";
+      document.getElementById("dealMonthly").value = d.monthly || "";
+      document.getElementById("dealUpfront").value = d.upfront || "";
+      document.getElementById("dealStatus").value = d.status || "active";
+      document.getElementById("dealNotes").value = d.notes || "";
+
+      showToast("Loaded deal into form. Editing will overwrite that row when saved.");
+      document.getElementById("dealForm").dataset.editIndex = String(index);
+    }
+
+    document.getElementById("dealForm").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const artist = document.getElementById("dealArtist").value.trim();
+      const pack = document.getElementById("dealPack").value.trim();
+      const monthly = Number(document.getElementById("dealMonthly").value || 0);
+      const upfront = Number(document.getElementById("dealUpfront").value || 0);
+      const status = document.getElementById("dealStatus").value;
+      const notes = document.getElementById("dealNotes").value.trim();
+
+      if(!artist && !pack){
+        showToast("Add at least an artist/client or pack name.");
+        return;
+      }
+
+      const deals = loadDeals();
+      const editIndex = document.getElementById("dealForm").dataset.editIndex;
+      const payload = { artist, pack, monthly, upfront, status, notes };
+
+      if(editIndex !== undefined && editIndex !== "" && deals[Number(editIndex)]){
+        deals[Number(editIndex)] = payload;
+      } else {
+        deals.push(payload);
+      }
+
+      document.getElementById("dealForm").dataset.editIndex = "";
+      saveDeals(deals);
+      renderDeals();
+      showToast("Deal saved.");
+    });
+
+    document.getElementById("clearAllBtn").addEventListener("click", ()=>{
+      if(!confirm("Clear all deals from this browser?")) return;
+      saveDeals([]);
+      renderDeals();
+      showToast("All rows cleared.");
+    });
+
+    renderDeals();
+  </script>
+</body>
+</html>

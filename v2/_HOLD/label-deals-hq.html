@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Label Deals HQ — They Krave For Me Records</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#020617;
+  color:#facc6b;
+}
+header {
+  padding:20px;
+  text-align:center;
+  background:radial-gradient(circle at top, #111827 0, #020617 55%);
+  border-bottom:2px solid #facc6b;
+}
+header h1 {
+  margin:0;
+  font-size:24px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+header p {
+  margin:6px 0 0;
+  font-size:12px;
+  color:#eab308;
+  letter-spacing:2px;
+}
+.toolbar {
+  max-width:1100px;
+  margin:16px auto 0;
+  padding:0 16px 12px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+}
+.badge {
+  display:inline-block;
+  border-radius:999px;
+  border:1px solid rgba(250,204,74,0.6);
+  padding:4px 10px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+}
+button {
+  border:none;
+  border-radius:999px;
+  padding:8px 14px;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:12px;
+}
+button.primary {
+  background:#facc15;
+  color:#000;
+}
+button.primary:hover {
+  filter:brightness(1.1);
+}
+button.ghost {
+  background:transparent;
+  border:1px solid rgba(250,204,74,0.6);
+  color:#facc15;
+}
+button.ghost:hover {
+  background:rgba(250,204,74,0.06);
+}
+main {
+  max-width:1100px;
+  margin:0 auto 40px;
+  padding:0 16px 24px;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:16px;
+  margin-top:16px;
+}
+.card {
+  background:rgba(15,23,42,0.96);
+  border-radius:16px;
+  border:1px solid rgba(250,204,74,0.35);
+  padding:16px 16px 14px;
+  box-shadow:0 0 18px rgba(250,204,74,0.18);
+  position:relative;
+  overflow:hidden;
+}
+.card::before {
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:radial-gradient(circle at top, rgba(250,204,74,0.12), transparent 60%);
+  opacity:0.8;
+  pointer-events:none;
+}
+.card-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  z-index:1;
+}
+.card h2 {
+  margin:0;
+  font-size:14px;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+}
+.card small {
+  font-size:11px;
+  color:#fde68a;
+}
+.tag-row {
+  margin-top:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  font-size:10px;
+}
+.tag {
+  border-radius:999px;
+  padding:3px 8px;
+  border:1px solid rgba(250,250,250,0.15);
+  background:rgba(0,0,0,0.45);
+}
+.card-body {
+  margin-top:10px;
+  font-size:12px;
+  position:relative;
+  z-index:1;
+}
+.card-footer {
+  margin-top:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  z-index:1;
+}
+.card-footer button {
+  font-size:11px;
+  padding:6px 10px;
+}
+.meta {
+  font-size:10px;
+  color:#e5e7eb;
+  opacity:0.8;
+  text-align:right;
+}
+.empty-state {
+  margin-top:40px;
+  text-align:center;
+  font-size:13px;
+  color:#e5e7eb;
+  opacity:0.8;
+}
+footer {
+  text-align:center;
+  font-size:11px;
+  color:#e5e7eb;
+  opacity:0.7;
+  margin-bottom:20px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>They Krave For Me Records — Deals HQ</h1>
+  <p>Onboarding ➜ Deals JSON ➜ Label Control</p>
+</header>
+
+<div class="toolbar">
+  <div>
+    <span class="badge">Local Engine</span>
+    <span style="font-size:11px;margin-left:6px;color:#e5e7eb;opacity:0.85;">
+      Source: <code>local_engine/deals.json</code>
+    </span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="ghost" id="refreshBtn">↻ Refresh Deals</button>
+    <button class="ghost" id="toContractHub">← Contract Hub</button>
+    <button class="primary" id="toOnboarding">+ New Deal (Onboard)</button>
+  </div>
+</div>
+
+<main>
+  <div id="dealsGrid" class="grid"></div>
+  <div id="emptyState" class="empty-state" style="display:none;">
+    No deals found yet.<br/><br/>
+    Create one from Contract Output Hub ➜ Onboarding form, then refresh.
+  </div>
+</main>
+
+<footer>
+  They Krave For Me Records — Label Autopilot Stack (Deals HQ Node, Local Mode)
+</footer>
+
+<script type="module">
+import { protectPage } from "./js/auth-gateway.js";
+protectPage(["owner","label"]); // 🔐 Label-only access
+
+const GRID = document.getElementById("dealsGrid");
+const EMPTY = document.getElementById("emptyState");
+const refreshBtn = document.getElementById("refreshBtn");
+const toContractHub = document.getElementById("toContractHub");
+const toOnboarding = document.getElementById("toOnboarding");
+
+refreshBtn.onclick = loadDeals;
+toContractHub.onclick = () => {
+  window.location.href = "label-contract-output.html";
+};
+toOnboarding.onclick = () => {
+  // Generic onboarding entry (no pre-bound contract)
+  window.location.href = "label-onboarding.html";
+};
+
+async function loadDeals() {
+  GRID.innerHTML = "";
+  EMPTY.style.display = "none";
+
+  try {
+    const res = await fetch("http://localhost:3001/deals");
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || "Unknown error");
+
+    const deals = json.deals || [];
+    if (!deals.length) {
+      EMPTY.style.display = "block";
+      return;
+    }
+
+    deals
+      .slice()
+      .reverse() // newest first
+      .forEach(deal => {
+        GRID.appendChild(renderDealCard(deal));
+      });
+  } catch (err) {
+    console.error("Error loading deals", err);
+    EMPTY.style.display = "block";
+    EMPTY.innerHTML =
+      "Error loading deals from local server.<br/>" +
+      "Make sure <code>node local_engine/server.js</code> is running.<br/><br/>" +
+      String(err);
+  }
+}
+
+function renderDealCard(deal) {
+  const div = document.createElement("div");
+  div.className = "card";
+
+  const role = deal.primaryRole || "artist";
+  const heat = deal.heatPriority || "unknown";
+  const campaign = deal.campaignFocus || "n/a";
+
+  const savedAt = deal.savedAt
+    ? new Date(deal.savedAt).toLocaleString()
+    : "unknown";
+
+  div.innerHTML = `
+    <div class="card-header">
+      <div>
+        <h2>${escapeHtml(deal.deal || deal.dealName || "Untitled Deal")}</h2>
+        <small>${escapeHtml(deal.party || "No party name")}</small>
+      </div>
+      <div class="badge">${escapeHtml(role.toUpperCase())}</div>
+    </div>
+
+    <div class="tag-row">
+      <div class="tag">Heat: ${escapeHtml(heat)}</div>
+      <div class="tag">Campaign: ${escapeHtml(campaign)}</div>
+      <div class="tag">Contract: ${escapeHtml(deal.contractId || "n/a")}</div>
+    </div>
+
+    <div class="card-body">
+      <div style="margin-bottom:4px;">
+        Contact: <strong>${escapeHtml(deal.contactName || "N/A")}</strong>
+        <span style="font-size:11px;color:#e5e7eb;">
+          (${escapeHtml(deal.contactEmail || "no email")})
+        </span>
+      </div>
+      <div style="font-size:11px;opacity:0.9;">
+        IG: ${escapeHtml(deal.igHandle || "@unknown")}
+      </div>
+      <div style="font-size:11px;margin-top:6px;max-height:60px;overflow:hidden;opacity:0.85;">
+        Notes: ${escapeHtml(
+          (deal.internalNotes || "No notes yet").slice(0, 160)
+        )}${deal.internalNotes && deal.internalNotes.length > 160 ? "…" : ""}
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <button class="ghost" type="button" data-contract="${escapeHtml(
+        deal.contractId || ""
+      )}">View Contract Snapshot</button>
+      <div class="meta">
+        Saved: ${savedAt}
+      </div>
+    </div>
+  `;
+
+  const btn = div.querySelector("button[data-contract]");
+  btn.addEventListener("click", () => {
+    alert(
+      "In a future power move this will deep-link back to the contract + full Supabase record.\n\n" +
+      "For now, it’s just confirming the wire:\n" +
+      "Contract ID: " +
+      (deal.contractId || "n/a")
+    );
+  });
+
+  return div;
+}
+
+// Simple HTML escape to avoid weird text breaking layout
+function escapeHtml(str) {
+  if (str == null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+loadDeals();
+</script>
+
+</body>
+</html>

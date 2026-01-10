@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM — Owner Mixtape Orders</title>
+  <style>
+    :root{--bg:#020617;--p:#a855f7;--pk:#ec4899;--c:#22d3ee;--txt:#e5e7eb}
+    body{margin:0;background:radial-gradient(1200px 600px at 18% 0%,rgba(168,85,247,.22),transparent 55%),radial-gradient(900px 500px at 82% 10%,rgba(34,211,238,.16),transparent 60%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px}
+    .card{border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:18px;background:rgba(2,6,23,.55);backdrop-filter: blur(10px)}
+    h1{margin:0 0 10px;font-size:26px}
+    p{margin:0 0 14px;opacity:.9}
+    input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--txt);outline:none}
+    button,a.btn{padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--txt);cursor:pointer;text-decoration:none;display:inline-block}
+    button:hover,a.btn:hover{border-color:rgba(236,72,153,.45)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:14px 0}
+    .order{border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:14px;margin-top:12px;background:rgba(255,255,255,.03)}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);margin-right:8px;background:rgba(255,255,255,.04);font-size:12px}
+    .muted{opacity:.75;font-size:13px}
+    code{background:rgba(0,0,0,.25);padding:2px 6px;border-radius:8px}
+    a{color:#a5f3fc}
+  </style>
+  <script src="/js/tkfm-quick-checkout.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🧾 Owner — Mixtape Orders</h1>
+      <p>Enter your <code>TKFM_OWNER_KEY</code> to load orders. Works with Supabase + local dev store.</p>
+
+      <div class="row">
+        <div style="flex:1;min-width:260px">
+          <input id="k" placeholder="Owner key"/>
+        </div>
+        <button id="load">Load Orders</button>
+        <a class="btn" href="/radio-hub.html">Radio Hub</a>
+      </div>
+
+      <div class="hr"></div>
+      <div class="muted" id="meta">No data loaded.</div>
+      <div id="list"></div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const meta = document.getElementById('meta');
+  const list = document.getElementById('list');
+
+  function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m]));}
+
+  function normalize(o){
+    // Supabase row shape
+    if (o && (o.artist_name || o.mixtape_title || o.created_at)) {
+      return {
+        id: o.id,
+        createdAt: o.created_at,
+        status: o.status || 'new',
+        tier: o.tier || '',
+        artistName: o.artist_name || '',
+        email: o.email || '',
+        phone: o.phone || '',
+        mixtapeTitle: o.mixtape_title || '',
+        download: o.download || '',
+        tracklist: o.tracklist || '',
+        socials: o.socials || '',
+        notes: o.notes || ''
+      };
+    }
+
+    // Local dev legacy shape
+    return {
+      id: o.id,
+      createdAt: o.createdAt || '',
+      status: o.status || 'new',
+      tier: o.tier || '',
+      artistName: o.artistName || '',
+      email: o.email || '',
+      phone: o.phone || '',
+      mixtapeTitle: o.mixtapeTitle || '',
+      download: (o.links && o.links.download) ? o.links.download : '',
+      tracklist: (o.links && o.links.tracklist) ? o.links.tracklist : '',
+      socials: (o.links && o.links.socials) ? o.links.socials : '',
+      notes: o.notes || ''
+    };
+  }
+
+  function linkOrDash(url){
+    const u = String(url||'').trim();
+    if (!u) return '—';
+    return `<a target="_blank" rel="noreferrer" href="${esc(u)}">${esc(u)}</a>`;
+  }
+
+  document.getElementById('load').addEventListener('click', async () => {
+    const key = (document.getElementById('k').value || '').trim();
+    if (!key) { meta.textContent = 'Missing owner key.'; return; }
+
+    meta.textContent = 'Loading…';
+    list.innerHTML = '';
+
+    const res = await fetch('/.netlify/functions/list-mixtape-orders', {
+      headers: { 'x-owner-key': key }
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      meta.textContent = 'Unauthorized or error.';
+      return;
+    }
+
+    meta.textContent = `Loaded ${data.count} order(s). Storage: ${data.storage || 'unknown'}`;
+    const orders = (data.orders || []).map(normalize);
+
+    if (!orders.length) {
+      list.innerHTML = '<div class="order"><span class="pill">none</span></div>';
+      return;
+    }
+
+    list.innerHTML = orders.map(o => `
+      <div class="order">
+        <div style="margin-bottom:8px">
+          <span class="pill">${esc(o.tier)}</span>
+          <span class="pill">${esc(o.status)}</span>
+          <span class="pill">${esc(o.createdAt)}</span>
+          <span class="pill">${esc(o.id)}</span>
+        </div>
+        <div><b>${esc(o.artistName)}</b> — ${esc(o.email)} ${o.phone ? ('— '+esc(o.phone)) : ''}</div>
+        <div class="muted" style="margin-top:6px"><b>Mixtape:</b> ${esc(o.mixtapeTitle)}</div>
+        <div class="muted" style="margin-top:6px"><b>Download:</b> ${linkOrDash(o.download)}</div>
+        <div class="muted" style="margin-top:6px"><b>Tracklist:</b> ${linkOrDash(o.tracklist)}</div>
+        <div class="muted" style="margin-top:6px"><b>Socials:</b> ${esc(o.socials || '—')}</div>
+        <div class="muted" style="margin-top:6px"><b>Notes:</b> ${esc(o.notes || '—')}</div>
+      </div>
+    `).join('');
+  });
+})();
+</script>
+  <script type="module" src="/js/tkfm-logo-resolver.js"></script>
+<script src="/js/tkfm-checkout.js"></script>
+</body>
+</html>

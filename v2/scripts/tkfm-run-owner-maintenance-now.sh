@@ -6,21 +6,25 @@ set -euo pipefail
 #
 # Usage:
 #   ./scripts/tkfm-set-owner-key.sh --clipboard
+#   ./scripts/tkfm-sync-owner-key-to-dotenv.sh
+#   netlify dev --port 8888
 #   ./scripts/tkfm-run-owner-maintenance-now.sh http://localhost:8888 250
-#   ./scripts/tkfm-run-owner-maintenance-now.sh https://www.tkfmradio.com 250
 #
-# Or:
-#   TKFM_OWNER_KEY=... ./scripts/tkfm-run-owner-maintenance-now.sh ...
+# Or prod:
+#   ./scripts/tkfm-run-owner-maintenance-now.sh https://www.tkfmradio.com 250
 
 BASE="${1:-http://localhost:8888}"
 KEEP="${2:-250}"
 
-KEY="$(./scripts/tkfm-owner-key.sh | tr -d '\r\n' | xargs)"
+if echo "$BASE" | grep -q "localhost"; then
+  ./scripts/tkfm-sync-owner-key-to-dotenv.sh . >/dev/null 2>&1 || true
+fi
+
+KEY="$(./scripts/tkfm-owner-key.sh | tr -d '\r\n' | xargs || true)"
 
 if [ -z "${KEY}" ]; then
   echo "FAIL: set owner key first:"
   echo "  ./scripts/tkfm-set-owner-key.sh --clipboard"
-  echo "  (or export TKFM_OWNER_KEY=...)"
   exit 2
 fi
 
