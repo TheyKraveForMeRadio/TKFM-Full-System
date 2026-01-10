@@ -251,5 +251,15 @@
   </footer>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 <script src="/js/tkfm-paid-lane-modal.js"></script>
+<script>
+(function(){
+  setTimeout(function(){
+    try{
+      var ok = (localStorage.getItem("tkfm_owner_authed")==="true") || (localStorage.getItem("owner_authed")==="true") || (localStorage.getItem("TKFM_OWNER_AUTH")==="true");
+      if (!ok && window.tkfmOwnerStopVerifying) window.tkfmOwnerStopVerifying("Invalid key or verify timed out.");
+    }catch(e){}
+  }, 6000);
+})();
+</script>
 </body>
 </html>
