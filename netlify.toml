@@ -1,6 +1,7 @@
 [build]
+base = "v2"
 publish = "dist"
-command = "npm ci && npm run build"
+command = "npm ci && npm run build && npm run postbuild"
 
 [functions]
 directory = "netlify/functions"
