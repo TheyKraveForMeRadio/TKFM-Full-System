@@ -203,11 +203,26 @@
     }
   </style>
 <script src="/js/tkfm-fx.js"></script>
-  <script src="/js/tkfm-quick-checkout.js"></script>
+  <!-- TKFM: BOOST CHECKOUT INTERCEPTOR -->
+<script defer src="/js/tkfm-boost-checkout.js"></script>
+<script src="/js/tkfm-quick-checkout.js"></script>
   <script src="/js/tkfm-paid-lane-modal.js" defer></script>
   <script src="/js/tkfm-paid-lane-submit.js" defer></script>
+  <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
 </head>
 <body data-tkfm-theme="radio">
+<!-- TKFM: DASHBOARD PILL -->
+<a href="/dashboard.html" style="
+  position:fixed; right:16px; bottom:16px; z-index:9999;
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:10px 12px; border-radius:999px; text-decoration:none;
+  font-weight:1000; letter-spacing:.02em; font-size:13px;
+  color:#020617;
+  background: linear-gradient(90deg,#22d3ee,#3b82f6);
+  box-shadow: 0 14px 28px rgba(0,0,0,.40);
+">Dashboard</a>
+
+
 
 <a href="/rotation-boost.html" style="text-decoration:none">
   <button class="btn" type="button">Rotation Boost</button>
