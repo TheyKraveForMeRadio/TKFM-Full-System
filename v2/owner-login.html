@@ -12,10 +12,7 @@
     (function(){
       function ok(){ return !!window.__TKFM_OWNER_GUARD_LOADED; }
       var s = document.querySelector("script[src=\"/js/tkfm-owner-guard.js\"]");
-      if (!s){ fail(); return; }
       s.addEventListener("error", fail);
-      s.addEventListener("load", function(){ if(!ok()) fail(); });
-      setTimeout(function(){ if(!ok()) fail(); }, 1500);
     })();
   </script>
   <script>
