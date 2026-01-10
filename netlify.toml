@@ -1,7 +1,6 @@
 [build]
-base = "v2"
 publish = "dist"
-command = "bash ./scripts/tkfm-prebuild-clean.sh && npm run build && npm run postbuild"
+command = "npm ci && npm run build"
 
 [functions]
 directory = "netlify/functions"
