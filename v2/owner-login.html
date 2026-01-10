@@ -1,339 +1,121 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <script>window.fail = window.fail || function(){}; var fail = window.fail;</script>
-<!-- TKFM_BUILD_MARKER: ee75b78-20260109_173347 -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Owner Login — TKFM</title>
-  <meta name="robots" content="noindex,nofollow"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/js/tkfm-owner-guard.js"></script>
-  <script>
-    setTimeout(function(){
-      if (!window.__TKFM_OWNER_GUARD_LOADED) {
-        try { if (typeof showMsg === "function") showMsg("Owner guard missing (js/tkfm-owner-guard.js).", false); } catch(e) {}
-      }
-    }, 1200);
-  </script>
-  <script>
-    (function(){
-      setTimeout(function(){
-        if(!window.__TKFM_OWNER_GUARD_LOADED){
-        }
-      }, 1200);
-    })();
-  </script>
-  <script>
-    (function(){
-      function ok(){ return !!window.__TKFM_OWNER_GUARD_LOADED; }
-      var s = document.querySelector("script[src=\"/js/tkfm-owner-guard.js\"]");
-      s.addEventListener("error", window.fail);
-    })();
-  </script>
-  <script>
-    setTimeout(() => {
-      if (!window.__TKFM_OWNER_GUARD_LOADED) {
-      }
-    }, 350);
-  </script>
+  <title>TKFM Owner Login</title>
+
   <style>
     body{
-      background:#020617;
+      margin:0; min-height:100vh; background:#020617;
       background-image:
         radial-gradient(circle at 0 0,rgba(56,189,248,0.22),transparent 55%),
         radial-gradient(circle at 100% 0,rgba(236,72,153,0.30),transparent 55%),
         radial-gradient(circle at 50% 100%,rgba(168,85,247,0.28),transparent 55%),
         radial-gradient(circle at 60% 50%,rgba(250,204,21,0.08),transparent 60%);
+      color:#e2e8f0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      display:flex; align-items:center; justify-content:center; padding:24px;
     }
-    .card{background:rgba(2,6,23,.62);border:1px solid rgba(148,163,184,.18)}
-    .pill{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase}
-    .btn{border-radius:999px;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;padding:.65rem 1rem;white-space:nowrap}
-    input{background:rgba(2,6,23,.55)!important;border:1px solid rgba(148,163,184,.22)!important}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .card{
+      width:min(720px, calc(100% - 24px));
+      border-radius:22px;
+      background:rgba(2,6,23,.70);
+      border:1px solid rgba(34,211,238,.30);
+      box-shadow:0 30px 120px rgba(0,0,0,.55);
+      padding:18px;
+    }
+    .pill{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(34,211,238,.95)}
+    .h{font-weight:900;font-size:22px;margin-top:8px}
+    .p{color:rgba(226,232,240,.78);line-height:1.55;margin-top:8px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+    input{
+      flex:1; min-width:260px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(34,211,238,.22);
+      background:rgba(15,23,42,.55);
+      color:#e2e8f0; outline:none;
+    }
+    input:focus{border-color:rgba(34,211,238,.55)}
+    .btn{
+      padding:10px 14px;border-radius:14px;
+      border:1px solid rgba(34,211,238,.35);
+      background:rgba(2,6,23,.65);
+      color:#e2e8f0;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+      font-size:12px;cursor:pointer;white-space:nowrap;
+    }
+    .btnGold{
+      background:linear-gradient(90deg, rgba(250,204,21,.18), rgba(249,115,22,.10));
+      border-color:rgba(250,204,21,.30);
+      color:#fff7ed;
+    }
+    .msg{margin-top:12px;font-size:12px;color:rgba(226,232,240,.78)}
+    a{color:#93c5fd;font-weight:900;text-decoration:none}
+    code{background:rgba(15,23,42,.6);padding:2px 6px;border-radius:8px;border:1px solid rgba(148,163,184,.2)}
   </style>
 </head>
-<body class="text-slate-50 min-h-screen">
-  <!-- TKFM OWNER LOGIN DIRECT VERIFY (failsafe) -->
-<div style="max-width:720px;margin:14px auto 0;padding:14px;border-radius:18px;background:rgba(2,6,23,.55);border:1px solid rgba(34,211,238,.18);color:#e2e8f0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;">
-  <div style="font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(34,211,238,.95);">OWNER VERIFY</div>
-  <div style="font-weight:900;font-size:18px;margin-top:8px;">Enter Owner Key and verify instantly.</div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;">
-    <input id="tkfmOwnerKeyField" placeholder="Paste TKFM_OWNER_KEY" autocomplete="off" style="flex:1;min-width:260px;padding:10px 12px;border-radius:14px;border:1px solid rgba(34,211,238,.22);background:rgba(15,23,42,.55);color:#e2e8f0;outline:none;" />
-    <button id="tkfmOwnerVerifyBtn" type="button" style="padding:10px 14px;border-radius:14px;border:1px solid rgba(250,204,21,.30);background:linear-gradient(90deg, rgba(250,204,21,.18), rgba(249,115,22,.10));color:#fff7ed;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:12px;cursor:pointer;">Verify</button>
-    <button id="tkfmOwnerClearBtn2" type="button" style="padding:10px 14px;border-radius:14px;border:1px solid rgba(34,211,238,.35);background:rgba(2,6,23,.65);color:#e2e8f0;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:12px;cursor:pointer;">Clear</button>
+<body>
+  <div class="card">
+    <div class="pill">TKFM • OWNER ACCESS</div>
+    <div class="h">Owner Login (Local Unlock)</div>
+    <div class="p">
+      Paste your <code>TKFM_OWNER_KEY</code>. This unlocks owner mode in your browser (no server verify, no spinner).
+    </div>
+
+    <div class="row">
+      <input id="k" placeholder="Paste TKFM_OWNER_KEY" autocomplete="off"/>
+      <button class="btn btnGold" id="unlock" type="button">Unlock</button>
+      <button class="btn" id="clear" type="button">Clear</button>
+    </div>
+
+    <div class="msg" id="m">Status: idle</div>
+    <div class="p" style="margin-top:10px;font-size:13px;">
+      After unlock, you can open:
+      <a href="/god-view.html">God View</a> •
+      <a href="/autopilot-engine.html">Autopilot</a> •
+      <a href="/owner-paid-lane-inbox.html">Owner Inbox</a>
+    </div>
   </div>
-  <div id="tkfmOwnerVerifyMsg" style="margin-top:10px;font-size:12px;color:rgba(226,232,240,.78);">Status: idle</div>
-</div>
 
 <script>
 (function(){
-  const msg = document.getElementById('tkfmOwnerVerifyMsg');
-  const inp = document.getElementById('tkfmOwnerKeyField');
-  const btn = document.getElementById('tkfmOwnerVerifyBtn');
-  const clr = document.getElementById('tkfmOwnerClearBtn2');
+  const inp = document.getElementById("k");
+  const msg = document.getElementById("m");
 
   function setMsg(t, ok){
     msg.textContent = t;
-    msg.style.color = ok ? 'rgba(34,211,238,.95)' : 'rgba(236,72,153,.95)';
+    msg.style.color = ok ? "rgba(34,211,238,.95)" : "rgba(236,72,153,.95)";
   }
 
-  function setOwnerKey(k){
-    localStorage.setItem('TKFM_OWNER_KEY', k);
-    localStorage.setItem('tkfm_owner_key', k);
-    localStorage.setItem('tkfm_owner_token', k);
-    localStorage.setItem('tkfm_owner_authed', 'true');
-    localStorage.setItem('owner_authed', 'true');
-    localStorage.setItem('TKFM_OWNER_AUTH', 'true');
-    localStorage.setItem('tkfm_owner_access', 'true');
-    localStorage.setItem('tkfm_owner_session', 'true');
+  function setOwner(k){
+    localStorage.setItem("TKFM_OWNER_KEY", k);
+    localStorage.setItem("tkfm_owner_key", k);
+    localStorage.setItem("tkfm_owner_token", k);
+
+    localStorage.setItem("tkfm_owner_authed", "true");
+    localStorage.setItem("owner_authed", "true");
+    localStorage.setItem("TKFM_OWNER_AUTH", "true");
+    localStorage.setItem("tkfm_owner_access", "true");
+    localStorage.setItem("tkfm_owner_session", "true");
   }
 
-  async function verify(k){
-    const ctrl = new AbortController();
-    const t = setTimeout(()=>ctrl.abort(), 6000);
-    try{
-      const res = await fetch('/.netlify/functions/owner-auth-check', {
-        method:'GET',
-        headers:{ 'x-tkfm-owner-key': String(k||'').trim() },
-        signal: ctrl.signal
-      });
-      clearTimeout(t);
-      const data = await res.json().catch(()=>({}));
-      return !!(res.ok && data.ok);
-    }catch(e){
-      clearTimeout(t);
-      return false;
-    }
-  }
+  document.getElementById("unlock").onclick = () => {
+    const k = (inp.value || "").trim();
+    if (!k) return setMsg("Status: paste your owner key first", false);
+    setOwner(k);
+    setMsg("Status: unlocked ✅ reloading…", true);
+    setTimeout(() => location.href = "/god-view.html", 400);
+  };
 
-  btn.addEventListener('click', async ()=>{
-    const k = (inp.value||'').trim();
-    if(!k){ setMsg('Status: paste your owner key first', false); return; }
-    setMsg('Status: verifying…', true);
-    const ok = await verify(k);
-    if(ok){
-      setOwnerKey(k);
-      setMsg('Status: verified ✅ reloading…', true);
-      setTimeout(()=>location.reload(), 400);
-    } else {
-      setMsg('Status: invalid key or verify failed (check Netlify env TKFM_OWNER_KEY)', false);
-    }
-  });
-
-  clr.addEventListener('click', ()=>{
-    ['TKFM_OWNER_KEY','tkfm_owner_key','tkfm_owner_token','tkfm_owner_authed','owner_authed','TKFM_OWNER_AUTH','tkfm_owner_access','tkfm_owner_session'].forEach(k=>localStorage.removeItem(k));
-    setMsg('Status: cleared. paste key + verify.', true);
-    inp.value='';
-  });
-})();
-</script>
-
-<div id="tkfmOwnerLock"></div>
-  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/80 backdrop-blur-xl">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center gap-4">
-      <a href="index.html" class="flex items-center gap-3">
-        <img src="/tkfm-radio-logo.png" class="h-9 w-auto object-contain" alt="TKFM"/>
-        <div class="leading-tight">
-          <p class="text-[0.6rem] uppercase tracking-[0.35em] text-slate-400">They Krave For Me Radio</p>
-          <p class="text-sm font-semibold">Owner Login</p>
-        </div>
-      </a>
-      <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-        <a href="god-view.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-200">God View</a>
-        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200">Radio Hub</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="max-w-5xl mx-auto px-4 pt-10 pb-16">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-pink-400/80 bg-pink-400/10 pill text-pink-200">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span>Owner Only</span>
-    </div>
-
-    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mt-4">
-      Secure Owner Access
-    </h1>
-    <p class="text-slate-200/85 max-w-3xl mt-3">
-      Login once, then continue to your destination. This page writes <b>all legacy owner keys</b> so older engines (Autopilot, Ops, etc.) won’t bounce you back.
-    </p>
-
-    <div class="grid md:grid-cols-2 gap-4 mt-8">
-      <div class="card rounded-2xl p-6">
-        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Login</p>
-        <h2 class="text-2xl font-extrabold mt-2">Enter your owner credentials</h2>
-
-        <div class="mt-4 grid gap-3">
-          <div>
-            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Owner Email</label>
-            <input id="email" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="you@email.com"/>
-          </div>
-
-          <div>
-            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Owner Password</label>
-            <input id="password" type="password" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50" placeholder="••••••••"/>
-          </div>
-
-          <div>
-            <label class="text-xs uppercase tracking-[0.22em] text-slate-400">TKFM Owner Key</label>
-            <input id="ownerKey" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" placeholder="TKFM_OWNER_KEY"/>
-            <p class="text-xs text-slate-500 mt-2">Must match Netlify env: <span class="mono">TKFM_OWNER_KEY</span>.</p>
-          </div>
-
-          <div class="flex flex-wrap gap-2 mt-2">
-            <button id="login" class="btn border border-emerald-500/40 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15">Login</button>
-            <button id="clear" class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15">Clear Session</button>
-          </div>
-
-          <p id="msg" class="text-sm font-semibold text-slate-300 mt-2"></p>
-        </div>
-      </div>
-
-      <div class="card rounded-2xl p-6">
-        <p class="text-slate-400 text-xs uppercase tracking-[0.28em]">Continue</p>
-        <h2 class="text-2xl font-extrabold mt-2">Where you’ll go after login</h2>
-        <p class="text-slate-200/85 mt-2">We respect <span class="mono">?next=</span> and send you there only after a successful login.</p>
-
-        <div class="mt-4">
-          <label class="text-xs uppercase tracking-[0.22em] text-slate-400">Next URL</label>
-          <input id="next" class="mt-2 w-full rounded-xl px-3 py-2 text-slate-50 mono" readonly/>
-        </div>
-
-        <div class="mt-4 flex flex-wrap gap-2">
-          <button id="continue" class="btn border border-purple-500/40 bg-purple-500/10 text-purple-100 hover:bg-purple-500/15">Continue</button>
-          <a class="btn border border-sky-500/40 bg-sky-500/10 text-sky-100 hover:bg-sky-500/15" href="god-view.html">Open God View</a>
-        </div>
-
-        <div class="mt-5 text-xs text-slate-500">
-          <div>Owner state (local): <span id="state" class="mono"></span></div>
-          <div class="mt-1">Stored keys: <span id="keys" class="mono"></span></div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    (function(){
-      const $ = (id) => document.getElementById(id);
-
-      function safe(s){ return String(s||''); }
-      function parseNext(){
-        const u = new URL(window.location.href);
-        const n = u.searchParams.get('next');
-        return n ? n : 'god-view.html';
-      }
-
-      function showMsg(t, ok){
-        $('msg').textContent = t || '';
-        $('msg').className = ok ? 'text-sm font-semibold text-emerald-300 mt-2' : 'text-sm font-semibold text-red-300 mt-2';
-      }
-
-      function refreshState(){
-        const keys = [];
-        try{
-          [
-            'tkfm_owner_token','tkfm_owner_key','TKFM_OWNER_KEY','tkfm_owner_authed','tkfm_owner_email',
-            'owner_authed','TKFM_OWNER_AUTH','ownerEmail','tkfm_owner_access','tkfm_owner_session','tkfm_owner'
-          ].forEach(k=>{
-            const v = localStorage.getItem(k);
-            if (v && String(v).trim()) keys.push(k);
-          });
-        }catch(e){}
-        const ok = (window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal());
-        $('state').textContent = ok ? 'OWNER' : 'LOCKED';
-        $('keys').textContent = keys.length ? keys.join(', ') : 'none';
-
-        // Pre-fill email if stored
-        try{
-          const any = window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.getAny ? window.__TKFM_OWNER_GUARD_LOADED.getAny() : {};
-          if (any && any.email && !$('email').value) $('email').value = any.email;
-        }catch(_e){}
-      }
-
-      async function doLogin(){
-        const email = safe($('email').value).trim().toLowerCase();
-        const password = safe($('password').value).trim();
-        const ownerKey = safe($('ownerKey').value).trim();
-
-        showMsg('Verifying…', true);
-
-        if (!window.__TKFM_OWNER_GUARD_LOADED || !window.__TKFM_OWNER_GUARD_LOADED.login){
-          setTimeout(() => {
-            if (!window.__TKFM_OWNER_GUARD_LOADED) {
-              setTimeout(() => {
-            if (!window.__TKFM_OWNER_GUARD_LOADED) {
-            }
-          }, 350);
-}
-          }, 350);
-          return;
-        }
-
-        const res = await window.__TKFM_OWNER_GUARD_LOADED.login({ email, password, ownerKey });
-        if (!res || !res.ok){
-          showMsg('❌ ' + (res && res.error ? res.error : 'Login failed.'), false);
-          refreshState();
-          return;
-        }
-
-        // EXTRA SAFETY: force legacy keys again (stops older pages bouncing)
-        try{
-          if (window.__TKFM_OWNER_GUARD_LOADED.setLegacyKeys){
-            window.__TKFM_OWNER_GUARD_LOADED.setLegacyKeys({ email, ownerKey, token: res.token || '' });
-          }
-        }catch(_e){}
-
-        showMsg('✅ Owner verified. Continue to your next page.', true);
-        refreshState();
-      }
-
-      function clear(){
-        if (window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.clearOwner) window.__TKFM_OWNER_GUARD_LOADED.clearOwner();
-        showMsg('Cleared owner session.', true);
-        refreshState();
-      }
-
-      function cont(){
-        const next = $('next').value || 'god-view.html';
-        const ok = (window.__TKFM_OWNER_GUARD_LOADED && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal && window.__TKFM_OWNER_GUARD_LOADED.isOwnerLocal());
-        if (!ok){
-          showMsg('Locked. Login first.', false);
-          return;
-        }
-        location.replace(next);
-      }
-
-      $('login').addEventListener('click', doLogin);
-      $('clear').addEventListener('click', clear);
-      $('continue').addEventListener('click', cont);
-
-      const next = parseNext();
-      $('next').value = next;
-
-      refreshState();
-    })();
-  </script>
-
-  <footer class="border-t border-slate-800/80 bg-black/80 backdrop-blur-xl">
-    <div class="max-w-5xl mx-auto px-4 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3">
-      <p>© <span id="year"></span> They Krave For Me Radio</p>
-      <div class="flex gap-2 flex-wrap">
-        <a class="hover:text-slate-200" href="contact.html">Contact</a><span>•</span>
-        <a class="hover:text-slate-200" href="media-kit.html">Media Kit</a>
-      </div>
-    </div>
-  </footer>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-<script src="/js/tkfm-paid-lane-modal.js"></script>
-<script>
-(function(){
-  setTimeout(function(){
-    try{
-      var ok = (localStorage.getItem("tkfm_owner_authed")==="true") || (localStorage.getItem("owner_authed")==="true") || (localStorage.getItem("TKFM_OWNER_AUTH")==="true");
-      if (!ok && window.tkfmOwnerStopVerifying) window.tkfmOwnerStopVerifying("Invalid key or verify timed out.");
-    }catch(e){}
-  }, 6000);
+  document.getElementById("clear").onclick = () => {
+    [
+      "TKFM_OWNER_KEY","tkfm_owner_key","tkfm_owner_token",
+      "tkfm_owner_authed","owner_authed","TKFM_OWNER_AUTH",
+      "tkfm_owner_access","tkfm_owner_session",
+      "ownerEmail","tkfm_owner_email","tkfm_owner"
+    ].forEach(k => localStorage.removeItem(k));
+    inp.value = "";
+    setMsg("Status: cleared. paste key + unlock.", true);
+  };
 })();
 </script>
 </body>
