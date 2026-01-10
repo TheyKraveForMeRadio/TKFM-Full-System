@@ -16,3 +16,10 @@ dist/
 >>>>>>> v2-clean-neon
 
 v2/.env
+
+# TKFM v2 ignores
+v2/node_modules/
+v2/dist/
+v2/backups/
+v2/.netlify/
+v2/.DS_Store
