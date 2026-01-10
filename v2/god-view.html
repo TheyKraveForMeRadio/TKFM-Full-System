@@ -131,7 +131,6 @@
       <div class="nav">
         <a class="pill" href="index.html">Public Site</a>
         <a class="pill" href="radio-hub.html">Radio Hub</a>
-        <a class="pill hot" id="loginBtn" href="owner-login.html">Owner Login</a>
       </div>
     </div>
   </header>
@@ -147,7 +146,6 @@
       <div class="divider"></div>
 
       <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
-        <a class="pill hot" id="goLogin" href="owner-login.html">Go to Owner Login</a>
         <button class="pill" id="clear">Clear Owner Session</button>
       </div>
 
@@ -242,7 +240,6 @@
 
       function setNextOnLoginLinks(){
         const next = location.pathname + location.search + location.hash;
-        const u = 'owner-login.html?next=' + encodeURIComponent(next);
         document.getElementById('goLogin').setAttribute('href', u);
         document.getElementById('loginBtn').setAttribute('href', u);
       }
