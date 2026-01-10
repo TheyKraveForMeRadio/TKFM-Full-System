@@ -1,16 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <script src="/js/tkfm-owner-guard.js"></script>
-  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>TKFM God View — Owner Command Center</title>
   <meta name="robots" content="noindex,nofollow"/>
 
   <!-- IMPORTANT:
-       This page is SELF-CONTAINED on purpose to stop redirect loops.
-       We DO NOT load tkfm-shell.js / access-gates.js on this page. -->
+       God View is SELF-CONTAINED to stop redirect loops.
+       We DO NOT load tkfm-owner-gate-no-redirect.js on this page. -->
 
   <style>
     :root{
@@ -86,6 +84,8 @@
     .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
     .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
     .pill.ok{border-color:rgba(16,185,129,.55);box-shadow:0 0 0 1px rgba(16,185,129,.10),0 0 22px rgba(16,185,129,.06)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .hidden{display:none !important}
 
     .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
     @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
@@ -112,29 +112,39 @@
     }
     .tag.lock{border-color:rgba(236,72,153,.26)}
     .tag.ok{border-color:rgba(16,185,129,.28)}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
-    .hidden{display:none !important}
   </style>
+
   <script>
   (function(){
-    function t(v){v=String(v||"");return v==="true"||v==="1";}
-    function get(k){try{return localStorage.getItem(k);}catch(e){return null;}}
-    function authed(){
-      return t(get("tkfm_owner_authed")) || t(get("owner_authed")) || t(get("TKFM_OWNER_AUTH")) || t(get("tkfm_owner_access")) || t(get("tkfm_owner_session")) || !!(get("TKFM_OWNER_KEY")||get("tkfm_owner_key")||get("tkfm_owner_token"));
+    function t(v){ v=String(v||""); return v==="true" || v==="1"; }
+    function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+    function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+    // Normalize owner keys -> flags (accept whatever owner-login set)
+    var key = (get("TKFM_OWNER_KEY")||get("tkfm_owner_key")||get("tkfm_owner_token")||"").trim();
+    if (key){
+      set("TKFM_OWNER_KEY", key);
+      set("tkfm_owner_key", key);
+      set("tkfm_owner_token", key);
+      set("tkfm_owner_authed","true");
+      set("owner_authed","true");
+      set("TKFM_OWNER_AUTH","true");
+      set("tkfm_owner_access","true");
+      set("tkfm_owner_session","true");
     }
-    window.__TKFM_OWNER_OK = authed();
-    document.addEventListener("DOMContentLoaded", function(){
-      if (window.__TKFM_OWNER_OK){
-        var lock = document.getElementById("tkfmOwnerLockWrap") || document.getElementById("tkfmOwnerLock") || document.querySelector("[data-owner-lock]");
-        if (lock) { try{ lock.remove(); }catch(e){} }
-      }
-    });
+
+    window.__TKFM_OWNER_OK =
+      t(get("tkfm_owner_authed")) ||
+      t(get("owner_authed")) ||
+      t(get("TKFM_OWNER_AUTH")) ||
+      t(get("tkfm_owner_access")) ||
+      t(get("tkfm_owner_session")) ||
+      !!key;
   })();
   </script>
 </head>
 
 <body>
-  <div id="tkfmOwnerLock"></div>
   <div class="bg"></div>
 
   <header>
@@ -145,21 +155,27 @@
       </div>
 
       <div class="nav">
-        <a class="pill" href="index.html">Public Site</a>
-        <a class="pill" href="radio-hub.html">Radio Hub</a>
+        <a class="pill" href="/index.html">Public Site</a>
+        <a class="pill" href="/radio-hub.html">Radio Hub</a>
+        <a class="pill hot" id="goLogin" href="/owner-login.html">Owner Login</a>
+        <button class="pill" id="clearTop" type="button">Clear Owner Session</button>
       </div>
     </div>
   </header>
 
   <main class="wrap" style="padding-top:18px">
-    <!-- LOCKED STATE (NO AUTO REDIRECT - stops blinking forever) -->
+    <!-- LOCKED STATE -->
     <section id="locked" class="glass card">
       <div class="k">Owner Gate</div>
-      <div class="h1"><span class="grad"></p>
+      <div class="h1"><span class="grad">Access Locked</span></div>
+      <p class="p">
+        This page does not auto-redirect (prevents loops). Click <strong>Owner Login</strong>, paste your key, then return here on the same port/host.
+      </p>
       <div class="divider"></div>
 
       <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
-        <button class="pill" id="clear">Clear Owner Session</button>
+        <a class="pill hot" id="loginBtn" href="/owner-login.html">Owner Login</a>
+        <button class="pill" id="clear" type="button">Clear Owner Session</button>
       </div>
 
       <p class="p" style="margin-top:14px">
@@ -176,42 +192,42 @@
       <div class="divider"></div>
 
       <div class="grid">
-        <a class="glass tile" href="tkfm-dev-console.html">
+        <a class="glass tile" href="/tkfm-dev-console.html">
           <div class="tileK">Owner</div>
           <div class="tileH">Dev Console</div>
           <div class="tileP">Feature flags, unlock testing, and internal controls.</div>
           <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
         </a>
 
-        <a class="glass tile" href="owner-ops-dashboard.html">
+        <a class="glass tile" href="/owner-ops-dashboard.html">
           <div class="tileK">Owner</div>
           <div class="tileH">Ops Dashboard</div>
           <div class="tileP">Operational overview and admin lanes.</div>
           <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
         </a>
 
-        <a class="glass tile" href="ai-dj-engine.html">
+        <a class="glass tile" href="/ai-dj-engine.html">
           <div class="tileK">Owner</div>
           <div class="tileH">AI DJ Engine</div>
           <div class="tileP">Automation engine (owner-only).</div>
           <div class="tags"><span class="tag ok">OWNER</span><span class="tag lock">GATED</span></div>
         </a>
 
-        <a class="glass tile" href="autopilot-engine.html">
+        <a class="glass tile" href="/autopilot-engine.html">
           <div class="tileK">Engines</div>
           <div class="tileH">Autopilot Engine</div>
           <div class="tileP">Scheduling + automation routing (monitor + control).</div>
           <div class="tags"><span class="tag ok">ENGINE</span><span class="tag lock">CONTROL</span></div>
         </a>
 
-        <a class="glass tile" href="label-home.html">
+        <a class="glass tile" href="/label-home.html">
           <div class="tileK">Label</div>
           <div class="tileH">TKFM Records</div>
           <div class="tileP">Label workflows (member gated + paid tiers).</div>
           <div class="tags"><span class="tag ok">LABEL</span><span class="tag lock">GATED</span></div>
         </a>
 
-        <button class="glass tile" id="logoutTile" style="text-align:left;border:none;cursor:pointer">
+        <button class="glass tile" id="logoutTile" style="text-align:left;border:none;cursor:pointer" type="button">
           <div class="tileK">Security</div>
           <div class="tileH">Clear Owner Session</div>
           <div class="tileP">Logout / reset token on this device.</div>
@@ -223,17 +239,17 @@
 
   <script>
     (function(){
-      // Detect owner state WITHOUT redirecting.
-      // This prevents the blink loop even if other pages bounce.
       const KEY_CANDIDATES = [
-        'tkfm_owner_token',
-        'tkfm_owner_key',
-        'TKFM_OWNER_KEY',
-        'tkfm_owner_authed',
-        'owner_authed',
-        'TKFM_OWNER_AUTH',
-        'ownerEmail',
-        'tkfm_owner_email'
+        "tkfm_owner_token",
+        "tkfm_owner_key",
+        "TKFM_OWNER_KEY",
+        "tkfm_owner_authed",
+        "owner_authed",
+        "TKFM_OWNER_AUTH",
+        "tkfm_owner_access",
+        "tkfm_owner_session",
+        "ownerEmail",
+        "tkfm_owner_email"
       ];
 
       function presentKeys(){
@@ -242,56 +258,58 @@
           const v = localStorage.getItem(k);
           if (v && String(v).trim()) found.push(k);
         }
-        document.getElementById('keys').textContent = found.length ? found.join(', ') : 'none';
+        const el = document.getElementById("keys");
+        if (el) el.textContent = found.length ? found.join(", ") : "none";
         return found;
       }
 
       function isOwner(){
-        const found = presentKeys();
-        return found.length > 0;
-      }
-
-      function setNextOnLoginLinks(){
-        const next = location.pathname + location.search + location.hash;
-        document.getElementById('goLogin').setAttribute('href', u);
-        document.getElementById('loginBtn').setAttribute('href', u);
+        // Use the normalized flag that we set in <head>
+        presentKeys();
+        return !!window.__TKFM_OWNER_OK;
       }
 
       function clearOwner(){
         for (const k of KEY_CANDIDATES) localStorage.removeItem(k);
-        // Also clear common app keys that sometimes store owner state
-        localStorage.removeItem('tkfm_owner');
-        localStorage.removeItem('tkfm_owner_session');
-        localStorage.removeItem('tkfm_owner_access');
+        localStorage.removeItem("tkfm_owner");
+        localStorage.removeItem("tkfm_user_features");
         presentKeys();
       }
 
+      function setNextLinks(){
+        const next = location.pathname + location.search + location.hash;
+        const u = "/owner-login.html?next=" + encodeURIComponent(next);
+        const a1 = document.getElementById("goLogin");
+        const a2 = document.getElementById("loginBtn");
+        if (a1) a1.setAttribute("href", u);
+        if (a2) a2.setAttribute("href", u);
+      }
+
       function render(){
-        setNextOnLoginLinks();
-        const locked = document.getElementById('locked');
-        const unlocked = document.getElementById('unlocked');
+        setNextLinks();
+        const locked = document.getElementById("locked");
+        const unlocked = document.getElementById("unlocked");
         if (isOwner()){
-          locked.classList.add('hidden');
-          unlocked.classList.remove('hidden');
+          locked.classList.add("hidden");
+          unlocked.classList.remove("hidden");
         } else {
-          unlocked.classList.add('hidden');
-          locked.classList.remove('hidden');
+          unlocked.classList.add("hidden");
+          locked.classList.remove("hidden");
         }
       }
 
-      document.getElementById('clear').addEventListener('click', function(){
-        clearOwner();
-        render();
+      document.getElementById("clear").addEventListener("click", function(){
+        clearOwner(); render();
       });
-
-      document.getElementById('logoutTile').addEventListener('click', function(){
-        clearOwner();
-        render();
+      document.getElementById("clearTop").addEventListener("click", function(){
+        clearOwner(); render();
+      });
+      document.getElementById("logoutTile").addEventListener("click", function(){
+        clearOwner(); render();
       });
 
       render();
     })();
   </script>
-<script src="/js/tkfm-paid-lane-modal.js"></script>
 </body>
 </html>
