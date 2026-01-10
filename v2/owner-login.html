@@ -28,7 +28,7 @@
     (function(){
       function ok(){ return !!window.__TKFM_OWNER_GUARD_LOADED; }
       var s = document.querySelector("script[src=\"/js/tkfm-owner-guard.js\"]");
-      s.addEventListener("error", fail);
+      s.addEventListener("error", window.fail);
     })();
   </script>
   <script>
