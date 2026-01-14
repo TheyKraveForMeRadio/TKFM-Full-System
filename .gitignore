@@ -1,25 +1,11 @@
-# Local Netlify folder
-.netlify
-.env
-dist/
-node_modules/
-<<<<<<< HEAD
-<<<<<<< HEAD
-v2/node_modules/
-=======
-dist/
-.vite/
->>>>>>> v2-clean-neon
-=======
-dist/
-.vite/
->>>>>>> v2-clean-neon
-
-v2/.env
-
-# TKFM v2 ignores
-v2/node_modules/
 v2/dist/
-v2/backups/
-v2/.netlify/
-v2/.DS_Store
+v2/.tkfm_store/
+node_modules/
+v2/node_modules/
+*.log
+nul
+Thumbs.db
+_HOLD/
+backups/
+tkfm_checkout.json
+*.zip
