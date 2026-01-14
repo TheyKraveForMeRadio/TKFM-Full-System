@@ -8,3 +8,6 @@ _HOLD/
 backups/
 tkfm_checkout.json
 *.zip
+.env
+.netlify/
+scripts/tkfm-functions-serve-9999.sh
