@@ -1,17 +1,10 @@
-# TKFM local dev
 .tkfm_store/
 dist/
 node_modules/
 *.log
-
-# windows junk
 nul
 Thumbs.db
-
-# holds/backups
 _HOLD/
 backups/
-
-# temp
 tkfm_checkout.json
 *.zip
