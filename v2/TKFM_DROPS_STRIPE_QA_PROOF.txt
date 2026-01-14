@@ -1,0 +1,18 @@
+=== ai_drops_starter_monthly ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a10nkW5oiLtANuV2r9w58Q30NITRLJBYsC7C7M1RTQR5l2DUppPHxP4VGx#fidnandhYHdWcXxpYCc%2
+=== ai_drops_pro_monthly ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a1iNAsGsDxo9Vd8SZJJXvBiLf7YAyK4pJMPznT0ovI9cUhAzwoZidch0o5#fidnandhYHdWcXxpYCc%2
+=== ai_drops_studio_monthly ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a1mKolN31k9KUBmiw2qtk28gQaNEFYgBETJIB4JIq9HeT5n3KwC24t1vZU#fidnandhYHdWcXxpYCc%2
+=== drop_pack_10 ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a1hkpYJWMPJa2T46iGA2rxXcBQXa7Nf81LGyO0Dg76ovZTFvHW3m1PrM1v#fidnandhYHdWcXxpYCc%2
+=== drop_pack_25 ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a15ePLgS0Aqw2qwdGIYx2wW85FfHTK10bWt9kNolt3Dj8vSGn6TzP5qkvY#fidnandhYHdWcXxpYCc%2
+=== drop_pack_100 ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a1B3RI2c4crgEOyd7HgkTE4OYkoqOTDX0rv2GOXdrDd6aNARUnLJBIWYP5#fidnandhYHdWcXxpYCc%2
+=== radio_imaging_bundle ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a1NutFQqiDh7UQqcMPclqQeLKNqtrqCrRTBue7UE53azeCp6FppBhKi5Qj#fidnandhYHdWcXxpYCc%2
+=== custom_voice_setup ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a1rqj6clXtdYkQMY5YdIiXarHIyBVCgugxKzF63ikmQ6YD4w5b7GRfBRQB#fidnandhYHdWcXxpYCc%2
+=== custom_voice_hosting_monthly ===
+{"ok":true,"url":"https://checkout.stripe.com/c/pay/cs_live_a1kmDXDtrN5pblGmpyhHGcqWay4M12lS3dgudf3m5NPq3NX8VVYKFK9CEV#fidnandhYHdWcXxpYCc%2
