@@ -12,10 +12,6 @@ Thumbs.db
 # backups / holds
 _HOLD/
 backups/
-originals/*BACKUP*
-originals/*backup*
-*.BACKUP.*
-*.backup.*
 
 # generated / temp
 tkfm_checkout.json
