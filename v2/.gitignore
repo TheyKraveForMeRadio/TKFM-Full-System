@@ -2,17 +2,16 @@
 .tkfm_store/
 dist/
 node_modules/
-.DS_Store
 *.log
 
 # windows junk
 nul
 Thumbs.db
 
-# backups / holds
+# holds/backups
 _HOLD/
 backups/
 
-# generated / temp
+# temp
 tkfm_checkout.json
 *.zip
