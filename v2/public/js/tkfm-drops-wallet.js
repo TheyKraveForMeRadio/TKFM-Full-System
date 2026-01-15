@@ -1,3 +1,4 @@
+// TKFM Drops Wallet + History (MVP) — client-side only
 (() => {
   const LS_CREDITS = "tkfm_drops_credits";
   const LS_HISTORY = "tkfm_drops_history";
@@ -10,7 +11,7 @@
     drop_pack_10: 10,
     drop_pack_25: 25,
     drop_pack_100: 100,
-    radio_imaging_bundle: 40, // placeholder
+    radio_imaging_bundle: 40
   };
 
   function getCredits(){
@@ -29,15 +30,27 @@
     try { return JSON.parse(localStorage.getItem(LS_HISTORY) || "[]") || []; }
     catch { return []; }
   }
+  function setHistory(h){
+    localStorage.setItem(LS_HISTORY, JSON.stringify((h || []).slice(0, 50)));
+  }
   function pushHistory(item){
     const h = getHistory();
     h.unshift(item);
-    localStorage.setItem(LS_HISTORY, JSON.stringify(h.slice(0, 50)));
+    setHistory(h);
     render();
   }
 
   function qs(k){
     return new URL(window.location.href).searchParams.get(k);
+  }
+
+  function esc(s){
+    return String(s||"")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
   }
 
   function render(){
@@ -54,25 +67,15 @@
       histEl.innerHTML = h.map(x => `
         <div style="border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.03);border-radius:14px;padding:10px;margin-top:10px">
           <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
-            <div style="font-weight:900">${escapeHtml(x.title||"Drop")}</div>
-            <div style="color:#94a3b8;font-size:12px">${escapeHtml(x.ts||"")}</div>
+            <div style="font-weight:900">${esc(x.title||"Drop")}</div>
+            <div style="color:#94a3b8;font-size:12px">${esc(x.ts||"")}</div>
           </div>
-          <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;color:#e5e7eb;font-size:12px;line-height:1.5">${escapeHtml(x.body||"")}</pre>
+          <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;color:#e5e7eb;font-size:12px;line-height:1.5">${esc(x.body||"")}</pre>
         </div>
       `).join("");
     }
   }
 
-  function escapeHtml(s){
-    return String(s||"")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#39;");
-  }
-
-  // Handle post-checkout: ?unlocked=planId
   function applyUnlock(){
     const unlocked = qs("unlocked");
     if (!unlocked) return;
@@ -82,21 +85,21 @@
     const add = PLAN_CREDITS[plan] || 0;
     if (add > 0) addCredits(add);
 
-    // clean URL (remove unlocked)
     const u = new URL(window.location.href);
     u.searchParams.delete("unlocked");
     window.history.replaceState({}, "", u.toString());
   }
 
-  // Simple generator (MVP)
   function wireGenerator(){
     const name = document.getElementById("tkfmDropName");
     const vibe = document.getElementById("tkfmDropVibe");
     const type = document.getElementById("tkfmDropType");
     const out = document.getElementById("tkfmDropOut");
+
     const gen = document.getElementById("tkfmDropGen");
     const save = document.getElementById("tkfmDropSave");
     const use = document.getElementById("tkfmDropUse1");
+    const clear = document.getElementById("tkfmDropClearHistory");
 
     if (!gen) return;
 
@@ -127,6 +130,14 @@
       setCredits(getCredits() - 1);
       alert("1 credit used. Remaining: " + getCredits());
     });
+
+    if (clear){
+      clear.addEventListener("click", () => {
+        if (!confirm("Clear drop history?")) return;
+        setHistory([]);
+        render();
+      });
+    }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
