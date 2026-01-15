@@ -4,3 +4,10 @@ command = "bash ./scripts/tkfm-prebuild-clean.sh && npm run build && npm run pos
 
 [functions]
 directory = "netlify/functions"
+
+[[redirects]]
+from = "/.netlify/functions/*"
+to = "/.netlify/functions/:splat"
+status = 200
+force = true
+
