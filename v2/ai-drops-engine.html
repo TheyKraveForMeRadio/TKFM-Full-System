@@ -210,10 +210,43 @@
 
       <div class="footer">
         Local dev tip: open this page on <b>:5173</b> (Vite) or <b>:7777</b> (dist preview). Functions run on <b>:9999</b>.
+      <!-- TKFM_DROPS_WALLET_START -->
+<div style="max-width:1120px;margin:16px auto 0;color:#e5e7eb">
+  <div style="border:1px solid rgba(34,211,238,.20);background:rgba(255,255,255,.03);border-radius:18px;padding:14px">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+      <div style="font-weight:1000">Credits Wallet</div>
+      <div style="color:#94a3b8;font-size:12px">Credits: <b id="tkfmDropsCredits">0</b></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <input id="tkfmDropName" placeholder="DJ / Station Name" style="padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.45);color:#e5e7eb" />
+        <input id="tkfmDropVibe" placeholder="Vibe (clean / hype / club)" style="padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.45);color:#e5e7eb" />
+        <select id="tkfmDropType" style="padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.45);color:#e5e7eb">
+          <option value="tag">DJ Tag</option>
+          <option value="id">Station ID</option>
+          <option value="sponsor">Sponsor Read</option>
+        </select>
       </div>
+      <textarea id="tkfmDropOut" placeholder="Generate a script…" style="min-height:140px;padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.45);color:#e5e7eb"></textarea>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button id="tkfmDropGen" style="padding:10px 12px;border-radius:14px;border:1px solid rgba(34,211,238,.28);background:rgba(34,211,238,.12);color:#fff;font-weight:1000;cursor:pointer">Generate</button>
+        <button id="tkfmDropSave" style="padding:10px 12px;border-radius:14px;border:1px solid rgba(168,85,247,.28);background:rgba(168,85,247,.12);color:#fff;font-weight:1000;cursor:pointer">Save to History</button>
+        <button id="tkfmDropUse1" style="padding:10px 12px;border-radius:14px;border:1px solid rgba(250,204,21,.28);background:rgba(250,204,21,.12);color:#fff;font-weight:1000;cursor:pointer">Use 1 Credit</button>
+      </div>
+      <div>
+        <div style="font-weight:1000;margin-top:10px">History</div>
+        <div id="tkfmDropsHistory"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TKFM_DROPS_WALLET_END -->
+
+</div>
     </div>
   </div>
 
   <script src="/js/tkfm-drops-engine.js?v=4"></script>
+  <script src="/js/tkfm-drops-wallet.js?v=1"></script>
 </body>
 </html>
