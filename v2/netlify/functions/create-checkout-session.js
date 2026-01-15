@@ -2,6 +2,20 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+function corsHeaders(event) {
+  // Allow cross-origin calls for local dev previews (7777 -> 9999) and simple deployments.
+  // If you want to lock this down later, replace '*' with your domain(s).
+  const origin = (event && event.headers && (event.headers.origin || event.headers.Origin)) || '*';
+  return {
+    'access-control-allow-origin': origin === '' ? '*' : origin,
+    'access-control-allow-methods': 'POST,OPTIONS',
+    'access-control-allow-headers': 'content-type, authorization, x-tkfm-owner-key, x-tkfm-owner, x-owner-key',
+    'access-control-max-age': '86400',
+    'vary': 'Origin',
+  };
+}
+
+
 /**
  * TKFM checkout resolver:
  * - Primary: resolve Stripe Price by lookup_key (same as data-plan / data-feature ids)
@@ -30,10 +44,10 @@ function pickOrigin(event) {
   return origin;
 }
 
-function bad(statusCode, msg, extra = {}) {
+function bad(event, statusCode, msg, extra = {}) {
   return {
     statusCode,
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', ...corsHeaders(event) },
     body: JSON.stringify({ ok: false, error: msg, ...extra }),
   };
 }
@@ -57,10 +71,15 @@ async function resolvePrice({ lookupKey, priceId }) {
 }
 
 export async function handler(event) {
-  if (event.httpMethod !== 'POST') return bad(405, 'Method not allowed');
+  // CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers: corsHeaders(event), body: '' };
+  }
+
+  if (event.httpMethod !== 'POST') return bad(event, 405, 'Method not allowed');
 
   if (!process.env.STRIPE_SECRET_KEY) {
-    return bad(500, 'Missing STRIPE_SECRET_KEY in Netlify env');
+    return bad(event, 500, 'Missing STRIPE_SECRET_KEY in Netlify env');
   }
 
   const body = jsonBody(event);
@@ -79,11 +98,11 @@ export async function handler(event) {
   try {
     price = await resolvePrice({ lookupKey, priceId });
   } catch (e) {
-    return bad(400, 'Could not resolve Stripe price', { lookupKey, message: e?.message || String(e) });
+    return bad(event, 400, 'Could not resolve Stripe price', { lookupKey, message: e?.message || String(e) });
   }
 
   if (!price?.id) {
-    return bad(400, 'Could not resolve Stripe price', {
+    return bad(event, 400, 'Could not resolve Stripe price', {
       lookupKey,
       hint: 'Ensure a Stripe Price exists with lookup_key == the plan/feature id (live vs test must match STRIPE_SECRET_KEY).',
     });
@@ -115,10 +134,10 @@ export async function handler(event) {
 
     return {
       statusCode: 200,
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...corsHeaders(event) },
       body: JSON.stringify({ ok: true, url: session.url, id: session.id, mode }),
     };
   } catch (e) {
-    return bad(500, 'Stripe checkout create failed', { message: e?.message || String(e), mode });
+    return bad(event, 500, 'Stripe checkout create failed', { message: e?.message || String(e), mode });
   }
 }

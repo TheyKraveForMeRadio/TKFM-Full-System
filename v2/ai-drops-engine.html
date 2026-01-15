@@ -3,347 +3,217 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TKFM Drop / Tag Engine</title>
-
-  <!-- Neon Cyberwave theme (TKFM RADIO) -->
+  <title>TKFM — AI Drops / Tags Engine</title>
+  <link rel="stylesheet" href="/public/tailwind.css"/>
   <style>
     :root{
       --bg:#020617;
-      --panel:#071026;
-      --panel2:#0b1737;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
       --p:#a855f7;
       --pk:#ec4899;
       --c:#22d3ee;
       --b:#3b82f6;
-      --gold:#facc15;
-      --gold2:#eab308;
-      --amber:#f97316;
-      --ok:#22c55e;
-      --bad:#ef4444;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
     }
-    *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 700px at 15% 15%, rgba(168,85,247,.18), transparent 60%),
-                  radial-gradient(900px 600px at 85% 10%, rgba(34,211,238,.18), transparent 55%),
-                  radial-gradient(900px 700px at 70% 90%, rgba(236,72,153,.14), transparent 55%),
-                  var(--bg);
       color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(168,85,247,.18), transparent 55%),
+        radial-gradient(1000px 600px at 85% 20%, rgba(34,211,238,.16), transparent 55%),
+        radial-gradient(900px 500px at 55% 95%, rgba(59,130,246,.14), transparent 55%),
+        var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:1100px;margin:0 auto;padding:22px}
+    .wrap{max-width:1120px;margin:0 auto;padding:26px 16px 72px}
     .topbar{
-      display:flex;align-items:center;justify-content:space-between;gap:14px;
-      padding:14px 16px;border-radius:18px;
-      background:linear-gradient(180deg, rgba(7,16,38,.78), rgba(7,16,38,.55));
-      border:1px solid rgba(34,211,238,.18);
-      box-shadow:0 0 0 1px rgba(168,85,247,.10) inset, 0 20px 80px rgba(0,0,0,.35);
-      position:sticky; top:12px; z-index:5;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      padding:14px 14px;border-radius:20px;
+      border:1px solid rgba(34,211,238,.22);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: 0 22px 80px rgba(0,0,0,.55);
       backdrop-filter: blur(10px);
     }
     .brand{display:flex;align-items:center;gap:12px}
-    .brand img{height:34px;width:auto;filter:drop-shadow(0 0 18px rgba(34,211,238,.22))}
-    .brand .title{line-height:1.1}
-    .brand .title b{display:block;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
-    .brand .title span{display:block;font-size:12px;color:var(--muted)}
-    .nav{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
-    .chip{
-      padding:9px 12px;border-radius:999px;
-      background:rgba(11,23,55,.7);
-      border:1px solid rgba(168,85,247,.18);
-      font-size:12px;color:var(--text);
+    .logo{
+      width:46px;height:46px;border-radius:16px;overflow:hidden;
+      border:1px solid rgba(168,85,247,.28);
+      box-shadow: 0 0 0 6px rgba(168,85,247,.10);
+      background:rgba(255,255,255,.03);
+      display:grid;place-items:center;
     }
-    .chip:hover{border-color:rgba(34,211,238,.28);transform:translateY(-1px)}
-    .hero{padding:28px 0 18px}
-    .hero h1{margin:0;font-size:38px;letter-spacing:-.02em}
-    .hero p{margin:10px 0 0;color:var(--muted);max-width:900px;line-height:1.5}
-    .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-    .badge{
-      font-size:12px;border-radius:999px;padding:8px 10px;
-      border:1px solid rgba(34,211,238,.18);
-      background:linear-gradient(180deg, rgba(11,23,55,.85), rgba(7,16,38,.55));
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .title h1{margin:0;font-size:15px;letter-spacing:.2px}
+    .title p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav a{
+      color:var(--text);text-decoration:none;font-size:12px;font-weight:900;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(255,255,255,.03);
     }
-    .badge strong{color:white}
-    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:18px}
-    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+    .hero{
+      margin-top:18px;
+      padding:18px 16px;border-radius:22px;
+      border:1px solid rgba(168,85,247,.22);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      box-shadow: 0 22px 90px rgba(0,0,0,.60);
+    }
+    .hero h2{margin:0;font-size:26px}
+    .hero p{margin:8px 0 0;color:var(--muted);line-height:1.55}
+    .status{
+      margin-top:12px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(34,211,238,.20);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px;
+      white-space:pre-wrap;word-break:break-word;
+    }
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+    @media(max-width: 980px){.grid{grid-template-columns:1fr}}
     .card{
-      border-radius:22px;
-      background:linear-gradient(180deg, rgba(11,23,55,.82), rgba(7,16,38,.62));
-      border:1px solid rgba(34,211,238,.16);
-      box-shadow:0 0 0 1px rgba(168,85,247,.08) inset, 0 30px 120px rgba(0,0,0,.35);
+      padding:16px;border-radius:22px;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(255,255,255,.04);
+      box-shadow: 0 18px 70px rgba(0,0,0,.55);
+      position:relative;
       overflow:hidden;
     }
-    .card .hd{padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .card .hd h2{margin:0;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
-    .card .bd{padding:18px}
-    .muted{color:var(--muted)}
-    .divider{height:1px;background:rgba(255,255,255,.06);margin:14px 0}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .field{flex:1;min-width:180px}
-    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
-    input, textarea, select{
-      width:100%;
-      background:rgba(2,6,23,.65);
-      border:1px solid rgba(34,211,238,.14);
-      color:var(--text);
-      border-radius:14px;
-      padding:10px 12px;
-      outline:none;
+    .card:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background: radial-gradient(600px 220px at 10% 0%, rgba(34,211,238,.18), transparent 55%),
+                  radial-gradient(600px 220px at 90% 0%, rgba(168,85,247,.18), transparent 55%);
+      opacity:.55;pointer-events:none;
     }
-    textarea{min-height:120px;resize:vertical}
-    input:focus, textarea:focus, select:focus{border-color:rgba(168,85,247,.35);box-shadow:0 0 0 3px rgba(168,85,247,.12)}
+    .card > *{position:relative}
+    .kicker{font-size:12px;color:var(--muted);font-weight:900}
+    .price{font-size:34px;font-weight:1000;letter-spacing:-.5px;margin-top:10px}
+    .sub{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4}
     .btn{
-      border:0;
-      border-radius:14px;
-      padding:11px 12px;
-      font-weight:700;
-      letter-spacing:.02em;
+      width:100%;
+      margin-top:14px;
+      padding:12px 12px;border-radius:16px;
+      font-weight:1000;letter-spacing:.2px;
+      border:1px solid rgba(34,211,238,.28);
+      background:linear-gradient(180deg, rgba(34,211,238,.14), rgba(255,255,255,.03));
+      color:#fff;
       cursor:pointer;
-      background:linear-gradient(90deg, rgba(168,85,247,.95), rgba(236,72,153,.95));
-      color:#0b1020;
-      box-shadow:0 10px 30px rgba(168,85,247,.18);
     }
-    .btn:hover{filter:saturate(1.05);transform:translateY(-1px)}
-    .btn.secondary{
-      background:rgba(11,23,55,.8);
-      border:1px solid rgba(34,211,238,.22);
-      color:var(--text);
-      box-shadow:none;
+    .btn.p{border-color:rgba(236,72,153,.30);background:linear-gradient(180deg, rgba(236,72,153,.14), rgba(255,255,255,.03))}
+    .btn.y{border-color:rgba(250,204,21,.28);background:linear-gradient(180deg, rgba(250,204,21,.14), rgba(255,255,255,.03))}
+    .sectionTitle{margin-top:18px;font-size:14px;color:#fff;font-weight:1000}
+    .pillRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .pill{font-size:11px;font-weight:900;padding:8px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.20);background:rgba(255,255,255,.03);color:var(--text)}
+    .miniGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:10px}
+    @media(max-width:980px){.miniGrid{grid-template-columns:1fr}}
+    .miniCard{
+      padding:14px;border-radius:20px;border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.03)
     }
-    .btn.secondary:hover{border-color:rgba(168,85,247,.28)}
-    .btn.gold{
-      background:linear-gradient(90deg, rgba(250,204,21,.95), rgba(249,115,22,.92));
-      color:#0b1020;
-      box-shadow:0 10px 30px rgba(250,204,21,.12);
-    }
-    .status{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      padding:10px 12px;border-radius:14px;
-      background:rgba(2,6,23,.45);
-      border:1px solid rgba(255,255,255,.08);
-      font-size:12px;
-    }
-    .status b{font-size:12px}
-    .status .pill{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10)}
-    .pill.ok{border-color:rgba(34,197,94,.25);color:#bbf7d0}
-    .pill.lock{border-color:rgba(239,68,68,.25);color:#fecaca}
-    .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media (max-width: 980px){.plans{grid-template-columns:1fr}}
-    .plan{
-      border-radius:18px;padding:14px;
-      background:rgba(2,6,23,.45);
-      border:1px solid rgba(168,85,247,.16);
-    }
-    .plan h3{margin:0;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
-    .plan p{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
-    .plan .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .k{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
-    .foot{padding:18px 0 30px;color:var(--muted);font-size:12px}
-    .small{font-size:11px}
-    .callout{
-      border-radius:18px;padding:12px 14px;margin-top:12px;
-      border:1px dashed rgba(34,211,238,.22);
-      background:linear-gradient(180deg, rgba(34,211,238,.07), rgba(168,85,247,.06));
-    }
+    .miniBtn{margin-top:12px;width:100%;padding:10px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(255,255,255,.03);color:#fff;font-weight:1000;cursor:pointer}
+    .footer{margin-top:22px;color:var(--muted);font-size:12px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <img src="/public/tkfm-radio-logo.png" onerror="this.style.display='none'"/>
+        <div class="logo">
+          <img src="/tkfm-radio-logo.png" alt="TKFM Radio" onerror="this.style.display='none'">
+        </div>
         <div class="title">
-          <b>TKFM Drop / Tag Engine</b>
-          <span>Radio Imaging + DJ Drops — script builder now, voice pipeline next</span>
+          <h1>TKFM — AI Drops / Tags Engine</h1>
+          <p>DJ tags • radio IDs • sponsor reads • station imaging</p>
         </div>
       </div>
       <div class="nav">
-        <a class="chip" href="/index.html">Home</a>
-        <a class="chip" href="/radio-hub.html">Radio Hub</a>
-        <a class="chip" href="/feature-engine.html">Feature Engine</a>
-        <a class="chip" href="/pricing.html">Pricing</a>
+        <a href="/radio-hub.html">Radio Hub</a>
+        <a href="/pricing.html">Pricing</a>
+        <a href="/app-hub.html">App Hub</a>
       </div>
     </div>
 
     <div class="hero">
-      <h1>Make drops. Make tags. Make <span style="color:var(--c)">radio-ready</span> energy.</h1>
-      <p>
-        This is the TKFM Drop / Tag Engine: a paid lane built for DJs, stations, podcasters, and artists.
-        Build clean scripts in seconds, then upgrade into packs + studio bundles for full-on radio imaging.
-      </p>
-      <div class="badges">
-        <div class="badge"><strong>Neon Radio</strong> • #a855f7 / #ec4899 / #22d3ee / #3b82f6</div>
-        <div class="badge"><strong>Records Gold</strong> • #facc15 / #eab308 / #f97316</div>
-        <div class="badge">Unlocks stored in <span class="k">localStorage tkfm_user_features</span></div>
-      </div>
-    </div>
+      <h2>Make your brand sound expensive.</h2>
+      <p>Pick a membership or grab top‑ups. Checkout is lookup_key based (no STRIPE_PRICE_* env vars needed). After purchase, you’ll return here with an unlock marker.</p>
+      <div id="tkfmDropsStatus" class="status">Loading…</div>
 
-    <div class="grid">
-      <div class="card" id="studioCard">
-        <div class="hd">
-          <h2>Drop Studio</h2>
-          <div class="status">
-            <b id="accessText">Checking access…</b>
-            <span id="accessPill" class="pill lock">Locked</span>
-          </div>
+      <div class="grid">
+        <div class="card">
+          <div class="kicker">Starter • 20 credits / month</div>
+          <div class="price">$29<span style="font-size:14px;color:var(--muted);font-weight:900">/mo</span></div>
+          <div class="sub">Best for DJs who need tags + IDs every week.</div>
+          <button class="btn" data-plan="ai_drops_starter_monthly">Checkout Starter</button>
         </div>
-        <div class="bd">
-          <div class="row">
-            <div class="field">
-              <label>DJ / Station Name</label>
-              <input id="name" placeholder="DJ Krave / TKFM Radio"/>
-            </div>
-            <div class="field">
-              <label>Tag Style</label>
-              <select id="style">
-                <option value="clean">Clean (radio safe)</option>
-                <option value="hype">Hype (club energy)</option>
-                <option value="lux">Luxury (gold label vibe)</option>
-                <option value="dark">Dark (midnight neon)</option>
-                <option value="sports">Sports / stadium</option>
-                <option value="podcast">Podcast intro</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Call to Action</label>
-              <input id="cta" placeholder="Follow @TKFMRadio • Tap in now • Send your music"/>
-            </div>
-          </div>
 
-          <div class="divider"></div>
+        <div class="card">
+          <div class="kicker">Pro • 60 credits / month</div>
+          <div class="price">$59<span style="font-size:14px;color:var(--muted);font-weight:900">/mo</span></div>
+          <div class="sub">Best for radio shows + stations running daily drops.</div>
+          <button class="btn p" data-plan="ai_drops_pro_monthly">Checkout Pro</button>
+        </div>
 
-          <div class="row">
-            <div class="field">
-              <label>Energy Words (comma-separated)</label>
-              <input id="energy" placeholder="exclusive, world premiere, neon, takeover, powered by TKFM"/>
-            </div>
-            <div class="field">
-              <label>Length</label>
-              <select id="length">
-                <option value="short">Short (3–5 sec)</option>
-                <option value="medium" selected>Medium (6–9 sec)</option>
-                <option value="long">Long (10–15 sec)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <label>Generated Drop Scripts</label>
-          <textarea id="out" placeholder="Your drop scripts will appear here…"></textarea>
-
-          <div class="row" style="margin-top:12px">
-            <button class="btn" id="btnGenerate">Generate Scripts</button>
-            <button class="btn secondary" id="btnCopy">Copy</button>
-            <button class="btn gold" id="btnUnlockHelp">I Purchased — Unlock</button>
-          </div>
-
-          <div class="callout small">
-            <div><b>How unlock works:</b> after checkout, you’ll land back here with <span class="k">?unlocked=lookup_key</span>. This page stores it into <span class="k">tkfm_user_features</span>.</div>
-          </div>
+        <div class="card">
+          <div class="kicker">Studio • 200 credits / month</div>
+          <div class="price">$149<span style="font-size:14px;color:var(--muted);font-weight:900">/mo</span></div>
+          <div class="sub">Best for heavy creators + imaging packs + campaigns.</div>
+          <button class="btn y" data-plan="ai_drops_studio_monthly">Checkout Studio</button>
         </div>
       </div>
 
-      <div class="card">
-        <div class="hd">
-          <h2>Plans + Packs</h2>
-          <span class="muted small">No Netlify env needed — uses Stripe <span class="k">lookup_key</span></span>
+      <div class="sectionTitle">Top‑Up Packs</div>
+      <div class="pillRow">
+        <span class="pill">10 credits • $39</span>
+        <span class="pill">25 credits • $79</span>
+        <span class="pill">100 credits • $249</span>
+      </div>
+      <div class="miniGrid">
+        <div class="miniCard">
+          <div class="kicker">Top‑Up 10</div>
+          <div class="price" style="font-size:26px">$39</div>
+          <button class="miniBtn" data-plan="drop_pack_10">Buy 10</button>
         </div>
-        <div class="bd">
-          <div class="plans">
-            <div class="plan">
-              <h3>AI Drops — Starter</h3>
-              <p>Starter access to the Drop Studio. Great for new DJs + artists.</p>
-              <div class="actions">
-                <button class="btn" data-plan="ai_drops_starter_monthly">Start Monthly</button>
-              </div>
-              <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">ai_drops_starter_monthly</span></div>
-            </div>
-            <div class="plan" style="border-color:rgba(34,211,238,.18)">
-              <h3>AI Drops — Pro</h3>
-              <p>More variations, more styles, faster workflow for working DJs.</p>
-              <div class="actions">
-                <button class="btn" data-plan="ai_drops_pro_monthly">Go Pro Monthly</button>
-              </div>
-              <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">ai_drops_pro_monthly</span></div>
-            </div>
-            <div class="plan" style="border-color:rgba(250,204,21,.22)">
-              <h3>AI Drops — Studio</h3>
-              <p>For stations + podcasters. Full imaging workflow + priority lane.</p>
-              <div class="actions">
-                <button class="btn gold" data-plan="ai_drops_studio_monthly">Studio Monthly</button>
-              </div>
-              <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">ai_drops_studio_monthly</span></div>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="plans">
-            <div class="plan">
-              <h3>Drop Pack 10</h3>
-              <p>One-time pack — 10 custom drop scripts + formatting.</p>
-              <div class="actions"><button class="btn secondary" data-plan="drop_pack_10">Buy Pack</button></div>
-              <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">drop_pack_10</span></div>
-            </div>
-            <div class="plan">
-              <h3>Drop Pack 25</h3>
-              <p>One-time pack — 25 scripts for a full season of content.</p>
-              <div class="actions"><button class="btn secondary" data-plan="drop_pack_25">Buy Pack</button></div>
-              <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">drop_pack_25</span></div>
-            </div>
-            <div class="plan">
-              <h3>Drop Pack 100</h3>
-              <p>One-time pack — station-grade library buildout.</p>
-              <div class="actions"><button class="btn secondary" data-plan="drop_pack_100">Buy Pack</button></div>
-              <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">drop_pack_100</span></div>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="plan" style="border-color:rgba(250,204,21,.22)">
-            <h3>Radio Imaging Bundle</h3>
-            <p>One-time bundle: intro + sweepers + stingers + sponsor tags.</p>
-            <div class="actions">
-              <button class="btn gold" data-plan="radio_imaging_bundle">Buy Bundle</button>
-            </div>
-            <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">radio_imaging_bundle</span></div>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="plan">
-            <h3>Custom Voice Setup</h3>
-            <p>One-time onboarding to set up a custom voice pipeline.</p>
-            <div class="actions">
-              <button class="btn" data-plan="custom_voice_setup">Start Setup</button>
-            </div>
-            <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">custom_voice_setup</span></div>
-          </div>
-
-          <div class="plan" style="margin-top:12px">
-            <h3>Custom Voice Hosting</h3>
-            <p>Monthly hosting for your custom voice assets + storage lane.</p>
-            <div class="actions">
-              <button class="btn" data-plan="custom_voice_hosting_monthly">Host Monthly</button>
-            </div>
-            <div class="muted small" style="margin-top:10px">lookup_key: <span class="k">custom_voice_hosting_monthly</span></div>
-          </div>
-
+        <div class="miniCard">
+          <div class="kicker">Top‑Up 25</div>
+          <div class="price" style="font-size:26px">$79</div>
+          <button class="miniBtn" data-plan="drop_pack_25">Buy 25</button>
+        </div>
+        <div class="miniCard">
+          <div class="kicker">Top‑Up 100</div>
+          <div class="price" style="font-size:26px">$249</div>
+          <button class="miniBtn" data-plan="drop_pack_100">Buy 100</button>
         </div>
       </div>
-    </div>
 
-    <div class="foot">
-      <div><b>Owner note:</b> This page doesn’t require the owner key — it’s a customer paid lane. Owner tools stay on owner-only pages.</div>
-      <div class="small" style="margin-top:6px">If a button doesn’t redirect, check that <span class="k">go-checkout</span> supports lookup_key fallback (it does in TKFM v2).</div>
+      <div class="sectionTitle">Premium</div>
+      <div class="miniGrid">
+        <div class="miniCard">
+          <div class="kicker">Radio Imaging Bundle</div>
+          <div class="sub">25 drops + 10 sweeps + 5 station IDs</div>
+          <div class="price" style="font-size:26px">$399</div>
+          <button class="miniBtn" data-plan="radio_imaging_bundle">Buy Bundle</button>
+        </div>
+        <div class="miniCard">
+          <div class="kicker">Custom Voice Setup</div>
+          <div class="sub">$299 setup (consent required)</div>
+          <div class="price" style="font-size:26px">$299</div>
+          <button class="miniBtn" data-plan="custom_voice_setup">Buy Setup</button>
+        </div>
+        <div class="miniCard">
+          <div class="kicker">Custom Voice Hosting</div>
+          <div class="sub">$49/mo hosting</div>
+          <div class="price" style="font-size:26px">$49<span style="font-size:12px;color:var(--muted);font-weight:900">/mo</span></div>
+          <button class="miniBtn" data-plan="custom_voice_hosting_monthly">Checkout Hosting</button>
+        </div>
+      </div>
+
+      <div class="footer">
+        Local dev tip: open this page on <b>:5173</b> (Vite) or <b>:7777</b> (dist preview). Functions run on <b>:9999</b>.
+      </div>
     </div>
   </div>
 
-  <script src="/js/tkfm-drops-engine.js"></script>
+  <script src="/js/tkfm-drops-engine.js?v=4"></script>
 </body>
 </html>
