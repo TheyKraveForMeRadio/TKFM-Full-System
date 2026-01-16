@@ -1,1 +1,2 @@
-/.netlify/functions/*  /.netlify/functions/:splat  200!
+# TKFM multipage: serve real files when they exist
+/*  /index.html  200
