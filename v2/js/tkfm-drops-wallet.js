@@ -1,8 +1,9 @@
-// TKFM Drops Wallet + History (MVP) — client-side only
+// TKFM Drops Wallet + History (Server-backed credits, local fallback)
 (() => {
   const LS_CREDITS = "tkfm_drops_credits";
   const LS_HISTORY = "tkfm_drops_history";
   const LS_PLAN = "tkfm_drops_plan";
+  const LS_CUSTOMER = "tkfm_stripe_customer_id";
 
   const PLAN_CREDITS = {
     ai_drops_starter_monthly: 20,
@@ -11,19 +12,52 @@
     drop_pack_10: 10,
     drop_pack_25: 25,
     drop_pack_100: 100,
-    radio_imaging_bundle: 40
+    radio_imaging_bundle: 40,
   };
 
-  function getCredits(){
+  function getCreditsLocal(){
     const n = parseInt(localStorage.getItem(LS_CREDITS) || "0", 10);
     return Number.isFinite(n) ? n : 0;
   }
-  function setCredits(n){
+  function setCreditsLocal(n){
     localStorage.setItem(LS_CREDITS, String(Math.max(0, n|0)));
-    render();
   }
-  function addCredits(n){
-    setCredits(getCredits() + (n|0));
+
+  function getCustomerId(){
+    const c = (localStorage.getItem(LS_CUSTOMER) || "").trim();
+    return c || null;
+  }
+
+  async function serverGetCredits(){
+    const customerId = getCustomerId();
+    if (!customerId) return null;
+    try{
+      const r = await fetch(`/.netlify/functions/drops-credits-get?customerId=${encodeURIComponent(customerId)}`, { method: "GET", credentials: "same-origin" });
+      if (!r.ok) return null;
+      const data = await r.json().catch(()=>null);
+      if (data && data.ok && typeof data.credits === "number") return data.credits|0;
+      return null;
+    }catch(_){
+      return null;
+    }
+  }
+
+  async function serverUseCredit(){
+    const customerId = getCustomerId();
+    if (!customerId) return null;
+    try{
+      const r = await fetch("/.netlify/functions/drops-credits-use", {
+        method:"POST",
+        headers:{ "content-type":"application/json" },
+        body: JSON.stringify({ customerId, amount: 1 }),
+        credentials:"same-origin"
+      });
+      const data = await r.json().catch(()=>null);
+      if (r.ok && data && data.ok && typeof data.credits === "number") return data.credits|0;
+      return null;
+    }catch(_){
+      return null;
+    }
   }
 
   function getHistory(){
@@ -53,37 +87,49 @@
       .replaceAll("'","&#39;");
   }
 
-  function render(){
+  function setCreditsUI(n){
     const creditsEl = document.getElementById("tkfmDropsCredits");
-    const histEl = document.getElementById("tkfmDropsHistory");
-    if (creditsEl) creditsEl.textContent = String(getCredits());
-
-    if (histEl){
-      const h = getHistory();
-      if (!h.length){
-        histEl.innerHTML = '<div style="color:#94a3b8;font-size:12px">No history yet. Your generated scripts will show here.</div>';
-        return;
-      }
-      histEl.innerHTML = h.map(x => `
-        <div style="border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.03);border-radius:14px;padding:10px;margin-top:10px">
-          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
-            <div style="font-weight:900">${esc(x.title||"Drop")}</div>
-            <div style="color:#94a3b8;font-size:12px">${esc(x.ts||"")}</div>
-          </div>
-          <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;color:#e5e7eb;font-size:12px;line-height:1.5">${esc(x.body||"")}</pre>
-        </div>
-      `).join("");
-    }
+    if (creditsEl) creditsEl.textContent = String(n|0);
   }
 
-  function applyUnlock(){
+  function renderHistory(){
+    const histEl = document.getElementById("tkfmDropsHistory");
+    if (!histEl) return;
+    const h = getHistory();
+    if (!h.length){
+      histEl.innerHTML = '<div style="color:#94a3b8;font-size:12px">No history yet. Your generated scripts will show here.</div>';
+      return;
+    }
+    histEl.innerHTML = h.map(x => `
+      <div style="border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.03);border-radius:14px;padding:10px;margin-top:10px">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <div style="font-weight:900">${esc(x.title||"Drop")}</div>
+          <div style="color:#94a3b8;font-size:12px">${esc(x.ts||"")}</div>
+        </div>
+        <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;color:#e5e7eb;font-size:12px;line-height:1.5">${esc(x.body||"")}</pre>
+      </div>
+    `).join("");
+  }
+
+  async function render(){
+    // Prefer server credits if customerId is known
+    const serverCredits = await serverGetCredits();
+    if (serverCredits !== null){
+      setCreditsLocal(serverCredits);
+      setCreditsUI(serverCredits);
+    } else {
+      setCreditsUI(getCreditsLocal());
+    }
+    renderHistory();
+  }
+
+  function applyUnlockLocalFallback(){
     const unlocked = qs("unlocked");
     if (!unlocked) return;
     const plan = String(unlocked).trim();
     localStorage.setItem(LS_PLAN, plan);
-
     const add = PLAN_CREDITS[plan] || 0;
-    if (add > 0) addCredits(add);
+    if (add > 0) setCreditsLocal(getCreditsLocal() + add);
 
     const u = new URL(window.location.href);
     u.searchParams.delete("unlocked");
@@ -125,10 +171,19 @@
       alert("Saved to history.");
     });
 
-    use.addEventListener("click", () => {
-      if (getCredits() <= 0) return alert("No credits left. Buy a top-up or upgrade.");
-      setCredits(getCredits() - 1);
-      alert("1 credit used. Remaining: " + getCredits());
+    use.addEventListener("click", async () => {
+      // try server first, fallback local
+      const serverCredits = await serverUseCredit();
+      if (serverCredits !== null){
+        await render();
+        alert("1 credit used. Remaining: " + serverCredits);
+        return;
+      }
+      const local = getCreditsLocal();
+      if (local <= 0) return alert("No credits left. Buy a top-up or upgrade.");
+      setCreditsLocal(local - 1);
+      await render();
+      alert("1 credit used. Remaining: " + (local - 1));
     });
 
     if (clear){
@@ -140,9 +195,9 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    applyUnlock();
+  document.addEventListener("DOMContentLoaded", async () => {
+    applyUnlockLocalFallback();
     wireGenerator();
-    render();
+    await render();
   });
 })();

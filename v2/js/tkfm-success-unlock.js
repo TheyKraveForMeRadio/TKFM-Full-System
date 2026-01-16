@@ -90,7 +90,64 @@
     });
   }
 
-  async function verifySession(sessionId) {
+    /* TKFM_DROPS_CREDITS_AWARD_START */
+  const DROPS_PLAN_CREDITS = {
+    ai_drops_starter_monthly: 20,
+    ai_drops_pro_monthly: 60,
+    ai_drops_studio_monthly: 200,
+    drop_pack_10: 10,
+    drop_pack_25: 25,
+    drop_pack_100: 100,
+    radio_imaging_bundle: 40,
+    custom_voice_setup: 0,
+    custom_voice_hosting_monthly: 0
+  };
+
+  function isDropsPlan(id){
+    return Boolean(id && Object.prototype.hasOwnProperty.call(DROPS_PLAN_CREDITS, String(id)));
+  }
+
+  async function getStripeCustomerId(sessionId){
+    try{
+      const r = await fetch(`/.netlify/functions/checkout-session-get?session_id=${encodeURIComponent(sessionId)}`, { method: 'GET', credentials: 'same-origin' });
+      if (!r.ok) return null;
+      const data = await r.json().catch(()=>null);
+      const cust = data && (data.customer || (data.session && data.session.customer));
+      return cust ? String(cust) : null;
+    }catch(_){
+      return null;
+    }
+  }
+
+  async function awardDropsCredits(sessionId, unlockedIds){
+    try{
+      const ids = Array.isArray(unlockedIds) ? unlockedIds.map(String) : [];
+      const dropsIds = ids.filter(isDropsPlan);
+      if (!dropsIds.length) return { ok:true, skipped:true, reason:'no_drops_plans' };
+
+      const customerId = await getStripeCustomerId(sessionId);
+      if (!customerId) return { ok:false, error:'No Stripe customer id' };
+
+      // store for wallet
+      try { localStorage.setItem('tkfm_stripe_customer_id', customerId); } catch(_) {}
+
+      // award each plan (server-side de-dupes by session_id+planId)
+      for (const planId of dropsIds){
+        await fetch('/.netlify/functions/drops-credits-add', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ customerId, planId, session_id: sessionId }),
+          credentials: 'same-origin'
+        }).catch(()=>null);
+      }
+      return { ok:true, customerId, awarded: dropsIds };
+    }catch(e){
+      return { ok:false, error: String(e?.message || e) };
+    }
+  }
+  /* TKFM_DROPS_CREDITS_AWARD_END */
+
+async function verifySession(sessionId) {
     const getUrl = `/.netlify/functions/verify-checkout-session?session_id=${encodeURIComponent(sessionId)}`;
 
     // Try GET first

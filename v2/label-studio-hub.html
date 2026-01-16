@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Records — Label Studio Hub</title>
+  <style>
+:root{--bg:#020617;--gold:#facc15;--gold2:#eab308;--amber:#f97316;--text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.70);--panel:rgba(2,6,23,0.72);--panel2:rgba(2,6,23,0.55);--border:rgba(250,204,21,0.28)}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
+background:radial-gradient(900px 450px at 12% 10%, rgba(250,204,21,0.18), transparent 55%),
+radial-gradient(900px 450px at 92% 18%, rgba(243,115,22,0.14), transparent 55%),
+radial-gradient(900px 450px at 68% 92%, rgba(168,85,247,0.10), transparent 55%),
+linear-gradient(180deg, #020617 0%, #020617 55%, #030a1c 100%);overflow-x:hidden}
+.wrap{max-width:1120px;margin:0 auto;padding:24px}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(2,6,23,0.82);backdrop-filter:blur(10px);border-bottom:1px solid rgba(250,204,21,0.18)}
+.topbar .inner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 24px;max-width:1120px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(250,204,21,0.25))}
+.brand .t b{display:block;font-size:14px;letter-spacing:0.9px;text-transform:uppercase}
+.brand .t span{display:block;font-size:12px;color:var(--muted)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(2,6,23,0.62);border:1px solid rgba(250,204,21,0.22)}
+.card{background:linear-gradient(180deg,var(--panel) 0%,var(--panel2) 100%);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,0.35)}
+.pad{padding:18px}
+.kicker{display:inline-flex;gap:8px;align-items:center;font-size:12px;border:1px solid rgba(250,204,21,0.22);background:rgba(250,204,21,0.08);padding:6px 10px;border-radius:999px}
+h1{margin:10px 0 8px;font-size:34px}
+.small{font-size:12px;color:rgba(255,255,255,0.70)}
+.hr{height:1px;background:linear-gradient(90deg, rgba(250,204,21,0.0), rgba(250,204,21,0.28), rgba(243,115,22,0.22), rgba(250,204,21,0.0));margin:14px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.btn{cursor:pointer;border:1px solid rgba(250,204,21,0.38);background:linear-gradient(90deg, rgba(250,204,21,0.18), rgba(243,115,22,0.14));
+color:rgba(255,255,255,0.92);padding:10px 12px;border-radius:12px;font-weight:800}
+.btn.ghost{background:rgba(2,6,23,0.32);border-color:rgba(168,85,247,0.25)}
+.notice{font-size:12px;border:1px solid rgba(250,204,21,0.20);background:rgba(250,204,21,0.08);padding:10px 12px;border-radius:14px}
+.notice.warn{border-color:rgba(236,72,153,0.22);background:rgba(236,72,153,0.08)}
+.tile{border-radius:16px;border:1px solid rgba(250,204,21,0.22);background:rgba(2,6,23,0.42);padding:14px}
+.table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:14px;border:1px solid rgba(250,204,21,0.18)}
+.table th,.table td{padding:10px;border-bottom:1px solid rgba(250,204,21,0.10);font-size:13px;vertical-align:top}
+.table th{background:rgba(2,6,23,0.55);text-align:left}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+input,textarea,select{width:100%;background:rgba(2,6,23,0.55);border:1px solid rgba(250,204,21,0.22);color:rgba(255,255,255,0.92);padding:10px 12px;border-radius:12px;outline:none}
+textarea{min-height:120px;resize:vertical}
+.footer{padding:22px 0 40px;color:rgba(255,255,255,0.60);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="inner">
+      <div class="brand">
+        <img src="/tkfm-records-logo.png" onerror="this.src='/public/tkfm-records-logo.png'" alt="TKFM Records"/>
+        <div class="t">
+          <b>TKFM Records — Label Studio Hub</b>
+          <span>Studio Profile • Vault • Deliverables</span>
+        </div>
+      </div>
+      <div class="badges">
+        <div class="badge">Luxury Gold</div>
+        <div class="badge">Studio Profile</div>
+        <div class="badge">Paid Lane</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="pad">
+        <div class="kicker">🏛️ Studio Profile</div>
+        <h1>Set your Studio profile (one time)</h1>
+        <div class="small">This helps TKFM deliver faster (contact + socials + style). Saved per customer.</div>
+
+        <div class="hr"></div>
+
+        <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+          <div>
+            <label>Artist / Producer Name</label>
+            <input id="p_name" placeholder="Name"/>
+          </div>
+          <div>
+            <label>Email</label>
+            <input id="p_email" placeholder="email@domain.com"/>
+          </div>
+          <div>
+            <label>Genre / Style</label>
+            <input id="p_genre" placeholder="Trap / R&B / Afrobeat / House"/>
+          </div>
+          <div>
+            <label>Instagram</label>
+            <input id="p_ig" placeholder="@handle"/>
+          </div>
+          <div>
+            <label>Artist Link</label>
+            <input id="p_link" placeholder="https://..."/>
+          </div>
+          <div>
+            <label>City</label>
+            <input id="p_city" placeholder="NYC / ATL / LA"/>
+          </div>
+        </div>
+
+        <div class="row" style="justify-content:flex-end;margin-top:12px">
+          <button class="btn ghost" id="loadProfile">Load</button>
+          <button class="btn" id="saveProfile">Save Profile</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div class="small">Customer: <span id="cust" class="mono">—</span></div>
+          <div class="small">Credits: <span id="credits" class="mono">0</span></div>
+        </div>
+        <div id="msg" class="notice" style="display:none"></div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <button class="btn" data-buy="label_studio_starter_monthly">Studio Starter (Monthly)</button>
+          <button class="btn" data-buy="label_studio_pro_monthly">Studio Pro (Monthly)</button>
+          <button class="btn" data-buy="label_studio_credits_25">Buy 25 Credits</button>
+          <button class="btn" data-buy="label_studio_credits_100">Buy 100 Credits</button>
+          <button class="btn ghost" id="refreshWallet">Refresh</button>
+          <a class="btn ghost" href="/owner-label-studio-ops.html" style="text-decoration:none">Owner Ops</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="grid">
+      <div class="tile">
+        <h3>🎛 Mix Polish</h3>
+        <div class="small">Auto chain + loudness targets.</div>
+        <div class="hr"></div>
+        <div class="row">
+          <button class="btn" data-engine="mix_polish" data-cost="10">Use 10 Credits</button>
+          <button class="btn ghost" data-open="mix_form">Open Form</button>
+        </div>
+      </div>
+      <div class="tile">
+        <h3>🧩 Stem Split</h3>
+        <div class="small">Split stems + cleanup.</div>
+        <div class="hr"></div>
+        <div class="row">
+          <button class="btn" data-engine="stem_split" data-cost="8">Use 8 Credits</button>
+          <button class="btn ghost" data-open="stem_form">Open Form</button>
+        </div>
+      </div>
+      <div class="tile">
+        <h3>🖼 Visual Pack</h3>
+        <div class="small">Cover + motion + thumbnails.</div>
+        <div class="hr"></div>
+        <div class="row">
+          <button class="btn" data-engine="visual_pack" data-cost="7">Use 7 Credits</button>
+          <button class="btn ghost" data-open="visual_form">Open Form</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="card" id="formsCard" style="display:none">
+      <div class="pad">
+        <div class="kicker">📝 Studio Request</div>
+        <div class="small">Using credits creates a request in the Studio queue.</div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <div style="flex:1;min-width:240px">
+            <label>Project / Song</label>
+            <input id="artist" placeholder="Project / Song title"/>
+          </div>
+          <div style="flex:1;min-width:240px">
+            <label>Engine</label>
+            <input id="engine" class="mono" readonly/>
+          </div>
+          <div style="width:140px">
+            <label>Credits</label>
+            <input id="cost" class="mono" readonly/>
+          </div>
+        </div>
+
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Reference, vibe, mix notes, cover concept, etc."></textarea>
+
+        <label>Links (optional)</label>
+        <input id="links" placeholder="Drive/Dropbox links"/>
+
+        <div class="row" style="justify-content:flex-end;margin-top:12px">
+          <button class="btn ghost" id="closeForms">Close</button>
+          <button class="btn" id="submitReq">Submit</button>
+        </div>
+
+        <div class="hr"></div>
+        <div id="formsMsg" class="notice" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="card">
+      <div class="pad">
+        <div class="kicker">📌 My Studio Requests</div>
+        <div class="small">Click a row to open Vault + Deliverables.</div>
+        <div class="hr"></div>
+        <div style="overflow:auto">
+          <table class="table">
+            <thead>
+              <tr><th>Date</th><th>Engine</th><th>Status</th><th>Credits</th><th>Uploads</th><th>Deliverables</th></tr>
+            </thead>
+            <tbody id="myRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="card">
+      <div class="pad">
+        <div class="kicker">🗄 Vault + Deliverables</div>
+        <div class="row" style="justify-content:space-between">
+          <div class="small">Selected: <span id="vaultReqId" class="mono">—</span> • Status: <span id="vaultStatus" class="mono">—</span></div>
+        </div>
+
+        <div class="hr"></div>
+        <div id="vaultMsg" class="notice" style="display:none"></div>
+
+        <div class="grid" style="grid-template-columns:1fr 1fr">
+          <div class="tile">
+            <h3>⬆️ Uploads</h3>
+            <div class="small">Paste links for stems, bounces, references.</div>
+            <div class="hr"></div>
+            <label>Title</label>
+            <input id="uploadTitle" placeholder="Stems / Reference / Session"/>
+            <label>URL</label>
+            <input id="uploadUrl" placeholder="https://drive.google.com/..."/>
+            <div class="row" style="justify-content:flex-end;margin-top:10px">
+              <button class="btn" id="addUploadBtn">Add Upload</button>
+            </div>
+            <div class="hr"></div>
+            <div id="uploadsList"></div>
+          </div>
+
+          <div class="tile">
+            <h3>📦 Deliverables</h3>
+            <div class="small">Owner will attach final files/links here.</div>
+            <div class="hr"></div>
+            <div id="deliverablesList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">TKFM Records • Studio Profile + Vault + Deliverables</div>
+  </div>
+
+  <script src="/js/tkfm-functions-client.js"></script>
+  <script src="/js/tkfm-label-studio.js"></script>
+  <script src="/js/tkfm-studio-billing.js"></script>
+  <script src="/js/tkfm-studio-recovery.js"></script>
+</body>
+</html>

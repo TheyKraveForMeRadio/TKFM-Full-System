@@ -1,94 +1,64 @@
-/* TKFM QUICK CHECKOUT (patched): loads /tkfm-price-map.json to avoid Netlify env bloat */
-let __tkfmPriceMap = null;
-async function __tkfmLoadPriceMap(){
-  if (__tkfmPriceMap) return __tkfmPriceMap;
-  try {
-    const r = await fetch('/tkfm-price-map.json', { cache: 'no-cache' });
-    if (!r.ok) throw new Error('map http '+r.status);
-    __tkfmPriceMap = await r.json();
-  } catch (e) {
-    __tkfmPriceMap = null;
-  }
-  return __tkfmPriceMap;
-}
-// TKFM Quick Checkout (sitewide) — stable delegated handler
-// - Works with ANY element containing data-plan or data-feature
-// - Stores last selected plan in sessionStorage so post-checkout can auto-route
-// - Redirects to Stripe Checkout URL returned by /.netlify/functions/create-checkout-session
 (function(){
-  if (window.__TKFM_QUICK_CHECKOUT_V2__) return;
-  window.__TKFM_QUICK_CHECKOUT_V2__ = true;
+  // TKFM Quick Checkout — 5173 safe
+  // Fix: Vite 5173 returns 404 for /.netlify/functions/* unless proxied.
+  // This uses window.TKFMCallFn fallback to localhost:9999.
+  const $ = (sel)=>document.querySelector(sel);
 
-  function toast(msg){
-    try{
-      let t = document.querySelector('.toast');
-      if(!t){
-        t = document.createElement('div');
-        t.className = 'toast';
-        t.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:9999;max-width:92vw;';
-        document.body.appendChild(t);
-      }
-      t.innerHTML = '<div style="background:rgba(2,6,23,.85);border:1px solid rgba(34,211,238,.25);padding:10px 12px;border-radius:14px;color:#e2e8f0;font:600 12px system-ui,Segoe UI,Roboto,sans-serif;">'+
-        String(msg).replace(/[<>&]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))+
-      '</div>';
-      clearTimeout(window.__TKFM_TOAST_T__);
-      window.__TKFM_TOAST_T__ = setTimeout(()=>{ if(t) t.innerHTML=''; }, 3200);
-    }catch(e){}
+  function setMsg(text){
+    const el = document.getElementById("tkfmCheckoutMsg");
+    if(el) el.textContent = text;
+    // also console
+    console.log("[TKFM checkout]", text);
   }
 
-  async function startCheckout(planId, meta){
-    if(!planId) return;
+  async function startCheckout(planIdOrLookupKey, extra){
     try{
-      sessionStorage.setItem('tkfm_last_plan', planId);
-      if (meta && typeof meta === 'object') {
-        sessionStorage.setItem('tkfm_last_meta', JSON.stringify(meta));
-      }
+      if(!window.TKFMCallFn) throw new Error("TKFMCallFn missing. Include /js/tkfm-functions-client.js first.");
+      const id = String(planIdOrLookupKey || "").trim();
+      if(!id) throw new Error("Missing plan id / lookup_key");
 
-      toast('Opening secure checkout…');
-      const res = await fetch('/.netlify/functions/create-checkout-session', {
-        method:'POST',
-        headers:{'content-type':'application/json'},
-        body: JSON.stringify({ planId, ...meta })
-      });
-      const j = await res.json().catch(()=>null);
-      if(!j || !j.ok || !j.url){
-        toast((j && (j.error || j.message)) ? (j.error || j.message) : 'Checkout error. Please try again.');
-        console.error('TKFM checkout error', j);
-        return;
+      const payload = Object.assign({
+        lookup_key: id,
+        planId: id
+      }, extra || {});
+
+      setMsg("Creating checkout…");
+
+      const r = await window.TKFMCallFn("create-checkout-session", payload);
+      const data = r.data || {};
+      const url = data.url || data.checkoutUrl || data.checkout_url || data.redirect_url;
+      if(!url){
+        throw new Error("No checkout URL returned");
       }
-      window.location.href = j.url;
+      setMsg(`Redirecting to Stripe… (${r.used})`);
+      window.location.href = url;
     }catch(err){
-      toast('Checkout failed. Please try again.');
-      console.error(err);
+      const attempts = err.attempts ? JSON.stringify(err.attempts) : "";
+      console.error("TKFM checkout error", err);
+      setMsg(`Checkout error: ${err.message} ${attempts}`);
+      return null;
     }
   }
 
-  function resolvePlanFromEl(el){
-    if(!el) return null;
-    return el.getAttribute('data-plan') || el.getAttribute('data-feature') || el.dataset.plan || el.dataset.feature || null;
+  // Auto-wire buttons
+  function wire(){
+    const btns = document.querySelectorAll("[data-plan],[data-lookup-key],[data-buy]");
+    btns.forEach(btn=>{
+      btn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        const id = btn.getAttribute("data-plan") || btn.getAttribute("data-lookup-key") || btn.getAttribute("data-buy");
+        startCheckout(id);
+      });
+    });
   }
 
-  // Delegate clicks anywhere
-  document.addEventListener('click', function(e){
-    const target = e.target && e.target.closest ? e.target.closest('[data-plan],[data-feature],.js-checkout') : null;
-    if(!target) return;
+  // Back-compat global used by other scripts
+  window.startCheckout = startCheckout;
+  window.TKFMStartCheckout = startCheckout;
 
-    const planId = resolvePlanFromEl(target);
-    if(!planId) return; // allow other click handlers if no plan
-
-    // Prevent default nav if this is a link/button meant to checkout
-    e.preventDefault();
-
-    // Optional meta: allow page to set return path or lane hint
-    const meta = {};
-    try{
-      // Where the user clicked from (helps post-checkout)
-      meta.from = window.location.pathname || '';
-    }catch(_){}
-
-    startCheckout(planId, meta);
-  }, true);
-
-  // Expose manual call if needed
-  window.tkfmStartCheckout = startCheckout;
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", wire);
+  }else{
+    wire();
+  }
 })();

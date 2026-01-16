@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Owner — Webhook Health</title>
+  <style>
+:root{
+  --bg:#020617; --purple:#a855f7; --pink:#ec4899; --cyan:#22d3ee; --blue:#3b82f6; --gold:#facc15; --amber:#f97316;
+  --text: rgba(255,255,255,0.92); --muted: rgba(255,255,255,0.70);
+  --panel: rgba(2,6,23,0.72); --border: rgba(168,85,247,0.30);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  color:var(--text);
+  background:
+    radial-gradient(900px 450px at 10% 10%, rgba(168,85,247,0.25), transparent 55%),
+    radial-gradient(900px 450px at 90% 20%, rgba(34,211,238,0.18), transparent 55%),
+    radial-gradient(900px 450px at 70% 90%, rgba(236,72,153,0.16), transparent 55%),
+    linear-gradient(180deg, #020617 0%, #020617 55%, #030a1c 100%);
+}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+.topbar{position:sticky;top:0;z-index:50;background: rgba(2,6,23,0.78);backdrop-filter: blur(10px);border-bottom: 1px solid rgba(34,211,238,0.18);}
+.topbar .inner{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:14px 24px;max-width:1100px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:46px;height:46px;object-fit:contain;filter: drop-shadow(0 0 18px rgba(168,85,247,0.35))}
+.brand .t{line-height:1.1}
+.brand .t b{display:block;font-size:14px;letter-spacing:0.9px;text-transform:uppercase}
+.brand .t span{display:block;font-size:12px;color:var(--muted)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:12px;padding:6px 10px;border-radius:999px;background: rgba(2,6,23,0.62);border:1px solid rgba(168,85,247,0.24);color: rgba(255,255,255,0.86);}
+.card{background: linear-gradient(180deg, var(--panel) 0%, rgba(2,6,23,0.55) 100%);border: 1px solid var(--border);border-radius: 18px;box-shadow: 0 12px 40px rgba(0,0,0,0.35);}
+.pad{padding:18px}
+.kicker{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:rgba(255,255,255,0.82);border:1px solid rgba(34,211,238,0.28);background: rgba(34,211,238,0.08);padding:6px 10px;border-radius:999px;}
+h1{margin:10px 0 8px;font-size:30px;letter-spacing:-0.4px}
+.hr{height:1px;background: linear-gradient(90deg, rgba(168,85,247,0.0), rgba(168,85,247,0.35), rgba(34,211,238,0.28), rgba(168,85,247,0.0)); margin:14px 0}
+label{display:block;font-size:12px;color:rgba(255,255,255,0.74);margin:10px 0 6px}
+input,select{width:100%;background: rgba(2,6,23,0.55);border:1px solid rgba(168,85,247,0.28);color: rgba(255,255,255,0.92);padding:10px 12px;border-radius:12px;outline:none;}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{cursor:pointer;border:1px solid rgba(168,85,247,0.42);background: linear-gradient(90deg, rgba(168,85,247,0.28), rgba(34,211,238,0.18));color: rgba(255,255,255,0.92);padding:10px 12px;border-radius:12px;font-weight:800;}
+.btn:hover{transform: translateY(-1px); filter: brightness(1.08); border-color: rgba(34,211,238,0.48)}
+.btn.ghost{background: rgba(2,6,23,0.32);border-color: rgba(34,211,238,0.25)}
+.notice{font-size:12px;color: rgba(255,255,255,0.80);border: 1px solid rgba(34,211,238,0.22);background: rgba(34,211,238,0.08);padding:10px 12px;border-radius:14px;}
+.notice.warn{border-color: rgba(250,204,21,0.24);background: rgba(250,204,21,0.08)}
+.table{width:100%;border-collapse: collapse;overflow:hidden;border-radius: 14px;border:1px solid rgba(168,85,247,0.22);}
+.table th,.table td{padding:10px 10px;border-bottom:1px solid rgba(168,85,247,0.16);font-size:13px;vertical-align:top;}
+.table th{color:rgba(255,255,255,0.78);text-align:left;background: rgba(2,6,23,0.45)}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+.small{font-size:12px;color:rgba(255,255,255,0.70)}
+.footer{padding:20px 0 36px;color:rgba(255,255,255,0.6);font-size:12px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="inner">
+      <div class="brand">
+        <img src="/tkfm-radio-logo.png" onerror="this.src='/public/tkfm-radio-logo.png'" alt="TKFM"/>
+        <div class="t">
+          <b>Owner Webhook Health</b>
+          <span>See latest Stripe webhook deliveries (Sponsor + Drops + Studio)</span>
+        </div>
+      </div>
+      <div class="badges">
+        <div class="badge">OWNER ONLY</div>
+        <div class="badge">Renewals covered</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="pad">
+        <div class="kicker">🪝 Stripe Webhooks • Health</div>
+        <h1>Confirm Stripe is hitting your site.</h1>
+        <div class="small">This reads the last 50 deliveries recorded on the server.</div>
+
+        <div class="hr"></div>
+
+        <div class="row" style="align-items:flex-end;justify-content:space-between">
+          <div style="flex:1;min-width:280px">
+            <label>TKFM_OWNER_KEY</label>
+            <input id="ownerKey" class="mono" placeholder="paste owner key (stored per-port)"/>
+          </div>
+          <div style="min-width:240px">
+            <label>Scope</label>
+            <select id="scope">
+              <option value="sponsor">sponsor</option>
+              <option value="drops">drops</option>
+              <option value="studio">studio</option>
+            </select>
+          </div>
+          <div class="row">
+            <button class="btn" id="saveKey">Save</button>
+            <button class="btn ghost" id="clearKey">Clear</button>
+            <button class="btn" id="refresh">Refresh</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="row" style="justify-content:space-between">
+          <div class="small">Stripe mode: <span id="mode" class="mono">—</span></div>
+          <div class="small">Deliveries: <span id="count" class="mono">—</span></div>
+        </div>
+
+        <div id="msg" class="notice" style="display:none"></div>
+
+        <div class="hr"></div>
+
+        <div style="overflow:auto">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>at</th>
+                <th>type</th>
+                <th>lookupKey</th>
+                <th>awarded</th>
+                <th>customer</th>
+                <th>event id</th>
+                <th>error</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer">Owner tool. Use after deploying webhook endpoints.</div>
+  </div>
+
+  <script src="/js/tkfm-functions-client.js"></script>
+  <script src="/js/tkfm-owner-webhook-health.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Records — Studio Success</title>
+  <style>
+:root{--bg:#020617;--gold:#facc15;--amber:#f97316;--text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.70);--panel:rgba(2,6,23,0.72);--border:rgba(250,204,21,0.28)}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
+background:radial-gradient(900px 450px at 12% 10%, rgba(250,204,21,0.18), transparent 55%),
+radial-gradient(900px 450px at 92% 18%, rgba(243,115,22,0.14), transparent 55%),
+linear-gradient(180deg, #020617 0%, #020617 55%, #030a1c 100%);min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:24px}
+.topbar{position:sticky;top:0;z-index:50;background: rgba(2,6,23,0.82);backdrop-filter: blur(10px);border-bottom: 1px solid rgba(250,204,21,0.18);}
+.topbar .inner{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:14px 24px;max-width:900px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:46px;height:46px;object-fit:contain;filter: drop-shadow(0 0 18px rgba(250,204,21,0.25))}
+.brand .t b{display:block;font-size:14px;letter-spacing:0.9px;text-transform:uppercase}
+.brand .t span{display:block;font-size:12px;color:var(--muted)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:12px;padding:6px 10px;border-radius:999px;background: rgba(2,6,23,0.62);border:1px solid rgba(250,204,21,0.22)}
+.card{background: linear-gradient(180deg, var(--panel) 0%, rgba(2,6,23,0.55) 100%);border: 1px solid var(--border);border-radius: 18px;box-shadow: 0 12px 40px rgba(0,0,0,0.35);}
+.pad{padding:18px}
+.kicker{display:inline-flex;gap:8px;align-items:center;font-size:12px;border:1px solid rgba(250,204,21,0.22);background: rgba(250,204,21,0.08);padding:6px 10px;border-radius:999px;}
+h1{margin:10px 0 8px;font-size:28px}
+.small{font-size:12px;color:rgba(255,255,255,0.70)}
+.hr{height:1px;background: linear-gradient(90deg, rgba(250,204,21,0.0), rgba(250,204,21,0.28), rgba(243,115,22,0.22), rgba(250,204,21,0.0)); margin:14px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{cursor:pointer;border:1px solid rgba(250,204,21,0.38);background: linear-gradient(90deg, rgba(250,204,21,0.18), rgba(243,115,22,0.14));
+color: rgba(255,255,255,0.92); padding:10px 12px;border-radius:12px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.ghost{background: rgba(2,6,23,0.32);border-color: rgba(168,85,247,0.25)}
+.notice{font-size:12px;border: 1px solid rgba(250,204,21,0.20);background: rgba(250,204,21,0.08);padding:10px 12px;border-radius:14px}
+.notice.warn{border-color: rgba(236,72,153,0.22);background: rgba(236,72,153,0.08)}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+input{width:100%;background:rgba(2,6,23,0.55);border:1px solid rgba(250,204,21,0.22);color:rgba(255,255,255,0.92);padding:10px 12px;border-radius:12px;outline:none}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="inner">
+      <div class="brand">
+        <img src="/tkfm-records-logo.png" onerror="this.src='/public/tkfm-records-logo.png'" alt="TKFM Records"/>
+        <div class="t">
+          <b>Studio Purchase Successful</b>
+          <span>Credits + Restore Link</span>
+        </div>
+      </div>
+      <div class="badges">
+        <div class="badge">Auto Restore</div>
+        <div class="badge">Multi‑Device</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="pad">
+        <div class="kicker">✅ Payment Confirmed</div>
+        <h1>Attaching credits + creating restore link…</h1>
+        <div class="small">This link restores the wallet on ANY device/browser.</div>
+
+        <div class="hr"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div><div class="small">Session</div><div id="sess" class="mono">—</div></div>
+          <div><div class="small">Plan</div><div id="plan" class="mono">—</div></div>
+          <div><div class="small">Customer</div><div id="cust" class="mono">—</div></div>
+        </div>
+
+        <div class="hr"></div>
+        <div id="status" class="notice">Working…</div>
+
+        <div class="hr"></div>
+
+        <div class="kicker">🔗 Restore Link</div>
+        <div class="small">Copy this and save it. (Optional: email it below)</div>
+        <div class="hr"></div>
+        <input id="restoreLink" class="mono" value="" placeholder="(generating…)"/>
+        <div class="row" style="justify-content:flex-end;margin-top:10px">
+          <button class="btn ghost" id="copyLink">Copy Link</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="kicker">✉️ Email Restore Link</div>
+        <div class="small">Optional — send the link to the customer email (requires SendGrid env).</div>
+        <div class="hr"></div>
+        <div class="row" style="align-items:flex-end">
+          <div style="flex:1;min-width:240px">
+            <label class="small">Customer Email</label>
+            <input id="email" placeholder="email@domain.com"/>
+          </div>
+          <button class="btn" id="sendEmail">Send</button>
+        </div>
+        <div id="emailMsg" class="notice" style="display:none;margin-top:10px"></div>
+
+        <div class="hr"></div>
+        <div class="row">
+          <a class="btn" href="/label-studio-hub.html">Return to Studio Hub</a>
+          <a class="btn ghost" href="/label-home.html">Label Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/tkfm-label-studio-success.js"></script>
+</body>
+</html>

@@ -1,31 +1,57 @@
-// TKFM V2 Unlock Utilities
-// Reads/writes localStorage.tkfm_user_features
-// Used by unlocks.html + can be imported elsewhere.
+(function(){
+  // TKFM Unlocks (NO ES MODULE EXPORTS) — fixes: "Unexpected token 'export'"
+  // Stores entitlements in localStorage (per-port). Server entitlements remain via your functions where applicable.
+  const LS_KEY = "tkfm_user_features";
 
-export function getUnlocks() {
-  try {
-    const v = JSON.parse(localStorage.getItem('tkfm_user_features') || '[]');
-    return Array.isArray(v) ? v : [];
-  } catch (e) {
-    return [];
+  function read(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      const obj = raw ? JSON.parse(raw) : {};
+      return (obj && typeof obj === "object") ? obj : {};
+    }catch(e){
+      return {};
+    }
   }
-}
 
-export function setUnlocks(arr) {
-  const clean = Array.from(new Set((arr || []).map(String).filter(Boolean)));
-  localStorage.setItem('tkfm_user_features', JSON.stringify(clean));
-  return clean;
-}
+  function write(obj){
+    localStorage.setItem(LS_KEY, JSON.stringify(obj || {}));
+  }
 
-export function addUnlock(id) {
-  const cur = getUnlocks();
-  cur.push(String(id));
-  return setUnlocks(cur);
-}
+  function has(featureId){
+    const f = read();
+    return !!f[featureId];
+  }
 
-export function clearUnlocks() {
-  localStorage.removeItem('tkfm_user_features');
-  localStorage.removeItem('tkfm_stripe_customer_id');
-  localStorage.removeItem('tkfm_owner_unlocked');
-  localStorage.removeItem('tkfm_owner_key');
-}
+  function enable(featureId, value=true){
+    const f = read();
+    f[featureId] = value === undefined ? true : value;
+    write(f);
+    return f;
+  }
+
+  function disable(featureId){
+    const f = read();
+    delete f[featureId];
+    write(f);
+    return f;
+  }
+
+  function merge(unlocks){
+    const f = read();
+    const u = unlocks && typeof unlocks === "object" ? unlocks : {};
+    for(const k of Object.keys(u)){
+      f[k] = u[k];
+    }
+    write(f);
+    return f;
+  }
+
+  function all(){
+    return read();
+  }
+
+  // Back-compat globals used across pages
+  window.TKFMUnlocks = { has, enable, disable, merge, all, _key: LS_KEY };
+  window.tkfmHasUnlock = has;
+  window.tkfmEnableUnlock = enable;
+})();

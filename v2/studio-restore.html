@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Records — Restore Studio Wallet</title>
+  <style>
+:root{--bg:#020617;--gold:#facc15;--text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.70);--panel:rgba(2,6,23,0.72);--border:rgba(250,204,21,0.28)}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
+background:radial-gradient(900px 450px at 12% 10%, rgba(250,204,21,0.18), transparent 55%),
+radial-gradient(900px 450px at 92% 18%, rgba(243,115,22,0.14), transparent 55%),
+linear-gradient(180deg, #020617 0%, #020617 55%, #030a1c 100%);min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:24px}
+.card{background:linear-gradient(180deg,var(--panel) 0%, rgba(2,6,23,0.55) 100%);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,0.35)}
+.pad{padding:18px}
+.kicker{display:inline-flex;gap:8px;align-items:center;font-size:12px;border:1px solid rgba(250,204,21,0.22);background:rgba(250,204,21,0.08);padding:6px 10px;border-radius:999px}
+h1{margin:10px 0 8px;font-size:28px}
+.small{font-size:12px;color:rgba(255,255,255,0.70)}
+.notice{font-size:12px;border:1px solid rgba(250,204,21,0.20);background:rgba(250,204,21,0.08);padding:10px 12px;border-radius:14px}
+.notice.warn{border-color:rgba(236,72,153,0.22);background:rgba(236,72,153,0.08)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="pad">
+        <div class="kicker">🔁 Restore Wallet</div>
+        <h1>Restoring your Studio wallet…</h1>
+        <div class="small">This will set your customer id on this device, then redirect you back to Studio.</div>
+        <div style="height:14px"></div>
+        <div class="notice" id="status">Working…</div>
+        <div style="height:14px"></div>
+        <div class="small">Token: <span class="mono" id="tok">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const t = (params.get("t")||"").trim();
+      const r = (params.get("r")||"/label-studio-hub.html").trim();
+      document.getElementById("tok").textContent = t ? t.slice(0,8) + "…" : "—";
+
+      async function post(url, body){
+        const res = await fetch(url, { method:"POST", headers:{ "content-type":"application/json" }, body: JSON.stringify(body||{}) });
+        const txt = await res.text();
+        let data = null;
+        try{ data = JSON.parse(txt); }catch(e){ data = { ok:false, raw: txt }; }
+        if(!res.ok) throw new Error(data.error || data.message || ("HTTP " + res.status));
+        return data;
+      }
+
+      (async function(){
+        const status = document.getElementById("status");
+        if(!t){ status.className="notice warn"; status.textContent="Missing token."; return; }
+        try{
+          const data = await post("/.netlify/functions/studio-restore-claim", { token: t });
+          if(!data.customerId) throw new Error("No customerId returned");
+          localStorage.setItem("tkfm_stripe_customer_id", data.customerId);
+          status.textContent = "Restored. Redirecting…";
+          setTimeout(()=>{ location.href = r; }, 700);
+        }catch(e){
+          status.className="notice warn";
+          status.textContent = "Restore failed: " + e.message;
+        }
+      })();
+    })();
+  </script>
+</body>
+</html>
