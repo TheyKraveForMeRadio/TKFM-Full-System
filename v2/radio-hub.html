@@ -209,7 +209,11 @@
   <script src="/js/tkfm-paid-lane-modal.js" defer></script>
   <script src="/js/tkfm-paid-lane-submit.js" defer></script>
   <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
-  <script src="/js/tkfm-functions-client.js"></script>
+<script src="/js/tkfm-functions-client.js" defer></script>
+  <script src="/js/tkfm-universal-price.js" defer></script>
+  <script src="/js/tkfm-universal-checkout.js" defer></script>
+  <link rel="stylesheet" href="/css/tkfm-global-shell.css">
+  <script src="/js/tkfm-global-shell.js" defer></script>
 </head>
 <body data-tkfm-theme="radio">
 <!-- TKFM: DASHBOARD PILL -->
@@ -233,7 +237,7 @@
 
   <header>
     <div class="wrap">
-      <a class="brand" href="index.html">
+      <a class="brand" href="/index.html">
         <div class="logo" aria-hidden="true"><img src="/tkfm-radio-logo.png" alt="TKFM"/></div>
         <div>
           <div class="k">They Krave For Me Radio</div>
@@ -242,12 +246,19 @@
       </a>
 
       <nav class="nav" aria-label="Radio Nav">
-        <a class="pill hot" href="radio-hub.html">On Air</a>
-        <a class="pill" href="now-playing.html">Now Playing</a>
-        <a class="pill" href="submit.html">Submit Music</a>
-        <a class="pill" href="pricing.html">Monthly Tiers</a>
-        <a class="pill" href="login.html">Member Sign In</a>
-      </nav>
+        <a class="pill" href="/index.html">Home</a>
+        <a class="pill hot" href="/radio-hub.html">On Air</a>
+        <a class="pill" href="/now-playing.html">Now Playing</a>
+        <a class="pill" href="/submit.html">Submit Music</a>
+        <a class="pill" href="/app-hub.html">Engines Hub</a>
+        <a class="pill" href="/tkfm-catalog.html">Catalog</a>
+        <a class="pill" href="/client-vault.html">My Portal</a>
+        <a class="pill" href="/tkfm-sitemap.html">Site Map</a>
+        <a class="pill" href="/pricing.html">Monthly Tiers</a>
+        <a class="pill" href="/label-hub.html">Records Hub</a>
+        <a class="pill" href="/login.html">Member Sign In</a>
+        <a class="pill" href="/start-here.html">Start Here</a>
+</nav>
     </div>
   </header>
 <!-- TKFM: BOOST NAV LINK -->
@@ -267,7 +278,7 @@
 ">
   <span style="letter-spacing:.12em; font-size:12px; text-transform:uppercase;">Paid Lane</span>
   <span style="font-size:14px;">Rotation Boost</span>
-  <span style="opacity:.9; font-size:12px;">$99 / $299</span>
+  <span style="opacity:.9; font-size:12px;"><span data-price-for="rotation_boost_7d">…</span> / <span data-price-for="rotation_boost_30d">…</span></span>
 </a>
 
 
@@ -281,15 +292,17 @@
           <p class="p">Independent Artist Power Station — live audio, community chat, and paid lanes that turn motion into momentum.</p>
 
           <div class="btnRow">
-            <a class="btn btnHot" href="pricing.html">Join a Tier</a>
-            <a class="btn" href="feature-engine.html">Feature Engine</a>
-            <a class="btn" href="dj-portal.html">DJ Portal</a>
+            <a class="btn btnHot" href="/pricing.html">Join a Tier</a>
+            <a class="btn" href="/feature-engine.html">Feature Engine</a>
+            <a class="btn" href="/dj-portal.html">DJ Portal</a>
           </div>
+<a class="btn btnHot" href="/distribution-engine.html">Distribution</a>
 
           <div class="now">
             <span class="badge">LIVE</span>
             <div class="meter" aria-hidden="true"><span></span></div>
             <span class="small" id="streamLabel">Stream URL: Not set</span>
+            <span class="small" id="tkfmNowPlayingLine">Now Playing: —</span>
           </div>
         </div>
 
@@ -314,7 +327,23 @@
           }catch(e){}
         })();
       </script>
+    
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">TKFM Quick Start</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">Pick a lane → checkout → submit → get on‑air</div>
+      <p class="p">Jump straight into the engines. Checkout runs via Stripe (lookup_key). Post‑purchase workflows live in <a href="/client-vault.html" style="color:var(--c);text-decoration:underline">My Portal</a>.</p>
+      <div class="divider"></div>
+      <div class="btnRow">
+        <a class="btn btnHot" href="/ai-drops-engine.html">AI Drops</a>
+        <a class="btn btnHot" href="/sponsor-read-engine.html">Sponsor Reads</a>
+        <a class="btn btnHot" href="/podcast-engine.html">Podcast Engine</a>
+        <a class="btn" href="/dj-mixtape-hosting.html">Mixtape Hosting</a>
+        <a class="btn" href="/tkfm-catalog.html">Catalog</a>
+        <a class="btn" href="/tkfm-sitemap.html">Site Map</a>
+      </div>
     </section>
+
+</section>
 
     <section class="layout" style="margin-top:14px">
       <div class="glass card">
@@ -353,10 +382,10 @@
         <div class="divider"></div>
 
         <div class="btnRow">
-          <a class="btn" href="feature-engine.html">AI Feature Store</a>
-          <a class="btn" href="social-engine.html">Social Campaigns</a>
-          <a class="btn" href="dj-mixtape-hosting.html">Mixtape Hosting</a>
-          <a class="btn" href="label-home.html">TKFM Records</a>
+          <a class="btn" href="/feature-engine.html">AI Feature Store</a>
+          <a class="btn" href="/social-engine.html">Social Campaigns</a>
+          <a class="btn" href="/dj-mixtape-hosting.html">Mixtape Hosting</a>
+          <a class="btn" href="/label-home.html">TKFM Records</a>
         </div>
 
         <div class="divider"></div>
@@ -373,7 +402,7 @@
     </section>
 
     <script src="js/nav-sanitize.js"></script>
-    <script type="module" src="/src/station-chat.js"></script>
+    <script type="module" src="/js/tkfm-station-chat.js"></script>
   
 <!-- TKFM: BOOST CTA START -->
 <section class="tkfm-boost-cta" style="
@@ -398,7 +427,7 @@
       <div style="width:260px; background: rgba(15,23,42,0.6); border:1px solid rgba(236,72,153,0.35); border-radius:16px; padding:14px;">
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;">
           <div style="font-weight:800; color:#ec4899;">BOOST — 7 DAYS</div>
-          <div style="font-weight:900; color:#facc15; font-size:20px;">$99</div>
+          <div style="font-weight:900; color:#facc15; font-size:20px;"><span data-price-for="rotation_boost_7d">…</span></div>
         </div>
         <ul style="margin:10px 0 12px 18px; padding:0; color:rgba(255,255,255,0.82); font-size:13px; line-height:1.35;">
           <li>7‑day priority placement</li>
@@ -420,7 +449,7 @@
       <div style="width:260px; background: rgba(15,23,42,0.6); border:1px solid rgba(34,211,238,0.35); border-radius:16px; padding:14px;">
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;">
           <div style="font-weight:800; color:#22d3ee;">BOOST — 30 DAYS</div>
-          <div style="font-weight:900; color:#facc15; font-size:20px;">$299</div>
+          <div style="font-weight:900; color:#facc15; font-size:20px;"><span data-price-for="rotation_boost_30d">…</span></div>
         </div>
         <ul style="margin:10px 0 12px 18px; padding:0; color:rgba(255,255,255,0.82); font-size:13px; line-height:1.35;">
           <li>30‑day priority placement</li>
@@ -473,5 +502,16 @@
 <!-- TKFM_DROPS_RADIO_HUB_END -->
 
   <script src="/js/tkfm-sponsor-cta.js"></script>
+  <script src="/js/tkfm-drops-tags-fix.js"></script>
+  <script src="/js/tkfm-label-studio-create-cta.js"></script>
+  <script src="/js/tkfm-pageviews.js"></script>
+  <script src="/js/tkfm-view-badge.js"></script>
+  <script type="module" src="/js/tkfm-launch-polish.js"></script>
+  <script type="module" src="/js/tkfm-donate-float.js"></script>
+  <script type="module" src="/js/tkfm-now-playing-widget.js"></script>
+  <script type="module" src="/js/tkfm-launch-alerts-cta.js"></script>
 </body>
+<div style="padding:10px">
+<a class="btn ghost" style="text-decoration:none" href="/tkfm-catalog.html">Live Catalog</a>
+</div>
 </html>

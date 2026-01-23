@@ -1,6 +1,8 @@
-// TKFM Dist Static Server (Windows-safe, no npx)
-// Serves ./dist for local smoke tests.
-// Usage: node scripts/tkfm-dist-static-server.mjs --port 9090
+// TKFM Dist Static Server (with optional functions proxy)
+// Serves ./dist and (optionally) proxies /.netlify/functions/* to http://127.0.0.1:9999
+// Usage:
+//   node scripts/tkfm-dist-static-server.mjs --port 9090
+//   node scripts/tkfm-dist-static-server.mjs --port 9090 --proxy-functions 1 --functions-port 9999
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
@@ -18,6 +20,8 @@ function arg(name, defVal) {
 }
 
 const PORT = Number(arg("--port", "9090")) || 9090;
+const PROXY_FUNCS = String(arg("--proxy-functions", "0")) === "1";
+const FUNCS_PORT = Number(arg("--functions-port", "9999")) || 9999;
 
 const MIME = {
   ".html":"text/html; charset=utf-8",
@@ -58,9 +62,35 @@ function serveFile(res, fp) {
   send(res, 200, data, { "content-type": type });
 }
 
+function proxyToFunctions(req, res) {
+  const target = {
+    host: "127.0.0.1",
+    port: FUNCS_PORT,
+    path: req.url,
+    method: req.method,
+    headers: { ...req.headers, host: `127.0.0.1:${FUNCS_PORT}` }
+  };
+
+  const pReq = http.request(target, (pRes) => {
+    res.writeHead(pRes.statusCode || 502, pRes.headers);
+    pRes.pipe(res);
+  });
+
+  pReq.on("error", (e) => {
+    send(res, 502, "functions proxy failed: " + String(e?.message || e));
+  });
+
+  req.pipe(pReq);
+}
+
 const server = http.createServer((req, res) => {
   try {
     if (!fs.existsSync(DIST)) return send(res, 500, "dist/ not found");
+
+    // Optional proxy for functions
+    if (PROXY_FUNCS && (req.url || "").startsWith("/.netlify/functions/")) {
+      return proxyToFunctions(req, res);
+    }
 
     let urlPath = req.url || "/";
     if (urlPath === "/") urlPath = "/index.html";
@@ -87,8 +117,12 @@ const server = http.createServer((req, res) => {
   }
 });
 
-// IMPORTANT: no host => binds in a Windows-friendly way (works with localhost + 127.0.0.1)
 server.listen(PORT, () => {
-  console.log(`TKFM DIST SERVER: http://localhost:${PORT}`);
+  console.log(`TKFM DIST SERVER: http://127.0.0.1:${PORT}`);
   console.log(`Serving: ${DIST}`);
+  if (PROXY_FUNCS) {
+    console.log(`Proxy:   /.netlify/functions/*  ->  http://127.0.0.1:${FUNCS_PORT}`);
+  } else {
+    console.log("Proxy:   OFF (functions will 404 in dist mode)");
+  }
 });

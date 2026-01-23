@@ -1,74 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
- 
-
-
-  
-
-  <script src="/js/logo-check.js" defer></script>
-  <script src="/js/access-gates.js" defer></script>
-  <script src="/js/tkfm-unlocks.js" defer></script>
-  <script src="/js/stripe-checkout.js" defer></script>
-TKFM Pricing paid access tiers, promo campaigns, mixtape hosting, and label workflows for artists, DJs, labels, and sponsors.
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>TKFM — Pricing</title>
+<meta content="TKFM pricing: paid access tiers, promo campaigns, mixtape hosting, and label workflows for artists, DJs, labels, and sponsors." name="description"/>
+<script defer="" src="/js/logo-check.js"></script>
+<script defer="" src="/js/access-gates.js"></script>
+<script defer="" src="/js/tkfm-unlocks.js"></script>
+<script defer="" src="/js/stripe-checkout.js"></script>
+<style>
     :root{
-  <!-- TKFM Paid Lane Submit Modal -->
-    <div id="tkfmPaidLaneModalCard" role="dialog" aria-modal="true" aria-label="Paid Lane Submission">
-      <div id="tkfmPaidLaneModalTop">
-  <!-- TKFM_PAID_LANE_MODAL_STYLES_START -->
-  <!-- TKFM_PAID_LANE_MODAL_STYLES_END -->
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div id="tkfmPaidLaneBadge">TKFM</div>
-          <div>
-            <div style="font-weight:900; font-size:16px; letter-spacing:.3px;">Paid Lane Submission</div>
-            <div style="font-size:12px; opacity:.8;">Submit instantly after purchase — feeds Featured + Autopilot.</div>
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div id="tkfmPaidLanePlanPill">Lane: (not set)</div>
-          <button class="tkfmBtn" type="button" data-tkfm-modal-close="1" aria-label="Close">Close</button>
-        </div>
-      </div>
-
-      <div id="tkfmPaidLaneBody">
-        <input id="tkfmPaidLane_planId" type="hidden" value="" />
-
-        <div class="tkfmPLField">
-          <label for="tkfmPaidLane_title">Title</label>
-          <input id="tkfmPaidLane_title" type="text" placeholder="Project / Track / Campaign title" />
-        </div>
-
-        <div class="tkfmPLField">
-          <label for="tkfmPaidLane_link">Link</label>
-          <input id="tkfmPaidLane_link" type="url" placeholder="https:// (YouTube, SoundCloud, Drive, Dropbox, Press link...)" />
-        </div>
-
-        <div class="tkfmPLField">
-          <label for="tkfmPaidLane_contact">Contact</label>
-          <input id="tkfmPaidLane_contact" type="text" placeholder="Email / IG / Phone (so we can follow up)" />
-        </div>
-
-        <div class="tkfmPLField">
-          <label for="tkfmPaidLane_notes">Notes</label>
-          <textarea id="tkfmPaidLane_notes" rows="4" placeholder="Any details you want TKFM to follow..."></textarea>
-        </div>
-
-        <div id="tkfmPaidLane_status"></div>
-
-        <div id="tkfmPaidLane_next">
-          Next step: <a id="tkfmPaidLane_go" href="/pricing.html">Go to your lane</a>
-        </div>
-      </div>
-
-      <div id="tkfmPaidLaneActions">
-        <button class="tkfmBtnGold tkfmBtn" type="button" id="tkfmPaidLane_submit">Submit Now</button>
-      </div>
-    </div>
-  </div>
       --bg:#020617;
-  <div id="tkfmPaidLaneSubmitHost" style="padding:12px 16px; max-width:1100px; margin:0 auto;"></div>
-      --purple:#a855f7;
+--purple:#a855f7;
       --pink:#ec4899;
       --cyan:#22d3ee;
       --blue:#3b82f6;
@@ -230,14 +175,18 @@ TKFM Pricing paid access tiers, promo campaigns, mixtape hosting, and label work
     footer .wrap{ padding: 18px 24px; }
   </style>
 <script src="/js/tkfm-fx.js"></script>
-  <!-- TKFM: BOOST CHECKOUT INTERCEPTOR -->
-<script defer src="/js/tkfm-boost-checkout.js"></script>
+<!-- TKFM: BOOST CHECKOUT INTERCEPTOR -->
+<script defer="" src="/js/tkfm-boost-checkout.js"></script>
 <script src="/js/tkfm-quick-checkout.js"></script>
-    <script src="/js/tkfm-paid-lane-modal.js" defer></script>
-  <script src="/js/tkfm-paid-lane-submit.js" defer></script>  <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
-  <script src="/js/tkfm-functions-client.js"></script>
+<script defer="" src="/js/tkfm-paid-lane-modal.js"></script>
+<script defer="" src="/js/tkfm-paid-lane-submit.js"></script> <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
+<script defer="" src="/js/tkfm-functions-client.js"></script>
+<script defer="" src="/js/tkfm-universal-price.js"></script>
+<script defer="" src="/js/tkfm-universal-checkout.js"></script>
+<script defer="" src="/js/tkfm-pricing-live-prices.js"></script>
+<link href="/css/tkfm-global-shell.css" rel="stylesheet"/>
+<script defer="" src="/js/tkfm-global-shell.js"></script>
 </head>
-
 <body data-tkfm-theme="radio"><!-- TKFM: DASHBOARD PILL -->
 <a href="/dashboard.html" style="
   position:fixed; right:16px; bottom:16px; z-index:9999;
@@ -248,30 +197,33 @@ TKFM Pricing paid access tiers, promo campaigns, mixtape hosting, and label work
   background: linear-gradient(90deg,#22d3ee,#3b82f6);
   box-shadow: 0 14px 28px rgba(0,0,0,.40);
 ">Dashboard</a>
-
-
 <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
-  <header class="topbar">
-    <div class="wrap">
-      <a data-plan="" data-checkout="1"  class="brand" href="index.html">
-        <img src="/tkfm-radio-logo.png" alt="TKFM Radio" />
-        <div>
-          <div class="kicker">TKFM RADIO NETWORK</div>
-          <div class="title">Pricing & Access  TKFM V2</div>
-        </div>
-      </a>
-
-      <nav class="nav"> TKFM RADIO NETWORK
-       <nav class="nav"> Pricing & Access  Plans + Paid Engines
-        <a data-plan="" data-checkout="1"  class="pill" href="radio-hub.html">Radio</a>
-        <a data-plan="" data-checkout="1"  class="pill" href="social-engine.html">Promo</a>
-        <a data-plan="" data-checkout="1"  class="pill" href="dj-mixtape-hosting.html">Mixtapes</a>
-        <a data-plan="" data-checkout="1"  class="pill" href="label-home.html">Label</a>
-      </nav>
-    </div>
-  </header>
+<header class="topbar">
+<div class="wrap">
+<a class="brand" href="/index.html">
+<img alt="TKFM Radio" src="/tkfm-radio-logo.png"/>
+<div>
+<div class="kicker">TKFM RADIO NETWORK</div>
+<div class="title">Pricing &amp; Access — TKFM V2</div>
+</div>
+</a>
+<nav aria-label="Primary" class="nav">
+<a class="pill" href="/index.html">Home</a>
+<a class="pill" href="/radio-hub.html">Radio Hub</a>
+<a class="pill" href="/label-hub.html">Records Hub</a>
+<a class="pill" href="/app-hub.html">Engines Hub</a>
+<a class="pill" href="/tkfm-catalog.html">Catalog</a>
+<a class="pill" href="/client-vault.html">My Portal</a>
+<a class="pill" href="/tkfm-sitemap.html">Site Map</a>
+<a class="pill" href="/social-engine.html">Promo</a>
+<a class="pill" href="/dj-mixtape-hosting.html">Mixtapes</a>
+<a class="pill hot" href="/label-home.html">Label</a>
+        <a class="pill" href="/start-here.html">Start Here</a>
+</nav>
+</div>
+</header>
 <!-- TKFM: BOOST NAV LINK -->
-<a href="/rotation-boost.html" class="tkfm-boost-nav-link" style="
+<a class="tkfm-boost-nav-link" href="/rotation-boost.html" style="
   position: relative;
   display:inline-flex;
   align-items:center;
@@ -285,531 +237,483 @@ TKFM Pricing paid access tiers, promo campaigns, mixtape hosting, and label work
   background: linear-gradient(90deg,#a855f7,#ec4899);
   box-shadow: 0 10px 24px rgba(0,0,0,0.35);
 ">
-  <span style="letter-spacing:.12em; font-size:12px; text-transform:uppercase;">Paid Lane</span>
-  <span style="font-size:14px;">Rotation Boost</span>
-  <span style="opacity:.9; font-size:12px;">$99 / $299</span>
+<span style="letter-spacing:.12em; font-size:12px; text-transform:uppercase;">Paid Lane</span>
+<span style="font-size:14px;">Rotation Boost</span>
+<span style="opacity:.9; font-size:12px;"><span data-price-for="rotation_boost_7d">…</span> / <span data-price-for="rotation_boost_30d">…</span></span>
 </a>
-
-
-
-  <main class="wrap hero">
-    <section class="glass heroCard">
-      <span class="badge"><span class="dot"></span> Artists • DJs • Labels • Brands — Paid Access + Upsells</span>
-      <h1 class="h1">
+<main class="wrap hero">
+<section class="glass heroCard">
+<span class="badge"><span class="dot"></span> Artists • DJs • Labels • Brands — Paid Access + Upsells</span>
+<h1 class="h1">
         Artists  DJs  Labels  Brands  Paid Access + Upsells
         <span class="grad">Choose a plan, then stack engines: promo, mixtapes, autopilot, label workflows.</span>
-      </h1> 
-      
-      <p class="sub">
+</h1>
+<p class="sub">
         Every lane here is built to convert attention into revenue: access tiers, automation engines, and one-time campaigns. Checkout is instant through Stripe, and your unlock is applied right after payment.
       </p>
-
-      <div class="divider"></div>
-
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a data-plan="" data-checkout="1"  class="pill" href="#artist-dj">Artist/DJ</a>
-        <a class="pill" href="#auto">Auto Engines</a>
-        <a class="pill" href="#label">Label</a>
-        <a class="pill" href="#promo">Promo</a>
-        <a class="pill" href="#packs">Paid Feature Packs</a>
-        <a class="pill" href="#mixtapes">Mixtape Hosting</a>
-        <a class="pill" href="#sponsors">Sponsors</a>
-        <a class="pill" href="#ai">AI Store</a>
-      </div>
-    </section>
-
-    <!-- ARTIST / DJ ACCESS (UNCHANGED PRICES) -->
-    <section id="artist-dj" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">Monthly Access</div>
-          <div class="sectionT">Artist & DJ Access</div>
-          <div class="sectionP">Same core plans. New upsells live below (Auto Engines + Packs).</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Creator Pass</div>
-          <div class="priceRow"><div class="price">$29</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Platform access + submissions lane</li>
-            <li>• Basic profile + visibility</li>
-            <li>• Eligible for paid boosts + engines</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="creator_pass_monthly">Activate Creator Pass</button>
-        </div>
-
-        <div class="glass card ringCyan">
-          <div class="cardK" style="color: rgba(34,211,238,.95);">Motion • Most Popular</div>
-          <div class="priceRow"><div class="price">$99</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Stronger placement pathways</li>
-            <li>• Faster promo eligibility</li>
-            <li>• Best for active releases</li>
-          </ul>
-          <button class="btn btnHot js-checkout" data-plan="motion_monthly">Upgrade to Motion</button>
-        </div>
-
-        <div class="glass card ringPink">
-          <div class="cardK" style="color: rgba(236,72,153,.95);">Takeover Viral</div>
-          <div class="priceRow"><div class="price">$199</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Premium lane + priority momentum</li>
-            <li>• Built to scale your presence</li>
-            <li>• Designed for aggressive growth</li>
-          </ul>
-          <button class="btn btnCta js-checkout" data-plan="takeover_viral_monthly">Go Takeover Viral</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- NEW: AUTO ENGINES -->
-    <section id="auto" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">NEW Paid Engines</div>
-          <div class="sectionT">Auto Engines</div>
-          <div class="sectionP">
+<div class="divider"></div>
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
+<a class="pill" data-checkout="1" data-plan="" href="#artist-dj">Artist/DJ</a>
+<a class="pill" href="#auto">Auto Engines</a>
+<a class="pill" href="#label">Label</a>
+<a class="pill" href="#promo">Promo</a>
+<a class="pill" href="#packs">Paid Feature Packs</a>
+<a class="pill" href="#mixtapes">Mixtape Hosting</a>
+<a class="pill" href="#sponsors">Sponsors</a>
+<a class="pill" href="#ai">AI Store</a>
+</div>
+</section>
+<!-- ARTIST / DJ ACCESS (UNCHANGED PRICES) -->
+<section class="section" id="artist-dj">
+<div class="sectionHead">
+<div>
+<div class="sectionK">Monthly Access</div>
+<div class="sectionT">Artist &amp; DJ Access</div>
+<div class="sectionP">Same core plans. New upsells live below (Auto Engines + Packs).</div>
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Creator Pass</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="creator_pass_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Platform access + submissions lane</li>
+<li>• Basic profile + visibility</li>
+<li>• Eligible for paid boosts + engines</li>
+</ul>
+<button class="btn js-checkout" data-plan="creator_pass_monthly">Activate Creator Pass</button>
+</div>
+<div class="glass card ringCyan">
+<div class="cardK" style="color: rgba(34,211,238,.95);">Motion • Most Popular</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="motion_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Stronger placement pathways</li>
+<li>• Faster promo eligibility</li>
+<li>• Best for active releases</li>
+</ul>
+<button class="btn btnHot js-checkout" data-plan="motion_monthly">Upgrade to Motion</button>
+</div>
+<div class="glass card ringPink">
+<div class="cardK" style="color: rgba(236,72,153,.95);">Takeover Viral</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="takeover_viral_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Premium lane + priority momentum</li>
+<li>• Built to scale your presence</li>
+<li>• Designed for aggressive growth</li>
+</ul>
+<button class="btn btnCta js-checkout" data-plan="takeover_viral_monthly">Go Takeover Viral</button>
+</div>
+</div>
+</section>
+<!-- NEW: AUTO ENGINES -->
+<section class="section" id="auto">
+<div class="sectionHead">
+<div>
+<div class="sectionK">NEW Paid Engines</div>
+<div class="sectionT">Auto Engines</div>
+<div class="sectionP">
             These are the always-on revenue lanes automation that keeps artists moving keeps DJs rotating keeps sponsors spending.
           </div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Autopilot Lite</div>
-          <div class="priceRow"><div class="price">$39</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Auto scheduling + basic rotation rules</li>
-            <li>• Drop queue → rotation assist</li>
-            <li>• Great entry engine upsell</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="autopilot_lite_monthly">Enable Autopilot Lite</button>
-        </div>
-
-        <div class="glass card ringCyan">
-          <div class="cardK" style="color: rgba(34,211,238,.95);">Autopilot Pro</div>
-          <div class="priceRow"><div class="price">$149</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Smart rotation + priority rules</li>
-            <li>• Campaign windows + boost logic</li>
-            <li>• Best engine for serious artists</li>
-          </ul>
-          <button class="btn btnHot js-checkout" data-plan="autopilot_pro_monthly">Upgrade to Autopilot Pro</button>
-        </div>
-
-        <div class="glass card ringPink">
-          <div class="cardK" style="color: rgba(236,72,153,.95);">AI DJ Autopilot</div>
-          <div class="priceRow"><div class="price">$99</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• AI DJ imaging workflow lane</li>
-            <li>• Drops + intros + radio-style cadence</li>
-            <li>• Adds “station energy” to releases</li>
-          </ul>
-          <button class="btn btnCta js-checkout" data-plan="ai_dj_autopilot_monthly">Enable AI DJ Autopilot</button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="grid">
-        <div class="glass card goldBlock">
-          <div class="cardK">Label Autopilot</div>
-          <div class="priceRow"><div class="price goldTitle">$199</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Automated label workflows + release lanes</li>
-            <li>• Contract pipeline assist + catalog ops</li>
-            <li>• Built for TKFM Records operations</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="label_autopilot_monthly">Enable Label Autopilot</button>
-        </div>
-
-        <div class="glass card goldBlock">
-          <div class="cardK">Sponsor Autopilot</div>
-          <div class="priceRow"><div class="price goldTitle">$299</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Sponsor rotation + placement automation</li>
-            <li>• Click/rotation tracking lanes</li>
-            <li>• Keeps brands renewing monthly</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="sponsor_autopilot_monthly">Enable Sponsor Autopilot</button>
-        </div>
-
-        <div class="glass card">
-          <div class="cardK">Analytics Pro</div>
-          <div class="priceRow"><div class="price">$49</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Enhanced stats + campaign tracking</li>
-            <li>• Growth dashboard lane</li>
-            <li>• Converts free users → pay</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="analytics_pro_monthly">Enable Analytics Pro</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- LABEL (UNCHANGED PRICES) -->
-    <section id="label" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">Label Tools</div>
-          <div class="sectionT">TKFM Records Label Access</div>
-          <div class="sectionP">Same label pricing. (Label Autopilot above is an optional engine.)</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">DJ Toolkit</div>
-          <div class="priceRow"><div class="price">$49</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• DJ tools inside the ecosystem</li>
-            <li>• Workflow helpers</li>
-            <li>• Access upgrades available</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="dj_toolkit_monthly">Activate DJ Toolkit</button>
-        </div>
-
-        <div class="glass card goldBlock">
-          <div class="cardK" style="color: rgba(250,204,21,.95);">Label Core</div>
-          <div class="priceRow"><div class="price goldTitle">$149</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Catalog workflows + ops</li>
-            <li>• Contract pipeline tools</li>
-            <li>• Built for structured growth</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="label_core_monthly">Activate Label Core</button>
-        </div>
-
-        <div class="glass card goldBlock">
-          <div class="cardK" style="color: rgba(250,204,21,.95);">Label Pro</div>
-          <div class="priceRow"><div class="price goldTitle">$299</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Full label power lane</li>
-            <li>• Scaling workflows</li>
-            <li>• Best for serious releases</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="label_pro_monthly">Upgrade to Label Pro</button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Contract Lab Pro</div>
-          <div class="priceRow"><div class="price">$79</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Advanced contract lab lane</li>
-            <li>• Higher-output templates</li>
-            <li>• Adds paid value to labels</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="contract_lab_pro_monthly">Enable Contract Lab Pro</button>
-        </div>
-
-        <div class="glass card">
-          <div class="cardK">Submissions Priority</div>
-          <div class="priceRow"><div class="price">$19</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Priority lane in review queue</li>
-            <li>• Faster decision flow</li>
-            <li>• Converts urgent artists</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="submissions_priority_monthly">Enable Priority</button>
-        </div>
-
-        <div class="glass card">
-          <div class="cardK">Distribution Assist</div>
-          <div class="priceRow"><div class="price">$59</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Release packaging lane</li>
-            <li>• Rollout checklist + admin support</li>
-            <li>• Smooths label operations</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="distribution_assist_monthly">Enable Distribution Assist</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROMO (UNCHANGED) -->
-    <section id="promo" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">Promotion</div>
-          <div class="sectionT">Promo & Rotation Boosts</div>
-          <div class="sectionP">Time-based visibility boosts across TKFM properties.</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Homepage Feature</div>
-          <div class="priceRow"><div class="price">$150</div></div>
-          <ul class="ul">
-            <li>• Front-facing placement</li>
-            <li>• Drives clicks + attention</li>
-            <li>• One-time feature</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="homepage_feature_artist">Buy Homepage Feature</button>
-        </div>
-
-        <div class="glass card ringCyan">
-          <div class="cardK" style="color: rgba(34,211,238,.95);">Rotation Boost</div>
-          <div class="priceRow"><div class="price">$200</div></div>
-          <ul class="ul">
-            <li>• Heavier rotation lane</li>
-            <li>• Keeps the record moving</li>
-            <li>• One-time campaign</li>
-          </ul>
-          <button class="btn btnHot js-checkout" data-plan="rotation_boost_campaign">Buy Rotation Boost</button>
-        </div>
-
-        <div class="glass card ringPink">
-          <div class="cardK" style="color: rgba(236,72,153,.95);">Social Starter</div>
-          <div class="priceRow"><div class="price">$49</div><div class="per">/ month</div></div>
-          <ul class="ul">
-            <li>• Paid social lane access</li>
-            <li>• Campaign submissions</li>
-            <li>• Built for creators</li>
-          </ul>
-          <button class="btn btnCta js-checkout" data-plan="social_starter_monthly">Enable Social Starter</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- NEW: PAID FEATURE PACKS -->
-    <section id="packs" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">NEW One-Time Upsells</div>
-          <div class="sectionT">Paid Feature Packs</div>
-          <div class="sectionP">High-margin packs you can sell on top of any plan. Instant checkout, instant unlock.</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Priority Submission Pack</div>
-          <div class="priceRow"><div class="price">$75</div></div>
-          <ul class="ul">
-            <li>• One-time priority lane token</li>
-            <li>• Perfect for urgent drops</li>
-            <li>• Instant upsell</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="priority_submission_pack">Buy Pack</button>
-        </div>
-
-        <div class="glass card ringCyan">
-          <div class="cardK" style="color: rgba(34,211,238,.95);">Playlist Pitch Pack</div>
-          <div class="priceRow"><div class="price">$250</div></div>
-          <ul class="ul">
-            <li>• Pitch formatting lane</li>
-            <li>• Rollout support checklist</li>
-            <li>• Great mid-ticket add-on</li>
-          </ul>
-          <button class="btn btnHot js-checkout" data-plan="playlist_pitch_pack">Buy Pack</button>
-        </div>
-
-        <div class="glass card ringPink">
-          <div class="cardK" style="color: rgba(236,72,153,.95);">Press Run Pack</div>
-          <div class="priceRow"><div class="price">$500</div></div>
-          <ul class="ul">
-            <li>• EPK alignment + press kit lane</li>
-            <li>• High-ticket, high-conversion</li>
-            <li>• Built for serious releases</li>
-          </ul>
-          <button class="btn btnCta js-checkout" data-plan="press_run_pack">Buy Pack</button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Radio Interview Slot</div>
-          <div class="priceRow"><div class="price">$150</div></div>
-          <ul class="ul">
-            <li>• Scheduled interview lane</li>
-            <li>• Creator growth product</li>
-            <li>• One-time booking</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="radio_interview_slot">Book Slot</button>
-        </div>
-
-        <div class="glass card goldBlock">
-          <div class="cardK">Homepage Takeover Day</div>
-          <div class="priceRow"><div class="price goldTitle">$500</div></div>
-          <ul class="ul">
-            <li>• Premium front-page domination</li>
-            <li>• Perfect for release day</li>
-            <li>• One-time takeover</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="homepage_takeover_day">Buy Takeover Day</button>
-        </div>
-
-        <div class="glass card">
-          <div class="cardK">Owner / Founder Access</div>
-          <div class="priceRow"><div class="price">$0</div><div class="per">(Owner only)</div></div>
-          <ul class="ul">
-            <li>• Controlled by OWNER_EMAIL / PASSWORD</li>
-            <li>• Admin consoles + God View</li>
-            <li>• Not for public sale unless you decide</li>
-          </ul>
-          <button class="btn js-checkout" data-plan="owner_founder_access">Owner Only</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- MIXTAPES (UNCHANGED PRICES) -->
-    <section id="mixtapes" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">DJ KRAVE</div>
-          <div class="sectionT">Professional Mixtape Hosting</div>
-          <div class="sectionP">DJ-hosted releases + placement. Same tiers.</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Starter</div>
-          <div class="priceRow"><div class="price">$500</div></div>
-          <ul class="ul"><li>• Hosted release lane + placement</li><li>• Clean rollout support</li></ul>
-          <button class="btn js-checkout" data-plan="mixtape_hosting_starter">Buy Starter</button>
-        </div>
-
-        <div class="glass card ringCyan">
-          <div class="cardK" style="color: rgba(34,211,238,.95);">Pro</div>
-          <div class="priceRow"><div class="price">$1,000</div></div>
-          <ul class="ul"><li>• Heavier placement</li><li>• Stronger rollout support</li></ul>
-          <button class="btn btnHot js-checkout" data-plan="mixtape_hosting_pro">Buy Pro</button>
-        </div>
-
-        <div class="glass card ringPink">
-          <div class="cardK" style="color: rgba(236,72,153,.95);">Elite</div>
-          <div class="priceRow"><div class="price">$2,500</div></div>
-          <ul class="ul"><li>• Top-tier hosting lane</li><li>• Maximum impact package</li></ul>
-          <button class="btn btnCta js-checkout" data-plan="mixtape_hosting_elite">Buy Elite</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- SPONSORS (UNCHANGED PRICES) -->
-    <section id="sponsors" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">Brands</div>
-          <div class="sectionT">Sponsors & Takeovers</div>
-          <div class="sectionP">Same sponsor lanes. Sponsor Autopilot is the new retention engine.</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">Starter Sponsor</div>
-          <div class="priceRow"><div class="price">$1,000</div><div class="per">/ month</div></div>
-          <ul class="ul"><li>• Consistent visibility lane</li><li>• Great entry sponsor product</li></ul>
-          <button class="btn js-checkout" data-plan="starter_sponsor_monthly">Activate Starter Sponsor</button>
-        </div>
-
-        <div class="glass card ringCyan">
-          <div class="cardK" style="color: rgba(34,211,238,.95);">City Sponsor</div>
-          <div class="priceRow"><div class="price">$3,000</div><div class="per">/ month</div></div>
-          <ul class="ul"><li>• Expanded placement</li><li>• Bigger campaign lane</li></ul>
-          <button class="btn btnHot js-checkout" data-plan="sponsor_city_monthly">Activate City Sponsor</button>
-        </div>
-
-        <div class="glass card ringPink">
-          <div class="cardK" style="color: rgba(236,72,153,.95);">Takeover Sponsor</div>
-          <div class="priceRow"><div class="price">$7,000</div><div class="per">/ month</div></div>
-          <ul class="ul"><li>• Major brand dominance</li><li>• Premium takeover lane</li></ul>
-          <button class="btn btnCta js-checkout" data-plan="sponsor_takeover_monthly">Activate Takeover</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- AI STORE (UNCHANGED PRICES) -->
-    <section id="ai" class="section">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionK">AI Add-Ons</div>
-          <div class="sectionT">AI Feature Store</div>
-          <div class="sectionP">Same pricing. One-time creative assets.</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">AI Radio Intro</div>
-          <div class="priceRow"><div class="price">$150</div></div>
-          <ul class="ul"><li>• Station-style intro asset</li></ul>
-          <button class="btn js-checkout" data-plan="ai_radio_intro">Buy AI Radio Intro</button>
-        </div>
-
-        <div class="glass card">
-          <div class="cardK">Feature Verse Kit</div>
-          <div class="priceRow"><div class="price">$250</div></div>
-          <ul class="ul"><li>• AI-assisted feature components</li></ul>
-          <button class="btn js-checkout" data-plan="ai_feature_verse_kit">Buy Feature Verse Kit</button>
-        </div>
-
-        <div class="glass card ringCyan">
-          <div class="cardK" style="color: rgba(34,211,238,.95);">Imaging Pack</div>
-          <div class="priceRow"><div class="price">$400</div></div>
-          <ul class="ul"><li>• Station-ready imaging assets</li></ul>
-          <button class="btn btnHot js-checkout" data-plan="ai_imaging_pack">Buy Imaging Pack</button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="grid">
-        <div class="glass card">
-          <div class="cardK">AI Social Pack</div>
-          <div class="priceRow"><div class="price">$300</div></div>
-          <button class="btn js-checkout" data-plan="ai_social_pack">Buy AI Social Pack</button>
-        </div>
-
-        <div class="glass card ringPink">
-          <div class="cardK" style="color: rgba(236,72,153,.95);">Launch Campaign</div>
-          <div class="priceRow"><div class="price">$1,000</div></div>
-          <button class="btn btnCta js-checkout" data-plan="ai_launch_campaign">Buy Launch Campaign</button>
-        </div>
-
-        <div class="glass card goldBlock">
-          <div class="cardK">Label Brand Pack</div>
-          <div class="priceRow"><div class="price goldTitle">$2,500</div></div>
-          <button class="btn js-checkout" data-plan="ai_label_brand_pack">Buy Label Brand Pack</button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- POST-CHECKOUT FOOTER (CUSTOMER-FACING) -->
-<section class="instant-unlock" aria-label="After checkout">
-  <div class="instant-unlock-inner">
-    <div class="instant-title">Access activates immediately</div>
-    <div class="instant-sub">
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Autopilot Lite</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="autopilot_lite_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Auto scheduling + basic rotation rules</li>
+<li>• Drop queue → rotation assist</li>
+<li>• Great entry engine upsell</li>
+</ul>
+<button class="btn js-checkout" data-plan="autopilot_lite_monthly">Enable Autopilot Lite</button>
+</div>
+<div class="glass card ringCyan">
+<div class="cardK" style="color: rgba(34,211,238,.95);">Autopilot Pro</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="autopilot_pro_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Smart rotation + priority rules</li>
+<li>• Campaign windows + boost logic</li>
+<li>• Best engine for serious artists</li>
+</ul>
+<button class="btn btnHot js-checkout" data-plan="autopilot_pro_monthly">Upgrade to Autopilot Pro</button>
+</div>
+<div class="glass card ringPink">
+<div class="cardK" style="color: rgba(236,72,153,.95);">AI DJ Autopilot</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="ai_dj_autopilot_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• AI DJ imaging workflow lane</li>
+<li>• Drops + intros + radio-style cadence</li>
+<li>• Adds “station energy” to releases</li>
+</ul>
+<button class="btn btnCta js-checkout" data-plan="ai_dj_autopilot_monthly">Enable AI DJ Autopilot</button>
+</div>
+</div>
+<div class="divider"></div>
+<div class="grid">
+<div class="glass card goldBlock">
+<div class="cardK">Label Autopilot</div>
+<div class="priceRow"><div class="price goldTitle"><span class="mono" data-price-for="label_autopilot_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Automated label workflows + release lanes</li>
+<li>• Contract pipeline assist + catalog ops</li>
+<li>• Built for TKFM Records operations</li>
+</ul>
+<button class="btn js-checkout" data-plan="label_autopilot_monthly">Enable Label Autopilot</button>
+</div>
+<div class="glass card goldBlock">
+<div class="cardK">Sponsor Autopilot</div>
+<div class="priceRow"><div class="price goldTitle"><span class="mono" data-price-for="sponsor_autopilot_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Sponsor rotation + placement automation</li>
+<li>• Click/rotation tracking lanes</li>
+<li>• Keeps brands renewing monthly</li>
+</ul>
+<button class="btn js-checkout" data-plan="sponsor_autopilot_monthly">Enable Sponsor Autopilot</button>
+</div>
+<div class="glass card">
+<div class="cardK">Analytics Pro</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="analytics_pro_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Enhanced stats + campaign tracking</li>
+<li>• Growth dashboard lane</li>
+<li>• Converts free users → pay</li>
+</ul>
+<button class="btn js-checkout" data-plan="analytics_pro_monthly">Enable Analytics Pro</button>
+</div>
+</div>
+</section>
+<!-- LABEL (UNCHANGED PRICES) -->
+<section class="section" id="label">
+<div class="sectionHead">
+<div>
+<div class="sectionK">Label Tools</div>
+<div class="sectionT">TKFM Records Label Access</div>
+<div class="sectionP">Same label pricing. (Label Autopilot above is an optional engine.)</div>
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">DJ Toolkit</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="dj_toolkit_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• DJ tools inside the ecosystem</li>
+<li>• Workflow helpers</li>
+<li>• Access upgrades available</li>
+</ul>
+<button class="btn js-checkout" data-plan="dj_toolkit_monthly">Activate DJ Toolkit</button>
+</div>
+<div class="glass card goldBlock">
+<div class="cardK" style="color: rgba(250,204,21,.95);">Label Core</div>
+<div class="priceRow"><div class="price goldTitle"><span class="mono" data-price-for="label_core_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Catalog workflows + ops</li>
+<li>• Contract pipeline tools</li>
+<li>• Built for structured growth</li>
+</ul>
+<button class="btn js-checkout" data-plan="label_core_monthly">Activate Label Core</button>
+</div>
+<div class="glass card goldBlock">
+<div class="cardK" style="color: rgba(250,204,21,.95);">Label Pro</div>
+<div class="priceRow"><div class="price goldTitle"><span class="mono" data-price-for="label_pro_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Full label power lane</li>
+<li>• Scaling workflows</li>
+<li>• Best for serious releases</li>
+</ul>
+<button class="btn js-checkout" data-plan="label_pro_monthly">Upgrade to Label Pro</button>
+</div>
+</div>
+<div class="divider"></div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Contract Lab Pro</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="contract_lab_pro_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Advanced contract lab lane</li>
+<li>• Higher-output templates</li>
+<li>• Adds paid value to labels</li>
+</ul>
+<button class="btn js-checkout" data-plan="contract_lab_pro_monthly">Enable Contract Lab Pro</button>
+</div>
+<div class="glass card">
+<div class="cardK">Submissions Priority</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="submissions_priority_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Priority lane in review queue</li>
+<li>• Faster decision flow</li>
+<li>• Converts urgent artists</li>
+</ul>
+<button class="btn js-checkout" data-plan="submissions_priority_monthly">Enable Priority</button>
+</div>
+<div class="glass card">
+<div class="cardK">Distribution Assist</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="distribution_assist_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Release packaging lane</li>
+<li>• Rollout checklist + admin support</li>
+<li>• Smooths label operations</li>
+</ul>
+<button class="btn js-checkout" data-plan="distribution_assist_monthly">Enable Distribution Assist</button>
+</div>
+</div>
+</section>
+<!-- PROMO (UNCHANGED) -->
+<section class="section" id="promo">
+<div class="sectionHead">
+<div>
+<div class="sectionK">Promotion</div>
+<div class="sectionT">Promo &amp; Rotation Boosts</div>
+<div class="sectionP">Time-based visibility boosts across TKFM properties.</div>
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Homepage Feature</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="homepage_feature_artist">…</span></div></div>
+<ul class="ul">
+<li>• Front-facing placement</li>
+<li>• Drives clicks + attention</li>
+<li>• One-time feature</li>
+</ul>
+<button class="btn js-checkout" data-plan="homepage_feature_artist">Buy Homepage Feature</button>
+</div>
+<div class="glass card ringCyan">
+<div class="cardK" style="color: rgba(34,211,238,.95);">Rotation Boost</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="rotation_boost_campaign">…</span></div></div>
+<ul class="ul">
+<li>• Heavier rotation lane</li>
+<li>• Keeps the record moving</li>
+<li>• One-time campaign</li>
+</ul>
+<button class="btn btnHot js-checkout" data-plan="rotation_boost_campaign">Buy Rotation Boost</button>
+</div>
+<div class="glass card ringPink">
+<div class="cardK" style="color: rgba(236,72,153,.95);">Social Starter</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="social_starter_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Paid social lane access</li>
+<li>• Campaign submissions</li>
+<li>• Built for creators</li>
+</ul>
+<button class="btn btnCta js-checkout" data-plan="social_starter_monthly">Enable Social Starter</button>
+</div>
+</div>
+</section>
+<!-- NEW: PAID FEATURE PACKS -->
+<section class="section" id="packs">
+<div class="sectionHead">
+<div>
+<div class="sectionK">NEW One-Time Upsells</div>
+<div class="sectionT">Paid Feature Packs</div>
+<div class="sectionP">High-margin packs you can sell on top of any plan. Instant checkout, instant unlock.</div>
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Priority Submission Pack</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="priority_submission_pack">…</span></div></div>
+<ul class="ul">
+<li>• One-time priority lane token</li>
+<li>• Perfect for urgent drops</li>
+<li>• Instant upsell</li>
+</ul>
+<button class="btn js-checkout" data-plan="priority_submission_pack">Buy Pack</button>
+</div>
+<div class="glass card ringCyan">
+<div class="cardK" style="color: rgba(34,211,238,.95);">Playlist Pitch Pack</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="playlist_pitch_pack">…</span></div></div>
+<ul class="ul">
+<li>• Pitch formatting lane</li>
+<li>• Rollout support checklist</li>
+<li>• Great mid-ticket add-on</li>
+</ul>
+<button class="btn btnHot js-checkout" data-plan="playlist_pitch_pack">Buy Pack</button>
+</div>
+<div class="glass card ringPink">
+<div class="cardK" style="color: rgba(236,72,153,.95);">Press Run Pack</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="press_run_pack">…</span></div></div>
+<ul class="ul">
+<li>• EPK alignment + press kit lane</li>
+<li>• High-ticket, high-conversion</li>
+<li>• Built for serious releases</li>
+</ul>
+<button class="btn btnCta js-checkout" data-plan="press_run_pack">Buy Pack</button>
+</div>
+</div>
+<div class="divider"></div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Radio Interview Slot</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="radio_interview_slot">…</span></div></div>
+<ul class="ul">
+<li>• Scheduled interview lane</li>
+<li>• Creator growth product</li>
+<li>• One-time booking</li>
+</ul>
+<button class="btn js-checkout" data-plan="radio_interview_slot">Book Slot</button>
+</div>
+<div class="glass card goldBlock">
+<div class="cardK">Homepage Takeover Day</div>
+<div class="priceRow"><div class="price goldTitle"><span class="mono" data-price-for="homepage_takeover_day">…</span></div></div>
+<ul class="ul">
+<li>• Premium front-page domination</li>
+<li>• Perfect for release day</li>
+<li>• One-time takeover</li>
+</ul>
+<button class="btn js-checkout" data-plan="homepage_takeover_day">Buy Takeover Day</button>
+</div>
+<div class="glass card">
+<div class="cardK">Owner / Founder Access</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="owner_founder_access">…</span></div><div class="per"></div></div>
+<ul class="ul">
+<li>• Controlled by OWNER_EMAIL / PASSWORD</li>
+<li>• Admin consoles + God View</li>
+<li>• Not for public sale unless you decide</li>
+</ul>
+<button class="btn js-checkout" data-plan="owner_founder_access">Owner Only</button>
+</div>
+</div>
+</section>
+<!-- MIXTAPES (UNCHANGED PRICES) -->
+<section class="section" id="mixtapes">
+<div class="sectionHead">
+<div>
+<div class="sectionK">DJ KRAVE</div>
+<div class="sectionT">Professional Mixtape Hosting</div>
+<div class="sectionP">DJ-hosted releases + placement. Same tiers.</div>
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Starter</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="mixtape_hosting_starter">…</span></div></div>
+<ul class="ul"><li>• Hosted release lane + placement</li><li>• Clean rollout support</li></ul>
+<button class="btn js-checkout" data-plan="mixtape_hosting_starter">Buy Starter</button>
+</div>
+<div class="glass card ringCyan">
+<div class="cardK" style="color: rgba(34,211,238,.95);">Pro</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="mixtape_hosting_pro">…</span></div></div>
+<ul class="ul"><li>• Heavier placement</li><li>• Stronger rollout support</li></ul>
+<button class="btn btnHot js-checkout" data-plan="mixtape_hosting_pro">Buy Pro</button>
+</div>
+<div class="glass card ringPink">
+<div class="cardK" style="color: rgba(236,72,153,.95);">Elite</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="mixtape_hosting_elite">…</span></div></div>
+<ul class="ul"><li>• Top-tier hosting lane</li><li>• Maximum impact package</li></ul>
+<button class="btn btnCta js-checkout" data-plan="mixtape_hosting_elite">Buy Elite</button>
+</div>
+</div>
+</section>
+<!-- SPONSORS (UNCHANGED PRICES) -->
+<section class="section" id="sponsors">
+<div class="sectionHead">
+<div>
+<div class="sectionK">Brands</div>
+<div class="sectionT">Sponsors &amp; Takeovers</div>
+<div class="sectionP">Same sponsor lanes. Sponsor Autopilot is the new retention engine.</div>
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">Starter Sponsor</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="starter_sponsor_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul"><li>• Consistent visibility lane</li><li>• Great entry sponsor product</li></ul>
+<button class="btn js-checkout" data-plan="starter_sponsor_monthly">Activate Starter Sponsor</button>
+</div>
+<div class="glass card ringCyan">
+<div class="cardK" style="color: rgba(34,211,238,.95);">City Sponsor</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="sponsor_city_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul"><li>• Expanded placement</li><li>• Bigger campaign lane</li></ul>
+<button class="btn btnHot js-checkout" data-plan="sponsor_city_monthly">Activate City Sponsor</button>
+</div>
+<div class="glass card ringPink">
+<div class="cardK" style="color: rgba(236,72,153,.95);">Takeover Sponsor</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="sponsor_takeover_monthly">…</span></div><div class="per"></div></div>
+<ul class="ul"><li>• Major brand dominance</li><li>• Premium takeover lane</li></ul>
+<button class="btn btnCta js-checkout" data-plan="sponsor_takeover_monthly">Activate Takeover</button>
+</div>
+</div>
+</section>
+<!-- AI STORE (UNCHANGED PRICES) -->
+<section class="section" id="ai">
+<div class="sectionHead">
+<div>
+<div class="sectionK">AI Add-Ons</div>
+<div class="sectionT">AI Feature Store</div>
+<div class="sectionP">Same pricing. One-time creative assets.</div>
+</div>
+</div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">AI Radio Intro</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="ai_radio_intro">…</span></div></div>
+<ul class="ul"><li>• Station-style intro asset</li></ul>
+<button class="btn js-checkout" data-plan="ai_radio_intro">Buy AI Radio Intro</button>
+</div>
+<div class="glass card">
+<div class="cardK">Feature Verse Kit</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="ai_feature_verse_kit">…</span></div></div>
+<ul class="ul"><li>• AI-assisted feature components</li></ul>
+<button class="btn js-checkout" data-plan="ai_feature_verse_kit">Buy Feature Verse Kit</button>
+</div>
+<div class="glass card ringCyan">
+<div class="cardK" style="color: rgba(34,211,238,.95);">Imaging Pack</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="ai_imaging_pack">…</span></div></div>
+<ul class="ul"><li>• Station-ready imaging assets</li></ul>
+<button class="btn btnHot js-checkout" data-plan="ai_imaging_pack">Buy Imaging Pack</button>
+</div>
+</div>
+<div class="divider"></div>
+<div class="grid">
+<div class="glass card">
+<div class="cardK">AI Social Pack</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="ai_social_pack">…</span></div></div>
+<button class="btn js-checkout" data-plan="ai_social_pack">Buy AI Social Pack</button>
+</div>
+<div class="glass card ringPink">
+<div class="cardK" style="color: rgba(236,72,153,.95);">Launch Campaign</div>
+<div class="priceRow"><div class="price"><span class="mono" data-price-for="ai_launch_campaign">…</span></div></div>
+<button class="btn btnCta js-checkout" data-plan="ai_launch_campaign">Buy Launch Campaign</button>
+</div>
+<div class="glass card goldBlock">
+<div class="cardK">Label Brand Pack</div>
+<div class="priceRow"><div class="price goldTitle"><span class="mono" data-price-for="ai_label_brand_pack">…</span></div></div>
+<button class="btn js-checkout" data-plan="ai_label_brand_pack">Buy Label Brand Pack</button>
+</div>
+</div>
+<div class="divider"></div>
+<!-- POST-CHECKOUT FOOTER (CUSTOMER-FACING) -->
+<section aria-label="After checkout" class="instant-unlock">
+<div class="instant-unlock-inner">
+<div class="instant-title">Access activates immediately</div>
+<div class="instant-sub">
       Complete checkout and your plan/features turn on right away. Your account will show whats unlocked, and you can jump straight into your engines  promo, mixtapes, label tools, and more.
     </div>
-    <div class="instant-note">
+<div class="instant-note">
       Need help or want a custom package? Reach out and well build your lane.
     </div>
-  </div>
+</div>
 </section>
-
-  <footer>
-    <div class="wrap">
+<footer>
+<div class="wrap">
       © 2025 They Krave For Me Radio (TKFM)  Radio Neon + Label Gold  Built for independent artist power.
     </div>
-  </footer>
-<script type="module" src="/js/tkfm-checkout.js"></script>
-  <script type="module" src="/js/tkfm-logo-resolver.js"></script>
+</footer>
+<script src="/js/tkfm-checkout.js" type="module"></script>
+<script src="/js/tkfm-logo-resolver.js" type="module"></script>
 <script src="/js/tkfm-checkout.js"></script>
 <script src="/js/tkfm-checkout.js"></script>
 <script src="/js/tkfm-paid-lane-modal.js"></script>
-  <script src="/js/tkfm-sponsor-cta.js"></script>
-  <script src="/js/tkfm-label-studio-cta.js"></script>
+<script src="/js/tkfm-sponsor-cta.js"></script>
+<script src="/js/tkfm-label-studio-cta.js"></script>
+<script src="/js/tkfm-drops-tags-fix.js"></script>
+<script src="/js/tkfm-label-studio-create-cta.js"></script>
+<script src="/js/tkfm-pageviews.js"></script>
+<script src="/js/tkfm-view-badge.js"></script>
+</section></main>  <script type="module" src="/js/tkfm-launch-polish.js"></script>
+  <script type="module" src="/js/tkfm-launch-alerts-cta.js"></script>
 </body>
+<div style="padding:10px">
+<a class="btn ghost" href="/tkfm-catalog.html" style="text-decoration:none">Live Catalog</a>
+</div>
 </html>
