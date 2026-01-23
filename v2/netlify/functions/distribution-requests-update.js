@@ -2,6 +2,7 @@ import { loadItems, saveItems, nowISO } from "./_tkfm_distribution_store.mjs";
 import { ok, bad, json, isOptions } from "./_tkfm_cors.mjs";
 
 const ALLOWED_STATUS = new Set(["submitted","needs_info","approved","scheduled","published","rejected"]);
+const CONTRACT_STATUS = new Set(["unsigned","sent","signed"]);
 
 function sanitizeLinks(obj){
   const src = (obj && typeof obj === "object") ? obj : {};
@@ -13,33 +14,49 @@ function sanitizeLinks(obj){
   };
 }
 
+function trim(s,n){ return String(s||"").trim().slice(0,n); }
+
 export async function handler(event) {
-  if(isOptions(event)) return json(200, { ok:true });
+  if (isOptions(event)) return json(200, { ok: true });
 
   const method = (event.httpMethod || "GET").toUpperCase();
-  if(method !== "POST") return bad(405, "POST required");
+  if (method !== "POST") return bad(405, "POST required");
 
   let body = {};
-  try{ body = JSON.parse(event.body || "{}"); }catch(e){ return bad(400, "Invalid JSON"); }
+  try { body = JSON.parse(event.body || "{}"); } catch (e) { return bad(400, "Invalid JSON"); }
 
   const id = String(body.id || "").trim();
   const patch = (body.patch && typeof body.patch === "object") ? body.patch : null;
-  if(!id || !patch) return bad(400, "id and patch required");
+  if (!id || !patch) return bad(400, "id and patch required");
 
   const items = loadItems();
-  const idx = (Array.isArray(items) ? items : []).findIndex(x=>x && x.id === id);
-  if(idx < 0) return bad(404, "not_found", { id });
+  const idx = (Array.isArray(items) ? items : []).findIndex(x => x && x.id === id);
+  if (idx < 0) return bad(404, "not_found", { id });
 
   const cur = items[idx];
   const next = { ...cur };
 
-  if(typeof patch.status === "string"){
-    const s = patch.status.trim();
-    if(ALLOWED_STATUS.has(s)) next.status = s;
+  if (typeof patch.contract_status === "string") {
+    const cs = patch.contract_status.trim();
+    if (CONTRACT_STATUS.has(cs)) next.contract_status = cs;
+    if (cs === "sent" && !next.contract_sent_at) next.contract_sent_at = nowISO();
+    if (cs === "signed") next.contract_signed_at = nowISO();
   }
-  if(typeof patch.owner_notes === "string") next.owner_notes = patch.owner_notes;
-  if(typeof patch.client_message === "string") next.client_message = patch.client_message;
-  if(patch.publish_links) next.publish_links = sanitizeLinks(patch.publish_links);
+  if (typeof patch.contract_url === "string") next.contract_url = trim(patch.contract_url, 500);
+
+  if (typeof patch.status === "string") {
+    const s = patch.status.trim();
+    if (ALLOWED_STATUS.has(s)) {
+      if ((s === "scheduled" || s === "published") && String(next.contract_status || "unsigned") !== "signed") {
+        return bad(400, "contract_not_signed", { want_status: s, contract_status: next.contract_status || "unsigned" });
+      }
+      next.status = s;
+    }
+  }
+
+  if (typeof patch.owner_notes === "string") next.owner_notes = patch.owner_notes;
+  if (typeof patch.client_message === "string") next.client_message = patch.client_message;
+  if (patch.publish_links) next.publish_links = sanitizeLinks(patch.publish_links);
 
   next.updated_at = nowISO();
 
