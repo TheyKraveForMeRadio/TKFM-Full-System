@@ -6,6 +6,7 @@ function nowISO() { return new Date().toISOString(); }
 const args = process.argv.slice(2);
 const baseArgIndex = args.indexOf("--base");
 const BASE = baseArgIndex !== -1 && args[baseArgIndex + 1] ? args[baseArgIndex + 1] : "http://localhost:5173";
+const TIMEOUT_MS = Number((args.includes("--timeout") ? args[args.indexOf("--timeout")+1] : null) || 3500);
 
 const ROOT = process.cwd();
 const OUTDIR = path.join(ROOT, ".tkfm");
@@ -26,31 +27,14 @@ function listRootHtml() {
     .sort();
 }
 
-async function fetchStatus(url) {
-  try {
-    const res = await fetch(url, { redirect: "manual" });
-    return { ok: res.status >= 200 && res.status < 300, status: res.status };
-  } catch (e) {
-    return { ok: false, status: 0, error: String(e?.message || e) };
-  }
-}
-
 function normalizeHref(href) {
   if (!href) return null;
-
-  // drop hash/query
-  const clean = href.split("#")[0].split("?")[0];
-
-  // ignore external + mailto + tel
+  const clean = href.split("#")[0].split("?")[0].trim();
+  if (!clean) return null;
   if (clean.startsWith("http://") || clean.startsWith("https://")) return null;
   if (clean.startsWith("mailto:") || clean.startsWith("tel:")) return null;
-
-  // normalize relative -> absolute-from-root
   if (clean.startsWith("/")) return clean;
-
-  // allow "page.html" style links
   if (clean.toLowerCase().endsWith(".html")) return "/" + clean;
-
   return null;
 }
 
@@ -72,13 +56,41 @@ function isPublicPage(p) {
   return true;
 }
 
+async function fetchStatus(url) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { redirect: "manual", cache: "no-store", signal: ctrl.signal });
+    clearTimeout(t);
+    return { ok: res.status >= 200 && res.status < 300, status: res.status };
+  } catch (e) {
+    clearTimeout(t);
+    return { ok: false, status: 0, error: String(e?.name === "AbortError" ? "timeout" : (e?.message || e)) };
+  }
+}
+
+async function runBatched(items, worker, concurrency=10) {
+  const out = [];
+  let idx = 0;
+  async function next() {
+    while (idx < items.length) {
+      const i = idx++;
+      out[i] = await worker(items[i], i);
+    }
+  }
+  const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => next());
+  await Promise.all(workers);
+  return out;
+}
+
 async function main() {
   fs.mkdirSync(OUTDIR, { recursive: true });
 
   let report = "";
   report += "TKFM RELEASE QA\n";
   report += `Time: ${nowISO()}\n`;
-  report += `Base: ${BASE}\n\n`;
+  report += `Base: ${BASE}\n`;
+  report += `Timeout: ${TIMEOUT_MS}ms\n\n`;
 
   const homepage = await fetchStatus(`${BASE}/`);
   report += `Homepage: ${homepage.ok ? "200 OK" : `FAIL (${homepage.status})`} (${BASE}/)\n`;
@@ -94,7 +106,6 @@ async function main() {
 
   const rootPagesAll = listRootHtml();
   const rootPublic = rootPagesAll.filter(isPublicPage);
-
   report += `Public root HTML pages (excluding owner-* and protected): ${rootPublic.length}\n`;
 
   let sitemapHtml = "";
@@ -113,9 +124,13 @@ async function main() {
   report += `Checking reachability for sitemap pages (public): ${sitemapLinks.length}\n\n`;
 
   const failures = [];
-  for (const p of sitemapLinks) {
+  const results = await runBatched(sitemapLinks, async (p) => {
     const s = await fetchStatus(`${BASE}${p}`);
-    if (!s.ok) failures.push({ p, status: s.status, error: s.error });
+    return { p, ...s };
+  }, 12);
+
+  for (const r of results) {
+    if (!r.ok) failures.push(r);
   }
 
   if (failures.length) {
@@ -130,7 +145,7 @@ async function main() {
   report += "Professional checks:\n";
   for (const p of proChecks) {
     const s = await fetchStatus(`${BASE}${p}`);
-    report += ` - ${p}: ${s.ok ? "OK (200)" : `FAIL (${s.status})`}\n`;
+    report += ` - ${p}: ${s.ok ? "OK (200)" : `FAIL (${s.status})${s.error ? ` err=${s.error}` : ""}`}\n`;
   }
   report += "\n";
 

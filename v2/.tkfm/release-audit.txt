@@ -1,0 +1,22 @@
+TKFM RELEASE QA
+Time: 2026-01-23T17:03:45.560Z
+Base: http://127.0.0.1:9090
+Timeout: 2500ms
+
+Homepage: 200 OK (http://127.0.0.1:9090/)
+Sitemap:   200 OK (http://127.0.0.1:9090/tkfm-sitemap.html)
+
+Homepage links include /tkfm-sitemap.html: YES
+
+Public root HTML pages (excluding owner-* and protected): 118
+Sitemap HTML links found (public): 119
+
+Checking reachability for sitemap pages (public): 119
+
+OK: All sitemap pages reachable (200)
+
+Professional checks:
+ - /radio-hub.html: OK (200)
+ - /pricing.html: OK (200)
+ - /support.html: OK (200)
+
