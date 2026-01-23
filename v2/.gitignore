@@ -11,3 +11,4 @@ tkfm_checkout.json
 .env
 .netlify/
 scripts/tkfm-functions-serve-9999.sh
+.env.local

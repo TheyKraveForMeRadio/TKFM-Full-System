@@ -1,42 +1,46 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(pwd)"
-DIST="$ROOT/dist"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
 
-echo "== TKFM BUILD: STATIC MULTIPAGE -> dist =="
+echo "== TKFM multipage build =="
+echo "ROOT: $ROOT_DIR"
 
-echo "Clean dist..."
-rm -rf "$DIST"
-mkdir -p "$DIST"
+rm -rf dist
+mkdir -p dist
 
-# Copy all root HTML pages
-echo "Copy *.html -> dist/"
-find "$ROOT" -maxdepth 1 -type f -name "*.html" -print0 | while IFS= read -r -d '' f; do
-  cp -f "$f" "$DIST/"
+echo "Running: npm run build"
+npm run build
+
+mkdir -p dist
+
+echo "== Ensuring ALL root *.html pages are shipped into dist =="
+shopt -s nullglob
+for f in "$ROOT_DIR"/*.html; do
+  bn="$(basename "$f")"
+  cp -f "$f" "$ROOT_DIR/dist/$bn"
+  echo " + $bn"
 done
+shopt -u nullglob
 
-# Copy root text files + netlify redirects
-for f in _redirects _headers robots.txt sitemap.xml; do
-  if [ -f "$ROOT/$f" ]; then
-    cp -f "$ROOT/$f" "$DIST/"
+echo "== Copying required static files into dist (if present) =="
+for rf in "_redirects" "robots.txt" "sitemap.xml" "manifest.webmanifest" "favicon.ico" "og-image.png"; do
+  if [ -f "$ROOT_DIR/$rf" ]; then
+    cp -f "$ROOT_DIR/$rf" "$ROOT_DIR/dist/$rf"
+    echo " + $rf"
   fi
 done
 
-# Copy asset folders if present
-for d in js css public; do
-  if [ -d "$ROOT/$d" ]; then
-    echo "Copy $d/ -> dist/$d/"
-    mkdir -p "$DIST/$d"
-    # Use cp for portability
-    cp -R "$ROOT/$d/." "$DIST/$d/"
-  fi
-done
-
-# Mirror public/* into dist/ root too (Vite-like behavior)
-if [ -d "$ROOT/public" ]; then
-  echo "Copy public/* -> dist/ root (asset root)"
-  cp -R "$ROOT/public/." "$DIST/"
+if [ -d "$ROOT_DIR/public" ]; then
+  cp -R "$ROOT_DIR/public/." "$ROOT_DIR/dist/" 2>/dev/null || true
+  echo " + public/* → dist/"
 fi
 
-echo "OK: dist packed" && ls -la "$DIST" | head -n 20
+if [ -d "$ROOT_DIR/js" ]; then
+  mkdir -p "$ROOT_DIR/dist/js"
+  cp -R "$ROOT_DIR/js/." "$ROOT_DIR/dist/js/" 2>/dev/null || true
+  echo " + js/* → dist/js/"
+fi
+
+echo "== DONE: dist now contains ALL pages =="

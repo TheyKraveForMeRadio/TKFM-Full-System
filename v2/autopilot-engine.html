@@ -21,6 +21,11 @@
     .btn{border-radius:999px;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;padding:.6rem 1rem;white-space:nowrap}
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
   </style>
+  <script src="/js/tkfm-functions-client.js" defer></script>
+  <script src="/js/tkfm-universal-price.js" defer></script>
+  <script src="/js/tkfm-universal-checkout.js" defer></script>
+  <link rel="stylesheet" href="/css/tkfm-global-shell.css">
+  <script src="/js/tkfm-global-shell.js" defer></script>
 </head>
 <body class="text-slate-50 min-h-screen">
   <div id="tkfmOwnerLock"></div>
@@ -57,7 +62,7 @@
         Login as owner first. We won’t auto-redirect (no blinking).
       </p>
       <div class="mt-4 flex flex-wrap gap-2">
-        <a class="btn border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15"
+        <a class="btn border border-pink-500/40 bg-pink-500/10 text-pink-100 hover:bg-pink-500/15" href="/owner-login.html">Owner Login</a>
         <button class="btn border border-slate-500/40 bg-slate-500/10 text-slate-100 hover:bg-slate-500/15" id="clear">
           Clear Owner Session
         </button>

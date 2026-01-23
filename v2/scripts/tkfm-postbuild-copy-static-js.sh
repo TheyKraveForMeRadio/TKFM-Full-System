@@ -3,29 +3,15 @@ set -euo pipefail
 
 mkdir -p dist/js
 
-copy_one () {
-  local src="$1"
-  local dst="$2"
-  if [ -f "$src" ]; then
-    cp -f "$src" "$dst"
-  fi
-}
+# Copy ALL js/*.js (ensures new fix scripts ship)
+if [ -d "js" ]; then
+  cp -f js/*.js dist/js/ 2>/dev/null || true
+fi
 
-# Owner guard scripts
-copy_one public/js/tkfm-owner-guard.js dist/js/tkfm-owner-guard.js
-copy_one public/js/tkfm-owner-gate-no-redirect.js dist/js/tkfm-owner-gate-no-redirect.js
-copy_one js/tkfm-owner-guard.js dist/js/tkfm-owner-guard.js
-copy_one js/tkfm-owner-gate-no-redirect.js dist/js/tkfm-owner-gate-no-redirect.js
+# Copy public/js too if present
+if [ -d "public/js" ]; then
+  cp -f public/js/*.js dist/js/ 2>/dev/null || true
+fi
 
-# Paid lane scripts
-copy_one public/js/tkfm-paid-lane-modal.js dist/js/tkfm-paid-lane-modal.js
-copy_one public/js/tkfm-paid-lane-submit.js dist/js/tkfm-paid-lane-submit.js
-copy_one js/tkfm-paid-lane-modal.js dist/js/tkfm-paid-lane-modal.js
-copy_one js/tkfm-paid-lane-submit.js dist/js/tkfm-paid-lane-submit.js
-
-# Quick checkout (if present)
-copy_one public/js/tkfm-quick-checkout.js dist/js/tkfm-quick-checkout.js
-copy_one js/tkfm-quick-checkout.js dist/js/tkfm-quick-checkout.js
-
-echo "OK: postbuild copied critical static js into dist/js"
-ls -la dist/js | sed -n '1,60p'
+echo "OK: postbuild copied js/*.js into dist/js"
+ls -la dist/js 2>/dev/null | head -n 50 || true
