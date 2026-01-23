@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Owner — Distribution Ops</title>
+  <meta name="description" content="Owner queue for TKFM Distribution Assist (review, status, scheduling, publish links)."/>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --gold:#facc15; --gold2:#eab308; --amber:#f97316;
+      --t:rgba(226,232,240,1);
+      --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit}
+    .bg{position:fixed;inset:0;z-index:-10}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(250,204,21,.14), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(249,115,22,.10), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.10), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(168,85,247,.10), transparent 70%);
+      filter: blur(2px);
+      opacity:.98;
+    }
+    header{
+      position:sticky;top:0;z-index:80;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .title{font-weight:950;letter-spacing:.06em}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(250,204,21,.55);box-shadow:0 0 0 1px rgba(250,204,21,.14),0 0 22px rgba(250,204,21,.10)}
+
+    main{max-width:1240px;margin:0 auto;padding:18px 22px 56px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:38px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--gold),var(--amber),rgba(34,211,238,.95),rgba(168,85,247,.95));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:16px 0;background:linear-gradient(90deg,transparent,rgba(250,204,21,.20),rgba(249,115,22,.12),transparent)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+      display:inline-flex;align-items:center;justify-content:center;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.70);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(250,204,21,.65);box-shadow:0 0 0 1px rgba(250,204,21,.16),0 0 22px rgba(250,204,21,.08);background:linear-gradient(90deg, rgba(250,204,21,.14), rgba(249,115,22,.08))}
+    .input, .select, .ta{
+      padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.22);
+      background:rgba(15,23,42,.60);
+      color:rgba(226,232,240,.95);
+      outline:none;
+    }
+    .ta{min-height:120px;resize:vertical}
+    .input:focus, .select:focus, .ta:focus{border-color:rgba(250,204,21,.70);box-shadow:0 0 0 4px rgba(250,204,21,.10)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    .tr{background:rgba(2,6,23,.55);border:1px solid rgba(148,163,184,.16);border-radius:16px}
+    .td{padding:12px 12px;border-top:1px solid rgba(148,163,184,.10);border-bottom:1px solid rgba(148,163,184,.10)}
+    .td:first-child{border-left:1px solid rgba(148,163,184,.10);border-top-left-radius:16px;border-bottom-left-radius:16px}
+    .td:last-child{border-right:1px solid rgba(148,163,184,.10);border-top-right-radius:16px;border-bottom-right-radius:16px}
+    .mini{font-size:12px;color:rgba(148,163,184,.95);line-height:1.5}
+    .badge{padding:7px 10px;border-radius:999px;border:1px solid rgba(250,204,21,.28);background:rgba(250,204,21,.06);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+    .muted{color:rgba(148,163,184,.95)}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:1100px){.split{grid-template-columns:1fr}}
+  </style>
+
+  <!-- OWNER GUARD -->
+  <script src="/js/tkfm-owner-guard.js"></script>
+  <script src="/js/tkfm-owner-gate-no-redirect.js"></script>
+  <script src="/js/tkfm-functions-client.js" defer></script>
+  <link rel="stylesheet" href="/css/tkfm-global-shell.css">
+  <script src="/js/tkfm-global-shell.js" defer></script>
+</head>
+
+<body data-tkfm-theme="records">
+  <div id="tkfmOwnerLock"></div>
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <div>
+        <div class="k">Owner Ops</div>
+        <div class="title">Distribution Queue</div>
+      </div>
+      <nav class="nav" aria-label="Owner Nav">
+        <a class="pill" href="/owner-ops-dashboard.html">Owner Ops</a>
+        <a class="pill" href="/owner-now-playing.html">Now Playing</a>
+        <a class="pill hot" href="/owner-distribution-ops.html">Distribution</a>
+        <a class="pill" href="/distribution-engine.html">Public Page</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="glass card">
+      <div class="k">Queue</div>
+      <div class="h1"><span class="grad">Review → Approve → Schedule → Publish</span></div>
+      <p class="p">V1 MVP queue is file-backed in local/dev and memory-backed elsewhere. It’s enough to run your workflow right now.</p>
+
+      <div class="divider"></div>
+
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div class="row" style="gap:10px">
+          <select class="select" id="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="submitted">Submitted</option>
+            <option value="needs_info">Needs info</option>
+            <option value="approved">Approved</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="published">Published</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <input class="input" id="search" placeholder="Search name / email / title..." style="min-width:280px"/>
+        </div>
+        <div class="row">
+          <button class="btn" id="refreshBtn" type="button">Refresh</button>
+          <button class="btn btnHot" id="newTestBtn" type="button">Create test item</button>
+        </div>
+      </div>
+
+      <div class="mini" id="meta" style="margin-top:10px">Ready.</div>
+
+      <div class="divider"></div>
+
+      <div style="overflow:auto">
+        <table class="table" aria-label="Distribution requests">
+          <thead>
+            <tr class="muted" style="text-transform:uppercase;letter-spacing:.14em;font-size:11px">
+              <th style="text-align:left;padding:0 6px">ID</th>
+              <th style="text-align:left;padding:0 6px">Client</th>
+              <th style="text-align:left;padding:0 6px">Title</th>
+              <th style="text-align:left;padding:0 6px">Type</th>
+              <th style="text-align:left;padding:0 6px">Status</th>
+              <th style="text-align:left;padding:0 6px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">Selected</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">Update a release</div>
+      <p class="p">Set status, add owner notes, store DSP links, and generate the public landing link.</p>
+
+      <div class="divider"></div>
+
+      <div class="split">
+        <div>
+          <div class="grid">
+            <div>
+              <div class="k">Request ID</div>
+              <div class="row" style="margin-top:10px">
+                <input class="input" id="selId" placeholder="Select an item from the table" readonly style="flex:1"/>
+                <a class="btn" id="openPublic" href="/release.html" target="_blank" rel="noopener">Open landing</a>
+              </div>
+              <div class="mini" id="selSummary" style="margin-top:10px">No item selected.</div>
+            </div>
+            <div>
+              <div class="k">Status</div>
+              <div class="row" style="margin-top:10px">
+                <select class="select" id="selStatus" style="flex:1">
+                  <option value="submitted">Submitted</option>
+                  <option value="needs_info">Needs info</option>
+                  <option value="approved">Approved</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="published">Published</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <button class="btn btnHot" id="saveStatus" type="button">Save</button>
+              </div>
+              <div class="mini" id="saveMeta" style="margin-top:10px"></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="k">Owner notes (internal)</div>
+          <textarea class="ta" id="ownerNotes" placeholder="Notes for the TKFM team..."></textarea>
+
+          <div class="row" style="margin-top:10px;justify-content:flex-end">
+            <button class="btn" id="saveNotes" type="button">Save notes</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="k">Client message (optional)</div>
+          <textarea class="ta" id="clientMsg" placeholder="Short message shown on landing page (e.g., 'Needs clean WAVs + updated cover credits')"></textarea>
+
+          <div class="row" style="margin-top:10px;justify-content:flex-end">
+            <button class="btn" id="saveClientMsg" type="button">Save message</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="k">Publish links</div>
+          <div class="mini">When you have links, paste them here. Landing page will show them instantly.</div>
+
+          <div class="grid" style="margin-top:10px">
+            <div class="field">
+              <div class="k">Spotify</div>
+              <input class="input" id="linkSpotify" placeholder="https://open.spotify.com/..."/>
+            </div>
+            <div class="field">
+              <div class="k">Apple Music</div>
+              <input class="input" id="linkApple" placeholder="https://music.apple.com/..."/>
+            </div>
+            <div class="field">
+              <div class="k">YouTube</div>
+              <input class="input" id="linkYouTube" placeholder="https://music.youtube.com/... or https://youtu.be/..."/>
+            </div>
+            <div class="field">
+              <div class="k">Other</div>
+              <input class="input" id="linkOther" placeholder="TIDAL / Amazon / Pandora link"/>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="k">Assets (from client)</div>
+          <textarea class="ta" id="assetsView" readonly placeholder="Select a request to see the assets..."></textarea>
+
+          <div class="row" style="margin-top:10px;justify-content:space-between">
+            <button class="btn" id="copyAssets" type="button">Copy assets</button>
+            <button class="btn btnHot" id="saveLinks" type="button">Save links</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/nav-sanitize.js"></script>
+  <script src="/js/tkfm-distribution-owner.js"></script>
+</body>
+</html>

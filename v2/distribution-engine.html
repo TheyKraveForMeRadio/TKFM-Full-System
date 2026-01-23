@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Distribution — Submit a Release</title>
+  <meta name="description" content="Submit Singles, EPs, Albums, and Mixtapes to TKFM Distribution Assist — contract-gated, transparent process, status tracking."/>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --gold:#facc15; --gold2:#eab308; --amber:#f97316;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1);
+      --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--t);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit}
+    .bg{position:fixed;inset:0;z-index:-10}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(250,204,21,.14), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(249,115,22,.10), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(168,85,247,.10), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(34,211,238,.08), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.98;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(250,204,21,.07) 0px, rgba(250,204,21,.07) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(249,115,22,.06) 0px, rgba(249,115,22,.06) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.14;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+
+    header{
+      position:sticky;top:0;z-index:80;
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid rgba(30,41,59,.65);
+      backdrop-filter:blur(14px);
+    }
+    header .wrap{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;min-width:260px}
+    .logo{
+      width:46px;height:46px;border-radius:14px;position:relative;overflow:hidden;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(2,6,23,.62);
+      box-shadow:0 0 0 1px rgba(255,255,255,.03),0 18px 60px rgba(0,0,0,.45);
+    }
+    .logo:before{
+      content:"";position:absolute;inset:-12px;border-radius:16px;
+      background:
+        radial-gradient(closest-side at 50% 50%, rgba(250,204,21,.18), transparent 70%),
+        radial-gradient(closest-side at 35% 65%, rgba(249,115,22,.14), transparent 72%),
+        radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.10), transparent 72%);
+      filter:blur(10px);opacity:.95;pointer-events:none;
+    }
+    .logo img{position:absolute;inset:0;margin:auto;height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 18px rgba(250,204,21,.12))}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .title{font-weight:950;letter-spacing:.06em}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .pill{
+      padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(15,23,42,.62);
+      font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(226,232,240,.95);
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(250,204,21,.55);box-shadow:0 0 0 1px rgba(250,204,21,.14),0 0 22px rgba(250,204,21,.10)}
+
+    main{max-width:1240px;margin:0 auto;padding:18px 22px 56px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:44px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--gold),var(--amber),var(--c),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:16px 0;background:linear-gradient(90deg,transparent,rgba(250,204,21,.20),rgba(249,115,22,.12),transparent)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .field{display:flex;flex-direction:column;gap:8px}
+    .label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92);font-weight:900}
+    .input, .select, .ta{
+      padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.22);
+      background:rgba(15,23,42,.60);
+      color:rgba(226,232,240,.95);
+      outline:none;
+    }
+    .ta{min-height:110px;resize:vertical}
+    .input:focus, .select:focus, .ta:focus{border-color:rgba(250,204,21,.70);box-shadow:0 0 0 4px rgba(250,204,21,.10)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{
+      padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.72);
+      color:rgba(226,232,240,.96);
+      cursor:pointer;
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease;
+      white-space:nowrap;
+      display:inline-flex;align-items:center;justify-content:center;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.70);background:rgba(15,23,42,.92)}
+    .btnHot{
+      border-color:rgba(250,204,21,.65);
+      box-shadow:0 0 0 1px rgba(250,204,21,.16),0 0 22px rgba(250,204,21,.08);
+      background:linear-gradient(90deg, rgba(250,204,21,.14), rgba(249,115,22,.08));
+    }
+    .tag{
+      padding:8px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.22);
+      background:rgba(255,255,255,.03);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+      color:rgba(226,232,240,.90)
+    }
+    .ok{border:1px solid rgba(16,185,129,.30);background:rgba(16,185,129,.07);border-radius:16px;padding:12px}
+    .warn{border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.06);border-radius:16px;padding:12px}
+    .mini{font-size:12px;color:rgba(148,163,184,.95);line-height:1.55}
+    code{color:var(--c)}
+  </style>
+
+  <script src="/js/tkfm-fx.js"></script>
+  <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
+  <script src="/js/tkfm-functions-client.js" defer></script>
+  <link rel="stylesheet" href="/css/tkfm-global-shell.css">
+  <script src="/js/tkfm-global-shell.js" defer></script>
+</head>
+
+<body data-tkfm-theme="records">
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <a class="brand" href="/index.html">
+        <div class="logo" aria-hidden="true"><img src="/tkfm-records-logo.png" alt="TKFM Records"/></div>
+        <div>
+          <div class="k">TKFM Records</div>
+          <div class="title">Distribution Assist</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Distribution Nav">
+        <a class="pill" href="/start-here.html">Start Here</a>
+        <a class="pill" href="/radio-hub.html">On Air</a>
+        <a class="pill" href="/label-hub.html">Records Hub</a>
+        <a class="pill hot" href="/distribution-engine.html">Distribution</a>
+        <a class="pill" href="/pricing.html">Monthly Tiers</a>
+        <a class="pill" href="/client-vault.html">My Portal</a>
+        <a class="pill" href="/tkfm-sitemap.html">Site Map</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="glass card">
+      <div class="k">Submit a Release</div>
+      <div class="h1"><span class="grad">One upload. One workflow. Real status.</span></div>
+      <p class="p">
+        TKFM Distribution Assist is the clean, contract‑gated lane for Singles, EPs, Albums, and Mixtapes.
+        Submit your pack, we review it, schedule it, and track it — while you keep your ownership.
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div class="row" style="gap:8px">
+          <span class="tag">Singles</span>
+          <span class="tag">EPs</span>
+          <span class="tag">Albums</span>
+          <span class="tag">Mixtapes</span>
+          <span class="tag">Landing Page</span>
+          <span class="tag">Monthly Statements</span>
+        </div>
+        <div class="mini" style="max-width:520px;text-align:right">
+          V1 MVP stores submissions in a local/dev queue. When you deploy, you’ll wire the same lane to your official distributor workflow.
+        </div>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">Step 1 — Your info</div>
+
+      <div class="grid" style="margin-top:12px">
+        <div class="field">
+          <div class="label">Name</div>
+          <input class="input" id="name" placeholder="Your name / stage name"/>
+        </div>
+        <div class="field">
+          <div class="label">Email</div>
+          <input class="input" id="email" placeholder="you@email.com"/>
+        </div>
+        <div class="field">
+          <div class="label">I am a</div>
+          <select class="select" id="role">
+            <option value="artist">Artist</option>
+            <option value="dj">DJ</option>
+            <option value="producer">Producer</option>
+            <option value="label">Label / Team</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="label">Release type</div>
+          <select class="select" id="releaseType">
+            <option value="single">Single</option>
+            <option value="ep">EP</option>
+            <option value="album">Album</option>
+            <option value="mixtape">Mixtape</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="k">Step 2 — Release details</div>
+
+      <div class="grid" style="margin-top:12px">
+        <div class="field">
+          <div class="label">Project title</div>
+          <input class="input" id="projectTitle" placeholder="Project / Release title"/>
+        </div>
+        <div class="field">
+          <div class="label">Primary artist</div>
+          <input class="input" id="primaryArtist" placeholder="Primary artist name"/>
+        </div>
+        <div class="field">
+          <div class="label">Genre</div>
+          <input class="input" id="genre" placeholder="Hip-Hop, R&B, Drill, Afrobeat..."/>
+        </div>
+        <div class="field">
+          <div class="label">Release date</div>
+          <input class="input" id="releaseDate" type="date"/>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:12px">
+        <div class="field">
+          <div class="label">Tracklist</div>
+          <textarea class="ta" id="tracklist" placeholder="One line per track:
+01 - Track Name
+02 - Track Name (feat ...)
+..."></textarea>
+          <div class="mini">V1 supports URL-based uploads. If you use Cloudinary, paste the links or use the Upload helper below.</div>
+        </div>
+        <div class="field">
+          <div class="label">Assets (URLs)</div>
+          <textarea class="ta" id="assetUrls" placeholder="Paste URLs (one per line):
+- Audio file(s) (WAV/MP3)
+- Cover art (JPG/PNG)
+- Lyrics / credits PDF (optional)"></textarea>
+          <div class="row">
+            <button class="btn" type="button" id="uploadHelpBtn">Upload helper</button>
+            <button class="btn" type="button" id="autofillBtn">Autofill from last submit</button>
+          </div>
+          <div class="mini">Upload helper can use unsigned Cloudinary uploads if you set <code>CLOUD_NAME</code> + <code>UPLOAD_PRESET</code> (stored locally in your browser).</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="k">Step 3 — Targets + add-ons</div>
+
+      <div class="grid" style="margin-top:12px">
+        <div class="field">
+          <div class="label">DSP Targets</div>
+          <div class="row" style="gap:8px">
+            <label class="tag"><input type="checkbox" class="dsp" value="spotify" checked/> Spotify</label>
+            <label class="tag"><input type="checkbox" class="dsp" value="apple_music" checked/> Apple Music</label>
+            <label class="tag"><input type="checkbox" class="dsp" value="itunes" checked/> iTunes</label>
+            <label class="tag"><input type="checkbox" class="dsp" value="tidal"/> TIDAL</label>
+            <label class="tag"><input type="checkbox" class="dsp" value="pandora"/> Pandora</label>
+            <label class="tag"><input type="checkbox" class="dsp" value="amazon"/> Amazon</label>
+            <label class="tag"><input type="checkbox" class="dsp" value="youtube_music"/> YouTube Music</label>
+          </div>
+          <div class="mini" style="margin-top:8px">V1 is “Distribution Assist” — your submission moves through the TKFM publishing queue and status system.</div>
+        </div>
+
+        <div class="field">
+          <div class="label">TKFM Add‑ons</div>
+          <div class="row" style="gap:8px">
+            <label class="tag"><input type="checkbox" class="addon" value="radio_add" checked/> Add to TKFM Radio</label>
+            <label class="tag"><input type="checkbox" class="addon" value="featured_rail"/> Featured Rail</label>
+            <label class="tag"><input type="checkbox" class="addon" value="social_boost"/> Social Boost</label>
+            <label class="tag"><input type="checkbox" class="addon" value="press_push"/> Press Push</label>
+          </div>
+          <div class="mini" style="margin-top:8px">Add‑ons can be sold via Stripe products later — V1 captures intent + routes to the right engines.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="k">Step 4 — Agreement</div>
+      <div class="warn" style="margin-top:10px">
+        <div style="font-weight:950">Non‑exclusive 1‑year royalty share contract required before publish.</div>
+        <div class="mini" style="margin-top:6px">
+          V1 MVP uses a simple acknowledgment checkbox. Swap this for PandaDoc (or Contract Lab signature) when ready.
+        </div>
+        <div class="row" style="margin-top:10px">
+          <label class="mini" style="display:flex;gap:10px;align-items:flex-start">
+            <input type="checkbox" id="contractAck"/>
+            <span>I agree to sign a 1‑year non‑exclusive royalty share contract (royalty split set by TKFM) before my release is published.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div class="mini" id="submitMeta">Ready.</div>
+        <div class="row">
+          <a class="btn" href="/client-vault.html">My Portal</a>
+          <button class="btn btnHot" type="button" id="submitBtn">Submit Release</button>
+        </div>
+      </div>
+
+      <div id="result" style="margin-top:12px;display:none"></div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">What you get</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">A transparent publishing process</div>
+      <p class="p">
+        Your submission becomes a tracked job: review → needs info / approved → scheduled → published → monthly statements.
+        You’ll also get a TKFM landing page for promo links.
+      </p>
+      <div class="divider"></div>
+      <div class="grid">
+        <div class="ok">
+          <div style="font-weight:950">Status + Notes</div>
+          <div class="mini">Never wonder “what’s happening” — every release has a visible status.</div>
+        </div>
+        <div class="ok">
+          <div style="font-weight:950">Landing Page</div>
+          <div class="mini">A single link to promote your project across TKFM + DSPs.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Upload helper modal -->
+  <div id="uploadModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;align-items:center;justify-content:center;padding:18px">
+    <div class="glass card" style="max-width:760px;width:100%">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="k">Cloudinary Upload Helper</div>
+          <div class="h1" style="font-size:26px;margin-top:10px">Upload → paste links into Assets</div>
+          <p class="p">This is optional. If you already host files, just paste URLs in the Assets box.</p>
+        </div>
+        <button class="btn" type="button" id="closeUpload">Close</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="field">
+          <div class="label">Cloud name</div>
+          <input class="input" id="cloudName" placeholder="ex: tkfmradio"/>
+        </div>
+        <div class="field">
+          <div class="label">Unsigned upload preset</div>
+          <input class="input" id="uploadPreset" placeholder="ex: tkfm_unsigned"/>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="field">
+          <div class="label">Select files</div>
+          <input class="input" id="files" type="file" multiple/>
+          <div class="mini">Audio + artwork allowed. Uploads go to Cloudinary and return URLs.</div>
+        </div>
+        <div class="field">
+          <div class="label">Output links</div>
+          <textarea class="ta" id="uploadOut" placeholder="Uploaded file URLs will appear here..."></textarea>
+          <div class="row">
+            <button class="btn" type="button" id="copyLinks">Copy links</button>
+            <button class="btn btnHot" type="button" id="uploadGo">Upload</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mini" id="uploadMeta" style="margin-top:10px;color:rgba(148,163,184,.95)"></div>
+    </div>
+  </div>
+
+  <script src="/js/nav-sanitize.js"></script>
+  <script src="/js/tkfm-distribution-engine.js"></script>
+  <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'records' });</script>
+</body>
+</html>

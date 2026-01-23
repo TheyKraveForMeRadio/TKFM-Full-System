@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Release</title>
+  <meta name="description" content="TKFM release landing page — smart links + status."/>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --gold:#facc15; --amber:#f97316;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1);
+      --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--t);background:var(--bg);overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    .bg{position:fixed;inset:0;z-index:-10}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(250,204,21,.14), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(249,115,22,.10), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(168,85,247,.10), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(34,211,238,.08), transparent 70%);
+      filter: blur(2px);
+      opacity:.98;
+    }
+    header{position:sticky;top:0;z-index:80;background:rgba(0,0,0,.72);border-bottom:1px solid rgba(30,41,59,.65);backdrop-filter:blur(14px)}
+    header .wrap{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;min-width:260px}
+    .logo{width:46px;height:46px;border-radius:14px;position:relative;overflow:hidden;border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.62);box-shadow:0 0 0 1px rgba(255,255,255,.03),0 18px 60px rgba(0,0,0,.45)}
+    .logo:before{content:"";position:absolute;inset:-12px;border-radius:16px;background:radial-gradient(closest-side at 50% 50%, rgba(250,204,21,.18), transparent 70%),radial-gradient(closest-side at 35% 65%, rgba(249,115,22,.14), transparent 72%),radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.10), transparent 72%);filter:blur(10px);opacity:.95;pointer-events:none}
+    .logo img{position:absolute;inset:0;margin:auto;height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 18px rgba(250,204,21,.12))}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .title{font-weight:950;letter-spacing:.06em}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .pill{padding:10px 14px;border-radius:999px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.62);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.95);transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap}
+    .pill:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.65);background:rgba(15,23,42,.90)}
+    main{max-width:1240px;margin:0 auto;padding:18px 22px 56px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:44px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--gold),var(--amber),var(--c),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:16px 0;background:linear-gradient(90deg,transparent,rgba(250,204,21,.20),rgba(249,115,22,.12),transparent)}
+    .grid{display:grid;grid-template-columns:.7fr 1.3fr;gap:14px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .cover{width:100%;aspect-ratio:1/1;border-radius:22px;border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.55);overflow:hidden}
+    .cover img{width:100%;height:100%;object-fit:cover}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{padding:11px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.34);background:rgba(15,23,42,.72);color:rgba(226,232,240,.96);cursor:pointer;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center}
+    .btn:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.70);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(250,204,21,.65);box-shadow:0 0 0 1px rgba(250,204,21,.16),0 0 22px rgba(250,204,21,.08);background:linear-gradient(90deg, rgba(250,204,21,.14), rgba(249,115,22,.08))}
+    .mini{font-size:12px;color:rgba(148,163,184,.95);line-height:1.55}
+    .tag{padding:8px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.22);background:rgba(255,255,255,.03);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(226,232,240,.90)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    pre{white-space:pre-wrap}
+  </style>
+
+  <script src="/js/tkfm-functions-client.js" defer></script>
+  <link rel="stylesheet" href="/css/tkfm-global-shell.css">
+  <script src="/js/tkfm-global-shell.js" defer></script>
+</head>
+
+<body data-tkfm-theme="records">
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <a class="brand" href="/index.html">
+        <div class="logo" aria-hidden="true"><img src="/tkfm-records-logo.png" alt="TKFM Records"/></div>
+        <div>
+          <div class="k">TKFM Records</div>
+          <div class="title">Release</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Release Nav">
+        <a class="pill" href="/distribution-engine.html">Submit</a>
+        <a class="pill" href="/radio-hub.html">On Air</a>
+        <a class="pill" href="/label-hub.html">Records Hub</a>
+        <a class="pill" href="/client-vault.html">My Portal</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="glass card">
+      <div class="k">TKFM Release Landing</div>
+      <div class="h1"><span class="grad" id="title">Loading…</span></div>
+      <p class="p" id="subtitle">Fetching release…</p>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <div class="glass card">
+        <div class="cover" id="cover"></div>
+        <div class="divider"></div>
+        <div class="k">Status</div>
+        <div class="row" style="margin-top:10px">
+          <span class="tag" id="statusTag">…</span>
+          <span class="mini" id="updatedAt"></span>
+        </div>
+        <div class="mini" id="clientMsg" style="margin-top:10px"></div>
+      </div>
+
+      <div class="glass card">
+        <div class="k">Listen</div>
+        <div class="btnRow" id="links"></div>
+        <div class="divider"></div>
+        <div class="k">Tracklist</div>
+        <pre class="mini" id="tracklist" style="margin-top:10px"></pre>
+        <div class="divider"></div>
+        <div class="k">About</div>
+        <div class="mini" id="about" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">Powered by</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">TKFM Distribution Assist</div>
+      <p class="p">Want distribution + promo + radio placement? Submit your release and move through the TKFM workflow.</p>
+      <div class="btnRow">
+        <a class="btn btnHot" href="/distribution-engine.html">Submit a Release</a>
+        <a class="btn" href="/radio-hub.html">Go On Air</a>
+        <a class="btn" href="/start-here.html">Start Here</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/nav-sanitize.js"></script>
+  <script src="/js/tkfm-release-page.js"></script>
+</body>
+</html>
