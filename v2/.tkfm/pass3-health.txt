@@ -1,0 +1,45 @@
+TKFM PASS 3 — HTML HEALTH SCAN
+Time: 2026-01-23T14:24:24.822Z
+Files scanned: 148
+
+MISSING </body>: 0
+
+MISSING </html>: 0
+
+FOUND /public/ PATHS: 0
+
+EMPTY href="": 4
+ - owner-boost-dashboard.html
+ - owner-featured-manager.html
+ - owner-media-features.html
+ - owner-paid-lane-inbox.html
+
+href="#": 4
+ - live.html
+ - owner-boost-checkout-debug.html
+ - radio-podcasts.html
+ - radio-tv.html
+
+SUSPICIOUS <a ... LINE (no >): 21
+ - artist-submissions-console.html:255
+ - artist-upload.html:35
+ - dashboard.html:228
+ - dj-mixtape-hosting.html:48
+ - feature-engine.html:223
+ - index.html:34
+ - label-home.html:13
+ - label-hub.html:45
+ - mixtape-catalog.html:93
+ - owner-boost-analytics.html:101
+ - owner-boost-dashboard.html:55
+ - owner-featured-manager.html:54
+ - owner-media-features.html:62
+ - owner-paid-lane-inbox.html:56
+ - owner-podcast-approvals.html:179
+ - owner-stripe-verifier.html:51
+ - podcast-engine.html:118
+ - pricing.html:191
+ - radio-hub.html:220
+ - rotation-boost.html:45
+ - social-engine.html:190
+
