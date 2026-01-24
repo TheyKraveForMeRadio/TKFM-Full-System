@@ -34,6 +34,11 @@
   <script src="/js/tkfm-quick-checkout.js"></script>
   <script src="/js/tkfm-paid-lane-modal.js" defer></script>
   <script src="/js/tkfm-paid-lane-submit.js" defer></script>  <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
+  <script src="/js/tkfm-functions-client.js" defer></script>
+  <script src="/js/tkfm-universal-price.js" defer></script>
+  <script src="/js/tkfm-universal-checkout.js" defer></script>
+  <link rel="stylesheet" href="/css/tkfm-global-shell.css">
+  <script src="/js/tkfm-global-shell.js" defer></script>
 </head>
 <body data-requires="creator_pass_monthly" data-gate-title="🔒 TKFM Creator Access Required" data-gate-message="Upgrade to Creator Pass to unlock this page." class="text-slate-50 min-h-screen flex flex-col" data-tkfm-theme="label">
 <!-- TKFM: DASHBOARD PILL -->
@@ -53,7 +58,7 @@
   <!-- NAV -->
   <header class="w-full border-b border-slate-800/80 bg-black/70 backdrop-blur-xl sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-      <a href="label-home.html" class="flex items-center gap-3">
+      <a href="/label-home.html" class="flex items-center gap-3">
         <img src="/tkfm-records-logo.png" alt="TKFM Records" class="h-9 w-auto object-contain" />
         <div class="leading-tight">
           <div class="text-[0.6rem] uppercase tracking-[0.35em] text-amber-300/80">
@@ -65,25 +70,47 @@
         </div>
       </a>
       <nav class="ml-auto flex flex-wrap gap-2 text-[0.7rem] uppercase tracking-[0.22em]">
-        <a href="index.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
-          <span>🎚</span><span>Radio Home</span>
+        <a href="/index.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
+          <span>🏠</span><span>Home</span>
         </a>
-        <a href="radio-hub.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/80 text-slate-100 flex items-center gap-1">
+        <a href="/radio-hub.html" class="px-3 py-1 rounded-full border border-sky-400/80 bg-sky-400/10 text-sky-200 flex items-center gap-1">
           <span>📻</span><span>Radio Hub</span>
         </a>
-        <a href="records-application.html" class="px-3 py-1 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-1">
+        <a href="/label-hub.html" class="px-3 py-1 rounded-full border border-yellow-300/80 bg-yellow-300/10 text-yellow-100 flex items-center gap-1">
+          <span>🏛</span><span>Records Hub</span>
+        </a>
+        <a href="/label-studio-hub.html" class="px-3 py-1 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-1">
+          <span>🎛</span><span>Studio</span>
+        </a>
+        <a href="/records-application.html" class="px-3 py-1 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-1">
           <span>📝</span><span>Apply</span>
         </a>
-        <a href="label-records-applications.html" class="px-3 py-1 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-1">
+        <a href="/label-records-applications.html" class="px-3 py-1 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-1">
           <span>📂</span><span>Queue</span>
         </a>
-        <a href="label-contract-lab.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-1">
+        <a href="/label-contract-lab.html" class="px-3 py-1 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-1">
           <span>📜</span><span>Contracts</span>
         </a>
-        <a href="god-view.html" class="px-3 py-1 rounded-full border border-yellow-300/80 bg-yellow-300/10 text-yellow-100 flex items-center gap-1">
+        <a href="/app-hub.html" class="px-3 py-1 rounded-full border border-purple-400/80 bg-purple-400/10 text-purple-100 flex items-center gap-1">
+          <span>⚡</span><span>Engines</span>
+        </a>
+        <a href="/tkfm-catalog.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-100 flex items-center gap-1">
+          <span>🧾</span><span>Catalog</span>
+        </a>
+        <a href="/client-vault.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-100 flex items-center gap-1">
+          <span>👤</span><span>My Portal</span>
+        </a>
+        <a href="/tkfm-sitemap.html" class="px-3 py-1 rounded-full border border-slate-700/80 bg-slate-950/70 text-slate-100 flex items-center gap-1">
+          <span>🗺</span><span>Site Map</span>
+        </a>
+        <a href="/pricing.html" class="px-3 py-1 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100 flex items-center gap-1">
+          <span>💳</span><span>Tiers</span>
+        </a>
+        <a href="/god-view.html" class="px-3 py-1 rounded-full border border-yellow-300/80 bg-yellow-300/10 text-yellow-100 flex items-center gap-1">
           <span>👁</span><span>GOD VIEW</span>
         </a>
-      </nav>
+        <a class="pill" href="/start-here.html">Start Here</a>
+</nav>
     </div>
   </header>
 <!-- TKFM: BOOST NAV LINK -->
@@ -110,7 +137,24 @@
 
   <!-- MAIN -->
   <main class="flex-1">
-    <section class="max-w-6xl mx-auto px-4 pt-8 pb-12 space-y-7">
+    
+    <section class="tkfmQuickStart" style="margin:14px 0 0;padding:0 18px">
+      <div style="border-radius:22px;border:1px solid rgba(250,204,21,.22);background:rgba(2,6,23,.72);box-shadow:0 18px 60px rgba(0,0,0,.55);padding:14px 14px">
+        <div style="font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(148,163,184,1)">TKFM Records Quick Start</div>
+        <div style="font-weight:950;font-size:22px;letter-spacing:.02em;margin-top:6px;color:rgba(226,232,240,1)">Create → Checkout → Deliverables</div>
+        <div style="color:rgba(148,163,184,.95);font-size:13px;line-height:1.55;margin-top:6px;max-width:980px">
+          1) Open Label Studio → 2) Buy credits/plan → 3) Submit deliverable → 4) Track status in <a href="/client-vault.html" style="color:#facc15;text-decoration:underline">My Portal</a>.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+          <a href="/label-studio-hub.html" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(250,204,21,.35);background:linear-gradient(90deg, rgba(250,204,21,.14), rgba(249,115,22,.12));color:rgba(226,232,240,1);font-weight:950;letter-spacing:.08em;font-size:12px">Label Studio Hub</a>
+          <a href="/label-studio-create-ultimate.html" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.55);color:rgba(226,232,240,1);font-weight:950;letter-spacing:.08em;font-size:12px">Create Ultimate</a>
+          <a href="/tkfm-catalog.html" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.55);color:rgba(226,232,240,1);font-weight:950;letter-spacing:.08em;font-size:12px">Catalog</a>
+          <a href="/tkfm-sitemap.html" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.55);color:rgba(226,232,240,1);font-weight:950;letter-spacing:.08em;font-size:12px">Site Map</a>
+        </div>
+      </div>
+    </section>
+
+<section class="max-w-6xl mx-auto px-4 pt-8 pb-12 space-y-7">
 
       <!-- HERO -->
       <div class="flex flex-col lg:flex-row gap-6 items-start">
@@ -134,13 +178,13 @@
           </p>
 
           <div class="flex flex-wrap gap-3 text-[0.8rem] mt-1">
-            <a href="records-application.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 font-medium">
+            <a href="/records-application.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 font-medium">
               <span>📝</span><span>Open Artist Application</span>
             </a>
-            <a href="label-records-applications.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100">
+            <a href="/label-records-applications.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100">
               <span>📂</span><span>Review Label Queue</span>
             </a>
-            <a href="label-contract-lab.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
+            <a href="/label-contract-lab.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100">
               <span>📜</span><span>Open Contract Lab</span>
             </a>
           </div>
@@ -214,7 +258,7 @@
             </p>
           </div>
           <div class="flex-1 flex justify-end w-full">
-            <a href="momentum-engine.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 text-[0.78rem] uppercase tracking-[0.22em]">
+            <a href="/momentum-engine.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 text-[0.78rem] uppercase tracking-[0.22em]">
               <span>View Motion</span><span class="text-xs">↗</span>
             </a>
           </div>
@@ -257,10 +301,10 @@
             </li>
           </ul>
           <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
-            <a href="records-application.html" class="px-3 py-1.5 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-2">
+            <a href="/records-application.html" class="px-3 py-1.5 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-2">
               <span>📝</span><span>View Application Form</span>
             </a>
-            <a href="label-records-applications.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+            <a href="/label-records-applications.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
               <span>📂</span><span>Open Review Queue</span>
             </a>
           </div>
@@ -299,10 +343,10 @@
             </li>
           </ul>
           <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
-            <a href="label-contract-lab.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-2">
+            <a href="/label-contract-lab.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-2">
               <span>📜</span><span>Open Contract Lab</span>
             </a>
-            <a href="label-contract-output.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+            <a href="/label-contract-output.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
               <span>📄</span><span>Latest Output</span>
             </a>
           </div>
@@ -340,10 +384,10 @@
             </li>
           </ul>
           <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
-            <a href="label-mixtape-spotlight.html" class="px-3 py-1.5 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-2">
+            <a href="/label-mixtape-spotlight.html" class="px-3 py-1.5 rounded-full border border-amber-400/80 bg-amber-400/10 text-amber-100 flex items-center gap-2">
               <span>🌟</span><span>Spotlight Console</span>
             </a>
-            <a href="autopilot-engine.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100 flex items-center gap-2">
+            <a href="/autopilot-engine.html" class="px-3 py-1.5 rounded-full border border-cyan-400/80 bg-cyan-400/10 text-cyan-100 flex items-center gap-2">
               <span>⚙</span><span>Autopilot Engine</span>
             </a>
           </div>
@@ -381,10 +425,10 @@
             </li>
           </ul>
           <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
-            <a href="label-sponsor-engine.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+            <a href="/label-sponsor-engine.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
               <span>💼</span><span>Label Sponsor Engine</span>
             </a>
-            <a href="label-revenue-console.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-2">
+            <a href="/label-revenue-console.html" class="px-3 py-1.5 rounded-full border border-emerald-400/80 bg-emerald-400/10 text-emerald-100 flex items-center gap-2">
               <span>📊</span><span>Revenue Console</span>
             </a>
           </div>
@@ -449,10 +493,10 @@
             </li>
           </ul>
           <div class="flex flex-wrap gap-2 mt-2 text-[0.78rem]">
-            <a href="ai-dj-engine.html" class="px-3 py-1.5 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-100 flex items-center gap-2">
+            <a href="/ai-dj-engine.html" class="px-3 py-1.5 rounded-full border border-pink-400/80 bg-pink-400/10 text-pink-100 flex items-center gap-2">
               <span>🤖</span><span>AI DJ Engine</span>
             </a>
-            <a href="news.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
+            <a href="/news.html" class="px-3 py-1.5 rounded-full border border-slate-600/80 bg-slate-900/90 text-slate-100 flex items-center gap-2">
               <span>📰</span><span>News Feed</span>
             </a>
           </div>
@@ -528,5 +572,6 @@
   <script type="module" src="/js/tkfm-logo-resolver.js"></script>
 <script src="/js/tkfm-checkout.js"></script>
 <script src="/js/tkfm-paid-lane-modal.js"></script>
+  <script type="module" src="/js/tkfm-launch-polish.js"></script>
 </body>
 </html>

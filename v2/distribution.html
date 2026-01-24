@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TKFM Distribution Assist — Distribute Your Music</title>
+  <meta name="description" content="Distribute Singles, EPs, and Albums with TKFM Distribution Assist. Transparent publishing, analytics-ready workflow, and TKFM audience access."/>
+  <link rel="icon" href="/favicon.ico"/>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --gold:#facc15; --gold2:#eab308; --amber:#f97316;
+      --p:#a855f7; --pk:#ec4899; --c:#22d3ee; --b:#3b82f6;
+      --t:rgba(226,232,240,1);
+      --m:rgba(148,163,184,.95);
+      --stroke:rgba(148,163,184,.18);
+      --panel:rgba(2,6,23,.86);
+      --shadow:0 0 0 1px rgba(255,255,255,.04),0 22px 70px rgba(0,0,0,.55);
+      --r:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--t);background:var(--bg);overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit}
+    .bg{position:fixed;inset:0;z-index:-10}
+    .bg:before{
+      content:"";position:absolute;inset:-35%;
+      background:
+        radial-gradient(900px 560px at 12% 10%, rgba(250,204,21,.16), transparent 60%),
+        radial-gradient(900px 560px at 88% 14%, rgba(249,115,22,.12), transparent 60%),
+        radial-gradient(900px 560px at 52% 92%, rgba(34,211,238,.10), transparent 60%),
+        radial-gradient(1100px 650px at 74% 70%, rgba(168,85,247,.10), transparent 70%);
+      filter: blur(2px);
+      animation: drift 10.5s ease-in-out infinite;
+      opacity:.98;
+    }
+    .bg:after{
+      content:"";position:absolute;inset:-25%;
+      background:
+        repeating-linear-gradient(0deg, rgba(250,204,21,.07) 0px, rgba(250,204,21,.07) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(249,115,22,.06) 0px, rgba(249,115,22,.06) 1px, transparent 1px, transparent 36px);
+      transform: rotate(-6deg);
+      opacity:.14;
+      animation: grid 16s linear infinite;
+    }
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
+    @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+
+    header{position:sticky;top:0;z-index:80;background:rgba(0,0,0,.72);border-bottom:1px solid rgba(30,41,59,.65);backdrop-filter:blur(14px)}
+    header .wrap{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;min-width:260px}
+    .logo{width:46px;height:46px;border-radius:14px;position:relative;overflow:hidden;border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.62);box-shadow:0 0 0 1px rgba(255,255,255,.03),0 18px 60px rgba(0,0,0,.45)}
+    .logo:before{content:"";position:absolute;inset:-12px;border-radius:16px;background:
+      radial-gradient(closest-side at 50% 50%, rgba(250,204,21,.18), transparent 70%),
+      radial-gradient(closest-side at 35% 65%, rgba(249,115,22,.14), transparent 72%),
+      radial-gradient(closest-side at 70% 30%, rgba(34,211,238,.10), transparent 72%);
+      filter:blur(10px);opacity:.95;pointer-events:none}
+    .logo img{position:absolute;inset:0;margin:auto;height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 18px rgba(250,204,21,.12))}
+    .k{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--m)}
+    .title{font-weight:950;letter-spacing:.06em}
+    .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .pill{padding:10px 14px;border-radius:999px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.62);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.95);transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap}
+    .pill:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(250,204,21,.55);box-shadow:0 0 0 1px rgba(250,204,21,.14),0 0 22px rgba(250,204,21,.10)}
+
+    main{max-width:1240px;margin:0 auto;padding:18px 22px 56px}
+    .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+    .card{padding:18px;border-radius:28px}
+    .h1{margin:10px 0 0;font-size:44px;line-height:1.05;font-weight:950}
+    .grad{background-image:linear-gradient(90deg,var(--gold),var(--amber),var(--c),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
+    .divider{height:1px;margin:16px 0;background:linear-gradient(90deg,transparent,rgba(250,204,21,.20),rgba(249,115,22,.12),transparent)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media(max-width:1100px){.grid{grid-template-columns:1fr}}
+    .tile{border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.55);border-radius:22px;padding:14px;position:relative;overflow:hidden}
+    .tile:before{content:"";position:absolute;inset:-2px;background:radial-gradient(560px 240px at 12% 12%,rgba(250,204,21,.12),transparent 60%),radial-gradient(560px 240px at 86% 16%,rgba(249,115,22,.10),transparent 60%);opacity:.95;pointer-events:none}
+    .tile>*{position:relative}
+    .tileH{font-size:18px;font-weight:950;margin-top:6px}
+    .tileP{margin-top:8px;color:rgba(148,163,184,.95);font-size:13px;line-height:1.55}
+    .tag{padding:7px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.55);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)}
+    .btn{padding:11px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.34);background:rgba(15,23,42,.72);color:rgba(226,232,240,.96);cursor:pointer;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center}
+    .btn:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.70);background:rgba(15,23,42,.92)}
+    .btnHot{border-color:rgba(250,204,21,.65);box-shadow:0 0 0 1px rgba(250,204,21,.16),0 0 22px rgba(250,204,21,.08);background:linear-gradient(90deg, rgba(250,204,21,.14), rgba(249,115,22,.08))}
+    .warn{border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.06);border-radius:16px;padding:12px}
+    .steps{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    @media(max-width:1100px){.steps{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:620px){.steps{grid-template-columns:1fr}}
+    .step{border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.55);border-radius:18px;padding:12px}
+    .num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:12px;border:1px solid rgba(250,204,21,.28);background:rgba(250,204,21,.06);font-weight:950}
+    .faq{border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.55);border-radius:18px;padding:12px}
+    .q{font-weight:950}
+    .a{margin-top:6px;color:rgba(148,163,184,.95);line-height:1.55;font-size:13px}
+    code{color:var(--c)}
+  </style>
+
+  <script src="/js/tkfm-fx.js"></script>
+  <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
+  <script src="/js/tkfm-functions-client.js" defer></script>
+  <script src="/js/tkfm-universal-price.js" defer></script>
+  <script src="/js/tkfm-universal-checkout.js" defer></script>
+  <link rel="stylesheet" href="/css/tkfm-global-shell.css">
+  <script src="/js/tkfm-global-shell.js" defer></script>
+</head>
+
+<body data-tkfm-theme="records">
+  <div class="bg"></div>
+
+  <header>
+    <div class="wrap">
+      <a class="brand" href="/index.html">
+        <div class="logo" aria-hidden="true"><img src="/tkfm-records-logo.png" alt="TKFM Records"/></div>
+        <div>
+          <div class="k">TKFM Records</div>
+          <div class="title">Distribution Assist</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Distribution Nav">
+        <a class="pill" href="/start-here.html">Start Here</a>
+        <a class="pill" href="/radio-hub.html">On Air</a>
+        <a class="pill" href="/label-hub.html">Records Hub</a>
+        <a class="pill hot" href="/distribution.html">Distribution</a>
+        <a class="pill" href="/pricing.html">Monthly Tiers</a>
+        <a class="pill" href="/client-vault.html">My Portal</a>
+        <a class="pill" href="/tkfm-sitemap.html">Site Map</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="glass card">
+      <div class="k">Distribute your music</div>
+      <div class="h1"><span class="grad">One upload. One workflow. Everywhere.</span></div>
+      <p class="p">
+        Distribute Singles, EPs and Albums with TKFM Distribution Assist — plus get access to the TKFM audience and a clean,
+        tracked publishing process. You keep ownership. We operate the pipeline.
+      </p>
+      <div class="divider"></div>
+      <div class="row">
+        <a class="btn btnHot" href="/distribution-engine.html">Submit a Release</a>
+        <a class="btn" href="/client-vault.html">My Portal</a>
+        <a class="btn" href="/royalty-statements.html">Statements</a>
+        <a class="btn" href="/payout-profile.html">Payout Profile</a>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">Benefits</div>
+      <div class="grid" style="margin-top:12px">
+        <div class="tile">
+          <div class="row"><span class="tag">Global Reach</span><span class="tag">DSP</span></div>
+          <div class="tileH">Reach English‑speakers globally</div>
+          <div class="tileP">Release to major platforms and build a real footprint. Your music travels.</div>
+        </div>
+        <div class="tile">
+          <div class="row"><span class="tag">Analytics</span><span class="tag">Earnings</span></div>
+          <div class="tileH">Track streams + earnings</div>
+          <div class="tileP">Statements → payout ledger → paid status. Transparent split tracking.</div>
+        </div>
+        <div class="tile">
+          <div class="row"><span class="tag">Audience</span><span class="tag">TKFM</span></div>
+          <div class="tileH">Exclusive TKFM audience access</div>
+          <div class="tileP">You’re connected to a radio + label ecosystem built for independent artists.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">Platform</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">Create releases with ease</div>
+      <p class="p">Submit once. Track status. Get a landing page. Upgrade promo with TKFM engines.</p>
+      <div class="divider"></div>
+      <div class="grid">
+        <div class="tile"><div class="tileH">Transparent publishing</div><div class="tileP">Review → contract gate → scheduled → published → monthly statements.</div></div>
+        <div class="tile"><div class="tileH">Control your projects</div><div class="tileP">Clear communication and visibility through the pipeline.</div></div>
+        <div class="tile"><div class="tileH">Performance on the go</div><div class="tileP">Statements + payouts in your portal.</div></div>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">How it works</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">A real pipeline — not a dead end</div>
+      <div class="divider"></div>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><div class="tileH" style="font-size:14px">Create Account</div><div class="a">Start on TKFMradio.com.</div></div>
+        <div class="step"><div class="num">2</div><div class="tileH" style="font-size:14px">Select Plan</div><div class="a">One‑off or monthly.</div></div>
+        <div class="step"><div class="num">3</div><div class="tileH" style="font-size:14px">Sign Contract</div><div class="a">Required before scheduling.</div></div>
+        <div class="step"><div class="num">4</div><div class="tileH" style="font-size:14px">Submit Release</div><div class="a">Upload assets + metadata.</div></div>
+        <div class="step"><div class="num">5</div><div class="tileH" style="font-size:14px">Publish</div><div class="a">DSP links added to landing page.</div></div>
+        <div class="step"><div class="num">6</div><div class="tileH" style="font-size:14px">Get Paid</div><div class="a">Statements → payouts via PayPal/ACH.</div></div>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">Plans</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">Choose a lane</div>
+      <p class="p">Prices load live when available. Checkout uses lookup_key.</p>
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div class="tile">
+          <div class="row"><span class="tag">One‑off</span><span class="tag">Single</span></div>
+          <div class="tileH">Single Release</div>
+          <div class="tileP">One project distribution assist + landing page + tracking.</div>
+          <div class="row" style="margin-top:10px;justify-content:space-between">
+            <div class="tag">Price: <span data-price-for="distribution_single_release">…</span></div>
+            <div class="tag">lookup_key: <code>distribution_single_release</code></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn btnHot tkfm-checkout" data-plan="distribution_single_release" type="button">Buy Single</button>
+            <a class="btn" href="/distribution-engine.html">Submit</a>
+          </div>
+        </div>
+
+        <div class="tile">
+          <div class="row"><span class="tag">Monthly</span><span class="tag">Artist</span></div>
+          <div class="tileH">Artist Monthly</div>
+          <div class="tileP">Ongoing releases + priority processing + monthly reporting.</div>
+          <div class="row" style="margin-top:10px;justify-content:space-between">
+            <div class="tag">Price: <span data-price-for="distribution_artist_monthly">…</span></div>
+            <div class="tag">lookup_key: <code>distribution_artist_monthly</code></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn btnHot tkfm-checkout" data-plan="distribution_artist_monthly" type="button">Start Plan</button>
+            <a class="btn" href="/distribution-engine.html">Submit</a>
+          </div>
+        </div>
+
+        <div class="tile">
+          <div class="row"><span class="tag">Monthly</span><span class="tag">Label</span></div>
+          <div class="tileH">Label Monthly</div>
+          <div class="tileP">Multiple artists + release scheduling + priority support.</div>
+          <div class="row" style="margin-top:10px;justify-content:space-between">
+            <div class="tag">Price: <span data-price-for="distribution_label_monthly">…</span></div>
+            <div class="tag">lookup_key: <code>distribution_label_monthly</code></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn btnHot tkfm-checkout" data-plan="distribution_label_monthly" type="button">Start Label</button>
+            <a class="btn" href="/distribution-engine.html">Submit</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="warn" style="margin-top:12px">
+        <div style="font-weight:950">Contract Gate is enforced</div>
+        <div class="a">Releases cannot be Scheduled/Published until contract status is Signed.</div>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">FAQ</div>
+      <div class="divider"></div>
+      <div class="faq">
+        <div class="q">Do I keep my rights?</div>
+        <div class="a">Yes. Non‑exclusive. You keep ownership. TKFM runs the workflow.</div>
+      </div>
+      <div class="faq" style="margin-top:10px">
+        <div class="q">How do payouts work?</div>
+        <div class="a">Statements imported → payout ledger generated → payouts marked paid via PayPal/ACH.</div>
+      </div>
+      <div class="faq" style="margin-top:10px">
+        <div class="q">Can I add promo?</div>
+        <div class="a">Yes — Feature Engine, Social Engine, Rotation Boost, Radio-TV placements.</div>
+      </div>
+    </section>
+
+    <section class="glass card" style="margin-top:14px">
+      <div class="k">Ready?</div>
+      <div class="h1" style="font-size:28px;margin-top:10px">Submit your release</div>
+      <p class="p">Start the workflow now.</p>
+      <div class="row" style="margin-top:12px">
+        <a class="btn btnHot" href="/distribution-engine.html">Open Distribution Engine</a>
+        <a class="btn" href="/start-here.html">Start Here</a>
+        <a class="btn" href="/client-vault.html">My Portal</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/nav-sanitize.js"></script>
+  <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'records' });</script>
+  <script type="module" src="/js/tkfm-launch-polish.js"></script>
+</body>
+</html>
