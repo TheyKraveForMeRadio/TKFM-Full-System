@@ -1,12 +1,13 @@
+import { getEmail, setEmail, getToken, setToken, authLogin, authHeader } from "/js/tkfm-secure-client-auth.js";
+
 (function(){
   const $=(id)=>document.getElementById(id);
-  const KEY="tkfm_distribution_email";
 
   function money(n){ const x=Number(n||0); return "$"+x.toFixed(2); }
   function esc(s){ return String(s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
 
   async function getJSON(url){
-    const res = await fetch(url, { cache:"no-store" });
+    const res = await fetch(url, { cache:"no-store", headers: { ...authHeader() } });
     const txt = await res.text();
     let data=null; try{ data=JSON.parse(txt);}catch(e){}
     return { ok: res.ok, status: res.status, text: txt, data };
@@ -35,29 +36,49 @@
       const net=money(l.net_amount||0);
       const artist=money(l.artist_amount||0);
       const split=esc(String(l.artist_split||60))+"/"+esc(String(l.tkfm_split||40));
-      return `<div style="margin-top:8px"><b>${title}</b><div style="opacity:.85">${dsp} • ${per} • ${cur} • Net ${net} • Artist ${artist} • Split ${split}</div></div>`;
+      const fee = Number(l.admin_fee_applied||0) ? (" • Fee "+money(l.admin_fee_applied)) : "";
+      return `<div style="margin-top:8px"><b>${title}</b><div style="opacity:.85">${dsp} • ${per} • ${cur} • Net ${net} • Artist ${artist} • Split ${split}${fee}</div></div>`;
     }).join("");
+  }
+
+  async function ensureAuth(email){
+    if(getToken()) return true;
+    const code = prompt("Enter TKFM Access Code to view statements:", "");
+    if(!code) return false;
+    const out = await authLogin(email, code);
+    if(!out.ok || !out.data || !out.data.ok){
+      $("lines").innerHTML = "<div class='warn'><b>Auth failed</b><pre>"+esc(out.text)+"</pre></div>";
+      return false;
+    }
+    setToken(out.data.token);
+    return true;
   }
 
   async function load(){
     const email=($("email").value||"").trim().toLowerCase();
     if(!email) return;
-    try{ localStorage.setItem(KEY,email);}catch(e){}
+    setEmail(email);
+
+    if(!(await ensureAuth(email))) return;
+
     const out=await getJSON("/.netlify/functions/statements-client?email="+encodeURIComponent(email));
     if(!out.ok || !out.data || !out.data.ok){
-      $("lines").innerHTML="<div class='warn'>Load failed.</div>";
+      $("lines").innerHTML="<div class='warn'><b>Load failed</b><pre>"+esc(out.text)+"</pre></div>";
       return;
     }
+
     const t=out.data.totals||{};
     $("tArtist").textContent="Artist: "+money(t.artist_amount||0);
     $("tPaid").textContent="Paid: "+money(t.paid||0);
     $("tUnpaid").textContent="Unpaid: "+money(t.unpaid||0);
     $("tTKFM").textContent="TKFM: "+money(t.tkfm_amount||0);
+
     $("payouts").innerHTML=renderPayouts(out.data.payouts||[]);
     $("lines").innerHTML=renderLines(out.data.lines||[]);
   }
 
   $("loadBtn").addEventListener("click", load);
 
-  try{ const e=localStorage.getItem(KEY)||""; if(e) $("email").value=e; }catch(e){}
+  const e=getEmail();
+  if(e) $("email").value=e;
 })();

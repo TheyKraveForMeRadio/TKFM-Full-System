@@ -1,13 +1,7 @@
 import { loadPayouts, savePayouts, nowISO } from "./_tkfm_payouts_store.mjs";
 import { loadProfiles } from "./_tkfm_payout_profiles_store.mjs";
 import { ok, bad, json, isOptions } from "./_tkfm_cors.mjs";
-
-function ownerOk(event){
-  const want = process.env.TKFM_OWNER_KEY || process.env.OWNER_KEY || "";
-  if(!want) return true;
-  const got = (event.headers && (event.headers["x-tkfm-owner-key"] || event.headers["X-TKFM-OWNER-KEY"])) || "";
-  return String(got) === String(want);
-}
+import { authEnabled, verifyBearer, emailFromPayload, requireOwner } from "./_tkfm_auth.mjs";
 
 function lower(s){ return String(s||"").trim().toLowerCase(); }
 
@@ -40,16 +34,22 @@ export async function handler(event){
     const items=(store.items||[]);
 
     if(email){
+      if(authEnabled()){
+        const v = verifyBearer(event);
+        if(!v.ok) return bad(401, v.error, { detail: v.detail || "" });
+        const tokEmail = emailFromPayload(v.payload);
+        if(tokEmail !== email) return bad(403, "email_mismatch");
+      }
       const out = items.filter(x=>lower(x.email||"")===email).slice(0,limit);
       return ok({ scope:"email", email, items: attachProfile(out) });
     }
 
-    if(!ownerOk(event)) return bad(403,"owner_key_required_or_use_email_filter");
+    if(!requireOwner(event)) return bad(403,"owner_key_required");
     return ok({ scope:"owner", items: attachProfile(items.slice(0,limit)) });
   }
 
   if(method==="POST"){
-    if(!ownerOk(event)) return bad(403,"owner_key_required");
+    if(!requireOwner(event)) return bad(403,"owner_key_required");
     let body={}; try{ body=JSON.parse(event.body||"{}"); }catch(e){ return bad(400,"Invalid JSON"); }
 
     const id=String(body.id||"").trim();
