@@ -15,6 +15,11 @@ function sanitizeLinks(obj){
 }
 
 function trim(s,n){ return String(s||"").trim().slice(0,n); }
+function clampNum(n, lo, hi){
+  const x = Number(n);
+  if(!Number.isFinite(x)) return null;
+  return Math.max(lo, Math.min(hi, x));
+}
 
 export async function handler(event) {
   if (isOptions(event)) return json(200, { ok: true });
@@ -43,6 +48,23 @@ export async function handler(event) {
     if (cs === "signed") next.contract_signed_at = nowISO();
   }
   if (typeof patch.contract_url === "string") next.contract_url = trim(patch.contract_url, 500);
+
+  if (patch.artist_split !== undefined) {
+    const v = clampNum(patch.artist_split, 0, 100);
+    if (v !== null) next.artist_split = v;
+  }
+  if (patch.tkfm_split !== undefined) {
+    const v = clampNum(patch.tkfm_split, 0, 100);
+    if (v !== null) next.tkfm_split = v;
+  }
+  if (typeof next.artist_split === "number" && typeof next.tkfm_split === "number") {
+    const sum = next.artist_split + next.tkfm_split;
+    if (sum !== 100) next.tkfm_split = Math.max(0, 100 - next.artist_split);
+  }
+  if (patch.admin_fee !== undefined) {
+    const v = clampNum(patch.admin_fee, 0, 1000000);
+    if (v !== null) next.admin_fee = v;
+  }
 
   if (typeof patch.status === "string") {
     const s = patch.status.trim();

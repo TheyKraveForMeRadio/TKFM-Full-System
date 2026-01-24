@@ -26,6 +26,7 @@
     try{ data = JSON.parse(txt); }catch(e){}
     return { ok: res.ok, status: res.status, text: txt, data };
   }
+
   function esc(s){ return String(s||'').replace(/[&<>"']/g, (c)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
   function fmtStatus(s){ return String(s||'submitted').replace(/_/g,' ').toUpperCase(); }
   function fmtContract(s){ return String(s||'unsigned').toUpperCase(); }
@@ -43,20 +44,23 @@
 
   function render(){
     if(!rowsEl) return;
-    const list = applyFilters(cache).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+    const list = applyFilters(cache).sort((a,b)=>(String(b.created_at||'')).localeCompare(String(a.created_at||'')));
     rowsEl.innerHTML = list.map(it=>{
       const id = esc(it.id);
       const title = esc(it.project_title||'');
       const type = esc(it.release_type||'');
       const status = esc(it.status||'submitted');
       const cs = esc(it.contract_status||'unsigned');
+      const artistSplit = (typeof it.artist_split==='number'?it.artist_split:60);
+      const tkfmSplit = (typeof it.tkfm_split==='number'?it.tkfm_split:40);
+      const fee = (typeof it.admin_fee==='number'?it.admin_fee:0);
       return (
         '<tr class="tr" data-id="'+id+'">'+
           '<td class="td"><div class="mini"><code>'+id+'</code></div><div class="mini">'+esc((it.created_at||'').slice(0,19).replace('T',' '))+'</div></td>'+
           '<td class="td"><div style="font-weight:950">'+esc(it.name||'')+'</div><div class="mini">'+esc(it.email||'')+'</div></td>'+
           '<td class="td"><div style="font-weight:950">'+title+'</div><div class="mini">'+esc(it.primary_artist||'')+'</div></td>'+
           '<td class="td"><span class="badge">'+type+'</span></td>'+
-          '<td class="td"><span class="badge">'+fmtContract(cs)+'</span></td>'+
+          '<td class="td"><span class="badge">'+fmtContract(cs)+'</span><div class="mini">Split '+artistSplit+'/'+tkfmSplit+' • Fee $'+fee+'</div></td>'+
           '<td class="td"><span class="badge">'+fmtStatus(status)+'</span></td>'+
           '<td class="td"><button class="btn btnHot" type="button" data-open="'+id+'">Open</button></td>'+
         '</tr>'
@@ -73,15 +77,22 @@
     $('ownerNotes').value = it.owner_notes || '';
     $('clientMsg').value = it.client_message || '';
     $('assetsView').value = Array.isArray(it.asset_urls) ? it.asset_urls.join('\n') : '';
+
     const links = it.publish_links || {};
     $('linkSpotify').value = links.spotify || '';
     $('linkApple').value = links.apple || '';
     $('linkYouTube').value = links.youtube || '';
     $('linkOther').value = links.other || '';
 
-    $('contractStatus').value = it.contract_status || 'unsigned';
-    $('contractUrl').value = it.contract_url || '';
+    // contract
+    if($('contractStatus')) $('contractStatus').value = it.contract_status || 'unsigned';
+    if($('contractUrl')) $('contractUrl').value = it.contract_url || '';
     setContractMeta((it.contract_status||'unsigned').toUpperCase());
+
+    // split
+    if($('artistSplit')) $('artistSplit').value = (typeof it.artist_split==='number'?it.artist_split:60);
+    if($('tkfmSplit')) $('tkfmSplit').value = (typeof it.tkfm_split==='number'?it.tkfm_split:40);
+    if($('adminFee')) $('adminFee').value = (typeof it.admin_fee==='number'?it.admin_fee:0);
 
     $('selSummary').innerHTML =
       '<div class="mini"><b>Client:</b> '+esc(it.name||'')+' • '+esc(it.email||'')+'</div>'+
@@ -125,7 +136,7 @@
     setMeta('Creating test item…');
     const out = await postJSON('/.netlify/functions/distribution-requests-submit', {
       name:'Test Artist', email:'test@tkfm.local', role:'artist', release_type:'single',
-      project_title:'Test Release', primary_artist:'Test Artist', genre:'Hip-Hop',
+      project_title:'Split Override Test', primary_artist:'Test Artist', genre:'Hip-Hop',
       release_date:'', tracklist:'01 - Test Track', asset_urls:['https://example.com/audio.mp3'],
       dsp_targets:['spotify'], addons:['radio_add'], contract_ack:true
     });
@@ -157,6 +168,12 @@
   $('saveContract')?.addEventListener('click', ()=>savePatch({ contract_status: $('contractStatus').value, contract_url: $('contractUrl').value.trim() }));
   $('markSent')?.addEventListener('click', ()=>savePatch({ contract_status:'sent', contract_url: $('contractUrl').value.trim() }));
   $('markSigned')?.addEventListener('click', ()=>savePatch({ contract_status:'signed', contract_url: $('contractUrl').value.trim() }));
+
+  $('saveSplit')?.addEventListener('click', ()=>{
+    const a = Number($('artistSplit').value||60);
+    const fee = Number($('adminFee').value||0);
+    savePatch({ artist_split: a, tkfm_split: 100-a, admin_fee: fee });
+  });
 
   $('copyAssets')?.addEventListener('click', copyAssets);
 

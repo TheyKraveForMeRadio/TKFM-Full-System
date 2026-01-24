@@ -43,6 +43,10 @@ export async function handler(event) {
     contract_sent_at: "",
     contract_signed_at: "",
 
+    artist_split: 60,
+    tkfm_split: 40,
+    admin_fee: 0,
+
     purchase_session_id: "",
     purchase_lookup_key: "",
     customer_email: "",
