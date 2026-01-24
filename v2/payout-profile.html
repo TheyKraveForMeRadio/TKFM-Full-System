@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TKFM — Payout Profile</title>
+<meta name="description" content="Set your payout method (PayPal/ACH) so TKFM can pay royalties."/>
+<link rel="icon" href="/favicon.ico"/>
+<style>
+:root{--bg:#020617;--t:#e2e8f0;--m:#94a3b8;--b:rgba(148,163,184,.18);--n1:#22d3ee;--n2:#a855f7;--n3:#ec4899}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--t)}
+.wrap{max-width:980px;margin:0 auto;padding:22px 16px}
+h1{margin:0;font-size:28px;font-weight:950}.sub{margin-top:8px;color:var(--m);line-height:1.5}
+.card{margin-top:14px;border:1px solid var(--b);background:rgba(15,23,42,.55);border-radius:18px;padding:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label{display:block;margin-top:10px;color:var(--m);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+input,select{width:100%;margin-top:6px;padding:12px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.55);color:var(--t);outline:none}
+.btn{padding:10px 12px;border-radius:999px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.55);color:var(--t);font-weight:950;cursor:pointer;text-decoration:none}
+.btnHot{border-color:transparent;color:#020617;background:linear-gradient(90deg,var(--n1),var(--n2),var(--n3))}
+.ok{border:1px solid rgba(16,185,129,.30);background:rgba(16,185,129,.07);border-radius:16px;padding:12px}
+.warn{border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.06);border-radius:16px;padding:12px}
+.mini{font-size:12px;color:var(--m);line-height:1.5}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas;font-size:12px;color:#cbd5e1}
+</style></head>
+<body>
+<div class="wrap">
+  <h1>Payout Profile</h1>
+  <div class="sub">Set how you want to get paid (PayPal or ACH). Used for royalty payouts.</div>
+  <div class="card">
+    <div class="row">
+      <a class="btn" href="/client-vault.html">My Portal</a>
+      <a class="btn" href="/royalty-statements.html">Statements</a>
+      <a class="btn" href="/distribution-engine.html">Distribution</a>
+    </div>
+
+    <label>Email (for payouts)</label>
+    <input id="email" placeholder="you@email.com"/>
+
+    <label>Payee Name</label>
+    <input id="payee_name" placeholder="Legal name or business name"/>
+
+    <label>Payout Method</label>
+    <select id="payout_method">
+      <option value="PayPal">PayPal</option>
+      <option value="ACH">ACH</option>
+    </select>
+
+    <div id="paypalFields">
+      <label>PayPal Email / Handle</label>
+      <input id="payout_handle" placeholder="paypal@email.com or @handle"/>
+    </div>
+
+    <div id="achFields" style="display:none">
+      <div class="row">
+        <div style="flex:1;min-width:220px">
+          <label>ACH Routing Last 4</label>
+          <input id="ach_routing_last4" placeholder="1234" maxlength="4"/>
+        </div>
+        <div style="flex:1;min-width:220px">
+          <label>ACH Account Last 4</label>
+          <input id="ach_account_last4" placeholder="5678" maxlength="4"/>
+        </div>
+      </div>
+      <div class="mini" style="margin-top:8px">MVP privacy: only last‑4 is stored. Full ACH collection can be added later.</div>
+    </div>
+
+    <div class="row" style="margin-top:12px;justify-content:flex-end">
+      <button class="btn" id="loadBtn" type="button">Load</button>
+      <button class="btn btnHot" id="saveBtn" type="button">Save Profile</button>
+    </div>
+
+    <div id="out" class="warn" style="margin-top:12px">Waiting…</div>
+  </div>
+</div>
+
+<script type="module" src="/js/tkfm-payout-profile.js"></script>
+<script type="module" src="/js/tkfm-launch-polish.js"></script>
+</body></html>

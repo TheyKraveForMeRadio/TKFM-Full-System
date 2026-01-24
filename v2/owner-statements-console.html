@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Owner — Statements & Payouts</title><meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" href="/favicon.ico"/>
+<style>
+:root{--bg:#020617;--t:#e2e8f0;--m:#94a3b8;--b:rgba(148,163,184,.18);--n1:#22d3ee;--n2:#a855f7;--n3:#ec4899;--gold:#facc15;--amber:#f97316}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--t)}
+.wrap{max-width:1100px;margin:0 auto;padding:22px 16px}
+h1{margin:0;font-size:26px;font-weight:950}.sub{margin-top:8px;color:var(--m);line-height:1.5}
+.card{margin-top:14px;border:1px solid var(--b);background:rgba(15,23,42,.55);border-radius:18px;padding:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label{display:block;margin-top:10px;color:var(--m);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+input,textarea{width:100%;margin-top:6px;padding:12px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.55);color:var(--t);outline:none}
+textarea{min-height:180px;resize:vertical}
+.btn{padding:10px 12px;border-radius:999px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.55);color:var(--t);font-weight:950;cursor:pointer;text-decoration:none}
+.btnHot{border-color:transparent;color:#020617;background:linear-gradient(90deg,var(--gold),var(--amber),var(--n1))}
+.mini{font-size:12px;color:var(--m);line-height:1.5}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.03);font-weight:950;font-size:12px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas;font-size:12px;color:#cbd5e1}
+.ok{border:1px solid rgba(16,185,129,.30);background:rgba(16,185,129,.07);border-radius:16px;padding:12px}
+.warn{border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.06);border-radius:16px;padding:12px}
+</style></head>
+<body><div class="wrap">
+<h1>Owner — Statements & Payouts</h1>
+<div class="sub">Paste CSV statement data, import a batch, then manage payouts. Uses <code>TKFM_OWNER_KEY</code> when configured.</div>
+
+<div class="card">
+  <div class="row">
+    <a class="btn" href="/owner-ops-dashboard.html">Owner Ops</a>
+    <a class="btn" href="/owner-distribution-ops.html">Distribution Queue</a>
+        <a class="btn" href="/owner-payout-profiles.html">Payout Profiles</a>
+    <a class="btn" href="/royalty-statements.html">Client Statements</a>
+  </div>
+
+  <label>Owner Key (optional)</label>
+  <input id="ownerKey" placeholder="x-tkfm-owner-key (leave blank if not required)"/>
+
+  <div class="row" style="margin-top:10px">
+    <div style="flex:1;min-width:220px"><label>DSP</label><input id="dsp" value="DSP"/></div>
+    <div style="flex:1;min-width:220px"><label>Period</label><input id="period" placeholder="2026-01 or 2025-Q4"/></div>
+  </div>
+
+  <label>CSV Statement</label>
+  <textarea id="csv" placeholder="Paste CSV here (header required).
+Recommended columns: release_id OR project_title, email, net_amount, currency, territory, streams"></textarea>
+
+  <div class="row" style="margin-top:10px;justify-content:flex-end">
+    <button class="btn btnHot" id="importBtn" type="button">Import Statement</button>
+  </div>
+
+  <div id="importOut" class="warn" style="margin-top:12px">Waiting…</div>
+</div>
+
+<div class="card">
+  <div class="row" style="justify-content:space-between">
+    <div class="pill">Batches</div>
+    <button class="btn" id="loadBatches" type="button">Refresh</button>
+  </div>
+  <div id="batches" class="mini" style="margin-top:10px">—</div>
+</div>
+
+<div class="card">
+  <div class="row" style="justify-content:space-between">
+    <div class="pill">Payout Ledger</div>
+    <button class="btn" id="loadPayouts" type="button">Refresh</button>
+  </div>
+  <div class="mini" style="margin-top:10px">Mark items paid/unpaid. Export CSV anytime.</div>
+  <div id="payouts" class="mini" style="margin-top:10px">—</div>
+  <div class="row" style="margin-top:10px;justify-content:flex-end">
+    <button class="btn" id="exportPayouts" type="button">Export Payouts CSV</button>
+  </div>
+</div>
+
+</div>
+<script type="module" src="/js/tkfm-statements-owner.js"></script>
+<script type="module" src="/js/tkfm-launch-polish.js"></script>
+</body></html>
