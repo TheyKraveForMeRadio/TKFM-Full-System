@@ -2,9 +2,9 @@ TKFM SPLIT DEPLOY RECEIPT (RADIO vs RECORDS)
 ===========================================
 
 Tag: split-ready
-Commit: 1987c98 (verify with: git show --oneline --decorate -s split-ready)
+Commit at time of receipt: (run) git show --oneline --decorate -s split-ready
 
-This repo supports TWO Netlify sites from the SAME codebase.
+Two-site plan (same repo, same functions, same Stripe lookup_key):
 
 ENV VAR (per site):
 - RADIO site:   TKFM_SITE_MODE=radio
@@ -16,10 +16,8 @@ bash scripts/tkfm-build-static-multipage.sh && node scripts/tkfm-site-mode-filte
 PUBLISH DIR:
 dist
 
-Behavior:
+Records homepage rule:
 - records mode copies dist/label-home.html -> dist/index.html
-- records mode removes radio pages (radio-*, live, now-playing, owner-live-*, sponsor-read*, ai-drops*, podcasts, etc)
-- radio mode removes records pages (label-*, distribution*, royalties, mixtapes store, etc)
 
 Local preview (no Netlify credits):
 bash scripts/tkfm-build-static-multipage.sh
