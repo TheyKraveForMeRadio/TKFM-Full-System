@@ -1,0 +1,32 @@
+TKFM LOCAL PREVIEW RECEIPT (NO NETLIFY)
+======================================
+
+You have two clean preview folders:
+
+RADIO:
+  .tkfm/previews/radio
+
+RECORDS:
+  .tkfm/previews/records
+
+Serve RADIO:
+  python -m http.server 4173 --directory .tkfm/previews/radio
+  open: http://localhost:4173/
+
+Serve RECORDS:
+  python -m http.server 4174 --directory .tkfm/previews/records
+  open: http://localhost:4174/
+
+Proof checks used:
+- records preview must not contain radio pages:
+  owner-live-*, radio-*, now-playing, live, podcast*, podcaster-*, sponsor-read*, ai-drops*, ai-dj*, app-hub, engines, tkfm-catalog
+- radio preview must not contain records pages:
+  label*, records*, distribution*, royalty*, label-studio*, owner-distribution*, owner-royalty*, mixtapes*
+
+If a preview looks outdated:
+  bash scripts/tkfm-build-static-multipage.sh
+  export TKFM_SITE_MODE=records && node scripts/tkfm-site-mode-filter.mjs
+  rm -rf .tkfm/previews/records && mkdir -p .tkfm/previews/records && cp -R dist/* .tkfm/previews/records/
+  bash scripts/tkfm-build-static-multipage.sh
+  export TKFM_SITE_MODE=radio && node scripts/tkfm-site-mode-filter.mjs
+  rm -rf .tkfm/previews/radio && mkdir -p .tkfm/previews/radio && cp -R dist/* .tkfm/previews/radio/
