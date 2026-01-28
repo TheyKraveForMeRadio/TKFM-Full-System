@@ -11,11 +11,13 @@
     *{box-sizing:border-box}html,body{height:100%}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";color:var(--t);background:var(--bg);overflow-x:hidden}
     a{color:inherit;text-decoration:none}img{max-width:100%;display:block}button{font-family:inherit}
+
     .bg{position:fixed;inset:0;z-index:-5}
     .bg:before{content:"";position:absolute;inset:-35%;background:radial-gradient(900px 560px at 12% 10%,rgba(168,85,247,.18),transparent 60%),radial-gradient(900px 560px at 88% 14%,rgba(236,72,153,.14),transparent 60%),radial-gradient(900px 560px at 52% 92%,rgba(34,211,238,.12),transparent 60%),radial-gradient(1100px 650px at 74% 70%,rgba(59,130,246,.10),transparent 70%);filter:blur(2px);animation:drift 10.5s ease-in-out infinite;opacity:.95}
     .bg:after{content:"";position:absolute;inset:-25%;background:repeating-linear-gradient(0deg,rgba(34,211,238,.05) 0px,rgba(34,211,238,.05) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(168,85,247,.04) 0px,rgba(168,85,247,.04) 1px,transparent 1px,transparent 36px);transform:rotate(-6deg);opacity:.18;animation:grid 16s linear infinite}
     @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(1.2%,-1.1%,0) scale(1.02)}}
     @keyframes grid{0%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}50%{transform:translate3d(1.5%,1%,0) rotate(-6deg)}100%{transform:translate3d(-1%,-1%,0) rotate(-6deg)}}
+
     .wrap{max-width:1240px;margin:0 auto;padding:22px}
     .glass{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
     .card{padding:18px;border-radius:28px}
@@ -23,6 +25,7 @@
     .h1{margin:10px 0 0;font-size:44px;line-height:1.05;font-weight:950}
     .p{margin:10px 0 0;color:var(--m);line-height:1.6;font-size:14px;max-width:980px}
     .grad{background-image:linear-gradient(90deg,var(--p),var(--pk),var(--c),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+
     header{position:sticky;top:0;z-index:90;background:rgba(0,0,0,.72);border-bottom:1px solid rgba(30,41,59,.65);backdrop-filter:blur(14px)}
     header .wrap{display:flex;align-items:center;gap:14px;padding:12px 22px}
     .brand{display:flex;align-items:center;gap:12px;min-width:260px}
@@ -32,14 +35,17 @@
     @keyframes hue{0%{filter:blur(10px) hue-rotate(0deg)}100%{filter:blur(10px) hue-rotate(360deg)}}
     .brand img{position:absolute;inset:0;margin:auto;height:44px;width:auto;object-fit:contain;transform:translateZ(16px);filter:drop-shadow(0 0 16px rgba(34,211,238,.14))}
     .title{font-size:13px;font-weight:950;letter-spacing:.06em;line-height:1.2}
+
     .nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .pill{padding:10px 14px;border-radius:999px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.62);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.95);transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap}
     .pill:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.65);background:rgba(15,23,42,.90)}
+    .pill.hot{border-color:rgba(236,72,153,.60);box-shadow:0 0 0 1px rgba(236,72,153,.14),0 0 22px rgba(236,72,153,.10)}
     .menuBtn{display:none;margin-left:auto;width:44px;height:44px;border-radius:14px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.60);color:rgba(226,232,240,.96);cursor:pointer}
     .drawer{display:none;position:fixed;left:16px;right:16px;top:74px;z-index:120;background:rgba(0,0,0,.72);border:1px solid rgba(148,163,184,.22);border-radius:20px;backdrop-filter:blur(14px);padding:10px}
     .drawer a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px;border-radius:16px;border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.55);margin:8px 0;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:900}
     .drawer a:hover{border-color:rgba(34,211,238,.55);background:rgba(15,23,42,.86)}
     @media (max-width:980px){.nav{display:none}.menuBtn{display:grid;place-items:center}}
+
     .hero{position:relative;overflow:hidden}
     .heroGrid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:stretch;margin-top:14px}
     @media (max-width:980px){.heroGrid{grid-template-columns:1fr}}
@@ -47,6 +53,7 @@
     .heroRight{display:flex;flex-direction:column;gap:14px}
     .heroLogoStage{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
     .heroEQ{position:absolute;inset:0;display:grid;place-items:center;opacity:.32;filter:blur(.2px);pointer-events:none}
+
     .eq{width:min(520px,86vw);height:190px;opacity:.9}
     .eq rect{fill:rgba(34,211,238,.24)}
     .eq rect:nth-child(3n){fill:rgba(168,85,247,.22)}
@@ -62,11 +69,14 @@
     .eq rect:nth-child(9){animation-duration:1.16s}
     .eq rect:nth-child(10){animation-duration:.84s}
     @keyframes bar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+
     .heroLogo{width:min(420px,76vw);filter:drop-shadow(0 0 22px rgba(34,211,238,.12)) drop-shadow(0 0 28px rgba(168,85,247,.10));animation:heroFloat 3.4s ease-in-out infinite;transform-style:preserve-3d}
     @keyframes heroFloat{0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg)}50%{transform:translate3d(0,-6px,0) rotateX(8deg) rotateY(-10deg)}}
+
     .heroGlowRing{position:absolute;width:min(520px,90vw);height:min(520px,90vw);border-radius:999px;background:radial-gradient(circle at 50% 50%,rgba(168,85,247,.16),transparent 55%),radial-gradient(circle at 35% 65%,rgba(236,72,153,.14),transparent 58%),radial-gradient(circle at 70% 35%,rgba(34,211,238,.12),transparent 60%);filter:blur(16px);opacity:.9;animation:pulse 4.8s ease-in-out infinite,hue2 9.5s linear infinite;pointer-events:none}
     @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
     @keyframes hue2{0%{filter:blur(16px) hue-rotate(0deg)}100%{filter:blur(16px) hue-rotate(360deg)}}
+
     .chipRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
     .chip{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.55);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(226,232,240,.92)}
     .chip.live{border-color:rgba(16,185,129,.30)}
@@ -74,12 +84,14 @@
     .chip.pay{border-color:rgba(34,211,238,.28)}
     .chip.dj{border-color:rgba(168,85,247,.30)}
     .dot{width:10px;height:10px;border-radius:999px;background:#10b981;box-shadow:0 0 18px rgba(16,185,129,.26)}
+
     .btnRow{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
     .btn{padding:11px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.34);background:rgba(15,23,42,.72);color:rgba(226,232,240,.96);cursor:pointer;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;transition:transform .16s ease,border-color .16s ease,background .16s ease;white-space:nowrap}
     .btn:hover{transform:translateY(-1px);border-color:rgba(34,211,238,.68);background:rgba(15,23,42,.92)}
     .btnHot{border-color:rgba(236,72,153,.62);box-shadow:0 0 0 1px rgba(236,72,153,.16),0 0 22px rgba(236,72,153,.10)}
     .btnAlt{border-color:rgba(168,85,247,.62)}
     .btnSoft{border-color:rgba(148,163,184,.26)}
+
     .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
     @media (max-width:1120px){.grid{grid-template-columns:repeat(2,1fr)}}
     @media (max-width:760px){.grid{grid-template-columns:1fr}}
@@ -94,15 +106,21 @@
     .tag.pay{border-color:rgba(34,211,238,.28)}
     .tag.lock{border-color:rgba(236,72,153,.26)}
     .tag.dj{border-color:rgba(168,85,247,.28)}
+    .tag.lab{border-color:rgba(59,130,246,.26)}
+
     .divider{height:1px;margin:14px 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.22),rgba(236,72,153,.18),transparent)}
+
     .footer{margin-top:80px;border-top:1px solid rgba(30,41,59,.7);background:rgba(0,0,0,.58);color:rgba(148,163,184,.95);font-size:12px;letter-spacing:.08em}
     .footer .wrap{padding:18px 22px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
     .onair{display:flex;flex-direction:column;gap:10px}
     .row{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
     .small{font-size:12px;color:var(--m)}
     .vol{display:flex;gap:10px;align-items:center}
     input[type="range"]{width:160px}
     .status{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid rgba(16,185,129,.30);background:rgba(2,6,23,.55);font-size:10px;letter-spacing:.22em;text-transform:uppercase}
+
+    /* === LAUNCH UX === */
     .launchWrap{margin-top:14px}
     .banner{position:relative;overflow:hidden;padding:16px;border-radius:24px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.55)}
     .banner:before{content:"";position:absolute;inset:-2px;background:radial-gradient(640px 260px at 10% 15%,rgba(34,211,238,.16),transparent 60%),radial-gradient(640px 260px at 90% 18%,rgba(236,72,153,.14),transparent 60%),radial-gradient(640px 260px at 52% 92%,rgba(168,85,247,.12),transparent 60%);opacity:.95;pointer-events:none}
@@ -119,6 +137,18 @@
     .rotDots{margin-top:12px;display:flex;gap:8px;align-items:center}
     .rotDot{width:8px;height:8px;border-radius:999px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.70);opacity:.85}
     .rotDot.on{background:rgba(34,211,238,.65);border-color:rgba(34,211,238,.85)}
+
+    /* === START HERE QUICKLINKS === */
+    .quicklinks{max-width:1120px;margin:26px auto 18px auto;padding:18px;border-radius:18px;background:rgba(2,6,23,.78);border:1px solid rgba(168,85,247,.32);box-shadow:0 0 0 1px rgba(34,211,238,.10),0 12px 40px rgba(0,0,0,.45)}
+    .qlTop{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .qlTitle{font-weight:900;letter-spacing:.6px;font-size:18px;color:#e2e8f0}
+    .qlSub{margin-top:6px;color:#94a3b8;font-size:13px;line-height:1.45}
+    .qlBtn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:10px 14px;border-radius:999px;font-weight:900;color:#020617;background:linear-gradient(90deg,#22d3ee,#a855f7,#ec4899);box-shadow:0 10px 25px rgba(0,0,0,.35)}
+    .qlGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px}
+    .qlCard{text-decoration:none;padding:12px 14px;border-radius:14px;border:1px solid rgba(34,211,238,.22);background:rgba(15,23,42,.55);color:#e2e8f0}
+    .qlCard .h{font-weight:900}
+    .qlCard .s{color:#94a3b8;font-size:12px;margin-top:4px}
+    .qlTip{margin-top:12px;color:#64748b;font-size:12px}
   </style>
 
   <script src="/js/tkfm-fx.js"></script>
@@ -126,18 +156,15 @@
   <script src="/js/tkfm-quick-checkout.js"></script>
   <script src="/js/tkfm-paid-lane-modal.js" defer></script>
   <script src="/js/tkfm-paid-lane-submit.js" defer></script>
-
   <script>window.__TKFM_DISABLE_OWNER_GATE = true;</script>
-
   <script src="/js/tkfm-functions-client.js" defer></script>
   <script src="/js/tkfm-universal-price.js" defer></script>
   <script src="/js/tkfm-universal-checkout.js" defer></script>
-
   <link rel="stylesheet" href="/css/tkfm-global-shell.css">
   <script src="/js/tkfm-global-shell.js" defer></script>
 </head>
-
 <body data-tkfm-theme="radio">
+
   <!-- TKFM: DASHBOARD PILL -->
   <a href="/dashboard.html" style="
     position:fixed; right:16px; bottom:16px; z-index:9999;
@@ -150,6 +177,7 @@
   ">Dashboard</a>
 
   <script>window.TKFM_FX&&TKFM_FX.mount({ theme: 'radio' });</script>
+
   <div class="bg"></div>
 
   <header>
@@ -176,7 +204,7 @@
         <a class="pill" href="/pricing.html">Monthly Tiers</a>
         <a class="pill" href="/login.html">Login</a>
         <a class="pill" href="/register.html">Sign Up</a>
-        <a class="pill" href="/start-here.html">Start Here</a>
+        <a class="pill hot" href="/start-here.html">Start Here</a>
       </nav>
 
       <button class="menuBtn" id="menuBtn" aria-label="Menu">≡</button>
@@ -221,7 +249,7 @@
     <section class="glass card hero">
       <div class="k">On Air • Paid Lanes • Submissions</div>
       <div class="h1"><span class="grad">TKFM</span> — Live Radio + Creator & DJ Engines</div>
-      <p class="p">Listen live, submit music, and unlock paid lanes: Creator Pass tools, DJ station access tiers, and promotion engines.</p>
+      <p class="p">Listen live, submit music, and unlock paid lanes: Creator Pass tools, DJ station access tiers, promotion engines, and mixtape hosting.</p>
 
       <div class="chipRow" id="tierChips">
         <span class="chip live"><span class="dot"></span> LIVE</span>
@@ -234,7 +262,16 @@
         <div class="glass card heroLeft">
           <div class="heroEQ" aria-hidden="true">
             <svg class="eq" viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg">
-              <rect x="20" y="40" width="28" height="120" rx="10"/><rect x="70" y="20" width="28" height="140" rx="10"/><rect x="120" y="55" width="28" height="105" rx="10"/><rect x="170" y="28" width="28" height="132" rx="10"/><rect x="220" y="62" width="28" height="98" rx="10"/><rect x="270" y="18" width="28" height="142" rx="10"/><rect x="320" y="48" width="28" height="112" rx="10"/><rect x="370" y="26" width="28" height="134" rx="10"/><rect x="420" y="58" width="28" height="102" rx="10"/><rect x="470" y="34" width="28" height="126" rx="10"/>
+              <rect x="20" y="40" width="28" height="120" rx="10"/>
+              <rect x="70" y="20" width="28" height="140" rx="10"/>
+              <rect x="120" y="55" width="28" height="105" rx="10"/>
+              <rect x="170" y="28" width="28" height="132" rx="10"/>
+              <rect x="220" y="62" width="28" height="98" rx="10"/>
+              <rect x="270" y="18" width="28" height="142" rx="10"/>
+              <rect x="320" y="48" width="28" height="112" rx="10"/>
+              <rect x="370" y="26" width="28" height="134" rx="10"/>
+              <rect x="420" y="58" width="28" height="102" rx="10"/>
+              <rect x="470" y="34" width="28" height="126" rx="10"/>
             </svg>
           </div>
 
@@ -278,7 +315,6 @@
             </div>
 
             <div class="divider"></div>
-
             <div class="k">Access</div>
             <div class="btnRow">
               <a class="btn" href="/login.html">Login</a>
@@ -296,12 +332,10 @@
               <button class="btn btnHot buy" data-plan="creator_pass_monthly" type="button">Buy Creator Pass</button>
               <button class="btn btnAlt buy" data-plan="dj_toolkit_monthly" type="button">Buy DJ Toolkit</button>
               <a class="btn" href="/feature-engine.html">Feature Engine</a>
+              <a class="btn" href="/dj-mixtape-hosting.html">Mixtape Hosting</a>
             </div>
 
-            <div class="small" style="margin-top:10px;color:rgba(226,232,240,.75)">
-              Live Prices: Creator Pass <span class="mono" data-price-for="creator_pass_monthly">…</span>
-              • DJ Toolkit <span class="mono" data-price-for="dj_toolkit_monthly">…</span>
-            </div>
+            <div class="small" style="margin-top:10px;color:rgba(226,232,240,.75)">Live Prices: Creator Pass <span class="mono" data-price-for="creator_pass_monthly">…</span> • DJ Toolkit <span class="mono" data-price-for="dj_toolkit_monthly">…</span></div>
           </div>
         </div>
       </div>
@@ -310,7 +344,7 @@
     <section class="launchWrap glass card">
       <div class="k">Launch Mode</div>
       <div style="margin-top:10px;font-size:22px;font-weight:950">Pick a lane. Get paid. Get placed.</div>
-      <p class="p" style="margin-top:6px;max-width:980px">Every engine follows the same customer path: <span class="grad" style="font-weight:950">Buy → Post-Checkout → Submit → My Portal</span>. No dead ends.</p>
+      <p class="p" style="margin-top:6px;max-width:980px">Every engine follows the same customer path: <span class="grad" style="font-weight:950">Buy → Post‑Checkout → Submit → My Portal</span>. No dead ends.</p>
 
       <div class="banner" id="tkfmLaunchBanner" role="region" aria-label="TKFM Launch Banners">
         <span class="badge2 radio" id="tkfmLaunchBadge">RADIO</span>
@@ -336,7 +370,7 @@
     <section style="margin-top:14px" class="glass card">
       <div class="k">Quick lanes</div>
       <div style="margin-top:10px;font-size:22px;font-weight:950">Choose a lane</div>
-      <p class="p" style="max-width:980px">Creator tools, DJ access tiers, paid promotion engines, and mixtape hosting.</p>
+      <p class="p" style="max-width:980px">Creator tools, DJ access tiers, paid promotion engines, mixtape hosting, and radio growth lanes.</p>
 
       <div class="grid">
         <a class="glass tile" href="/creator-pass.html">
@@ -367,6 +401,13 @@
           <div class="tags"><span class="tag pay">PAID</span><span class="tag dj">DJ</span></div>
         </a>
 
+        <a class="glass tile" href="/they-krave-for-me-mixtapes.html">
+          <div class="tileK">Store</div>
+          <div class="tileH">They Krave For Me Mixtapes</div>
+          <div class="tileP">Upload and sell mixtapes, singles, and tracks (MP3 + cover art).</div>
+          <div class="tags"><span class="tag pay">STORE</span><span class="tag">MP3</span></div>
+        </a>
+
         <a class="glass tile" href="/social-engine.html">
           <div class="tileK">Promotion</div>
           <div class="tileH">Social Campaigns</div>
@@ -387,13 +428,21 @@
           <div class="tileP">Route listeners to the live stream experience.</div>
           <div class="tags"><span class="tag">RADIO</span><span class="tag">LIVE</span></div>
         </a>
+
+        <a class="glass tile" href="/tkfm-catalog.html">
+          <div class="tileK">Radio</div>
+          <div class="tileH">Catalog</div>
+          <div class="tileP">Browse catalog lanes and placements.</div>
+          <div class="tags"><span class="tag">CATALOG</span><span class="tag">PUBLIC</span></div>
+        </a>
       </div>
     </section>
+
   </main>
 
   <footer class="footer">
     <div class="wrap">
-      <div>© 2025 They Krave For Me Radio (TKFM)</div>
+      <div>© 2026 They Krave For Me Radio (TKFM)</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <a class="pill" href="/pricing.html">Monthly Tiers</a>
         <a class="pill" href="/submit.html">Submit</a>
@@ -408,90 +457,125 @@
   </footer>
 
   <script>
-    (function(){
-      function $(s){return document.querySelector(s)}
-      function safeJson(str,fb){try{return JSON.parse(str)}catch(e){return fb}}
-      function hasFeature(id){const f=safeJson(localStorage.getItem("tkfm_user_features")||"{}",{});return !!f[id]}
-      function setTxt(id,txt){const el=$(id);if(el)el.textContent=txt}
-      function setTag(id,txt){const el=$(id);if(el)el.textContent=txt}
+  (function(){
+    function $(s){return document.querySelector(s)}
+    function safeJson(str,fb){try{return JSON.parse(str)}catch(e){return fb}}
+    function hasFeature(id){
+      const f=safeJson(localStorage.getItem("tkfm_user_features")||"{}",{});
+      return !!f[id]
+    }
+    function setTxt(id,txt){const el=$(id);if(el)el.textContent=txt}
+    function setTag(id,txt){const el=$(id);if(el)el.textContent=txt}
 
-      const btn=$("#menuBtn"),drawer=$("#drawer");
-      function close(){if(drawer)drawer.style.display="none"}
-      function toggle(){if(!drawer)return;drawer.style.display=(drawer.style.display==="block")?"none":"block"}
-      if(btn&&drawer&&!btn.__bound){
-        btn.__bound=true;
-        btn.addEventListener("click",toggle);
-        document.addEventListener("click",function(e){if(e.target===btn)return;if(drawer.contains(e.target))return;close()});
-        window.addEventListener("resize",function(){if(window.innerWidth>980)close()})
-      }
+    const btn=$("#menuBtn"),drawer=$("#drawer");
+    function close(){if(drawer)drawer.style.display="none"}
+    function toggle(){if(!drawer)return;drawer.style.display=(drawer.style.display==="block")?"none":"block"}
+    if(btn&&drawer&&!btn.__bound){
+      btn.__bound=true;
+      btn.addEventListener("click",toggle);
+      document.addEventListener("click",function(e){
+        if(e.target===btn)return;
+        if(drawer.contains(e.target))return;
+        close();
+      });
+      window.addEventListener("resize",function(){if(window.innerWidth>980)close()});
+    }
 
-      const stream=localStorage.getItem("RADIO_STREAM_URL")||localStorage.getItem("radio_stream_url")||localStorage.getItem("tkfm_radioStreamUrl")||localStorage.getItem("tkfm_streamUrl")||"";
-      const streamText=$("#streamText");
-      const player=$("#player");
-      if(streamText)streamText.textContent="Stream URL: "+(stream?stream:"Not set");
-      if(player&&stream)player.src=stream;
+    const stream=localStorage.getItem("RADIO_STREAM_URL")||localStorage.getItem("radio_stream_url")||localStorage.getItem("tkfm_radioStreamUrl")||localStorage.getItem("tkfm_streamUrl")||"";
+    const streamText=$("#streamText");
+    const player=$("#player");
+    if(streamText)streamText.textContent="Stream URL: "+(stream?stream:"Not set");
+    if(player&&stream)player.src=stream;
 
-      const vol=$("#vol");
-      if(player&&vol){
-        player.volume=parseFloat(vol.value||"0.8");
-        vol.addEventListener("input",function(){player.volume=parseFloat(vol.value||"0.8")})
-      }
+    const vol=$("#vol");
+    if(player&&vol){
+      player.volume=parseFloat(vol.value||"0.8");
+      vol.addEventListener("input",function(){player.volume=parseFloat(vol.value||"0.8")});
+    }
 
-      const playBtn=$("#playBtn");
-      if(playBtn&&player){
-        playBtn.addEventListener("click",async function(){
-          try{
-            if(!stream&&!player.src){alert("Stream URL is not set yet.");return}
-            if(player.paused){await player.play();playBtn.textContent="Pause"}
-            else{player.pause();playBtn.textContent="Play"}
-          }catch(e){
-            alert("Playback blocked by browser policy. Click Play on the audio controls.")
-          }
-        });
-        player.addEventListener("pause",function(){playBtn.textContent="Play"});
-        player.addEventListener("play",function(){playBtn.textContent="Pause"})
-      }
-
-      const creatorActive=hasFeature("creator_pass_monthly")||hasFeature("creator_pass_yearly");
-      const djActive=hasFeature("dj_toolkit_monthly");
-      setTxt("#chipCreator","CREATOR: "+(creatorActive?"ACTIVE":"LOCKED"));
-      setTxt("#chipDJ","DJ: "+(djActive?"ACTIVE":"LOCKED"));
-      setTag("#tagCreator",creatorActive?"ACTIVE":"LOCKED");
-      setTag("#tagDJ",djActive?"ACTIVE":"LOCKED");
-
-      async function startCheckout(planId){
+    const playBtn=$("#playBtn");
+    if(playBtn&&player){
+      playBtn.addEventListener("click",async function(){
         try{
-          const res=await fetch("/.netlify/functions/create-checkout-session",{
-            method:"POST",
-            headers:{"content-type":"application/json"},
-            body:JSON.stringify({lookup_key:planId})
-          });
-          if(!res.ok){const t=await res.text();throw new Error("Checkout failed: "+res.status+" "+t)}
-          const data=await res.json();
-          if(data&&data.url)window.location.href=data.url;
-          else throw new Error("No checkout url returned.")
-        }catch(err){
-          alert(String(err&&err.message?err.message:err))
+          if(!stream&&!player.src){alert("Stream URL is not set yet.");return}
+          if(player.paused){await player.play();playBtn.textContent="Pause"}
+          else{player.pause();playBtn.textContent="Play"}
+        }catch(e){
+          alert("Playback blocked by browser policy. Click Play on the audio controls.");
         }
+      });
+      player.addEventListener("pause",function(){playBtn.textContent="Play"});
+      player.addEventListener("play",function(){playBtn.textContent="Pause"});
+    }
+
+    const creatorActive=hasFeature("creator_pass_monthly")||hasFeature("creator_pass_yearly");
+    const djActive=hasFeature("dj_toolkit_monthly");
+    setTxt("#chipCreator","CREATOR: "+(creatorActive?"ACTIVE":"LOCKED"));
+    setTxt("#chipDJ","DJ: "+(djActive?"ACTIVE":"LOCKED"));
+    setTag("#tagCreator",creatorActive?"ACTIVE":"LOCKED");
+    setTag("#tagDJ",djActive?"ACTIVE":"LOCKED");
+
+    async function startCheckout(planId){
+      try{
+        const res=await fetch("/.netlify/functions/create-checkout-session",{
+          method:"POST",
+          headers:{"content-type":"application/json"},
+          body:JSON.stringify({lookup_key:planId})
+        });
+        if(!res.ok){
+          const t=await res.text();
+          throw new Error("Checkout failed: "+res.status+" "+t);
+        }
+        const data=await res.json();
+        if(data&&data.url)window.location.href=data.url;
+        else throw new Error("No checkout url returned.");
+      }catch(err){
+        alert(String(err&&err.message?err.message:err));
       }
-      document.querySelectorAll(".buy").forEach(function(b){
-        b.addEventListener("click",function(){
-          const plan=b.getAttribute("data-plan");
-          if(!plan)return;
-          startCheckout(plan)
-        })
-      })
-    })();
+    }
+
+    document.querySelectorAll(".buy").forEach(function(b){
+      b.addEventListener("click",function(){
+        const plan=b.getAttribute("data-plan");
+        if(!plan)return;
+        startCheckout(plan);
+      });
+    });
+  })();
   </script>
 
   <script type="module" src="/js/tkfm-launch-rotator.js"></script>
   <script type="module" src="/js/tkfm-checkout.js"></script>
   <script type="module" src="/js/tkfm-logo-resolver.js"></script>
-
   <script src="/js/tkfm-paid-lane-modal.js"></script>
   <script src="/js/tkfm-sponsor-cta.js"></script>
   <script src="/js/tkfm-pageviews.js"></script>
   <script src="/js/tkfm-view-badge.js"></script>
-  <script type="module" src="/js/tkfm-auto-customer-capture.js"></script>
+
+  <!-- TKFM_QUICKLINKS_V2 -->
+  <section class="quicklinks">
+    <div class="qlTop">
+      <div>
+        <div class="qlTitle">TKFM — Start Here</div>
+        <div class="qlSub">The Independent Artist Power Station — choose a lane, submit, or shop. Full navigation lives in the sitemap.</div>
+      </div>
+      <a href="/tkfm-sitemap.html" class="qlBtn">All Pages (Sitemap)</a>
+    </div>
+
+    <div class="qlGrid">
+      <a href="/radio-hub.html" class="qlCard" style="border-color:rgba(34,211,238,.22)"><div class="h">Radio Hub</div><div class="s">Main listener + creator gateway</div></a>
+      <a href="/pricing.html" class="qlCard" style="border-color:rgba(168,85,247,.22)"><div class="h">Pricing</div><div class="s">Memberships + top-ups</div></a>
+      <a href="/ai-drops-engine.html" class="qlCard" style="border-color:rgba(236,72,153,.22)"><div class="h">AI Drops / Tags</div><div class="s">DJ tags • station IDs • imaging</div></a>
+      <a href="/sponsor-read-engine.html" class="qlCard" style="border-color:rgba(34,211,238,.22)"><div class="h">Sponsor Reads</div><div class="s">Credits + request pipeline</div></a>
+      <a href="/they-krave-for-me-mixtapes.html" class="qlCard" style="border-color:rgba(168,85,247,.22)"><div class="h">Mixtapes Store</div><div class="s">DJ / No‑DJ versions • tracklists</div></a>
+      <a href="/my-mixtapes.html" class="qlCard" style="border-color:rgba(168,85,247,.22)"><div class="h">My Mixtapes</div><div class="s">Owned badge + downloads</div></a>
+      <a href="/client-vault.html" class="qlCard" style="border-color:rgba(34,211,238,.22)"><div class="h">Client Vault</div><div class="s">Portal + access links</div></a>
+      <a href="/tkfm-catalog.html" class="qlCard" style="border-color:rgba(59,130,246,.22)"><div class="h">Catalog</div><div class="s">Public lanes + listings</div></a>
+      <a href="/support.html" class="qlCard" style="border-color:rgba(148,163,184,.22)"><div class="h">Support</div><div class="s">Help + contact</div></a>
+    </div>
+
+    <div class="qlTip">Pro tip: keep the sitemap linked in your header/nav too — that’s your universal “everything works” safety.</div>
+  </section>
+
 </body>
 </html>
